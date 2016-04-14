@@ -1,0 +1,13 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.1.2-tosca_definitions_version-01-valid-definition
+  oasis.testAssertion.description: Parsing a document with valid tosca definition version MUST succeed.
+  oasis.testAssertion.target: The 'tosca_definitions_version' value out of the parsing.
+  oasis.testAssertion.predicate: >
+    assert true 'tosca_definitions_version' value is equal to 'http://docs.oasis-open.org/tosca/ns/simple/yaml/1.0' or 'tosca_simple_yaml_1_0'
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.1.2
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
