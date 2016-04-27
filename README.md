@@ -11,7 +11,7 @@ However this repository may be moved later under OASIS repository. Based on that
 In order to contribute to this repository you should Fork the repository, add some tests on your fork and issue a pull-request that respect the following constraints:
 
 * The pull-request must not contains too many tests in order to ease the review of the pull-request.
-* If a pull-request contains multiple tests template they must all be difference scenarios aiming to validate the same element of the specification
+* If a pull-request define multiple tests they must all be variants aiming to validate the same element of the specification
 * The test template must be placed in the folder matching the conformance target (Parser-Validator or Orchestrator)
 * The test template can be a yaml TOSCA template OR an unzipped TOSCA archive in a folder.
 * The TOSCA template or Archive's entry TOSCA template must contains a *metadata* section that defines the test assertion expected from parsing the template as defined bellow:
@@ -32,18 +32,17 @@ metadata:
 ```
 
   * Where:
-
-    * **<test assertion id>:** unique id of the test assertion and must follow the following pattern:
-<oasis.testAssertion.normativeSource.textSourceItem.section>-<element under test>-<test variant id>-<optional short description>.
-    * **<optional prerequisite>:** association (corresponding to the Prerequisite termin- ology definition) expresses a pre-condition to be satisfied by the <Target> in order to qualify for the test expressed by the <Predicate>. It is a boolean expression: if evaluates to "true", the <Predicate> can be evaluated over the <Target>. If evaluates to "false", the <Target> is not qualified for this test assertion.
-    * **<required target>** target that will be validated by the predicate.
-    * **<required predicate>:** association (corresponding to the Predicate terminology definition) expresses the feature or behavior expected from the <Target> as stated in <NormativeSource>. It is a boolean expression: if evaluates to "true", the <Target> instance exhibits the expected feature. If "false", the <Target> does not.
-    * **<required level>** the level of prescription of the test (*mandatory*, *preferred* or *permitted*).
-    * **<required id of the normative source under test>** Id of the normative source targeted by the test assertion (*tosca_simple_yaml_1_0*).
-    * **<required version of the normative source>** Version of the normative source targeted by the test assertion (*1.0.0*).
-    * **<required section>** Number of the section in the normative source.
-    * **<optional line>** Optional line from the normative source.
-    * **<required conformance target>** the tool that is targeted by the test assertion Parser-Validator or Orchestrator.
+    * **&lt;test assertion id&gt;:** unique id of the test assertion and must follow the following pattern:
+&lt;oasis.testAssertion.normativeSource.textSourceItem.section&gt;-&lt;element under test&gt;-&lt;test variant id&gt;-&lt;optional short description&gt;.
+    * **&lt;optional prerequisite&gt;:** association (corresponding to the Prerequisite termin- ology definition) expresses a pre-condition to be satisfied by the &lt;Target&gt; in order to qualify for the test expressed by the &lt;Predicate&gt;. It is a boolean expression: if evaluates to "true", the &lt;Predicate&gt; can be evaluated over the &lt;Target&gt;. If evaluates to "false", the &lt;Target&gt; is not qualified for this test assertion.
+    * **&lt;required target&gt;** target that will be validated by the predicate.
+    * **&lt;required predicate&gt;:** association (corresponding to the Predicate terminology definition) expresses the feature or behavior expected from the &lt;Target&gt; as stated in &lt;NormativeSource&gt;. It is a boolean expression: if evaluates to "true", the &lt;Target&gt; instance exhibits the expected feature. If "false", the &lt;Target&gt; does not.
+    * **&lt;required level&gt;** the level of prescription of the test (*mandatory*, *preferred* or *permitted*).
+    * **&lt;required id of the normative source under test&gt;** Id of the normative source targeted by the test assertion (*tosca_simple_yaml_1_0*).
+    * **&lt;required version of the normative source&gt;** Version of the normative source targeted by the test assertion (*1.0.0*).
+    * **&lt;required section&gt;** Number of the section in the normative source.
+    * **&lt;optional line&gt;** Optional line from the normative source.
+    * **&lt;required conformance target&gt;** the tool that is targeted by the test assertion Parser-Validator or Orchestrator.
 
   * Example:
 
@@ -63,8 +62,8 @@ metadata:
 
 * The name of the TOSCA template or archive folder MUST be equal to the test assertion id (for example *3.1.2-tosca_definitions_version-01-valid-definition.yml*):
 * The predicate expression must follow the following patterns:
-  * assert <target> value is equal to <expected value> (or <other expected value> ...)
-  * assert raises the error <error_id> (and error <error_id> ...)
+  * assert &lt;target&gt; value is equal to &lt;expected value&gt; (or &lt;other expected value&gt; ...)
+  * assert raises the error &lt;error_id&gt; (and error &lt;error_id&gt; ...)
 
 # Approval process
 
