@@ -4,13 +4,14 @@ This repository aims to contains tests scenarios and templates that will allow v
 
 The content of the repository is not officially recognized by TOSCA TC or TOSCA Interoperability SC.
 
-However this repository may be moved later under OASIS repository. Based on that any people that will issue pull-requests agree that the IP related to it's pull-request will follow OASIS TOSCA TC rules and be owned by OASIS.
+However this repository may be moved later under OASIS repository. This means that people contributing to this repository agrees that the IP related to contributions will follow OASIS TOSCA TC rules and be owned by OASIS.
 
 # How to contribute
 
 In order to contribute to this repository you should Fork the repository, add some tests on your fork and issue a pull-request that respect the following constraints:
 
-* The pull-request must not contains too many tests in order to ease the review of the pull-request.
+
+* Pull requests should not contains too many tests as it will take longer to review them. They also may be rejected even if only a single test is rejected..
 * If a pull-request define multiple tests they must all be variants aiming to validate the same element of the specification
 * The test template must be placed in the folder matching the conformance target (Parser-Validator or Orchestrator)
 * The test template can be a yaml TOSCA template OR an unzipped TOSCA archive in a folder.
