@@ -1,0 +1,13 @@
+tosca_definitions_version: not_tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.1.2-tosca_definitions_version-03-invalid
+  oasis.testAssertion.description: Parser should be fail if tosca_definitions_version is not valid.
+  oasis.testAssertion.target: error raised by the parser
+  oasis.testAssertion.predicate: >
+    assert raises the error 'InvalidTOSCAVersion'
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.1.2
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
