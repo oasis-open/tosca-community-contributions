@@ -1,0 +1,16 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  template_name:
+    complex: value
+  oasis.testAssertion.id: 3.9.3.3-metadata-02-complex_template_name_metadata
+  oasis.testAssertion.description: Parser should be fail if metadata is a complex yaml value
+  oasis.testAssertion.target: error raised by the parser
+  oasis.testAssertion.predicate: >
+    assert raises the error 'ComplexMetadataNotSupported'
+  oasis.testAssertion.tags.errors: ComplexMetadataNotSupported
+  oasis.testAssertion.prescription_level: optional
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.9.3.3
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator

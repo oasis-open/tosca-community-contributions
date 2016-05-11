@@ -1,0 +1,16 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  template_name: tosca_meta_data_test
+  template_author: tosca interop sc
+  template_version: 1.0
+  oasis.testAssertion.id: 3.9.1.1-meta_data_01-valid
+  oasis.testAssertion.description: Parsing a valid metadata section MUST succeed.
+  oasis.testAssertion.target: The 'metadata' value out of the parsing.
+  oasis.testAssertion.predicate: >
+    assert 'template_name' value is equal to 'tosca_meta_data_test'
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.9.1.1
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
