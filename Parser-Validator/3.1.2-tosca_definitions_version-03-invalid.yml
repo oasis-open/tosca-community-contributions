@@ -6,6 +6,7 @@ metadata:
   oasis.testAssertion.target: error raised by the parser
   oasis.testAssertion.predicate: >
     assert raises the error 'InvalidTOSCAVersion'
+  oasis.testAssertion.tags.errors: InvalidTOSCAVersion
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
   oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0

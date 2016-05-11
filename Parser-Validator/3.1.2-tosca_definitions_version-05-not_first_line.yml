@@ -9,6 +9,7 @@ metadata:
   oasis.testAssertion.target: error raised by the parser
   oasis.testAssertion.predicate: >
     assert raises the error 'TOSCAVersionMustBeFirstLine'
+  oasis.testAssertion.tags.errors: TOSCAVersionMustBeFirstLine
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.parsing_result: ERROR, tosca_definitions_version is required and MUST be first line of the TOSCA document
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
