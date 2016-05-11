@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.9.3.7-dsl_definitions-02-invalid-value-type
+  oasis.testAssertion.description: Parsing a document with valid dsl_definitions that contains wrong values MUST fail.
+  oasis.testAssertion.prerequisite: >
+    TODO Add reference to the node template parsing test.
+  oasis.testAssertion.target: error raised by the parser.
+  oasis.testAssertion.predicate: >
+    assert raises the error 'InvalidType'
+  oasis.testAssertion.tags.errors: InvalidType
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.9.3.7
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+dsl_definitions:
+  host_capabbilities: &host_capabbilities
+    disk_size: 10 GB
+    num_cpus: string value
+    mem_size: 4096 MB
+
+topology_template:
+  node_templates:
+    compute:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties: *host_capabbilities
