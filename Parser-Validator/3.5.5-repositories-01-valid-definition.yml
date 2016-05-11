@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.5.5-repositories-01-valid-definition
+  oasis.testAssertion.description: Parsing a document with valid repository MUST succeed.
+  oasis.testAssertion.target: The 'repository' out of the parsing.
+  oasis.testAssertion.predicate: >
+    assert 'description' value is equal to 'A repository'
+    and assert 'url' value is equal to 'https://github.com/my-project/'
+    and assert 'credential.user' value is equal to 'username'
+    and assert 'credential.token' value is equal to 'password'
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.5.5, 3.9.3.8
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+repositories:
+  simple_repository: https://github.com/my-other-project/
+  my_git_repository:
+    description: A repository
+    url: https://github.com/my-project/
+    credential:
+      user: username
+      token: password
