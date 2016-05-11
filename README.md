@@ -24,6 +24,7 @@ metadata:
   oasis.testAssertion.prerequisite: <optional prerequisite>
   oasis.testAssertion.target: <required target>
   oasis.testAssertion.predicate: <required predicate>
+  oasis.testAssertion.tags.errors: <optional error_code>, <optional error_code>
   oasis.testAssertion.prescription_level: <required level>
   oasis.testAssertion.normativeSource.refSourceItem.documentId: <required id of the normative source under test>
   oasis.testAssertion.normativeSource.refSourceItem.versionId: <required version of the normative source>
@@ -38,6 +39,7 @@ metadata:
     * **&lt;optional prerequisite&gt;:** association (corresponding to the Prerequisite termin- ology definition) expresses a pre-condition to be satisfied by the &lt;Target&gt; in order to qualify for the test expressed by the &lt;Predicate&gt;. It is a boolean expression: if evaluates to "true", the &lt;Predicate&gt; can be evaluated over the &lt;Target&gt;. If evaluates to "false", the &lt;Target&gt; is not qualified for this test assertion.
     * **&lt;required target&gt;** target that will be validated by the predicate.
     * **&lt;required predicate&gt;:** association (corresponding to the Predicate terminology definition) expresses the feature or behavior expected from the &lt;Target&gt; as stated in &lt;NormativeSource&gt;. It is a boolean expression: if evaluates to "true", the &lt;Target&gt; instance exhibits the expected feature. If "false", the &lt;Target&gt; does not.
+    * **&lt;optional error_code&gt;** is a coma separated list of error codes (also expressed in the predicate) in case of expected parsing errors.
     * **&lt;required level&gt;** the level of prescription of the test (*mandatory*, *preferred* or *permitted*).
     * **&lt;required id of the normative source under test&gt;** Id of the normative source targeted by the test assertion (*tosca_simple_yaml_1_0*).
     * **&lt;required version of the normative source&gt;** Version of the normative source targeted by the test assertion (*1.0.0*).
