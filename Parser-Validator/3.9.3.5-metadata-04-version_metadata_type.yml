@@ -10,6 +10,7 @@ metadata:
     where the tosca template_version metadata value is not a version type
     then assert raises the error 'ValueTypeMismatch'
   oasis.testAssertion.tags.errors: ValueTypeMismatch
+  oasis.testAssertion.tags.errors_lines: 4
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
   oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
