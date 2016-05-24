@@ -5,7 +5,9 @@ metadata:
   oasis.testAssertion.description: Parsing a document with valid description MUST succeed.
   oasis.testAssertion.target: The 'description' value out of the parsing.
   oasis.testAssertion.predicate: >
-    assert 'description' value is equal to 'This is an example of a single line description (no folding).'
+    when parsing a TOSCA template
+    where a valid description section is defined and 'description' value is 'This is an example of a single line description (no folding).'
+    then assert 'description' value is equal to 'This is an example of a single line description (no folding).'
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
   oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0

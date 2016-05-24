@@ -5,8 +5,11 @@ metadata:
   oasis.testAssertion.description: Parser should be fail if description is not valid.
   oasis.testAssertion.target: error raised by the parser
   oasis.testAssertion.predicate: >
-    assert raises the error 'InvalidType'
+    when parsing a TOSCA template
+    where the description value is a complex yaml value (map/list)
+    then assert raises the error 'InvalidType'
   oasis.testAssertion.tags.errors: InvalidType
+  oasis.testAssertion.tags.errors_lines: 19
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
   oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
