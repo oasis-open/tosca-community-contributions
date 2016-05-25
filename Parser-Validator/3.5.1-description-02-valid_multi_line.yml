@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.5.1-description-02-valid_multi_line
+  oasis.testAssertion.description: Parsing a document with valid multi-line description MUST succeed.
+  oasis.testAssertion.target: a tosca template that has a valid multi-line description value equals to 'This is an example of a multi-line description using YAML. It permits for line breaks for easier readability... if needed.  However, (multiple) line breaks are folded into a single space character when processed into a single string value.'.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert 'description' value is equal to 'This is an example of a multi-line description using YAML. It permits for line breaks for easier readability... if needed.  However, (multiple) line breaks are folded into a single space character when processed into a single string value.'
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.5.1, 3.9.3.5
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+description: >
+  This is an example of a multi-line description using YAML. It permits for line
+  breaks for easier readability...
+
+  if needed.  However, (multiple) line breaks are folded into a single space
+  character when processed into a single string value.
