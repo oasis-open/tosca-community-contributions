@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  template_version: my version
+  oasis.testAssertion.id: 3.9.3.5-metadata-04-version_metadata_type
+  oasis.testAssertion.description: Parser shoud fails when template_version metadata is not a version type
+  oasis.testAssertion.target: a tosca template that has a non-version value defined for template_version metadata
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the error 'ValueTypeMismatch'
+  oasis.testAssertion.tags.errors: ValueTypeMismatch
+  oasis.testAssertion.tags.errors_lines: 4
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.9.3.5
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
