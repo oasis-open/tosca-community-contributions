@@ -5,10 +5,12 @@ metadata:
   oasis.testAssertion.description: Parsing a document with valid dsl_definitions that contains wrong values MUST fail.
   oasis.testAssertion.prerequisite: >
     TODO Add reference to the node template parsing test.
-  oasis.testAssertion.target: error raised by the parser.
+  oasis.testAssertion.target: a tosca template that has an valid dsl_definitions which defines incorrect value types.
   oasis.testAssertion.predicate: >
-    assert raises the error 'InvalidType'
-  oasis.testAssertion.tags.errors: InvalidType
+    When parsing the template
+    assert raises the error 'ValueTypeMismatch'
+  oasis.testAssertion.tags.errors: ValueTypeMismatch
+  oasis.testAssertion.tags.errors_lines: 22
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
   oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0

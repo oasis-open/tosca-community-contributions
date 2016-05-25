@@ -5,8 +5,9 @@ metadata:
   oasis.testAssertion.description: Parsing a document with valid dsl_definitions version MUST succeed.
   oasis.testAssertion.prerequisite: >
     TODO Add reference to the node template parsing test.
-  oasis.testAssertion.target: error raised by the parser.
+  oasis.testAssertion.target: a tosca template that has an valid dsl_definitions.
   oasis.testAssertion.predicate: >
+    When parsing the template
     assert there is no errors
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
