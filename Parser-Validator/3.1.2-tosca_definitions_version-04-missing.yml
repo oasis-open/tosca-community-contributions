@@ -4,10 +4,12 @@ description: >
 metadata:
   oasis.testAssertion.id: 3.1.2-tosca_definitions_version-04-missing
   oasis.testAssertion.description: Parsing a document without tosca definition version MUST fail.
-  oasis.testAssertion.target: error raised by the parser
+  oasis.testAssertion.target: a tosca template that does not define tosca_definitions_version.
   oasis.testAssertion.predicate: >
+    When parsing the template
     assert raises the error 'MissingTOSCAVersion'
   oasis.testAssertion.tags.errors: MissingTOSCAVersion
+  oasis.testAssertion.tags.errors_lines: 1
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.parsing_result: ERROR, tosca_definitions_version is required
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
