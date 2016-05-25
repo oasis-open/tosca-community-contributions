@@ -25,6 +25,7 @@ metadata:
   oasis.testAssertion.target: <required target>
   oasis.testAssertion.predicate: <required predicate>
   oasis.testAssertion.tags.errors: <optional error_code>, <optional error_code>
+  oasis.testAssertion.tags.errors_lines: <optional error_line>, <optional error_line>
   oasis.testAssertion.prescription_level: <required level>
   oasis.testAssertion.normativeSource.refSourceItem.documentId: <required id of the normative source under test>
   oasis.testAssertion.normativeSource.refSourceItem.versionId: <required version of the normative source>
@@ -40,6 +41,7 @@ metadata:
     * **&lt;required target&gt;** target that will be validated by the predicate.
     * **&lt;required predicate&gt;:** association (corresponding to the Predicate terminology definition) expresses the feature or behavior expected from the &lt;Target&gt; as stated in &lt;NormativeSource&gt;. It is a boolean expression: if evaluates to "true", the &lt;Target&gt; instance exhibits the expected feature. If "false", the &lt;Target&gt; does not.
     * **&lt;optional error_code&gt;** is a coma separated list of error codes (also expressed in the predicate) in case of expected parsing errors.
+    * **&lt;optional error_line&gt;** is a coma separated list of error lines in the document the list of line numbers must match the list of error codes in the errors section.
     * **&lt;required level&gt;** the level of prescription of the test (*mandatory*, *preferred* or *permitted*).
     * **&lt;required id of the normative source under test&gt;** Id of the normative source targeted by the test assertion (*tosca_simple_yaml_1_0*).
     * **&lt;required version of the normative source&gt;** Version of the normative source targeted by the test assertion (*1.0.0*).
@@ -53,8 +55,9 @@ metadata:
 metadata:
   oasis.testAssertion.id: 3.1.2-tosca_definitions_version-01-valid-definition
   oasis.testAssertion.description: Parsing a document with valid tosca definition version MUST succeed.
-  oasis.testAssertion.target: The 'tosca_definitions_version' value out of the parsing.
+  oasis.testAssertion.target: a tosca template that has a valid tosca_definitions_version value equals to 'tosca_simple_yaml_1_0'.
   oasis.testAssertion.predicate: >
+    When parsing the template
     assert 'tosca_definitions_version' value is equal to 'http://docs.oasis-open.org/tosca/ns/simple/yaml/1.0' or 'tosca_simple_yaml_1_0'
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
