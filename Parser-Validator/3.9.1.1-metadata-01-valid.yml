@@ -4,7 +4,7 @@ metadata:
   template_name: tosca_meta_data_test
   template_author: tosca interop sc
   template_version: 1.0
-  oasis.testAssertion.id: 3.9.1.1-meta_data-01-valid
+  oasis.testAssertion.id: 3.9.1.1-metadata-01-valid
   oasis.testAssertion.description: Parsing a valid metadata section MUST succeed.
   oasis.testAssertion.target: a tosca template that has a valid metadata section defined and template_name value is tosca_meta_data_test.
   oasis.testAssertion.target: The 'metadata' value out of the parsing.
