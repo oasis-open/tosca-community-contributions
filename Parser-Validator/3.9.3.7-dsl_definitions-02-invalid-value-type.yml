@@ -18,7 +18,7 @@ metadata:
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 dsl_definitions:
-  host_capabbilities: &host_capabbilities
+  host_capabilities: &host_capabilities
     disk_size: 10 GB
     num_cpus: string value
     mem_size: 4096 MB
@@ -29,4 +29,4 @@ topology_template:
       type: tosca.nodes.Compute
       capabilities:
         host:
-          properties: *host_capabbilities
+          properties: *host_capabilities
