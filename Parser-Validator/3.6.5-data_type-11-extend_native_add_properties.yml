@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.6.5-data_type-11-extend_native_add_properties
+  oasis.testAssertion.description: Parsing a data type that adds properties to a native type should fail.
+  oasis.testAssertion.target: a tosca template that defines a data types extented from string and that add properties.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the error 'InvalidNativeTypeExtend'
+  oasis.testAssertion.tags.errors: InvalidNativeTypeExtend
+  oasis.testAssertion.tags.errors_lines: 33
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.6.5
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+data_types:
+  url:
+    derived_from: string
+    description: A data type that defines a url string.
+    properties:
+      last_name:
+        type: string
+      first_name:
+        type: string

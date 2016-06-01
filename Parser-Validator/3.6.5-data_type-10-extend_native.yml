@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.6.5-data_type-10-extend_native
+  oasis.testAssertion.description: Parsing a data type that extends a native type with constraints should be successful.
+  oasis.testAssertion.target: a tosca template that defines three data types extented from string each adding some constraints to it.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert there is no errors
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.6.5
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+data_types:
+  url:
+    derived_from: string
+    description: A data type that defines a url string.
+    constraints:
+      - pattern: ^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$
+  ipv6_address:
+    derived_from: string
+    description: A data type that defines a ip v6 address string.
+    constraints:
+      - pattern: ^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
+  password:
+    derived_from: string
+    constraints:
+      - min_length: 8
+      - max_length: 12
