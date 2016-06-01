@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.6.5-data_type-01-complex_type
+  oasis.testAssertion.description: Parsing a data type that defines a complex type should be successful.
+  oasis.testAssertion.target: a tosca template that defines a valid 'tosca.example.types.Person' data_type with a description, 2 string properties and 1 integer property.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert there is no errors
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.6.5
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+data_types:
+  tosca.example.types.Person:
+    description: A data type that represents a person.
+    properties:
+      last_name:
+        type: string
+      first_name:
+        type: string
+      age:
+        type: integer
