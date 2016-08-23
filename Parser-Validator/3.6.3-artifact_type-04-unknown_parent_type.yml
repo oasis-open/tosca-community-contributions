@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.6.3-artifact_type-04-unknown_parent_type
+  oasis.testAssertion.description: Parsing an artifact type that derives from an unknown type should fail.
+  oasis.testAssertion.target: a tosca template that defines a valid artifact_type with only the description.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the error 'MissingArtifactType'
+  oasis.testAssertion.tags.errors: MissingArtifactType
+  oasis.testAssertion.tags.errors_lines: 20
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.6.3
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+artifact_types:
+  tosca_sample:
+    derived_from: tosca.test.UnknownType
