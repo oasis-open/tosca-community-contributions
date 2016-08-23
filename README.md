@@ -41,7 +41,7 @@ d1: OASIS Open Repository: manages TOSCA Simple Profile in YAML templates and de
 <p><b><a id="currentMaintainers">Current Maintainers of this Open Repository</a></b></p>
 
 <ul>
-<li><a href="mailto:luc.boutier@fastconnect.fr">Luc Boutier</a>; GitHub ID: <a href="https://github.com/lucboutier/">https://github.com/lucboutier/</a>; WWW: <a href="http://www.fastconnect.fr/">FastConnect SAS</a></li>
+<li><a href="mailto:luc.boutier@fastconnect.fr">Luc Boutier</a>; GitHub ID: <a href="https://github.com/lucboutier/">https://github.com/lucboutier/</a>; WWW: <a href="http://www.fastconnect.fr/">FastConnect</a></li>
 </ul>
 
 </div>
