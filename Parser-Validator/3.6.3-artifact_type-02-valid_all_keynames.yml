@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.6.3-artifact_type-02-valid_all_keynames
+  oasis.testAssertion.description: >
+    This test ensure that the parser is able to parse a TOSCA artifact type where all keynames are defined.
+  oasis.testAssertion.target: a tosca template that defines a valid artifact_type with all keynames.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert there is no errors
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.6.3
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+artifact_types:
+  tosca_sample:
+    derived_from: tosca.artifacts.Root
+    description: Java Archive artifact type
+    mime_type: application/java-archive
+    file_ext: [ jar ]
+    version: 1.0
+    properties:
+      sample_property:
+        type: string
+        description: a sample property
+        required: false

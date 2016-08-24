@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.6.3-artifact_type-03-no_root_inherited
+  oasis.testAssertion.description: >
+    This test ensure that the parser is able to parse a TOSCA artifact type.
+    The version keyname is not defined as it's usage is not defined in the specification.
+    The properties keyname is as well not defined as it's usage is also not defined in the specification.
+  oasis.testAssertion.target: a tosca template that defines a valid artifact_type with only the description.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the warning 'WarnNotInheritFromRoot'
+  oasis.testAssertion.prescription_level: preferred
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.6.3
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+artifact_types:
+  tosca_sample:
+    description: Just a sample artifact type for parsing tests
