@@ -35,7 +35,15 @@
 </div>
 
 <div>
-<h2><a id="contribution-guide">Contribution Guide</a></h2>
+<h2><a id="feedback">Feedback</a></h2>
+
+<p>Questions or comments about this Open Repository's activities should be composed as GitHub issues or comments. If use of an issue/comment is not possible or appropriate, questions may be directed by email to the <a href="https://github.com/oasis-open/tosca-test-assertions/blob/master/README.md#maintainers">repository Maintainer(s)</a>.  Please send general questions about Open Repository participation to OASIS Staff at <a href="mailto:repository-admin@oasis-open.org">repository-admin@oasis-open.org</a> and any specific CLA-related questions to <a href="mailto:repository-cla@oasis-open.org">repository-cla@oasis-open.org</a>.</p>
+
+</div>
+
+</div>
+
+# Contribution Guide
 
 Pull requests in order to be properly validated and accepted should follow the constraints defined below:
 
@@ -98,13 +106,3 @@ metadata:
 * The predicate expression must follow the following patterns:
   * assert &lt;target&gt; value is equal to &lt;expected value&gt; (or &lt;other expected value&gt; ...)
   * assert raises the error &lt;error_id&gt; (and error &lt;error_id&gt; ...)
-</div>
-
-<div>
-<h2><a id="feedback">Feedback</a></h2>
-
-<p>Questions or comments about this Open Repository's activities should be composed as GitHub issues or comments. If use of an issue/comment is not possible or appropriate, questions may be directed by email to the <a href="https://github.com/oasis-open/tosca-test-assertions/blob/master/README.md#maintainers">repository Maintainer(s)</a>.  Please send general questions about Open Repository participation to OASIS Staff at <a href="mailto:repository-admin@oasis-open.org">repository-admin@oasis-open.org</a> and any specific CLA-related questions to <a href="mailto:repository-cla@oasis-open.org">repository-cla@oasis-open.org</a>.</p>
-
-</div>
-
-</div>
