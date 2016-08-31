@@ -8,7 +8,7 @@ metadata:
     When parsing the template
     assert raises the error 'InvalidNativeTypeExtend'
   oasis.testAssertion.tags.errors: InvalidNativeTypeExtend
-  oasis.testAssertion.tags.errors_lines: 33
+  oasis.testAssertion.tags.errors_lines: 20
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
   oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
