@@ -1,10 +1,9 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 metadata:
-  oasis.testAssertion.id: 3.5.5-repositories-01-valid-simple-definition
+  oasis.testAssertion.id: 3.5.5-repositories-02-valid-simple-definition
   oasis.testAssertion.description: Parsing a document with valid repository MUST succeed.
   oasis.testAssertion.target: a tosca template that defines a valid single line repository.
-  oasis.testAssertion.target: The 'repository' out of the parsing.
   oasis.testAssertion.predicate: >
     When parsing the template
     Then The repository out of the parsing
