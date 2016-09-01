@@ -1,9 +1,9 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 metadata:
-  oasis.testAssertion.id: 3.5.7-imports-01-simple-relative
-  oasis.testAssertion.description: Parsing a document with an single line import from a relative file MUST be successful.
-  oasis.testAssertion.target: a tosca template that defines a valid single line import to a relative file.
+  oasis.testAssertion.id: 3.5.7-imports-05-simple-url
+  oasis.testAssertion.description: Parsing a document with an single line import from a remote file MUST be successful.
+  oasis.testAssertion.target: a tosca template that defines a valid single line import to a remote file.
   oasis.testAssertion.prerequisite: >
     TODO Add reference to the node template parsing test.
   oasis.testAssertion.predicate: >
@@ -16,7 +16,7 @@ metadata:
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 imports:
-  - my-types: dependencies/my-types/my-types.yml
+  - my-types: https://github.com/oasis-open/tosca-test-assertions/raw/master/Parser-Validator/dependencies/my-types/my-types.yml
 
 topology_template:
   node_templates:

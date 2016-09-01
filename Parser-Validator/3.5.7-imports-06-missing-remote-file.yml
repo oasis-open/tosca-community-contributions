@@ -1,9 +1,9 @@
 tosca_definitions_version: tosca_simple_yaml_1_0
 
 metadata:
-  oasis.testAssertion.id: 3.5.7-imports-04-missing-relative-file
-  oasis.testAssertion.description: Parsing a document with an import that points to a local missing file SHOULD fail.
-  oasis.testAssertion.target: a tosca template that defines an import that points to a local missing file.
+  oasis.testAssertion.id: 3.5.7-imports-06-missing-remote-file
+  oasis.testAssertion.description: Parsing a document with an single line import from a remote file that does not exists SHOULD fail.
+  oasis.testAssertion.target: a tosca template that defines a valid single line import to a remote file that does not exists.
   oasis.testAssertion.predicate:  >
     When parsing the template
     assert raises the error 'MissingImportFile'
@@ -12,8 +12,8 @@ metadata:
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
   oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
-  oasis.testAssertion.normativeSource.textSourceItem.section: 3.5.7, 3.5.7.2.2, 3.9.3.9
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.5.7, 3.5.7.2.1, 3.9.3.9
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 imports:
-  - my-types: dependencies/missing-file.yml
+  - my-types: https://github.com/oasis-open/tosca-test-assertions/raw/master/Parser-Validator/dependencies/my-unknown-file.yml

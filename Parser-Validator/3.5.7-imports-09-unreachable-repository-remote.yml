@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.5.7-imports-09-unreachable-repository-remote
+  oasis.testAssertion.description: Parsing a document with an import to a missing remote file resolved through a repository definition SHOULD fail.
+  oasis.testAssertion.target: a tosca template that defines an import to a missing remote file resolved through a repository definition.
+  oasis.testAssertion.predicate:  >
+    When parsing the template
+    assert raises the error 'MissingImportFile'
+  oasis.testAssertion.tags.errors: MissingImportFile
+  oasis.testAssertion.tags.errors_lines: 24
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.5.7, 3.5.7.2.1, 3.9.3.9
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+repositories:
+  my_repository:
+    description: A repository
+    url: https://github.com/invalid-path/tosca-test-assertions/raw/master
+
+imports:
+  - my-types:
+      file: Parser-Validator/dependencies/my-types/my-types.yml
+      repository: my_repository

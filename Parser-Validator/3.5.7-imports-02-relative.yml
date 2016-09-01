@@ -18,11 +18,11 @@ metadata:
 imports:
   - my-types:
       file: dependencies/my-types/my-types.yml
-#      namespace_uri: <definition_namespace_uri>
-#      namespace_prefix: <definition_namespace_prefix>
+      namespace_uri: https://github.com/oasis-open/tosca-test-assertions/raw/master/Parser-Validator/dependencies/my-types/my-types.yml
+      namespace_prefix: mt
 
 topology_template:
   node_templates:
     my_node:
-      type: my_company.my_types.my_type
-      description: Template for an instance of my_company.my_types.my_type defined in the imported file
+      type: mt:tosca.tests.nodes.MyType
+      description: Template for an instance of tosca.tests.nodes.MyType defined in the imported file
