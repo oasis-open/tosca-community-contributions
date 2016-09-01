@@ -2,7 +2,7 @@ tosca_definitions_version: not_tosca_simple_yaml_1_0
 
 metadata:
   oasis.testAssertion.id: 3.1.2-tosca_definitions_version-03-invalid
-  oasis.testAssertion.description: Parser should be fail if tosca_definitions_version is not valid.
+  oasis.testAssertion.description: Parser SHOULD be failing if tosca_definitions_version is not valid.
   oasis.testAssertion.target: a tosca template that has an invalid tosca_definitions_version value equals to 'not_tosca_simple_yaml_1_0'.
   oasis.testAssertion.predicate: >
     When parsing the template
