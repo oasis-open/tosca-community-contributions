@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.6.6-capability_types-04-unknown-source-type
+  oasis.testAssertion.description: Parsing a capability type that defines a capability type with an unknown source type should fail.
+  oasis.testAssertion.target: a tosca template that defines a capability type with an unknown source type
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the error 'UnknownCapabilityType'
+  oasis.testAssertion.tags.errors: UnknownCapabilityType
+  oasis.testAssertion.tags.errors_lines: 22
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.6.6
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+capability_types:
+  tosca.test.capabilities.MyCapability:
+    derived_from: tosca.capabilities.Root
+    description: This is a sample capability for testing scenarios.
+    valid_source_types: [ tosca.test.UnknownType ]

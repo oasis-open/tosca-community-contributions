@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  oasis.testAssertion.id: 3.6.4-interface_type-02-only-required-keynames
+  oasis.testAssertion.description: Parsing an interface type with required keynames only should be successful.
+  oasis.testAssertion.target: a tosca template that defines a valid interface type with no optional keynames
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert there is no errors
+    optional assert raises the warning 'WarnNotInheritFromRoot'
+  oasis.testAssertion.tags.warnings: WarnNotInheritFromRoot
+  oasis.testAssertion.tags.warnings_lines: 20
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_simple_yaml_1_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.6.4
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+interface_types:
+  tosca.example.interfaces.MyInterface:
