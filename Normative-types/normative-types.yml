@@ -637,7 +637,7 @@ node_types:
     requirements:
       - host:
           capability: tosca.capabilities.Container
-          node: tosca.nodes.Container
+          node: tosca.nodes.Container.Runtime
           relationship: tosca.relationships.HostedOn
   tosca.nodes.LoadBalancer:
     derived_from: tosca.nodes.Root
