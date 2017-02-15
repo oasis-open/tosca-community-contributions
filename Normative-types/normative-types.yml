@@ -389,7 +389,7 @@ relationship_types:
         type: tosca.datatypes.Credential
         description: The security credential to use to present to the target endpoint to for either authentication or authorization purposes.
         required: false
-  tosca.relationships.AttachTo:
+  tosca.relationships.AttachesTo:
     derived_from: tosca.relationships.Root
     valid_target_types: [ tosca.capabilities.Attachment ]
     properties:
@@ -637,7 +637,7 @@ node_types:
     requirements:
       - host:
           capability: tosca.capabilities.Container
-          node: tosca.nodes.Container
+          node: tosca.nodes.Container.Runtime
           relationship: tosca.relationships.HostedOn
   tosca.nodes.LoadBalancer:
     derived_from: tosca.nodes.Root
