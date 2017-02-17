@@ -74,13 +74,13 @@ data_types:
         constraints:
           - valid_values: [ udp, tcp, igmp ]
       target: 
-        type: PortDef
+        type: tosca.datatypes.network.PortDef
       target_range:
         type: range
         constraints:
           - in_range: [ 1, 65535 ]
       source:
-        type: PortDef
+        type: tosca.datatypes.network.PortDef
       source_range:
         type: range
         constraints:
