@@ -177,8 +177,6 @@ capability_types:
         type: tosca.datatypes.network.PortDef
         description: The optional port of the endpoint.
         required: false
-        constraints:
-          - in_range: [ 1, 65535 ]
       secure:
         type: boolean
         description: Requests for the endpoint to be secure and use credentials supplied on the ConnectsTo relationship.
@@ -446,21 +444,17 @@ node_types:
       private_address:
         type: string
         description: The primary private IP address assigned by the cloud provider that applications may use to access the Compute node.
-        required: false
       public_address:
         type: string
         description: The primary public IP address assigned by the cloud provider that applications may use to access the Compute node.
-        required: false
       networks:
         type: map
         entry_schema:
           type: tosca.datatypes.network.NetworkInfo
-        required: false
       ports:
         type: map
         entry_schema:
           type: tosca.datatypes.network.PortInfo
-        required: false
     requirements:
       - local_storage:
           capability: tosca.capabilities.Attachment
@@ -530,8 +524,6 @@ node_types:
   tosca.nodes.DBMS:
     derived_from: tosca.nodes.SoftwareComponent
     description: "The TOSCA DBMS node represents a typical relational, SQL Database Management System software component or service."
-    tags:
-      icon: /images/relational_db.png
     properties:
       root_password:
         type: string
@@ -566,9 +558,10 @@ node_types:
         description: the optional password for the DB user account
         required: false
     requirements:
-      - host: tosca.capabilities.Container
-        # node: tosca.nodes.DBMS
-        relationship: tosca.relationships.HostedOn
+      - host:
+          capability: tosca.capabilities.Container
+          node: tosca.nodes.DBMS
+          relationship: tosca.relationships.HostedOn
     capabilities:
       database_endpoint:
         type: tosca.capabilities.Endpoint.Database
@@ -592,13 +585,10 @@ node_types:
       storage_endpoint:
         type: tosca.capabilities.Endpoint
   tosca.nodes.BlockStorage:
-    abstract: true
     derived_from: tosca.nodes.Root
     description: >
       The TOSCA BlockStorage node currently represents a server-local block storage device (i.e., not shared)
       offering evenly sized blocks of data from which raw storage volumes can be created.
-    tags:
-      icon: /images/volume.png
     properties:
       size:
         type: scalar-unit.size
