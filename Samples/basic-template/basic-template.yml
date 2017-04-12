@@ -1,0 +1,99 @@
+tosca_definitions_version: tosca_simple_yaml_1_0
+
+metadata:
+  template_name: tosca.samples.basic_template
+  template_author: tosca interop sc
+  template_version: 1.0.0-SNAPSHOT
+
+description: A sample template that features basic tosca elements.
+
+capability_types:
+  tosca.capabilities.samples.basic.SampleEndpoint:
+    derived_from: tosca.capabilities.Endpoint
+    description: A sample endpoint used to connect to compatible sample nodes.
+
+relationship_types:
+  tosca.relationships.samples.basic.SampleRelationship:
+    derived_from: tosca.relationships.ConnectsTo
+    description:
+    interfaces:
+      Configure:
+          add_target:
+            inputs:
+              PROTOCOL: { get_attribute: [TARGET, protocol] }
+              IP: { get_attribute: [TARGET, ip_address] }
+              PORT: { get_attribute: [TARGET, port] }
+              URL_PATH: { get_attribute: [TARGET, url_path] }
+            implementation: scripts/samplerelationship_add_target.sh
+          remove_target:
+            inputs:
+              PROTOCOL: { get_attribute: [TARGET, protocol] }
+              IP: { get_attribute: [TARGET, ip_address] }
+              PORT: { get_attribute: [TARGET, port] }
+              URL_PATH: { get_attribute: [TARGET, url_path] }
+            implementation: scripts/samplerelationship_remove_target.sh
+
+node_types:
+  tosca.nodes.samples.basic.SampleSourceNode:
+    derived_from: tosca.nodes.SoftwareComponent
+    description: A sample node type that must be hosted on a compute node and is the source of the sample relationship.
+    properties:
+      component_version:
+        type: version
+        description: Sample definition and constraint to override the SoftwareComponent component_version property
+        default: 2
+        constraints:
+          - equal: 2
+    requirements:
+      - target:
+          capability: tosca.capabilities.samples.basic.SampleEndpoint
+          relationship: tosca.relationships.samples.basic.SampleRelationship
+          description: Sample mandatory requirement on a single target node.
+          occurrences: [ 1, 1 ]
+    interfaces:
+      Standard:
+        create:
+          inputs:
+            VERSION: { get_property: [SELF, component_version] }
+          implementation: scripts/samplesourcenode-create.sh
+        start: scripts/samplesourcenode-start.sh
+        stop: scripts/samplesourcenode-stop.sh
+
+  tosca.nodes.samples.basic.SampleTargetNode:
+    derived_from: tosca.nodes.SoftwareComponent
+    description: A sample node type that must be hosted on a compute node and is the target of the sample relationship.
+    capabilities:
+      sample_endpoint:
+        type: tosca.capabilities.samples.basic.SampleEndpoint
+        description: A sample endpoint to connect the SampleSourceNode
+        occurrences: [0, UNBOUNDED]
+        properties:
+          protocol: http
+          port: 80
+    interfaces:
+      Standard:
+        create: scripts/sampletargetnode-create.sh
+        configure: scripts/sampletargetnode-configure.sh
+        start: scripts/sampletargetnode-start.sh
+        stop: scripts/sampletargetnode-stop.sh
+        delete: scripts/sampletargetnode-delete.sh
+
+topology_template:
+  node_templates:
+    source_host:
+      type: tosca.nodes.Compute
+    target_host:
+      type: tosca.nodes.Compute
+    target:
+      type: tosca.nodes.samples.basic.SampleTargetNode
+      requirements:
+        - host: target_host
+      capabilities:
+        sample_endpoint:
+          properties:
+            url_path: hello
+    source:
+      type: tosca.nodes.samples.basic.SampleSourceNode
+      requirements:
+        - host: source_host
+        - target: target
