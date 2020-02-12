@@ -41,7 +41,9 @@ d1: OASIS TC Open Repository: manages TOSCA Simple Profile in YAML templates and
 <p><b><a id="currentMaintainers">Current Maintainers of this TC Open Repository</a></b></p>
 
 <ul>
-<li><a href="mailto:luc.boutier@fastconnect.fr">Luc Boutier</a>; GitHub ID: <a href="https://github.com/lucboutier/">https://github.com/lucboutier/</a>; WWW: <a href="http://www.fastconnect.fr/">FastConnect</a></li>
+<li><a href="mailto:lauwers@ubicity.com">Chris Lauwers</a>; GitHub ID: <a href="https://github.com/lauwers/">https://github.com/lauwers/</a>; WWW: <a href="http://www.ubicity.com/">Ubicity Corp.</a></li>
+<li><a href="mailto:tliron@redhat.com">Tal Liron</a>; GitHub ID: <a href="https://github.com/tliron/">https://github.com/tliron/</a>; WWW: <a href="http://www.redhat.com/">Red Hat</a></li>
+<li><a href="mailto:calin.curescu@ericsson.com">Calin Curescu</a>; GitHub ID: <a href="https://github.com/calincurescu/">https://github.com/calincurescu/</a>; WWW: <a href="http://www.ericsson.com/">Ericsson</a></li>
 </ul>
 
 </div>
