@@ -1,0 +1,69 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+
+metadata:
+  template_name: tosca-normative-artifact-types
+  template_author: TOSCA TC
+  template_version: 1.2.0
+
+description: >-
+  This TOSCA definitions document contains the TOSCA Simple Profile
+  artifact types as defined in the TOSCA Simple Profile for YAML v1.2
+  specification.
+
+artifact_types:
+
+  tosca.artifacts.Root:
+    description: >-
+      The TOSCA Artifact Type all other TOSCA Artifact Types derive
+      from
+
+  tosca.artifacts.File:
+    derived_from: tosca.artifacts.Root
+    description: >
+      This artifact type is used when an artifact definition needs to
+      have its associated file simply treated as a file and no special
+      handling/handlers are invoked.
+
+  tosca.artifacts.Deployment:
+    derived_from: tosca.artifacts.Root
+    description: >-
+      TOSCA base type for deployment artifacts
+
+  tosca.artifacts.Deployment.Image:
+    derived_from: tosca.artifacts.Deployment
+    description: >
+      This artifact type represents a parent type for any “image”
+      which is an opaque packaging of a TOSCA Node’s deployment
+      (whether real or virtual) whose contents are typically already
+      installed and pre-configured (i.e., “stateful”) and prepared to
+      be run on a known target container.
+
+  tosca.artifacts.Deployment.Image.VM:
+    derived_from: tosca.artifacts.Deployment.Image
+    description: >
+      This artifact represents the parent type for all Virtual Machine
+      (VM) image and container formatted deployment artifacts.  These
+      images contain a stateful capture of a machine (e.g., server)
+      including operating system and installed software along with any
+      configurations and can be run on another machine using a
+      hypervisor which virtualizes typical server (i.e., hardware)
+      resources.  Virtual Machine (VM) Image
+
+  tosca.artifacts.Implementation:
+    derived_from: tosca.artifacts.Root
+    description: >-
+      TOSCA base type for implementation artifacts
+
+  tosca.artifacts.Implementation.Bash:
+    derived_from: tosca.artifacts.Implementation
+    description: >-
+      Script artifact for the Unix Bash shell
+    mime_type: application/x-sh
+    file_ext: [ sh ]
+
+  tosca.artifacts.Implementation.Python:
+    derived_from: tosca.artifacts.Implementation
+    description: >-
+      Artifact for the interpreted Python language
+    mime_type: application/x-python
+    file_ext: [ py ]

@@ -1,0 +1,88 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+
+metadata:
+  template_name: tosca-normative-relationship-types
+  template_author: TOSCA TC
+  template_version: 1.2.0
+
+description: >-
+  This TOSCA definitions document contains the TOSCA Simple Profile
+  relationship types as defined in the TOSCA Simple Profile for YAML
+  v1.2 specification.
+
+relationship_types:
+
+  tosca.relationships.Root:
+    description: >-
+      The TOSCA root Relationship Type all other TOSCA base
+      Relationship Types derive from
+    attributes:
+      tosca_id:
+        type: string
+        description: >-
+          A unique identifier of the realized instance of a
+          Relationship Template that derives from any TOSCA normative
+          type.
+      tosca_name:
+        type: string
+        description: >
+          This attribute reflects the name of the Relationship
+          Template as defined in the TOSCA service template.  This
+          name is not unique to the realized instance model of
+          corresponding deployed application as each template in the
+          model can result in one or more instances (e.g., scaled)
+          when orchestrated to a provider environment.
+      state:
+        type: string
+        description: The state of the relationship instance.
+        default: initial
+    interfaces:
+      Configure:
+        type: tosca.interfaces.relationship.Configure
+
+  tosca.relationships.DependsOn:
+    derived_from: tosca.relationships.Root
+    description: >-
+      This type represents a general dependency relationship between
+      two nodes.
+    valid_target_types: [ tosca.capabilities.Node ]
+
+  tosca.relationships.HostedOn:
+    derived_from: tosca.relationships.Root
+    description: >-
+      This type represents a hosting relationship between two nodes.
+    valid_target_types: [ tosca.capabilities.Container ]
+
+  tosca.relationships.ConnectsTo:
+    derived_from: tosca.relationships.Root
+    description: >-
+      This type represents a network connection relationship between
+      two nodes.
+    valid_target_types: [ tosca.capabilities.Endpoint ]
+    properties:
+      credential:
+        type: tosca.datatypes.Credential
+        description: >-
+          The security credential to use to present to the target
+          endpoint to for either authentication or authorization
+          purposes.
+        required: false
+
+  tosca.relationships.AttachesTo:
+    derived_from: tosca.relationships.Root
+    valid_target_types: [ tosca.capabilities.Attachment ]
+    properties:
+      location:
+        type: string
+        constraints:
+          - min_length: 1
+      device:
+        type: string
+        required: false
+
+  tosca.relationships.RoutesTo:
+    derived_from: tosca.relationships.ConnectsTo
+    description: >-
+      This type represents an intentional network routing between two
+      Endpoints in different networks.
+    valid_target_types: [ tosca.capabilities.Endpoint ]
