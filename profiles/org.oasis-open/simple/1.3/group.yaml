@@ -1,0 +1,16 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+  template_name: tosca-normative-group-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+description: >-
+  This TOSCA definitions document contains the TOSCA Simple Profile
+  group types as defined in the TOSCA Simple Profile for YAML v1.3
+  specification.
+
+group_types:
+  tosca.groups.Root:
+    description: >-
+      The TOSCA Group Type all other TOSCA Group Types derive from
