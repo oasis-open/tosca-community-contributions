@@ -1,14 +1,14 @@
-tosca_definitions_version: tosca_simple_yaml_1_1
+tosca_definitions_version: tosca_simple_yaml_1_2
 
 metadata:
   template_name: tosca-normative-capability-types
   template_author: TOSCA TC
-  template_version: 1.1.0
+  template_version: 1.2.0
 
 description: >-
   This TOSCA definitions document contains the TOSCA Simple Profile
   capability types as defined in the TOSCA Simple Profile for YAML
-  v1.1 specification.
+  v1.3 specification.
 
 capability_types:
 
