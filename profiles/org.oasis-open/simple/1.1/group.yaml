@@ -14,6 +14,6 @@ group_types:
   tosca.groups.Root:
     description: >-
       The TOSCA Group Type all other TOSCA Group Types derive from
-#    interfaces:
-#      Standard:
-#        type: tosca.interfaces.node.lifecycle.Standard
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
