@@ -1,0 +1,8 @@
+*~
+*.pyc
+*.bak
+env
+uploads
+*.csar
+repo
+.idea
