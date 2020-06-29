@@ -66,16 +66,6 @@ definitions that are contributed by the TOSCA community and that can serve as a 
 </ul>
 </p>
 
-<!-- 
-d1: OASIS TC Open Repository: manages TOSCA Simple Profile in YAML templates and definitions that can be used to test TOSCA compliance using metadata (primarily the OASIS Test Assertion Markup Language) that describes the test and the expected behavior of the TOSCA tool or orchestrator -->
-
-</div>
-
-<div><h2><a id="purposeClarifications">Additions to Statement of Purpose</a></h2>
-
-<p>Repository Maintainers may include here any clarifications &mdash; any additional sections, subsections, and paragraphs that the Maintainer(s) wish to add as descriptive text, reflecting (sub-) project status, milestones, releases, modifications to statement of purpose, etc.  The project Maintainers will create and maintain this content on behalf of the participants.</p>
-</div>
-
 <div>
 <h2><a id="maintainers">Maintainers</a></h2>
 
