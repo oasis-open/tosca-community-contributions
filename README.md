@@ -4,22 +4,67 @@
 <div>
 <h2><a id="readme-general">OASIS TC Open Repository: tosca-community-contributions</a></h2>
 
-<p>This GitHub public repository ( <b><a href="https://github.com/oasis-open/tosca-community-contributions">https://github.com/oasis-open/tosca-community-contributions</a></b> ) was created at the request of the <a href="https://www.oasis-open.org/committees/tosca/">OASIS Topology and Orchestration Specification for Cloud Applications (TOSCA) TC</a> as an <a href="https://www.oasis-open.org/resources/open-repositories/">OASIS TC Open Repository</a> to support development of open source resources related to Technical Committee work.</p>
+<p>This GitHub public repository ( <b><a
+href="https://github.com/oasis-open/tosca-community-contributions">https://github.com/oasis-open/tosca-community-contributions</a></b>
+) was created at the <a
+href="https://issues.oasis-open.org/browse/TCADMIN-2420">
+request</a> of the <a
+href="https://www.oasis-open.org/committees/tosca/">OASIS Topology and
+Orchestration Specification for Cloud Applications (TOSCA) TC</a> as
+an <a
+href="https://www.oasis-open.org/resources/open-repositories/">OASIS
+TC Open Repository</a> to support development of open source resources
+related to Technical Committee work.</p>
 
-<p>While this TC Open Repository remains associated with the sponsor TC, its development priorities, leadership, intellectual property terms, participation rules, and other matters of governance are <a href="https://github.com/oasis-open/tosca-community-contributions/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-process">separate and distinct</a> from the OASIS TC Process and related policies.</p>
+<p>While this TC Open Repository remains associated with the sponsor
+TC, its development priorities, leadership, intellectual property
+terms, participation rules, and other matters of governance are <a
+href="https://github.com/oasis-open/tosca-community-contributions/blob/master/CONTRIBUTING.md#governance-distinct-from-oasis-tc-process">separate
+and distinct</a> from the OASIS TC Process and related policies.</p>
 
-<p>All contributions made to this TC Open Repository are subject to open source license terms expressed in the <a href="https://www.oasis-open.org/sites/www.oasis-open.org/files/Apache-LICENSE-2.0.txt">Apache License v 2.0</a> license.  That license was selected as the declared <a href="https://www.oasis-open.org/resources/open-repositories/licenses">"Applicable License"</a> when the TC Open Repository was created.</p>
+<p>All contributions made to this TC Open Repository are subject to
+open source license terms expressed in the <a
+href="https://www.oasis-open.org/sites/www.oasis-open.org/files/Apache-LICENSE-2.0.txt">Apache
+License v 2.0</a> license.  That license was selected as the declared
+<a
+href="https://www.oasis-open.org/resources/open-repositories/licenses">"Applicable
+License"</a> when the TC Open Repository was created.</p>
 
-<p>As documented in <a href="https://github.com/oasis-open/tosca-community-contributions/blob/master/CONTRIBUTING.md#public-participation-invited">"Public Participation Invited</a>", contributions to this OASIS TC Open Repository are invited from all parties, whether affiliated with OASIS or not.  Participants must have a GitHub account, but no fees or OASIS membership obligations are required.  Participation is expected to be consistent with the <a href="https://www.oasis-open.org/policies-guidelines/open-repositories">OASIS TC Open Repository Guidelines and Procedures</a>, the open source <a href="https://github.com/oasis-open/tosca-community-contributions/blob/master/LICENSE">LICENSE</a> designated for this particular repository, and the requirement for an <a href="https://www.oasis-open.org/resources/open-repositories/cla/individual-cla">Individual Contributor License Agreement</a> that governs intellectual property.</p>
+<p>As documented in <a
+href="https://github.com/oasis-open/tosca-community-contributions/blob/master/CONTRIBUTING.md#public-participation-invited">"Public
+Participation Invited</a>", contributions to this OASIS TC Open
+Repository are invited from all parties, whether affiliated with OASIS
+or not.  Participants must have a GitHub account, but no fees or OASIS
+membership obligations are required.  Participation is expected to be
+consistent with the <a
+href="https://www.oasis-open.org/policies-guidelines/open-repositories">OASIS
+TC Open Repository Guidelines and Procedures</a>, the open source <a
+href="https://github.com/oasis-open/tosca-community-contributions/blob/master/LICENSE">LICENSE</a>
+designated for this particular repository, and the requirement for an
+<a
+href="https://www.oasis-open.org/resources/open-repositories/cla/individual-cla">Individual
+Contributor License Agreement</a> that governs intellectual
+property.</p>
 
 </div>
 
 <div>
 <h2><a id="purposeStatement">Statement of Purpose</a></h2>
 
-<p>Statement of Purpose for this OASIS TC Open Repository (tosca-community-contributions) as <a href="https://lists.oasis-open.org/archives/tosca/201608/msg00005.html">proposed</a> and <a href="https://www.oasis-open.org/committees/download.php/58670/TOSCA-TC-Minutes2016-08-04.docx">approved</a> [<a href="https://issues.oasis-open.org/browse/TCADMIN-2420">bis</a>] by the TC:</p>
-
-<p>The repository manages TOSCA Simple Profile in YAML templates and definitions that can be used to test TOSCA tools and orchestrator compliance. The intent is for each item to contain metadata using the OASIS Test Assertion Markup Language (although other metadata may also be permitted) that describes the test and the expected behavior of the tool or orchestrator under test. The TOSCA TC has directed the TOSCA Interoperability SC to consider contributions in this repo as a potential basis for the establishment of a test assertion work product.</p>
+<p>This repository manages TOSCA service templates and
+definitions that are contributed by the TOSCA community and that can serve as a starting point to help community members with their TOSCA projects. Contributions may include (but are not limited to) the following:
+<ul>
+<li>
+<em>Profiles</em>: collections of TOSCA type definitions for specific application domains.
+</li>
+<li>
+<em>Example Services</em>: example service templates (and associated artifacts) that can be used to deploy simple services.
+</li>
+<li>
+<em>Tests</em>: service templates that can be used by parser designers or orchestrator designers to check compliance with the TOSCA specification.
+</li>
+</ul>
+</p>
 
 <!-- 
 d1: OASIS TC Open Repository: manages TOSCA Simple Profile in YAML templates and definitions that can be used to test TOSCA compliance using metadata (primarily the OASIS Test Assertion Markup Language) that describes the test and the expected behavior of the TOSCA tool or orchestrator -->
