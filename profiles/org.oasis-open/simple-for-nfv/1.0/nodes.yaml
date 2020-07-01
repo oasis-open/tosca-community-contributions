@@ -1,0 +1,241 @@
+tosca_definitions_version: tosca_simple_yaml_1_2
+
+imports:
+- artifacts.yaml
+- relationships.yaml
+
+node_types:
+
+  tosca.nodes.nfv.VDU.Compute:
+    metadata:
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
+      specification.location: 5.9.2
+    description: >-
+      The TOSCA nfv.VDU.Compute node type represents the virtual compute part of a VDU entity which
+      it mainly describes the deployment and operational behavior of a VNF component (VNFC), as
+      defined by [ETSI NFV IFA011].
+    derived_from: tosca.nodes.Compute
+    properties:
+      name:
+        description: >-
+          Human readable name of the VDU.
+        type: string
+        required: true
+      description:
+        description: >-
+          Human readable description of the VDU.
+        type: string
+        required: true
+      boot_order:
+        description: >-
+          The key indicates the boot index (lowest index defines highest boot priority).
+          The Value references a descriptor from which a valid boot device is created e.g.
+          VirtualStorageDescriptor from which a VirtualStorage instance is created. If no boot order
+          is defined the default boot order defined in the VIM or NFVI shall be used.
+        type: list # ERRATUM: an explicit index (boot index) is unnecessary, contrary to IFA011
+        entry_schema:
+          type: string
+        required: false
+      nfvi_constraints:
+        description: >-
+          Describes constraints on the NFVI for the VNFC instance(s) created from this VDU.
+          For example, aspects of a secure hosting environment for the VNFC instance that involve
+          additional entities or processes. More software images can be attached to the
+          virtualization container using virtual_storage.
+        type: list
+        entry_schema:
+          type: string
+        required: false
+      configurable_properties:
+        description: >-
+          Describes the configurable properties of all VNFC instances based on this VDU.
+        type: map
+        entry_schema:
+          type: tosca.datatypes.nfv.VnfcConfigurableProperties
+        required: true
+    attributes:
+      # ERRATUM: The attributes are only described in section [5.9.2.5 Definition], but are not
+      # mentioned in section [5.9.2.2 Attributes]. Additionally, it does not seem to make sense to
+      # deprecate inherited attributes, as it breaks the inheritance contract.
+      private_address:
+        type: string
+        status: deprecated
+      public_address:
+        type: string
+        status: deprecated
+      networks:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.NetworkInfo
+        status: deprecated
+      ports:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.PortInfo
+        status: deprecated
+    capabilities:
+      virtual_compute:
+        description: >-
+          Describes virtual compute resources capabilities.
+        type: tosca.capabilities.nfv.VirtualCompute
+      virtual_binding:
+        description: >-
+          Defines ability of VirtualBindable.
+        type: tosca.capabilities.nfv.VirtualBindable
+      monitoring_parameter:
+        # ERRATUM: commented out in 5.9.2.5
+        description: >-
+          Monitoring parameter, which can be tracked for a VNFC based on this VDU. Examples include:
+          memory-consumption, CPU-utilisation, bandwidth-consumption, VNFC downtime, etc.
+        type: tosca.capabilities.nfv.Metric
+    #requirements:
+      # ERRATUM: virtual_storage is TBD
+      # ERRATUM: csd04 attempts to deprecate the inherited local_storage requirement, but this
+      # is not possible in TOSCA
+    artifacts:
+      sw_image:
+        description: >-
+          Describes the software image which is directly loaded on the virtualization container
+          realizing this virtual storage.
+        file: '' # ERRATUM: missing value even though it is required in TOSCA
+        type: tosca.artifacts.nfv.SwImage
+
+  tosca.nodes.nfv.VDU.VirtualStorage:
+    metadata:
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
+      specification.location: 5.9.3
+    description: >-
+      The NFV VirtualStorage node type represents a virtual storage entity which it describes the
+      deployment and operational behavior of a virtual storage resources, as defined by
+      [ETSI NFV IFA011].
+    derived_from: tosca.nodes.Root
+    properties:
+      type_of_storage:
+        description: >-
+          Type of virtualized storage resource.
+        type: string
+        required: true
+      size_of_storage:
+        description: >-
+          Size of virtualized storage resource (in GB).
+        type: scalar-unit.size
+        required: true
+      rdma_enabled:
+        description: >-
+          Indicate if the storage support RDMA.
+        type: boolean
+        required: false
+    artifacts:
+      sw_image:
+        description: >-
+          Describes the software image which is directly loaded on the virtualization container
+          realizing this virtual storage.
+        file: '' # ERRATUM: missing in spec
+        type: tosca.artifacts.nfv.SwImage
+
+  tosca.nodes.nfv.Cpd:
+    metadata:
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
+      specification.location: 5.9.4
+    description: >-
+      The TOSCA nfv.Cpd node represents network connectivity to a compute resource or a VL as
+      defined by [ETSI GS NFV-IFA 011]. This is an abstract type used as parent for the various Cpd
+      types.
+    derived_from: tosca.nodes.Root
+    properties:
+      layer_protocol:
+        description: >-
+          Identifies which protocol the connection point uses for connectivity purposes.
+        type: string
+        constraints:
+        - valid_values: [ ethernet, mpls, odu2, ipv4, ipv6, pseudo_wire ]
+        required: false
+      role: # Name in ETSI NFV IFA011 v0.7.3 cpRole
+        description: >-
+          Identifies the role of the port in the context of the traffic flow patterns in the VNF or
+          parent NS. For example a VNF with a tree flow pattern within the VNF will have legal
+          cpRoles of ROOT and LEAF.
+        type: string
+        constraints:
+        - valid_values: [ root, leaf ]
+        required: false
+      description:
+        description: >-
+          Provides human-readable information on the purpose of the connection point
+          (e.g. connection point for control plane traffic).
+        type: string
+        required: false
+      address_data:
+        description: >-
+          Provides information on the addresses to be assigned to the connection point(s) instantiated
+          from this Connection Point Descriptor.
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.AddressData
+        required: false
+
+  tosca.nodes.nfv.VduCpd:
+    metadata:
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
+      specification.location: 5.9.5
+    description: >-
+      The TOSCA nfv.VduCpd node type represents a type of TOSCA Cpd node and describes network
+      connectivity between a VNFC instance (based on this VDU) and an internal VL as defined by
+      [ETSI GS NFV-IFA 011].
+    derived_from: tosca.nodes.nfv.Cpd
+    properties:
+      bitrate_requirement:
+        description: >-
+          Bitrate requirement on this connection point.
+        type: integer
+        required: false
+      virtual_network_interface_requirements:
+        description: >-
+          Specifies requirements on a virtual network interface realising the CPs instantiated from
+          this CPD.
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
+        required: false
+    requirements:
+    # ERRATUM: seems to be a leftover from csd03
+    # - virtual_link:
+    #     description: Describes the requirements for linking to virtual link
+    #     capability: tosca.capabilities.nfv.VirtualLinkable
+    #     relationship: tosca.relationships.nfv.VirtualLinksTo
+    #     node: tosca.nodes.nfv.VnfVirtualLinkDesc
+    - virtual_binding:
+        capability: tosca.capabilities.nfv.VirtualBindable
+        relationship: tosca.relationships.nfv.VirtualBindsTo
+        node: tosca.nodes.nfv.VDU.Compute # ERRATUM: seems wrong in spec
+
+  tosca.nodes.nfv.VnfVirtualLinkDesc:
+    metadata:
+      puccini.normative: 'true'
+      specification.citation: '[TOSCA-Simple-Profile-NFV-v1.0-csd04]'
+      specification.location: 5.9.6
+    description: >-
+      The TOSCA nfv.VnfVirtualLinkDesc node type represents a logical internal virtual link as
+      defined by [ETSI GS NFV-IFA 011].
+    derived_from: tosca.nodes.Root
+    properties:
+      connectivity_type:
+        description: >-
+          specifies the protocol exposed by the VL and the flow pattern supported by the VL.
+        type: tosca.datatypes.nfv.ConnectivityType
+        required: true
+      description:
+        description: >-
+          Provides human-readable information on the purpose of the VL (e.g. control plane traffic).
+        type: string
+        required: false
+      test_access:
+        description: >-
+          Test access facilities available on the VL (e.g. none, passive, monitoring, or active
+          (intrusive) loopbacks at endpoints.
+        type: string
+        required: false
