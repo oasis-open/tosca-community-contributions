@@ -1,0 +1,256 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+# This is by far the most elaborate aspect of TOSCA
+# There are many ways to define and assign requirements and relationships
+
+metadata:
+
+  template_name: Requirements and Capabilities Example
+  template_author: Puccini
+
+node_types:
+
+  # Though requirements are a sequenced list, you cannot specify the same name more than once at the node type
+  # (Even though you can do so at the node template)
+  LightBulb:
+    requirements:
+    # The short notation is used to just specify a target capability type
+    - socket: Socket
+
+  # The long notation for requirements lets us further specify a target node type
+  # And also (optionally) a default relationship type
+  Fan:
+    requirements:
+    - socket:
+        capability: SuperSocket
+        node: PowerPanel
+        relationship: SmartPlug
+        # You can also control the number of times the requirement *must* be assigned per node template
+        # The implied default is the range of [ 1, 1 ]
+        # Note that if you don't specify "occurrences" then a requirement will be automatically assigned
+        # (That is the situation with the short notation we used in "LightBulb", above)
+        occurrences: [ 2, UNBOUNDED ]
+
+  PowerPanel:
+    properties:
+      age:
+        type: scalar-unit.time
+    capabilities:
+      main: Socket
+      aux: Socket
+      emergency:
+        type: SuperSocket
+        # The long notation for capabilities lets us specify "occurrences",
+        # which is how many times the capability *must* be required
+        # This functionality applies to the requirements resolution phase
+        # and does *not* have a grammatical (parsing) effect
+        # (It's thus *very* different from the meaning of the "occurrences" keyword in requirements)
+        # The default if not specified is [ 0, UNBOUNDED ]
+        occurrences: [ 2, 4 ]
+
+capability_types:
+
+  Socket:
+    properties:
+      standard:
+        type: string
+      voltage:
+        type: float
+      frequency:
+        type: scalar-unit.frequency
+
+  SuperSocket:
+    derived_from: Socket
+    properties:
+      failsafe:
+        type: boolean
+
+relationship_types:
+
+  SmartPlug:
+    properties:
+      vendor:
+        type: string
+        required: false
+    attributes:
+      ip_address:
+        type: string
+
+  SuperSmartPlug:
+    derived_from: SmartPlug
+    properties:
+      failsafe:
+        type: boolean
+
+topology_template:
+
+  inputs:
+    age:
+      type: scalar-unit.time
+      default: 5 d
+
+  node_templates:
+
+    # Because the "socket" requirement is not controlled by "occurrences" at the node type
+    # it will be automatically assigned to "light1"
+    # That requirements has 3 matching capabilities in this topology,
+    # So Puccini will arbitrarily satisfy it with one of them
+    light1:
+      type: LightBulb
+
+    # You can also specify it and require a specific node template
+    # (It must have a capability of the right type, or a derived type)
+    light2:
+      type: LightBulb
+      requirements:
+      - socket: main_panel
+
+    # Or specify a node type, which will match with node templates of that type (or a derived type)
+    # (Again, it must have a matching capability)
+    light3:
+      type: LightBulb
+      requirements:
+      - socket: PowerPanel
+
+    # With the long notation you can also specify the *name* of the capability at the target node
+    # (Again, it must be a matching capability)
+    light4:
+      type: LightBulb
+      requirements:
+      - socket:
+          node: main_panel
+          capability: emergency
+
+    # Or you can specify a capability type
+    # (Which must be derived from the capability type specified at the node type requirement)
+    light5:
+      type: LightBulb
+      requirements:
+      - socket:
+          capability: SuperSocket
+
+    # You can specify the same requirement more than once, which will lead to multiple relationships
+    # (However, the number of times you may do so can be limited by "occurrences" at the node type requirement)
+    light6:
+      type: LightBulb
+      requirements:
+      - socket:
+          capability: SuperSocket
+      # An "empty" requirement will use whatever we specified at the node type
+      - socket: {}
+
+    # You can use "node_filter" to further require property values at the target node
+    light7:
+      type: LightBulb
+      requirements:
+      - socket:
+          capability: Socket
+          node_filter:
+            properties:
+              age:
+              # Note that special data types are not supported here
+              - less_than: 8640000 # 100 d -> seconds
+
+    # You can also put "node_filter" at the node itself, in which case the filter will
+    # apply to *all* requirements
+    light8:
+      type: LightBulb
+      node_filter:
+        properties:
+          age:
+          - less_than: 8640000 # 100 d -> seconds
+      requirements:
+      - socket:
+          capability: Socket
+
+    # "node_filter" can also work on capability properties
+    light9:
+      type: LightBulb
+      requirements:
+      - socket:
+          capability: Socket
+          node_filter:
+            capabilities:
+            - emergency:
+                properties:
+                  frequency:
+                  - greater_than: 100 # 100 hz
+ 
+    # You can add a relationship type to the requirement
+    # (If you don't, Puccini creates an empty relationship with no properties)
+    light10:
+      type: LightBulb
+      requirements:
+      - socket:
+          relationship: SmartPlug
+
+    # The long notation lets you assign values to the relationship
+    light11:
+      type: LightBulb
+      requirements:
+      - socket:
+          relationship:
+            type: SmartPlug
+            properties:
+              vendor: Smart Appliances Industries
+
+    # Yet another option is to use a relationship template (see below) instead of a type
+    light12:
+      type: LightBulb
+      requirements:
+      - socket:
+          relationship: smart_plug
+
+    # "occurrences" for "socket" requirement is [ 2, 4 ], so we must assign it *at least* twice
+    fan1:
+      type: Fan
+      requirements:
+      - socket:
+          relationship:
+            properties:
+              vendor: PowerEmperor
+      - socket:
+          relationship:
+            # The relationship type was already specified in the "Fan" node type
+            # Still, we can change that type as long as it's of a derived type
+            # (The same rule would apply if we use a relationship template instead)
+            type: SuperSmartPlug
+            properties:
+              vendor: PowerEmperor
+              failsafe: false
+
+    main_panel:
+      type: PowerPanel
+      properties:
+        age: { get_input: age }
+      capabilities:
+        main:
+          properties:
+            standard: People's Republic of China
+            voltage: 220.0
+            frequency: 50 hz
+        aux:
+          properties:
+            standard: United States of America
+            voltage: 110.0
+            frequency: 60 hz
+        emergency:
+          properties:
+            standard: High Frequency
+            voltage: 110.0
+            frequency: 120 hz
+            failsafe: true
+
+  relationship_templates:
+
+    # Relationship templates are not like node templates!
+    # They do *not* model the topology
+    # Instead, they are used as a set of "pre-filled" values for relationship assignments
+    # (See usage in node template "light12" above)
+    # You can achieve a similar result by deriving a relationship type and providing
+    # "default" values to properties, attributes, and interface inputs/outputs
+    smart_plug:
+      type: SuperSmartPlug
+      properties:
+        vendor: Electric Stuff International
+        failsafe: false

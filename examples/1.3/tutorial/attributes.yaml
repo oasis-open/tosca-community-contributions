@@ -1,0 +1,49 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+
+  template_name: Attributes Example
+  template_author: Puccini
+
+node_types:
+
+  Backup:
+    # Unlike "properties", you can't mark an attribute as required or not
+    # Attributes are *always* added to the node template, even if they have not been assigned
+    # If they don't have a "default" value, they will get an automatic, sensible default
+    # (E.g., a string will get an empty string)
+    # But this might not always match constraints, which would result in an error
+    # So in some cases you might have to explicitly assign a default
+    attributes:
+      days:
+        type: list
+        entry_schema: DayOfWeek
+      max_size:
+        description: Max size
+        type: scalar-unit.size
+
+data_types:
+
+  DayOfWeek:
+    derived_from: string
+    constraints:
+    - valid_values: [ su, mo, tu, we, th, fr, sa ]
+
+topology_template:
+
+  node_templates:
+
+    backup1:
+      type: Backup
+      attributes:
+        # You can assign initial values to attributes
+        # Though it's expected that they may change
+        max_size: 10 gib
+
+    backup2:
+      type: Backup
+      attributes:
+        # There is also a long notation that lets you override the description
+        max_size:
+          description: Current max size 
+          value: 10 gib

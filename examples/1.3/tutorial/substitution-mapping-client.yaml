@@ -1,0 +1,52 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+# Also see: substitution-mapping.yaml
+
+metadata:
+
+  template_name: Substitution Mapping Client Example
+  template_author: Puccini
+
+imports:
+
+# (Make sure to take a look at the import)
+- imports/super-load-balancer.yaml
+
+topology_template:
+
+  node_templates:
+
+    # This is actually not a very interesting service template
+    # (We're just using an imported node type)
+    loadbalancer:
+      type: SuperLoadBalancer
+      directives:
+      - substitutable
+
+    # This single Compute will satisfy *both* "admin_host" and "db_hosts" requirements in loadbalancer
+    # (It's allowed because the "occurrences" for our "host" capability is the default [0, UNBOUNDED])
+    server:
+      type: tosca:Compute
+
+# So, you might be wondering how our loadbalancer node will be "substituted"
+# by the complete service modeled in substitution-mapping.yaml
+ 
+# That's beyond the scope of TOSCA, which only provides the design
+# Another way to think of it is that TOSCA is all about "service templates" and "node templates"
+# While actual "services" and "nodes" are implementation details beyond its scope
+
+# All we can do here is specify the "substitutable" directive (see: metadata.yaml)
+# Which tells the orchestrator that it's an abstract node
+# It's stil up to the orchestrator to compose the services together
+
+# Service composition can in fact be a very complex orchestration implementation detail
+# (It's not just a "copy-and-paste" of templates)
+
+# It would likely involve looking up possible substitutions in a catalog of services
+# And even provisioning/deploying a new service if one is not available
+
+# And then these deployed services would need to talk to each other
+# Which might involve quite a bit of network configuration (ingress, routing, TLS, SDN, etc.)
+# And/or setting up a proxy/gateway between them
+
+# Exciting stuff to be sure, but TOSCA can only model it, not implement it

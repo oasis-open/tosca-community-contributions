@@ -1,0 +1,51 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+# Also see: substitution-mapping-client.yaml
+
+metadata:
+
+  template_name: Substitution Mapping Example
+  template_author: Puccini
+
+imports:
+
+# (Make sure to take a look at the import)
+- imports/super-load-balancer.yaml
+
+topology_template:
+
+  node_templates:
+
+    loadbalancer:
+      type: tosca:LoadBalancer
+
+    # Both the WebServer and DBMS types derive from SoftwareComponent, meaning that they require a host
+    # So normally this service template would fail to parse due to unsatisfied requirements
+    # However, because we are mapping these in "substitution_mappings" Puccini will allow it
+    # (They are expected to be satisfied by a client service template)
+
+    admin:
+      type: tosca:WebServer
+      properties:
+        component_version: '1.0'
+
+    db:
+      type: tosca:DBMS
+
+  # Allow this entire service to be used as a single node
+  substitution_mappings:
+    node_type: SuperLoadBalancer
+    capabilities:
+      # Expose the internal loadbalancer node's capability
+      client: [ loadbalancer, client ]
+    requirements:
+      # Expose the requirements of our software components
+      admin_host: [ admin, host ]
+      db_host: [ db, host ]
+    properties:
+      version: [ admin, component_version ]
+    attributes:
+      admin_state: [ admin, state ]
+      db_state: [ db, state ]
+    interfaces:
+      Standard: [ admin, Standard ]

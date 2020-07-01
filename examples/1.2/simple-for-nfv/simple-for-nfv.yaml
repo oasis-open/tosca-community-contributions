@@ -1,0 +1,49 @@
+# To enable the NFV profile use this reserved "tosca_definitions_version" 
+tosca_definitions_version: tosca_simple_profile_for_nfv_1_0
+
+# The Simple Profile for NFV is a work in progress
+# It aims to allow ETSI MANO descriptors to be compatible with TOSCA
+# It builds on the Simple Profile but actually subverts aspects of it
+
+metadata:
+
+  template_name: Simple Profile for NFV Example
+  template_author: Puccini
+
+topology_template:
+
+  node_templates:
+
+    cpd:
+      type: tosca:VduCpd
+      requirements:
+      - virtual_binding: firewall
+      - virtual_binding: router
+
+    firewall:
+      type: tosca:VDU.Compute
+      properties:
+        name: vfirewall
+        description: Virtual Firewall
+        configurable_properties: {}
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_cpu:
+              num_virtual_cpu: 4
+            virtual_memory:
+              virtual_mem_size: 8 GB
+
+    router:
+      type: tosca:VDU.Compute
+      properties:
+        name: vrouter
+        description: Virtual Router
+        configurable_properties: {}
+      capabilities:
+        virtual_compute:
+          properties:
+            virtual_cpu:
+              num_virtual_cpu: 2
+            virtual_memory:
+              virtual_mem_size: 4 GB

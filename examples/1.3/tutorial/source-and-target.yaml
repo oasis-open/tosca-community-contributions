@@ -1,0 +1,49 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+
+  template_name: Source and Target Example
+  template_author: Puccini
+
+node_types:
+
+  Application:
+    derived_from: tosca:WebServer
+    properties:
+      url:
+        type: string
+
+topology_template:
+
+  node_templates:
+
+    server:
+      type: tosca:Compute
+      attributes:
+        public_address: myapp.com
+      requirements:
+      - local_storage:
+          node: storage
+          relationship:
+            properties:
+              # Within relationships you can use "SOURCE" and "TARGET" keywords
+              # For both the "get_property" and "get_attribute" functions
+              location: { concat: [ /mnt/, { get_property: [ TARGET, volume_id ] } ] }
+              device: /dev/hda1
+
+    app:
+      type: Application
+      properties:
+        # Another special kind of target is "HOST", which can be used in nodes and their capabilities
+        # It refers to the target of any "HostedOn" relationship from the node
+        url: { get_attribute: [ HOST, public_address ] }
+      requirements:
+      - host:
+          relationship: tosca:HostedOn
+
+    storage:
+      type: tosca:BlockStorage
+      properties:
+        name: storage
+        volume_id: bucket
+        size: 20 gib

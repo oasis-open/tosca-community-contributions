@@ -1,0 +1,70 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+# You can add a human-readable "description" almost anywhere in TOSCA
+# Descriptions are compiled into Clout
+
+metadata:
+
+  template_name: Descriptions Example
+  template_author: Puccini
+
+description: >-
+  My service
+
+node_types:
+
+  Server:
+    derived_from: tosca:Compute
+    # It's good practice to use YAML's ">-" for multiline strings
+    # (It will collapse paragraphs into lines and remove the final trailing newline)
+    description: >-
+      A really good server for our application.
+
+      On a scale of 1 to 10, this is an "11" server. That's how good it is.
+    properties:
+      cost:
+        type: float
+        # Even properties can have descriptions
+        description: Cost in US dollars
+
+  SuperServer:
+    derived_from: Server
+    properties:
+      memory_configurations:
+        description: Tiers of memory
+        type: map
+        entry_schema:
+          type: RAMSize
+          # Using the long notation for "entry_schema" you can specify a description for it
+          # (Which will override the type's description)
+          description: Soldered RAM size
+        default:
+          low: 1 gib
+          mid: 4 gib
+          hi: 16 gib
+
+data_types:
+
+  RAMSize:
+    derived_from: scalar-unit.size
+    description: RAM size
+
+topology_template:
+
+  description: >-
+    My service template.
+
+    Note that when compiled this description will be appended to the service level description.
+
+  node_templates:
+
+    main:
+      type: Server
+      description: The main server
+      properties:
+        cost: 1200.0
+  
+    super:
+      type: SuperServer
+      properties:
+        cost: 2200.0
