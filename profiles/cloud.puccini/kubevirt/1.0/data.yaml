@@ -1,0 +1,1433 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+
+- namespace_prefix: k8s
+  file: ../../kubernetes/1.0/profile.yaml
+
+data_types:
+
+  VirtualMachineInstanceTemplate:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_virtualmachineinstancespec' 
+    description: >-
+      VirtualMachineInstanceSpec is a description of a VirtualMachineInstance.
+    properties:
+      affinity:
+        description: >-
+          If affinity is specified, obey all the affinity rules.
+        type: k8s:Affinity
+        required: false
+      dnsConfig:
+        description: >-
+          Specifies the DNS parameters of a pod. Parameters specified here will be merged to the
+          generated DNS configuration based on DNSPolicy.
+        type: string # TODO
+        required: false
+      dnsPolicy:
+        description: >-
+          Set DNS policy for the pod. Defaults to "ClusterFirst". Valid values are
+          'ClusterFirstWithHostNet', 'ClusterFirst', 'Default' or 'None'. DNS parameters given in
+          DNSConfig will be merged with the policy selected with DNSPolicy. To have DNS options set
+          along with hostNetwork, you have to specify DNS policy explicitly to
+          'ClusterFirstWithHostNet'.
+        type: string
+        required: false
+      domain:
+        description: >-
+          Specification of the desired behavior of the VirtualMachineInstance on the host.
+        type: Domain
+      evictionStrategy:
+        description: >-
+          EvictionStrategy can be set to "LiveMigrate" if the VirtualMachineInstance should be
+          migrated instead of shut-off in case of a node drain.
+        type: string # TODO
+        required: false
+      hostname:
+        description: >-
+          Specifies the hostname of the vmi If not specified, the hostname will be set to the name
+          of the vmi, if dhcp or cloud-init is configured properly.
+        type: string
+        required: false
+      livenessProbe:
+        description: >-
+          Periodic probe of VirtualMachineInstance liveness. VirtualmachineInstances will be stopped
+          if the probe fails. Cannot be updated.
+        type: string # TODO
+        required: false
+      networks:
+        description: >-
+          List of networks that can be attached to a vm's virtual interface.
+        type: list
+        entry_schema: KubeVirtNetwork
+        required: false
+      nodeSelector:
+        description: >-
+          NodeSelector is a selector which must be true for the vmi to fit on a node. Selector which
+          must match a node's labels for the vmi to be scheduled on that node.
+        type: string # TODO
+        required: false
+      priorityClassName:
+        description: >-
+          If specified, indicates the pod's priority. If not specified, the pod priority will be
+          default or zero if there is no default.
+        type: string
+        required: false
+      readinessProbe:
+        description: >-
+          Periodic probe of VirtualMachineInstance service readiness. VirtualmachineInstances will
+          be removed from service endpoints if the probe fails. Cannot be updated.
+        type: string # TODO
+        required: false
+      subdomain:
+        description: >-
+          If specified, the fully qualified vmi hostname will be
+          "<hostname>.<subdomain>.<pod namespace>.svc.<cluster domain>". If not specified, the vmi
+          will not have a domainname at all. The DNS entry will resolve to the vmi, no matter if the
+          vmi itself can pick up a hostname.
+        type: string
+        required: false
+      terminationGracePeriodSeconds:
+        description: >-
+          Grace period observed after signalling a VirtualMachineInstance to stop after which the
+          VirtualMachineInstance is force terminated.
+        type: integer
+        required: false
+      tolerations:
+        description: >-
+          If toleration is specified, obey all the toleration rules.
+        type: list
+        entry_schema: k8s:Toleration
+        required: false
+      volumes:
+        description: >-
+          List of volumes that can be mounted by disks belonging to the vmi.
+        type: list
+        entry_schema: Volume
+        required: false
+
+  Domain:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_domainspec' 
+    properties:
+      chassis:
+        description: >-
+          Chassis specifies the chassis info passed to the domain.
+        type: Chassis
+        required: false
+      clock:
+        description: >-
+          Clock sets the clock and timers of the vmi.
+        type: Clock
+        required: false
+      cpu:
+        description: >-
+          CPU allow specified the detailed CPU topology inside the vmi.
+        type: CPU
+        required: false
+      devices:
+        description: >-
+          Devices allows adding disks, network interfaces, ...
+        type: Devices
+        required: false
+      features:
+        description: >-
+          Features like acpi, apic, hyperv, smm.
+        type: Features
+        required: false
+      firmware:
+        description: >-
+          Firmware.
+        type: Firmware
+        required: false
+      ioThreadsPolicy:
+        description: >-
+          Controls whether or not disks will share IOThreads. Omitting IOThreadsPolicy disables use
+          of IOThreads. One of: shared, auto.
+        type: string # TODO: IOThreadsPolicy
+        required: false
+      machine:
+        description: >-
+          Machine type.
+        type: Machine
+        required: false
+      memory:
+        description: >-
+          Memory allows specifying the VMI memory features.
+        type: Memory
+        required: false
+      resources:
+        description: >-
+          Resources describes the Compute Resources required by this vmi.
+        type: ResourceRequirements
+        required: false
+
+  Chassis:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_chassis' 
+    properties:
+      asset:
+        type: string
+        required: false
+      manufacturer:
+        type: string
+        required: false
+      serial:
+        type: string
+        required: false
+      sku:
+        type: string
+        required: false
+      version:
+        type: string
+        required: false
+
+  Clock:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_clock' 
+    description: >-
+      Represents the clock and timers of a vmi.
+    properties:
+      timer:
+        description: >-
+          Timer specifies whih timers are attached to the vmi.
+        type: HPETimer
+      timezone:
+        description: >-
+          Timezone sets the guest clock to the specified timezone. Zone name follows the TZ
+          environment variable format (e.g. 'America/New_York').
+        type: string # TODO: ClockOffsetTimezone
+        required: false
+      utc:
+        description: >-
+          UTC sets the guest clock to UTC on each boot. If an offset is specified, guest changes to
+          the clock will be kept during reboots and are not reset.
+        type: ClockOffsetUTC
+        required: false
+
+  HPETimer:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_hpettimer' 
+    properties:
+      present:
+        description: >-
+          Enabled set to false makes sure that the machine type or a preset can’t add the timer.
+          Defaults to true.
+        type: boolean
+        default: true
+        required: false
+      tickPolicy:
+        description: >-
+          TickPolicy determines what happens when QEMU misses a deadline for injecting a tick to the
+          guest. One of "delay", "catchup", "merge", "discard".
+        type: string
+        constraints:
+        - valid_values: [ delay, catchup, merge, discard ]
+        required: false
+
+  ClockOffsetUTC:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_clockoffsetutc' 
+    description: >-
+      UTC sets the guest clock to UTC on each boot.
+    properties:
+      offsetSeconds:
+        description: >-
+          OffsetSeconds specifies an offset in seconds, relative to UTC. If set, guest changes to
+          the clock will be kept during reboots and not reset.
+        type: integer
+        required: false
+
+  CPU:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_cpu' 
+    description: >-
+      CPU allows specifying the CPU topology.
+    properties:
+      cores:
+        description: >-
+          Cores specifies the number of cores inside the vmi. Must be a value greater or equal 1.
+        type: integer
+        constraints:
+        - greater_or_equal: 1
+        required: false
+      dedicatedCpuPlacement:
+        description: >-
+          dedicatedCpuPlacement requests the scheduler to place the VirtualMachineInstance on a node
+          with enough dedicated pCPUs and pin the vCPUs to it.
+        type: boolean
+        required: false
+      features:
+        description: >-
+          Features specifies the CPU features list inside the VMI.
+        type: list
+        entry_schema: CPUFeature
+        required: false
+      isolateEmulatorThread:
+        description: >-
+          isolateEmulatorThread requests one more dedicated pCPU to be allocated for the VMI to
+          place the emulator thread on it.
+        type: boolean
+        required: false
+      model:
+        description: >-
+          Model specifies the CPU model inside the VMI. It is possible to specify special cases like
+          "host-passthrough" to get the same CPU as the node and "host-model" to get CPU closest to
+          the node one. Defaults to host-model.
+        type: string
+        required: false
+      sockets:
+        description: >-
+          Sockets specifies the number of sockets inside the vmi. Must be a value greater or equal 1.
+        type: integer
+        constraints:
+        - greater_or_equal: 1
+        required: false
+      threads:
+        description: >-
+          Threads specifies the number of threads inside the vmi. Must be a value greater or equal 1.
+        type: integer
+        constraints:
+        - greater_or_equal: 1
+        required: false
+
+  CPUFeature:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_cpufeature' 
+    description: >-
+      CPUFeature allows specifying a CPU feature.
+    properties:
+      name:
+        description: >-
+          Name of the CPU feature
+        type: string
+      policy:
+        description: >-
+          Policy is the CPU feature attribute which can have the following attributes:
+
+          force - The virtual CPU will claim the feature is supported regardless of it being
+          supported by host CPU.
+
+          require - Guest creation will fail unless the feature is supported by the host CPU or the
+          hypervisor is able to emulate it.
+
+          optional - The feature will be supported by virtual CPU if and only if it is supported by
+          host CPU.
+
+          disable - The feature will not be supported by virtual CPU.
+
+          forbid - Guest creation will fail if the feature is supported by host CPU.
+
+          Defaults to require
+        type: string
+        constraints:
+        - valid_values: [ force, require, optional, disable, forbid ]
+        default: require
+        required: false
+
+  Devices:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_devices' 
+    properties:
+      autoattachGraphicsDevice:
+        description: >-
+          Whether to attach the default graphics device or not. VNC will not be available if set to
+          false. Defaults to true.
+        type: boolean
+        default: true
+        required: false
+      autoattachPodInterface:
+        description: >-
+          Whether to attach a pod network interface. Defaults to true.
+        type: boolean
+        default: true
+        required: false
+      autoattachSerialConsole:
+        description: >-
+          Whether to attach the default serial console or not. Serial console access will not be
+          available if set to false. Defaults to true.
+        type: boolean
+        default: true
+        required: false
+      blockMultiQueue:
+        description: >-
+          Whether or not to enable virtio multi-queue for block devices.
+        type: boolean
+        required: false
+      disks:
+        description: >-
+          Disks describes disks, cdroms, floppy and luns which are connected to the vmi.
+        type: list
+        entry_schema: Disk
+        required: false
+      gpus:
+        description: >-
+          Whether to attach a GPU device to the vmi.
+        type: list
+        entry_schema: GPU
+        required: false
+      inputs:
+        description: >-
+          Inputs describe input devices.
+        type: list
+        entry_schema: Input
+        required: false
+      interfaces:
+        description: >-
+          Interfaces describe network interfaces which are added to the vmi.
+        type: list
+        entry_schema: Interface
+        required: false
+      networkInterfaceMultiqueue:
+        description: >-
+          If specified, virtual network interfaces configured with a virtio bus will also enable the
+          vhost multiqueue feature.
+        type: boolean
+        required: false
+      rng:
+        description: >-
+          Whether to have random number generator from host.
+        type: string # TODO: RNG
+        required: false
+      watchdog:
+        description: >-
+          Watchdog describes a watchdog device which can be added to the vmi.
+        type: Watchdog
+        required: false
+
+  Disk:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_disk' 
+    properties:
+      bootOrder:
+        description: >-
+          BootOrder is an integer value > 0, used to determine ordering of boot devices. Lower
+          values take precedence. Each disk or interface that has a boot order must have a unique
+          value. Disks without a boot order are not tried if a disk with a boot order exists.
+        type: integer
+        constraints:
+        - greater_than: 0
+        required: false
+      cache:
+        description: >-
+          Cache specifies which kvm disk cache mode should be used.
+        type: string
+        required: false
+      cdrom:
+        description: >-
+          Attach a volume as a cdrom to the vmi.
+        type: CDRomTarget
+        required: false
+      dedicatedIOThread:
+        description: >-
+          dedicatedIOThread indicates this disk should have an exclusive IO Thread. Enabling this
+          implies useIOThreads = true. Defaults to false
+        type: boolean
+        default: false
+        required: false
+      disk:
+        description: >-
+          Attach a volume as a disk to the vmi.
+        type: DiskTarget
+        required: false
+      floppy:
+        description: >-
+          Attach a volume as a floppy to the vmi.
+        type: FloppyTarget
+        required: false
+      lun:
+        description: >-
+          Attach a volume as a LUN to the vmi.
+        type: LunTarget
+        required: false
+      name:
+        description: >-
+          Name is the device name.
+        type: string
+      serial:
+        description: >-
+          Serial provides the ability to specify a serial number for the disk device..
+        type: string
+        required: false
+
+  CDRomTarget:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_cdromtarget' 
+    properties:
+      bus:
+        description: >-
+          Bus indicates the type of disk device to emulate. Supported values: virtio, sata, scsi.
+        type: string
+        constraints:
+        - valid_values: [ virtio, sata, scsi ]
+        required: false
+      readonly:
+        description: >-
+          ReadOnly. Defaults to true.
+        type: boolean
+        default: true
+        required: false
+      tray:
+        description: >-
+          Tray indicates if the tray of the device is open or closed. Allowed values are "open" and
+          "closed". Defaults to closed.
+        type: string
+        constraints:
+        - valid_values: [ open, closed ]
+        default: closed
+        required: false
+
+  DiskTarget:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_disktarget' 
+    properties:
+      bus:
+        description: >-
+          Bus indicates the type of disk device to emulate. Supported values: virtio, sata, scsi.
+        type: string
+        constraints:
+        - valid_values: [ virtio, sata, scsi ]
+        required: false
+      pciAddress:
+        description: >-
+          If specified, the virtual disk will be placed on the guests pci address with the specifed
+          PCI address. For example: 0000:81:01.10
+        type: string
+        required: false
+      readonly:
+        description: >-
+          ReadOnly. Defaults to false.
+        type: boolean
+        default: false
+        required: false
+
+  FloppyTarget:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_floppytarget' 
+    properties:
+      readonly:
+        description: >-
+          ReadOnly. Defaults to false.
+        type: boolean
+        default: false
+        required: false
+      tray:
+        description: >-
+          Tray indicates if the tray of the device is open or closed. Allowed values are "open" and
+          "closed". Defaults to closed.
+        type: string
+        constraints:
+        - valid_values: [ open, closed ]
+        default: closed
+        required: false
+
+  LunTarget:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_luntarget' 
+    properties:
+      bus:
+        description: >-
+          Bus indicates the type of disk device to emulate. Supported values: virtio, sata, scsi.
+        type: string
+        constraints:
+        - valid_values: [ virtio, sata, scsi ]
+        required: false
+      readonly:
+        description: >-
+          ReadOnly. Defaults to false.
+        type: boolean
+        default: false
+        required: false
+
+  GPU:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_gpu' 
+    properties:
+      deviceName:
+        type: string
+      name:
+        description: >-
+          Name of the GPU device as exposed by a device plugin.
+        type: string
+
+  Input:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_input' 
+    properties:
+      bus:
+        description: >-
+          Bus indicates the bus of input device to emulate. Supported values: virtio, usb.
+        type: string
+        constraints:
+        - valid_values: [ virtio, usb ]
+        required: false
+      name:
+        description: >-
+          Name is the device name.
+        type: string
+      type:
+        description: >-
+          Type indicated the type of input device. Supported values: tablet.
+        # ERRATUM: description must be wrong!
+        #constraints:
+        #- valid_values: [ tablet ]
+        type: string
+
+  Interface:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_interface' 
+    properties:
+      bootOrder:
+        description: >-
+          BootOrder is an integer value > 0, used to determine ordering of boot devices. Lower
+          values take precedence. Each interface or disk that has a boot order must have a unique
+          value. Interfaces without a boot order are not tried.
+        type: integer
+        constraints:
+        - greater_than: 0
+        required: false
+      bridge:
+        type: map # TODO: InterfaceBridge
+        entry_schema: string
+        required: false
+      dhcpOptions:
+        description: >-
+          If specified the network interface will pass additional DHCP options to the VMI.
+        type: DHCPOptions
+        required: false
+      macAddress:
+        description: >-
+          Interface MAC address. For example: de:ad:00:00:be:af or DE-AD-00-00-BE-AF.
+        type: string
+        required: false
+      masquerade:
+        type: string # TODO: InterfaceMasquerade
+        required: false
+      model:
+        description: >-
+          Interface model. One of: e1000, e1000e, ne2k_pci, pcnet, rtl8139, virtio. Defaults to
+          virtio.
+        type: string
+        constraints:
+        - valid_values: [e1000, e1000e, ne2k_pci, pcnet, rtl8139, virtio ]
+        default: virtio
+        required: false
+      name:
+        description: >-
+          Logical name of the interface as well as a reference to the associated networks. Must
+          match the Name of a Network.
+        type: string
+      pciAddress:
+        description: >-
+          If specified, the virtual network interface will be placed on the guests pci address with
+          the specifed PCI address. For example: 0000:81:01.10
+        type: string
+        required: false
+      ports:
+        description: >-
+          List of ports to be forwarded to the virtual machine.
+        type: list
+        entry_schema: Port
+        required: false
+      slirp:
+        type: string # TODO: InterfaceSlirp
+        required: false
+      sriov:
+        type: string # TODO: InterfaceSRIOV
+        required: false
+
+  DHCPOptions:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_dhcpoptions' 
+    description: >-
+      Extra DHCP options to use in the interface.
+    properties:
+      bootFileName:
+        description: >-
+          If specified will pass option 67 to interface's DHCP server.
+        type: string
+        required: false
+      ntpServers:
+        description: >-
+          If specified will pass the configured NTP server to the VM via DHCP option 042.
+        type: list
+        entry_schema: string
+        required: false
+      privateOptions:
+        description: >-
+          If specified will pass extra DHCP options for private use, range: 224-254.
+        type: list
+        entry_schema: DHCPPrivateOption
+        required: false
+      tftpServerName:
+        description: >-
+          If specified will pass option 66 to interface's DHCP server.
+        type: string
+        required: false
+
+  DHCPPrivateOption:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_dhcpprivateoptions' 
+    description: >-
+      DHCPExtraOption defines Extra DHCP options for a VM.
+    properties:
+      option:
+        description: >-
+          Option is an Integer value from 224-254.
+        type: integer
+        constraints:
+        - in_range: [ 224, 254 ]
+      name:
+        description: >-
+          Value is a String value for the Option provided.
+        type: string
+
+  Port:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_port' 
+    description: >-
+      Port repesents a port to expose from the virtual machine. Default protocol TCP. The port field
+      is mandatory.
+    properties:
+      name:
+        description: >-
+          If specified, this must be an IANA_SVC_NAME and unique within the pod. Each named port in
+          a pod must have a unique name. Name for the port that can be referred to by services.
+        type: string
+        required: false
+      port:
+        description: >-
+          Number of port to expose for the virtual machine. This must be a valid port number, 0 < x
+          < 65536.
+        type: integer
+        constraints:
+        - in_range: [ 0, 65536 ]
+      protocol:
+        description: >-
+          Protocol for port. Must be UDP or TCP. Defaults to "TCP".
+        type: string
+        constraints:
+        - valid_values: [ UDP, TCP ]
+        default: TCP
+        required: false
+
+  Watchdog:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_watchdog' 
+    description: >-
+      Named watchdog device.
+    properties:
+      i6300esb:
+        description: >-
+          i6300esb watchdog device.
+        type: I6300ESBWatchdog
+        required: false
+      name:
+        description: >-
+          Name of the watchdog.
+        type: string
+
+  I6300ESBWatchdog:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_i6300esbwatchdog' 
+    description: >-
+      i6300esb watchdog device.
+    properties:
+      action:
+        description: >-
+          The action to take. Valid values are poweroff, reset, shutdown. Defaults to reset.
+        type: string
+        constraints:
+        - valid_values: [ poweroff, reset, shutdown ]
+        default: reset
+        required: false
+
+  Features:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_features' 
+    properties:
+      acpi:
+        description: >-
+          ACPI enables/disables ACPI insidejsondata guest. Defaults to enabled.
+        type: FeatureState
+        required: false
+      apic:
+        description: >-
+          Defaults to the machine type setting.
+        type: FeatureAPIC
+        required: false
+      hyperv:
+        description: >-
+          Defaults to the machine type setting.
+        type: FeatureHyperv
+        required: false
+      smm:
+        description: >-
+          SMM enables/disables System Management Mode. TSEG not yet implemented.
+        type: FeatureState
+        required: false
+
+  FeatureState:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_featurestate' 
+    description: >-
+      Represents if a feature is enabled or disabled.
+    properties:
+      enabled:
+        description: >-
+          Enabled determines if the feature should be enabled or disabled on the guest. Defaults to
+          true.
+        type: boolean
+        default: true
+        required: false
+
+  FeatureAPIC:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_featureapic' 
+    properties:
+      enabled:
+        description: >-
+          Enabled determines if the feature should be enabled or disabled on the guest. Defaults to
+          true.
+        type: boolean
+        default: true
+        required: false
+      endOfInterrupt:
+        description: >-
+          EndOfInterrupt enables the end of interrupt notification in the guest. Defaults to false.
+        type: boolean
+        default: false
+        required: false
+
+  FeatureHyperv:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_featurehyperv' 
+    description: >-
+      Hyperv specific features.
+    properties:
+      evmcs:
+        description: >-
+          EVMCS Speeds up L2 vmexits, but disables other virtualization features. Requires vapic. Defaults to the machine type setting.
+        type: FeatureState
+        required: false
+      frequencies:
+        description: >-
+          Frequencies improves the TSC clock source handling for Hyper-V on KVM. Defaults to the
+          machine type setting.
+        type: FeatureState
+        required: false
+      ipi:
+        description: >-
+          IPI improves performances in overcommited environments. Requires vpindex. Defaults to the
+          machine type setting.
+        type: FeatureState
+        required: false
+      reenlightenment:
+        description: >-
+          Reenlightenment enables the notifications on TSC frequency changes. Defaults to the
+          machine type setting.
+        type: FeatureState
+        required: false
+      relaxed:
+        description: >-
+          Relaxed instructs the guest OS to disable watchdog timeouts. Defaults to the machine type
+          setting.
+        type: FeatureState
+        required: false
+      reset:
+        description: >-
+          Reset enables Hyperv reboot/reset for the vmi. Requires synic. Defaults to the machine
+          type setting.
+        type: FeatureState
+        required: false
+      runtime:
+        description: >-
+          Runtime improves the time accounting to improve scheduling in the guest. Defaults to the
+          machine type setting.
+        type: FeatureState
+        required: false
+      spinlocks:
+        description: >-
+          Spinlocks allows to configure the spinlock retry attempts.
+        type: FeatureSpinlocks
+        required: false
+      synic:
+        description: >-
+          SyNIC enables the Synthetic Interrupt Controller. Defaults to the machine type setting.
+        type: FeatureState
+        required: false
+      synictimer:
+        description: >-
+          SyNICTimer enables Synthetic Interrupt Controller Timers, reducing CPU load. Defaults to
+          the machine type setting.
+        type: FeatureState
+        required: false
+      tlbflush:
+        description: >-
+          TLBFlush improves performances in overcommited environments. Requires vpindex. Defaults to
+          the machine type setting.
+        type: FeatureState
+        required: false
+      vapic:
+        description: >-
+          VAPIC improves the paravirtualized handling of interrupts. Defaults to the machine type
+          setting.
+        type: FeatureState
+        required: false
+      vendorid:
+        description: >-
+          VendorID allows setting the hypervisor vendor id. Defaults to the machine type setting.
+        type: FeatureVendorID
+        required: false
+      vpindex:
+        description: >-
+          VPIndex enables the Virtual Processor Index to help windows identifying virtual
+          processors. Defaults to the machine type setting.
+        type: FeatureState
+        required: false
+
+  FeatureSpinlocks:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_featurespinlocks' 
+    properties:
+      enabled:
+        description: >-
+          Enabled determines if the feature should be enabled or disabled on the guest. Defaults to
+          true.
+        type: boolean
+        default: true
+        required: false
+      spinlocks:
+        description: >-
+          Retries indicates the number of retries. Must be a value greater or equal 4096. Defaults
+          to 4096.
+        type: integer
+        constraints:
+        - greater_or_equal: 4096
+        default: 4096
+        required: false
+
+  FeatureVendorID:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_featurevendorid' 
+    properties:
+      enabled:
+        description: >-
+          Enabled determines if the feature should be enabled or disabled on the guest. Defaults to
+          true.
+        type: boolean
+        default: true
+        required: false
+      spinlocks:
+        description: >-
+          VendorID sets the hypervisor vendor id, visible to the vmi. String up to twelve
+          characters.
+        type: string
+        constraints:
+        - max_length: 12
+        required: false
+
+  Firmware:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_firmware' 
+    properties:
+      bootloader:
+        description: >-
+          Settings to control the bootloader that is used.
+        type: Bootloader
+        required: false
+      serial:
+        description: >-
+          The system-serial-number in SMBIOS.
+        type: string
+        required: false
+      uuid:
+        description: >-
+          UUID reported by the vmi bios. Defaults to a random generated uid.
+        type: string
+        required: false
+
+  Bootloader:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_bootloader' 
+    description: >-
+      Represents the firmware blob used to assist in the domain creation process. Used for setting
+      the QEMU BIOS file path for the libvirt domain.
+    properties:
+      bios:
+        description: >-
+          If set (default), BIOS will be used.
+        type: string # TODO: BIOS
+        required: false
+      efi:
+        description: >-
+          If set, EFI will be used instead of BIOS.
+        type: string # TODO: EFI
+        required: false
+
+  Machine:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_machine' 
+    properties:
+      type:
+        description: >-
+          QEMU machine type is the actual chipset of the VirtualMachineInstance.
+        type: string
+
+  Memory:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_memory' 
+    description: >-
+      Memory allows specifying the VirtualMachineInstance memory features.
+    properties:
+      guest:
+        description: >-
+          Guest allows to specifying the amount of memory which is visible inside the Guest OS. The
+          Guest must lie between Requests and Limits from the resources section. Defaults to the
+          requested memory in the resources section if not specified.
+        type: string
+        required: false
+      hugepages:
+        description: >-
+          Hugepages allow to use hugepages for the VirtualMachineInstance instead of regular memory.
+        type: Hugepages
+        required: false
+
+  Hugepages:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_hugepages' 
+    description: >-
+      Hugepages allow to use hugepages for the VirtualMachineInstance instead of regular memory.
+    properties:
+      pageSize:
+        description: >-
+          PageSize specifies the hugepage size, for x86_64 architecture valid values are 1Gi and
+          2Mi.
+        type: string
+        required: false
+
+  ResourceRequirements:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_resourcerequirements' 
+    properties:
+      limits:
+        description: >-
+          Limits describes the maximum amount of compute resources allowed. Valid resource keys are
+          "memory" and "cpu".
+        type: map
+        entry_schema: string
+        required: false
+      overcommitGuestOverhead:
+        description: >-
+          Don't ask the scheduler to take the guest-management overhead into account. Instead put
+          the overhead only into the container's memory limit. This can lead to crashes if all
+          memory is in use on a node. Defaults to false.
+        type: boolean
+        default: false
+        required: false
+      requests:
+        description: >-
+          Requests is a description of the initial vmi resources. Valid resource keys are "memory"
+          and "cpu".
+        type: map
+        entry_schema: string
+        required: false
+
+  DataVolume:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1alpha1_datavolumespec' 
+    description: >-
+      DataVolumeSpec defines our specification for a DataVolume type.
+    properties:
+      contentType:
+        description: >-
+          DataVolumeContentType options: "kubevirt", "archive".
+        type: string
+        constraints:
+        - valid_values: [ kubevirt, archive ]
+        required: false
+      pvc:
+        description: >-
+          PVC is a pointer to the PVC Spec we want to use.
+        type: k8s:PersistentVolumeClaim
+      source:
+        description: >-
+          Source is the src of the data for the requested DataVolume.
+        type: DataVolumeSource
+
+  KubeVirtNetwork:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_network' 
+    description: >-
+      Network represents a network type and a resource that should be connected to the vm.
+    properties:
+      genie:
+        type: GenieNetwork
+        required: false
+      multus:
+        type: MultusNetwork
+        required: false
+      name:
+        description: >-
+          Network name. Must be a DNS_LABEL and unique within the vm.
+        type: string
+      pod:
+        type: PodNetwork
+        required: false
+
+  GenieNetwork:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_genienetwork' 
+    description: >-
+      Represents the genie cni network.
+    properties:
+      networkName:
+        description: >-
+          References the CNI plugin name.
+        type: string
+
+  MultusNetwork:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_multusnetwork' 
+    description: >-
+      Represents the multus cni network.
+    properties:
+      default:
+        description: >-
+          Select the default network and add it to the multus-cni.io/default-network annotation.
+        type: boolean
+        required: false
+      networkName:
+        description: >-
+          References to a NetworkAttachmentDefinition CRD object. Format: <networkName>,
+          <namespace>/<networkName>. If namespace is not specified, VMI namespace is assumed.
+        type: string
+
+  PodNetwork:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_podnetwork' 
+    description: >-
+      Represents the stock pod network interface.
+    properties:
+      vmNetworkCIDR:
+        description: >-
+          CIDR for vm network. Default 10.0.2.0/24 if not specified.
+        type: string
+        required: false
+
+  Volume:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_volume' 
+    description: >-
+      Volume represents a named volume in a vmi.
+    properties:
+      cloudInitConfigDrive:
+        description: >-
+          CloudInitConfigDrive represents a cloud-init Config Drive user-data source. The Config
+          Drive data will be added as a disk to the vmi. A proper cloud-init installation is
+          required inside the guest.
+        type: CloudInitConfigDriveSource
+        required: false
+      cloudInitNoCloud:
+        description: >-
+          CloudInitNoCloud represents a cloud-init NoCloud user-data source. The NoCloud data will
+          be added as a disk to the vmi. A proper cloud-init installation is required inside the
+          guest.
+        type: CloudInitNoCloudSource
+        required: false
+      configMap:
+        description: >-
+          ConfigMapSource represents a reference to a ConfigMap in the same namespace.
+        type: ConfigMapVolumeSource
+        required: false
+      containerDisk:
+        description: >-
+          ContainerDisk references a docker image, embedding a qcow or raw disk.
+        type: ContainerDiskSource
+        required: false
+      dataVolume:
+        description: >-
+          DataVolume represents the dynamic creation a PVC for this volume as well as the process of
+          populating that PVC with a disk image.
+        type: DataVolumeSource
+        required: false
+      emptyDisk:
+        description: >-
+          EmptyDisk represents a temporary disk which shares the vmis lifecycle.
+        type: EmptyDiskSource
+        required: false
+      ephemeral:
+        description: >-
+          Ephemeral is a special volume source that "wraps" specified source and provides
+          copy-on-write image on top of it.
+        type: EphemeralVolumeSource
+        required: false
+      hostDisk:
+        description: >-
+          HostDisk represents a disk created on the cluster level.
+        type: HostDisk
+        required: false
+      name:
+        description: >-
+          Volume's name. Must be a DNS_LABEL and unique within the vmi.
+        type: string
+      persistentVolumeClaim:
+        description: >-
+          PersistentVolumeClaimVolumeSource represents a reference to a PersistentVolumeClaim in the
+          same namespace. Directly attached to the vmi via qemu.
+        type: PersistentVolumeClaimVolumeSource
+        required: false
+      secret:
+        description: >-
+          SecretVolumeSource represents a reference to a secret data in the same namespace.
+        type: SecretVolumeSource
+        required: false
+      serviceAccount:
+        description: >-
+          ServiceAccountVolumeSource represents a reference to a service account. There can only be
+          one volume of this type!
+        type: ServiceAccountVolumeSource
+        required: false
+
+  CloudInitConfigDriveSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_cloudinitconfigdrivesource' 
+    description: >-
+      Represents a cloud-init config drive user data source.
+    properties:
+      networkData:
+        description: >-
+          NetworkData contains config drive inline cloud-init networkdata.
+        type: string
+        required: false
+      networkDataBase64:
+        description: >-
+          NetworkDataBase64 contains config drive cloud-init networkdata as a base64 encoded string.
+        type: string
+        required: false
+      networkDataSecretRef:
+        description: >-
+          NetworkDataSecretRef references a k8s secret that contains config drive networkdata.
+        type: LocalObjectReference
+        required: false
+      secretRef:
+        description: >-
+          UserDataSecretRef references a k8s secret that contains config drive userdata.
+        type: LocalObjectReference
+        required: false
+      userData:
+        description: >-
+          UserData contains config drive inline cloud-init userdata.
+        type: string
+        required: false
+      userDataBase64:
+        description: >-
+          UserDataBase64 contains config drive cloud-init userdata as a base64 encoded string.
+        type: string
+        required: false
+
+  CloudInitNoCloudSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_cloudinitnocloudsource' 
+    description: >-
+      Represents a cloud-init nocloud user data source.
+    properties:
+      networkData:
+        description: >-
+          NetworkData contains NoCloud inline cloud-init networkdata.
+        type: string
+        required: false
+      networkDataBase64:
+        description: >-
+          NetworkDataBase64 contains NoCloud cloud-init networkdata as a base64 encoded string.
+        type: string
+        required: false
+      networkDataSecretRef:
+        description: >-
+          NetworkDataSecretRef references a k8s secret that contains NoCloud networkdata.
+        type: LocalObjectReference
+        required: false
+      secretRef:
+        description: >-
+          UserDataSecretRef references a k8s secret that contains NoCloud userdata.
+        type: LocalObjectReference
+        required: false
+      userData:
+        description: >-
+          UserData contains NoCloud inline cloud-init userdata.
+        type: string
+        required: false
+      userDataBase64:
+        description: >-
+          UserDataBase64 contains NoCloud cloud-init userdata as a base64 encoded string.
+        type: string
+        required: false
+
+  LocalObjectReference:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_localobjectreference' 
+    description: >-
+      LocalObjectReference contains enough information to let you locate the referenced object
+      inside the same namespace.
+    properties:
+      name:
+        description: >-
+          Name of the referent.
+        type: string
+        required: false
+
+  ConfigMapVolumeSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_configmapvolumesource' 
+    description: >-
+      ConfigMapVolumeSource adapts a ConfigMap into a volume.
+    properties:
+      name:
+        description: >-
+          Name of the referent.
+        type: string
+        required: false
+      optional:
+        description: >-
+          Specify whether the ConfigMap or its keys must be defined.
+        type: boolean
+        required: false
+
+  ContainerDiskSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_containerdisksource' 
+    description: >-
+      Represents a docker image with an embedded disk.
+    properties:
+      image:
+        description: >-
+          Image is the name of the image with the embedded disk.
+        type: string
+      imagePullPolicy:
+        description: >-
+          Image pull policy. One of Always, Never, IfNotPresent. Defaults to Always if :latest tag
+          is specified, or IfNotPresent otherwise. Cannot be updated.
+        type: string
+        constraints:
+        - valid_values: [ Always, Never, IfNotPresent ]
+        required: false
+      imagePullSecret:
+        description: >-
+          ImagePullSecret is the name of the Docker registry secret required to pull the image. The
+          secret must already exist.
+        type: string
+        required: false
+      path:
+        description: >-
+          Path defines the path to disk file in the container.
+        type: string
+        required: false
+
+  DataVolumeSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_datavolumesource' 
+    properties:
+      name:
+        description: >-
+          Name represents the name of the DataVolume in the same namespace.
+        type: string
+
+  EmptyDiskSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_emptydisksource' 
+    description: >-
+      EmptyDisk represents a temporary disk which shares the vmi's lifecycle.
+    properties:
+      capacity:
+        description: >-
+          Capacity of the sparse disk.
+        type: string
+
+  EphemeralVolumeSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_ephemeralvolumesource' 
+    properties:
+      persistentVolumeClaim:
+        description: >-
+          PersistentVolumeClaimVolumeSource represents a reference to a PersistentVolumeClaim in the
+          same namespace.
+        type: PersistentVolumeClaimVolumeSource
+        required: false
+
+  HostDisk:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_hostdisk' 
+    description: >-
+      Represents a disk created on the cluster level.
+    properties:
+      capacity:
+        description: >-
+          Capacity of the sparse disk.
+        type: string
+        required: false
+      path:
+        description: >-
+          The path to HostDisk image located on the cluster.
+        type: string
+      shared:
+        description: >-
+          Shared indicate whether the path is shared between nodes.
+        type: boolean
+        required: false
+      type:
+        description: >-
+          Contains information if disk.img exists or should be created allowed options are 'Disk'
+          and 'DiskOrCreate'.
+        constraints:
+        - valid_values: [ Disk, DiskOrCreate ]
+        type: string
+
+  PersistentVolumeClaimVolumeSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_persistentvolumeclaimvolumesource' 
+    description: >-
+      PersistentVolumeClaimVolumeSource references the user's PVC in the same namespace. This volume
+      finds the bound PV and mounts that volume for the pod. A PersistentVolumeClaimVolumeSource is,
+      essentially, a wrapper around another type of volume that is owned by someone else (the
+      system).
+    properties:
+      claimName:
+        description: >-
+          ClaimName is the name of a PersistentVolumeClaim in the same namespace as the pod using
+          this volume.
+        type: string
+      readOnly:
+        description: >-
+          Will force the ReadOnly setting in VolumeMounts. Default false.
+        type: boolean
+        default: false
+        required: false
+
+  SecretVolumeSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_secretvolumesource' 
+    description: >-
+      SecretVolumeSource adapts a Secret into a volume.
+    properties:
+      optional:
+        description: >-
+          Specify whether the Secret or its keys must be defined.
+        type: boolean
+        required: false
+      secretName:
+        description: >-
+          Name of the secret in the pod's namespace to use.
+        type: string
+        required: false
+
+  ServiceAccountVolumeSource:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_serviceaccountvolumesource' 
+    description: >-
+      ServiceAccountVolumeSource adapts a ServiceAccount into a volume.
+    properties:
+      serviceAccountName:
+        description: >-
+          Name of the service account in the pod's namespace to use.
+        type: string
+        required: false

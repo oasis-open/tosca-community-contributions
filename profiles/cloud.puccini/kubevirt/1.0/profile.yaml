@@ -1,0 +1,8 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+namespace: cloud.puccini.kubevirt
+
+imports:
+
+- capabilities.yaml
+- artifacts.yaml

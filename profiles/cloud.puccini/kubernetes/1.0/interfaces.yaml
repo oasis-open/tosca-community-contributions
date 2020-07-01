@@ -1,0 +1,67 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+
+- data.yaml
+- namespace_prefix: o11n
+  file: ../../orchestration/1.0/profile.yaml
+
+interface_types:
+
+  Command:
+    derived_from: o11n:Execution
+    description: >-
+      Base type for Kubernetes command executions.
+
+      The implementation is the command to execute.
+    inputs:
+      command:
+        description: >-
+          Command plus its arguments.
+        type: list
+        entry_schema: string
+        constraints:
+        - min_length: 1
+      artifacts:
+        description: >-
+          A list of artifact names to copy to the target before execution.
+
+          The artifact's "deploy_path" *must* be set. Directories will be created if they do not
+          exist (using `mkdir --parents`).
+
+          Note that there is special support for the "permissions" property of Deployable type
+          artifacts.
+        type: list
+        entry_schema: string
+        required: false
+
+  ContainerCommand:
+    description: >-
+      Uses the SPDY executor on the "exec" subresource of the pods.
+    derived_from: Command
+    inputs:
+      selector:
+        type: LabelSelector
+        required: false
+      pods:
+        type: ExecutionPods
+        default: all
+      container:
+        description: >-
+          The name of the container in the pods in which to execute.
+
+          This is only required if the pods have more than one container.
+        type: string
+        required: false
+
+  SSHCommand:
+    description: >-
+      Uses SSH to execute commands.
+    derived_from: Command
+    inputs:
+      host:
+        type: string
+      username:
+        type: string
+      key:
+        type: string

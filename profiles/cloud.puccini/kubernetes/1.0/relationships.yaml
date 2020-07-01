@@ -1,0 +1,10 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+
+- capabilities.yaml
+
+relationship_types:
+
+  Route:
+    valid_target_types: [ Service ] # capability

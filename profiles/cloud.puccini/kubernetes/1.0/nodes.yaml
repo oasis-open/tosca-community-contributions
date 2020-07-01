@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+
+- capabilities.yaml
+- relationships.yaml
+
+node_types:
+
+  Service:
+    description: >-
+      Represents a collection of workloads (pods and controllers) and resources that all use the
+      same selector.
+    capabilities:
+      metadata: Metadata
+      service: Service
+      deployment: Deployment
+    requirements:
+    - route:
+        capability: Service
+        relationship: Route
+        occurrences: [ 0, UNBOUNDED ]

@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+
+  Release:
+    description: >-
+      Helm release.
+    properties:
+      name:
+        description: >-
+          Release name. If not specified will use node template name.
+        type: string
+        required: false
+      chart:
+        description: >-
+          URL to the chart (as with "helm install"). Can point to an archive (tarball) or path to
+          a local directory. This can be a "get_artifact" function call (see the Chart artifact
+          type).
+        type: string
+      version:
+        type: string
+        required: false
+      namespace:
+        type: string
+        required: false
+      hooks:
+        description: >-
+          Set to true to install hooks.
+        type: boolean
+        default: false
+      values:
+        description: >-
+          Set chart values (as with "helm install --set-string"). If both "values" and "valuesUrl"
+          are used and overlap, "values" will override "valuesUrl".
+        type: map
+        entry_schema: string
+        required: false
+      valuesUrl:
+        description: >-
+          URL to a YAML file with chart values (as with "helm install --values").
+        type: string
+        required: false

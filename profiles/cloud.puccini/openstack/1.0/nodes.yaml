@@ -1,0 +1,249 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+
+- data.yaml
+- capabilities.yaml
+- relationships.yaml
+
+node_types:
+
+  # https://docs.openstack.org/heat/stein/template_guide/openstack.html#OS::Nova::Server
+  nova.Server:
+    metadata:
+      heat_name: OS::Nova::Server
+    properties:
+      admin_pass:
+        description: >-
+          The administrator password for the server.
+        type: string
+        required: false
+      availability_zone:
+        description: >-
+          Name of the availability zone for server placement.
+        type: string
+        required: false
+      block_device_mapping:
+        description: >-
+          Block device mappings for this server.
+        type: list
+        entry_schema: nova.Server.BlockDevice
+        required: false
+      block_device_mapping_v2:
+        description: >-
+          Block device mappings v2 for this server.
+        type: list
+        entry_schema: nova.Server.BlockDevice2
+        required: false
+      config_drive:
+        description: >-
+          If True, enable config drive on the server.
+        type: boolean
+        required: false
+      deployment_swift_data:
+        description: >-
+          Swift container and object to use for storing deployment data for the server resource. The
+          parameter is a map value with the keys "container" and "object", and the values are the
+          corresponding container and object names. The software_config_transport parameter must be
+          set to POLL_TEMP_URL for swift to be used. If not specified, and software_config_transport
+          is set to POLL_TEMP_URL, a container will be automatically created from the resource name,
+          and the object name will be a generated uuid.
+        type: map
+        entry_schema: nova.Server.SwiftData
+        required: false
+      diskConfig:
+        description: >-
+          Control how the disk is partitioned when the server is created.
+        type: string
+        constraints:
+        - valid_values: [ AUTO, MANUAL ]
+        required: false
+      flavor:
+        description: >-
+          The ID or name of the flavor to boot onto.
+        type: nova.Flavor
+      flavor_update_policy:
+        description: >-
+          Policy on how to apply a flavor update; either by requesting a server resize or by
+          replacing the entire server.
+        type: string
+        default: RESIZE
+        constraints:
+        - valid_values: [ RESIZE, REPLACE ]
+        required: false
+      image:
+        description: >-
+          The ID or name of the image to boot with.
+        type: glance.Image
+        required: false
+      image_update_policy:
+        description: >-
+          Policy on how to apply an image-id update; either by requesting a server rebuild or by
+          replacing the entire server.
+        type: string
+        default: REBUILD
+        constraints:
+        - valid_values: [ REBUILD, REPLACE, REBUILD_PRESERVE_EPHEMERAL ]
+        required: false
+      key_name:
+        description: >-
+          Name of keypair to inject into the server.
+        type: nova.Keypair
+        required: false
+      metadata:
+        description: >-
+          Arbitrary key/value metadata to store for this server. Both keys and values must be 255
+          characters or less. Non-string values will be serialized to JSON (and the serialized
+          string must be 255 characters or less).
+        type: map
+        entry_schema: string # TODO
+        required: false
+      name:
+        description: >-
+          Server name.
+        type: string
+        required: false
+      networks:
+        description: >-
+          An ordered list of nics to be added to this server, with information about connected
+          networks, fixed ips, port etc.
+        type: list
+        entry_schema: nova.Server.Network
+        required: false
+      personality:
+        description: >-
+          A map of files to create/overwrite on the server upon boot. Keys are file names and values
+          are the file contents.
+        type: map
+        entry_schema: string # TODO
+        required: false
+      reservation_id:
+        description: >-
+          A UUID for the set of servers being requested.
+        type: string
+        required: false
+      scheduler_hints:
+        description: >-
+          Arbitrary key-value pairs specified by the client to help boot a server.
+        type: map
+        entry_schema: string
+        required: false
+      security_groups:
+        description: >-
+          List of security group names or IDs. Cannot be used if neutron ports are associated with
+          this server; assign security groups to the ports instead.
+        type: list
+        entry_schema: string
+        required: false
+      software_config_transport:
+        description: >-
+          How the server should receive the metadata required for software configuration.
+          POLL_SERVER_CFN will allow calls to the cfn API action DescribeStackResource authenticated
+          with the provided keypair. POLL_SERVER_HEAT will allow calls to the Heat API resource-show
+          using the provided keystone credentials. POLL_TEMP_URL will create and populate a Swift
+          TempURL with metadata for polling. ZAQAR_MESSAGE will create a dedicated zaqar queue and
+          post the metadata for polling.
+        type: string
+        default: POLL_SERVER_CFN
+        constraints:
+        - valid_values: [ POLL_SERVER_CFN, POLL_SERVER_HEAT, POLL_TEMP_URL, ZAQAR_MESSAGE ]
+        required: false
+      tags:
+        description: >-
+          Server tags.
+        type: list
+        entry_schema: string
+        required: false
+      user_data:
+        description: >-
+          User data script to be executed by cloud-init. Changes cause replacement of the resource
+          by default, but can be ignored altogether by setting the "user_data_update_policy"
+          property.
+        type: string
+        required: false
+      user_data_format:
+        description: >-
+          How the user_data should be formatted for the server. For HEAT_CFNTOOLS, the user_data is
+          bundled as part of the heat-cfntools cloud-init boot configuration data. For RAW the
+          user_data is passed to Nova unmodified. For SOFTWARE_CONFIG user_data is bundled as part
+          of the software config data, and metadata is derived from any associated
+          SoftwareDeployment resources.
+        type: string
+        default: HEAT_CFNTOOLS
+        constraints:
+        - valid_values: [ HEAT_CFNTOOLS, RAW, SOFTWARE_CONFIG ]
+        required: false
+      user_data_update_policy:
+        description: >-
+          Policy on how to apply a user_data update; either by ignoring it or by replacing the
+          entire server.
+        type: string
+        default: REPLACE
+        constraints:
+        - valid_values: [ REPLACE, IGNORE ]
+        required: false
+        
+    attributes:
+      accessIPv4:
+        description: >-
+          The manually assigned alternative public IPv4 address of the server.
+        type: string
+      accessIPv6:
+        description: >-
+          The manually assigned alternative public IPv6 address of the server.
+        type: string
+      addresses:
+        description: >-
+          A dict of all network addresses with corresponding port_id. Each network will have two
+          keys in dict, they are network name and network id. The port ID may be obtained through
+          the following expression:
+          "{get_attribute: [<server>, addresses, <network name_or_id>, 0, port]}".
+        type: string
+      console_urls:
+        description: >-
+          URLs of server's consoles. To get a specific console type, the requested type can be
+          specified as parameter to the get_attribute function, e.g. get_attribute: [ <server>,
+          console_urls, novnc ]. Currently supported types are novnc, xvpvnc, spice-html5,
+          rdp-html5, serial and webmks.
+        type: string
+      instance_name:
+        description: >-
+          AWS compatible instance name.
+        type: string
+      name:
+        description: >-
+          Name of the server.
+        type: string
+      networks:
+        description: >-
+          A dict of assigned network addresses of the form:
+          {"public": [ip1, ip2...],
+           "private": [ip3, ip4],
+           "public_uuid": [ip1, ip2...],
+           "private_uuid": [ip3, ip4]}.
+          Each network will have two keys in dict, they are network name and network id.
+        type: string
+      os_collect_config:
+        description: >-
+          The os-collect-config configuration for the server's local agent to be configured to
+          connect to Heat to retrieve deployment data.
+        type: string
+      show:
+        description: >-
+          Detailed information about resource.
+        type: string
+      tags:
+        description: >-
+          Tags from the server.
+        type: list
+        entry_schema: string
+
+    capabilities:
+      resource:
+        type: Resource
+
+    requirements:
+    - dependency:
+        capability: Resource
+        relationship: Depends
+        occurrences: [ 0, UNBOUNDED ]

@@ -1,0 +1,46 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+
+- data.yaml
+- namespace_prefix: k8s
+  file: ../../kubernetes/1.0/profile.yaml
+
+capability_types:
+
+  VirtualMachine:
+    metadata:
+      specification.url: 'https://kubevirt.io/api-reference/v0.30.0/definitions.html#_v1_virtualmachine' 
+      turandot.apiVersion: kubevirt.io/v1alpha3
+      turandot.move: spec.template->spec.template.spec
+      turandot.copy: metadata->spec.template.metadata
+    derived_from: k8s:Resource
+    description: >-
+      VirtualMachine handles the VirtualMachines that are not running or are in a stopped state. The
+      VirtualMachine contains the template to create the VirtualMachineInstance. It also mirrors the
+      running state of the created VirtualMachineInstance in its status.
+    properties:
+      dataVolumeTemplates:
+        description: >-
+          dataVolumeTemplates is a list of dataVolumes that the VirtualMachineInstance template can
+          reference. DataVolumes in this list are dynamically created for the VirtualMachine and are
+          tied to the VirtualMachine's life-cycle.
+        type: list
+        entry_schema: DataVolume
+        required: false
+      runStrategy:
+        description: >-
+          Running state indicates the requested running state of the VirtualMachineInstance.
+          Mutually exclusive with running.
+        type: string # VirtualMachineRunStrategy not in docs
+        required: false
+      running:
+        description: >-
+          Running controls whether the associatied VirtualMachineInstance is created or not.
+          Mutually exclusive with runStrategy.
+        type: boolean
+        required: false
+      template:
+        description: >-
+          Template is the direct specification of VirtualMachineInstance.
+        type: VirtualMachineInstanceTemplate
