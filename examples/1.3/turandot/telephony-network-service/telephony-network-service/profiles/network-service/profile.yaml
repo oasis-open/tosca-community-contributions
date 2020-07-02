@@ -1,0 +1,70 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+namespace: cloud.puccini.network-service
+
+node_types:
+
+  NetworkPlane:
+    properties:
+      annotations:
+        type: map
+        entry_schema: string
+        required: false
+    capabilities:
+      connection: Connectable
+
+  NetworkFunction:
+    properties:
+      annotations:
+        type: map
+        entry_schema: string
+        required: false
+    capabilities:
+      deployment: Deployable
+    requirements:
+    - connection:
+        capability: Connectable
+        relationship: Connection
+
+  Router:
+    derived_from: NetworkFunction
+    capabilities:
+      route: Routable
+
+capability_types:
+
+  Connectable: {}
+
+  Routable:
+    derived_from: Connectable
+
+  Deployable:
+    attributes:
+      ingress:
+        type: Route
+
+relationship_types:
+
+  Connection: {}
+
+  Routing:
+    derived_from: Connection
+    properties:
+      routes:
+        type: list
+        entry_schema: Route
+
+data_types:
+
+  NetworkSubnet:
+    derived_from: string
+
+  NetworkAddress:
+    derived_from: string
+
+  Route:
+    properties:
+      destination:
+        type: NetworkSubnet
+      gateway:
+        type: NetworkAddress

@@ -1,0 +1,83 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+
+- namespace_prefix: ns
+  file: profiles/network-service/profile.yaml
+- namespace_prefix: k8s
+  file: profiles/kubernetes/1.0/profile.yaml
+- namespace_prefix: o11n
+  file: profiles/orchestration/1.0/profile.yaml
+
+node_types:
+
+  NetworkAttachmentDefinition:
+    metadata:
+      turandot.generateNames: 'false'
+    capabilities:
+      metadata: k8s:Metadata
+      network-attachment-definition: k8s:BridgeNetworkAttachmentDefinition
+
+topology_template:
+
+  inputs:
+
+    namespace:
+      type: string
+      default: workspace
+
+    name:
+      type: string
+      default: data-plane
+
+    ip-prefix:
+      type: string
+      default: '192.168.2'
+
+  node_templates:
+
+    router:
+      type: ns:Router
+
+    bridge:
+      type: NetworkAttachmentDefinition
+      capabilities:
+        metadata:
+          properties:
+            name: { get_input: name }
+            namespace: { get_input: namespace }
+            labels:
+              app.kubernetes.io/name: { get_input: name }
+        network-attachment-definition:
+          properties:
+            metadataNamePostfix: ''
+            config:
+              name: { get_input: name }
+              bridge: { get_input: name }
+              isDefaultGateway: true
+              ipMasq: true
+              promiscMode: true
+              ipam:
+                type: host-local
+                subnet: { concat: [ { get_input: ip-prefix }, '.0/24' ] }
+                rangeStart: { concat: [ { get_input: ip-prefix }, '.2' ] }
+                rangeEnd: { concat: [ { get_input: ip-prefix }, '.254' ] }
+                routes:
+                - dst: '0.0.0.0/0'
+                gateway: { concat: [ { get_input: ip-prefix }, '.1' ] }
+
+  substitution_mappings:
+
+    node_type: ns:NetworkPlane
+    capabilities:
+      connection: [ router, route ]
+
+  policies:
+
+  # Note: "router" will also inherit the provisioning policy from via substitution
+  - wan:
+      type: o11n:Provisioning
+      properties:
+        virtualizable: false
+      targets:
+      - router

@@ -1,0 +1,12 @@
+[default]
+
+exten => _X.,1,Log(NOTICE, $__{CALLERID(num)} called $__{EXTEN})
+ same => n,Dial(PJSIP/$__{EXTEN})
+ same => n,Dial(PJSIP/trunk/sip:$__{EXTEN}@$TRUNK_IP)
+ same => n,Answer()
+ same => n,Playback(im-sorry)
+ same => n,Playback(extension)
+ same => n,SayDigits($__{EXTEN})
+ same => n,Playback(vm-isunavail)
+ same => n,Playback(cannot-complete-as-dialed)
+ same => n,Hangup()

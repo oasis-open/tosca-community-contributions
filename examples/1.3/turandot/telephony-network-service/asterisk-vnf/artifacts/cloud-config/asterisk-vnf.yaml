@@ -1,0 +1,31 @@
+#cloud-config
+
+password: fedora
+chpasswd:
+  expire: false
+
+users:
+- default
+- name: admin
+  groups: wheel
+  shell: /bin/bash
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  ssh-authorized-keys:
+  - "$KEY"
+
+  #lock_passwd: false
+  # TODO: doesn't work!
+  #passwd: $1$VWxq3zKg$fY3uElTYsu16yh7ICDKdT1
+  # To generate password hash:
+  #  echo mypassword | mkpasswd --stdin --method=SHA-512 --rounds=4096
+  # or:
+  #  echo mypassword | openssl passwd -stdin -1
+
+runcmd:
+- systemctl enable asterisk.service
+- systemctl start asterisk.service
+# We don't need cloud-init anymore:
+- systemctl disable cloud-config.service
+- systemctl disable cloud-final.service
+- systemctl disable cloud-init-local.service
+- systemctl disable cloud-init.service

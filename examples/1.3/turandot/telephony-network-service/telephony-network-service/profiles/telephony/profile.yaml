@@ -1,0 +1,53 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+namespace: cloud.puccini.telephony
+
+imports:
+
+- namespace_prefix: ns
+  file: ../network-service/profile.yaml
+
+node_types:
+
+  PBX:
+    derived_from: ns:NetworkFunction
+    properties:
+      endpoints:
+        type: map
+        entry_schema: Endpoint
+        required: false
+    capabilities:
+      trunks: Trunks
+    requirements:
+    - trunk:
+        capability: Trunks
+        relationship: Trunk
+
+capability_types:
+
+  Trunks:
+    derived_from: ns:Connectable
+    properties:
+      endpoints:
+        type: map
+        entry_schema: Endpoint
+        required: false
+
+relationship_types:
+
+  Trunk:
+    properties:
+      endpoint:
+        type: string
+    attributes:
+      ip:
+        type: string
+
+data_types:
+
+  Endpoint:
+    properties:
+      username:
+        type: string
+      password:
+        type: string

@@ -15,7 +15,6 @@ imports:
   file: imports/mongodb.yaml
 
 # The optional "namespace" keyword specifies the canonical namespace for the types declared here
-# (In Puccini it appears only in the compiled Clout output with a "::" separator)
 # It is typically used when designing type profiles
 # In this file it does nothing, because we do not declare types here
 # But see its use in "imports/nginx.yaml" and "imports/mongodb.yaml" 

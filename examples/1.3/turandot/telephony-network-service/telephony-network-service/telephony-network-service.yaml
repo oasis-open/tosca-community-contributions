@@ -1,0 +1,142 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+
+- namespace_prefix: ns
+  file: profiles/network-service/profile.yaml
+- namespace_prefix: telephony
+  file: profiles/telephony/profile.yaml
+- namespace_prefix: o11n
+  file: profiles/orchestration/1.0/profile.yaml
+
+topology_template:
+
+  inputs:
+
+    central-site:
+      type: string
+      default: central
+
+    edge-site:
+      type: string
+      default: edge
+
+    namespace:
+      type: string
+      default: workspace
+
+  node_templates:
+
+    central-pbx:
+      type: telephony:PBX
+      properties:
+        endpoints:
+          '200':
+            username: '200'
+            password: password
+          '201':
+            username: '201'
+            password: password
+      capabilities:
+        trunks:
+          properties:
+            endpoints:
+              incoming:
+                username: trunk
+                password: password
+      requirements:
+      - trunk:
+          node: edge-pbx
+          relationship:
+            properties:
+              endpoint: incoming
+      - connection:
+          node: data-plane
+
+    edge-pbx:
+      type: telephony:PBX
+      properties:
+        endpoints:
+          '100':
+            username: '100'
+            password: password
+          '101':
+            username: '101'
+            password: password
+      capabilities:
+        trunks:
+          properties:
+            endpoints:
+              incoming:
+                username: trunk
+                password: password
+      requirements:
+      - trunk:
+          node: central-pbx
+          relationship:
+            properties:
+              endpoint: incoming
+      - connection:
+          node: data-plane
+          relationship:
+            type: ns:Routing
+            properties:
+              routes:
+              - { get_attribute: [ SOURCE, deployment, ingress ] }
+
+    data-plane:
+      type: ns:NetworkPlane
+
+  policies:
+
+  - central-pbx:
+      type: o11n:Provisioning
+      properties:
+        sites:
+        - { get_input: central-site }
+        profile:
+          name: large
+        substitutionInputs:
+          namespace: { get_input: namespace }
+      targets:
+      - central-pbx
+
+  - edge-pbx:
+      type: o11n:Provisioning
+      properties:
+        sites:
+        - { get_input: edge-site }
+        profile:
+          name: small
+        substitutionInputs:
+          namespace: { get_input: namespace }
+      targets:
+      - edge-pbx
+
+  - central-data-plane:
+      type: o11n:Provisioning
+      properties:
+        sites:
+        - { get_input: central-site }
+        profile:
+          name: simple
+        substitutionInputs:
+          namespace: { get_input: namespace }
+          name: data-plane
+          ip-prefix: 192.168.2
+      targets:
+      - data-plane
+
+  - edge-data-plane:
+      type: o11n:Provisioning
+      properties:
+        sites:
+        - { get_input: edge-site }
+        profile:
+          name: simple
+        substitutionInputs:
+          namespace: { get_input: namespace }
+          name: data-plane
+          ip-prefix: 192.168.3
+      targets:
+      - data-plane

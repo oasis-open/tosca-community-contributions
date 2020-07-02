@@ -1,0 +1,19 @@
+[default]
+
+exten => 911,1,Log(NOTICE, $__{CALLERID(num)} called $__{EXTEN} (bot))
+ same => n,Answer()
+ same => n,Playback(queue-periodic-announce)
+ same => n,Hangup()
+
+exten => _1XX,1,Log(NOTICE, $__{CALLERID(num)} called $__{EXTEN})
+ same => n,Dial(PJSIP/trunk/sip:$__{EXTEN}@$TRUNK_IP)
+
+exten => _X.,1,Log(NOTICE, $__{CALLERID(num)} called $__{EXTEN})
+ same => n,Dial(PJSIP/$__{EXTEN})
+ same => n,Answer()
+ same => n,Playback(im-sorry)
+ same => n,Playback(extension)
+ same => n,SayDigits($__{EXTEN})
+ same => n,Playback(vm-isunavail)
+ same => n,Playback(cannot-complete-as-dialed)
+ same => n,Hangup()

@@ -1,0 +1,217 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+imports:
+
+- namespace_prefix: ns
+  file: profiles/network-service/profile.yaml
+- namespace_prefix: telephony
+  file: profiles/telephony/profile.yaml
+- namespace_prefix: mariadb
+  file: profiles/mariadb/profile.yaml
+- namespace_prefix: k8s
+  file: profiles/kubernetes/1.0/profile.yaml
+- namespace_prefix: kubevirt
+  file: profiles/kubevirt/1.0/profile.yaml
+- namespace_prefix: o11n
+  file: profiles/orchestration/1.0/profile.yaml
+
+node_types:
+
+  Asterisk:
+    capabilities:
+      metadata: k8s:Metadata
+      virtual-machine: kubevirt:VirtualMachine
+      tcp: k8s:LoadBalancer
+      udp: k8s:LoadBalancer
+      connection: ns:Connectable
+    requirements:
+    - db:
+        capability: mariadb:Connectable
+    - data-plane:
+        capability: ns:Connectable
+        node: ns:NetworkPlane
+    interfaces:
+      normal:
+        type: k8s:SSHCommand
+
+topology_template:
+
+  inputs:
+
+    namespace:
+      type: string
+      default: workspace
+
+  node_templates:
+
+    asterisk:
+      type: Asterisk
+      capabilities:
+        metadata:
+          properties:
+            name: asterisk-vnf
+            namespace: { get_input: namespace }
+            labels:
+              app.kubernetes.io/name: asterisk-vnf
+        virtual-machine:
+          properties:
+            metadataNamePostfix: ''
+            running: true
+            template:
+              # Multithreadedness breaks the machine (because of nested virtualization?)
+              #cpu:
+              #  cores: 2
+              #  threads: 4
+              domain:
+                resources:
+                  requests:
+                    memory: 1024M
+                devices:
+                  disks:
+                  - name: containerdisk
+                    disk: {}
+                  - name: cloudinitdisk
+                    disk: {}
+                  interfaces:
+                  - name: control-plane
+                    bridge: {}
+                  - name: data-plane
+                    bridge: {}
+              networks:
+              - name: control-plane
+                pod: {}
+              - name: data-plane
+                multus:
+                  networkName: { get_property: [ data-plane, annotations, name ] }
+              volumes:
+              - name: containerdisk
+                containerDisk:
+                  image: { get_artifact: [ SELF, image ] }
+                  imagePullPolicy: Always
+              - name: cloudinitdisk
+                cloudInitNoCloud:
+                  userDataBase64: { get_artifact: [ SELF, cloudConfig ] }
+        tcp:
+          properties:
+            ports:
+            - { name: ssh, protocol: TCP, targetPort: 22, port: 22 }
+          attributes:
+            ingress:
+            - ip: <unknown>
+        udp:
+          properties:
+            ports:
+            - { name: sip,  protocol: UDP, targetPort: 5060,  port: 5060  }
+            - { name: rtp0, protocol: UDP, targetPort: 10000, port: 10000 }
+            - { name: rtp1, protocol: UDP, targetPort: 10001, port: 10001 }
+            - { name: rtp2, protocol: UDP, targetPort: 10002, port: 10002 }
+            - { name: rtp3, protocol: UDP, targetPort: 10003, port: 10003 }
+            - { name: rtp4, protocol: UDP, targetPort: 10004, port: 10004 }
+            - { name: rtp5, protocol: UDP, targetPort: 10005, port: 10005 }
+            - { name: rtp6, protocol: UDP, targetPort: 10006, port: 10006 }
+            - { name: rtp7, protocol: UDP, targetPort: 10007, port: 10007 }
+          attributes:
+            ingress:
+            - ip: <unknown>
+      interfaces:
+        normal:
+          inputs:
+            host: { get_attribute: [ SELF, tcp, clusterIP ] }
+            username: admin
+            key: { get_artifact: [ SELF, privateKey ] }
+            command:
+            - /tmp/configure.sh
+            - { get_attribute: [ SELF, udp, ingress, 0, ip ] }
+            artifacts:
+            - configure.sh
+            - puccini-clout
+            - pjsip.conf
+            - rtp.conf
+            - extensions.conf
+      artifacts:
+        image:
+          type: k8s:ContainerImage
+          file: artifacts/images/asterisk-vnf.tar.gz
+          properties:
+            tag: asterisk-vnf
+        cloudConfig:
+          type: kubevirt:CloudConfig
+          file: artifacts/cloud-config/asterisk-vnf.yaml
+          properties:
+            base64: true
+            variables:
+              $KEY: { get_artifact: [ SELF, publicKey ] }
+        privateKey:
+          type: o11n:Key
+          file: artifacts/keypairs/admin@asterisk-vnf
+        publicKey:
+          type: o11n:Key
+          file: artifacts/keypairs/admin@asterisk-vnf.pub
+        configure.sh:
+          type: o11n:Executable
+          file: artifacts/scripts/asterisk/configure-vnf.sh
+          deploy_path: /tmp/configure.sh
+        pjsip.conf:
+          type: o11n:Deployable
+          file: artifacts/asterisk/pjsip-vnf.conf.template
+          deploy_path: /tmp/pjsip.conf.template
+        rtp.conf:
+          type: o11n:Deployable
+          file: artifacts/asterisk/rtp.conf
+          deploy_path: /tmp/rtp.conf
+        extensions.conf:
+          type: o11n:Deployable
+          file: artifacts/asterisk/extensions-vnf.conf.template
+          deploy_path: /tmp/extensions.conf.template
+        puccini-clout:
+          type: o11n:Executable
+          file: artifacts/binaries/puccini-clout
+          deploy_path: /tmp/puccini-clout
+
+    db:
+      type: mariadb:DB
+      capabilities:
+        metadata:
+          properties:
+            name: asterisk-vnf
+            namespace: { get_input: namespace }
+            labels:
+              app.kubernetes.io/name: asterisk-vnf-mariadb
+        db:
+          properties:
+            database: asterisk
+            username: asterisk
+            password: asterisk
+            rootpwd: asterisk
+
+    data-plane:
+      type: ns:NetworkPlane
+      properties:
+        # TODO: should happen via substitution property mapping
+        annotations:
+          name: data-plane
+
+  outputs:
+
+    tcp-ip:
+      type: string
+      value: { get_attribute: [ asterisk, tcp, ingress, 0, ip ] }
+
+    udp-ip:
+      type: string
+      value: { get_attribute: [ asterisk, udp, ingress, 0, ip ] }
+
+  substitution_mappings:
+
+    node_type: telephony:PBX
+    capabilities:
+      connection: [ asterisk, connection ]
+
+  policies:
+
+  - data-plane:
+      type: o11n:Provisioning
+      properties:
+        instantiable: false
+      targets:
+      - data-plane

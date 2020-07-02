@@ -36,7 +36,7 @@ policy_types:
 group_types:
 
   Redundants:
-    # Groups can have properties (and interfaces, too)
+    # Groups can have properties
     properties:
       priority:
         type:
