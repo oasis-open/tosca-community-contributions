@@ -64,6 +64,7 @@ definitions that are contributed by the TOSCA community and that can serve as a 
 <em>Tests</em>: service templates that can be used by parser designers or orchestrator designers to check compliance with the TOSCA specification.
 </li>
 </ul>
+Note that this repository is not intended to track implementations of the TOSCA language itself. For a list of such implementations, please refer to the <a href="https://github.com/oasis-open/tosca-community-contributions/wiki/Known-TOSCA-Implementations">Known TOSCA Implementations</a> wiki page. 
 </p>
 
 <div>
