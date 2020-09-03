@@ -1,0 +1,70 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+  template_name: capability.yaml
+  template_author: OASIS TOSCA TC
+  template_version: 1.3.0
+ 
+description: OASIS TOSCA non-normative profile capability types
+
+capability_types:
+
+  tosca.capabilities.Container.Docker:
+    description: >-
+      The Container.Docker type is a non-normative type that indicates
+      capabilities of a Docker runtime environment (client).
+    derived_from: tosca.capabilities.Compute
+    properties:
+      version:
+        description: >-
+          List of supported Docker versions.
+        type: list
+        required: false
+        entry_schema: 
+          type: version
+      publish_all:
+        description: >-
+          Indicates that all ports (ranges) listed in the dockerfile
+          using the EXPOSE keyword be published.
+        type: boolean
+        default: false
+        required: false
+      publish_ports:
+        description: >-
+          List of ports mappings from source (Docker container) to
+          target (host) ports to publish.
+        type: list
+        entry_schema: 
+          type: PortSpec
+        required: false
+      expose_ports:
+        description: >-
+          List of ports mappings from source (Docker container) to
+          expose to other Docker containers (not accessible outside
+          host).
+        type: list
+        entry_schema:
+          type: PortSpec
+        required: false
+      volumes:
+        description: >-
+          The dockerfile VOLUME command which is used to enable access
+          from the Docker container to a directory on the host
+          machine.
+        type: list
+        entry_schema:
+          type: string
+        required: false
+      host_id:
+        description: >-
+          The optional identifier of an existing host resource on
+          which this container should be run.
+        type: string
+        required: false
+      volume_id:
+        description: >
+          The optional identifier of an existing storage volume
+          (resource) on which to create the container’s mount
+          point(s).
+        type: string
+        required: false
