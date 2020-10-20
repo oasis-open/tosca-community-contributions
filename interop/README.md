@@ -7,6 +7,6 @@ The following orchestrators are participants in this interoperability demonstrat
 * Ericsson
 * [Ubicity](https://ubicity.com)
 * [Unfurl](https://github.com/onecommons/unfurl)
-* [Xlab](https://github.com/xlab-si/xopera-opera)
+* [xOpera by XLAB](https://github.com/xlab-si/xopera-opera)
 ## Use Cases
 * Infrastructure-as-a-Service Clouds: deploy compute instances on Amazon Web Services, Microsoft Azure, and Google Cloud
