@@ -1,0 +1,46 @@
+tosca_definitions_version: tosca_simple_yaml_1_1
+
+description: >-
+  Template for deploying a single server with MySQL software on top.
+
+metadata:
+  template_name: Hello World
+  template_author: OASIS TOSCA TC
+  template_version: 1.3
+  reference: TOSCA Simple Profile in YAML Version 1.3 Section 2.2
+
+imports:
+  - non-normative-types.yaml
+
+topology_template:
+  inputs:
+    my_mysql_rootpw:
+      type: string
+    my_mysql_port:
+      type: integer
+
+  node_templates:
+    mysql:
+      type: tosca.nodes.DBMS.MySQL
+      properties:
+        root_password: { get_input: my_mysql_rootpw }
+        port: { get_input: my_mysql_port }
+      requirements:
+        - host: db_server
+
+    db_server:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties:
+            # Compute properties
+            num_cpus: 2 
+            disk_size: 10 GB
+            mem_size: 4 MB
+        os:
+          properties:
+            # host Operating System image properties
+            architecture: x86_64 
+            type: linux  
+            distribution: rhel  
+            version: '6.5.0'  
