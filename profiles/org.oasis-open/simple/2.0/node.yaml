@@ -325,7 +325,7 @@ node_types:
       - storage:
           capability: Storage
       - network:
-          capability: EndPoint
+          capability: Endpoint
 
   LoadBalancer:
     derived_from: Root
