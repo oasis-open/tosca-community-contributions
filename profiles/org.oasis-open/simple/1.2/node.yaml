@@ -321,7 +321,7 @@ node_types:
       - storage:
           capability: tosca.capabilities.Storage
       - network:
-          capability: tosca.capabilities.EndPoint
+          capability: tosca.capabilities.Endpoint
 
   tosca.nodes.LoadBalancer:
     derived_from: tosca.nodes.Root
