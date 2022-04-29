@@ -1,0 +1,477 @@
+##########################################################################
+# This file contains TOSCA Simple Profile node type
+# definitions.
+##########################################################################
+
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  template_name: node_types.yaml
+  template_author: Oasis Open
+  template_version: 2.0
+ 
+description: >
+  TOSCA Simple Profile Version node type definitions
+
+imports:
+  - data_types.yaml
+  - capability_types.yaml
+  - interface_types.yaml
+  - relationship_types.yaml
+
+node_types:
+
+  Root:
+    description: >
+      The TOSCA base node type from which all other TOSCA normative
+      node types derive.
+    attributes:
+      state:
+        type: string
+    capabilities:
+      feature: 
+        type: Node
+    requirements:
+      - dependency:
+          capability: Node
+          node: Root
+          relationship: DependsOn
+          occurrences: [ 0, UNBOUNDED ]
+    interfaces: 
+      Standard:
+        type: Lifecycle.Standard 
+
+  Abstract.Compute:
+    description: >-
+      The TOSCA Abstract.Compute node represents an abstract compute
+      resource without any requirements on storage or network
+      resources.
+    derived_from: Root
+    capabilities:
+      host: 
+        type: Compute
+        valid_source_types: []
+
+  Compute:
+    description: >
+      The TOSCA Compute node represents one or more processors of
+      software applications or services along with other essential
+      local resources.  Collectively, the resources represented by a
+      compute node can logically be viewed as a (real or virtual)
+      “server”.
+    derived_from: Abstract.Compute
+    attributes:
+      private_address:
+        description: >
+          The primary private IP address assigned by the cloud
+          provider that applications may use to access the Compute
+          node.
+        type: string
+      public_address:
+        description: >
+          The primary public IP address assigned by the cloud provider
+          that applications may use to access the Compute node.
+        type: string
+      networks:
+        description: >-
+          The list of logical networks assigned to the compute host
+          instance and information about them.
+        type: map
+        entry_schema:
+          type: NetworkInfo
+      ports:
+        description: >-
+          The list of logical ports assigned to the compute host
+          instance and information about them.
+        type: map
+        entry_schema:
+          type: PortInfo
+    requirements:
+      - local_storage: 
+          capability: Attachment
+          node: Storage.BlockStorage
+          relationship: AttachesTo
+          occurrences: [0, UNBOUNDED]  
+    capabilities:
+      host: 
+        type: Compute
+        valid_source_types: [SoftwareComponent]
+      endpoint:
+        type: Endpoint.Admin
+      os:
+        type: OperatingSystem
+      scalable:
+        type: Scalable
+      binding:
+        type: Bindable
+
+  SoftwareComponent:
+    description: >
+      The TOSCA SoftwareComponent node represents a generic software
+      component that can be managed and run by a TOSCA compute node.
+    derived_from: Root
+    properties:
+      component_version: 
+        description: >
+          Domain-specific software component version.
+        type: version
+        required: false
+      admin_credential: 
+        description: >-
+          The optional credential that can be used to authenticate to the software component.
+        type: Credential
+        required: false
+    requirements:
+      - host: 
+          capability: Compute
+          node: Compute
+          relationship: HostedOn
+          occurrences: [ 0, 1 ]
+
+  WebServer:
+    description: >-
+      The TOSCA WebServer Node Type represents an abstract software
+      component or service that is capable of hosting and providing
+      management operations for one or more WebApplication nodes.
+    derived_from: SoftwareComponent
+    capabilities:
+      data_endpoint:
+        description: Private layer 4 endpoints.
+        type: Endpoint
+      admin_endpoint: Endpoint.Admin
+      host: 
+        type: Compute
+        valid_source_types: [ WebApplication ]
+
+  WebApplication:
+    description: >-
+      The TOSCA WebApplication node represents a software application
+      that can be managed and run by a TOSCA WebServer node.  Specific
+      types of web applications such as Java, etc. could be derived
+      from this type.
+    derived_from: Root
+    properties:
+      context_root:
+        description: >-
+          The web application’s context root which designates the
+          application’s URL path within the web server on which it is
+          hosted.
+        type: string
+        required: false
+    capabilities:
+      app_endpoint: Endpoint
+    requirements:
+      - host: 
+          capability: Compute
+          node: WebServer
+          relationship: HostedOn
+
+  DBMS:
+    description: >
+      The TOSCA DBMS node represents a typical relational SQL Database
+      Management System software component or service.
+    derived_from: SoftwareComponent
+    properties:
+      root_password: 
+        type: string
+        required: false
+        description: >
+          the root password for the DBMS service.
+      port:
+        type: integer
+        required: false
+        description: >
+          The port on which the DBMS service will listen for data and
+          requests.
+    capabilities:    
+      host: 
+        type: Compute
+        valid_source_types: [ Database ]
+
+  Database:
+    description: >
+      The TOSCA Database node represents a logical database that can
+      be managed and hosted by a TOSCA DBMS node.
+    derived_from: Root
+    properties:
+      name:
+        type: string
+        description: >
+          The logical name of the database.
+      port:
+        type: integer
+        description: >
+          The port on which the underlying database service will listen for data.
+      user:
+        type: string
+        description: >
+          The user account name for DB administration.
+        required: false
+      password:
+        type: string
+        description: >
+          The password for the DB user account.
+        required: false
+    requirements:
+      - host:
+          capability: Compute
+          node: DBMS
+          relationship: HostedOn
+    capabilities:
+      database_endpoint: 
+        type: Endpoint.Database
+
+  Abstract.Storage:
+    description: >-
+      The TOSCA Abstract.Storage node represents an abstract storage
+      resource without any requirements on compute or network
+      resources.
+    derived_from: Root
+    properties:
+      size: 
+        type: scalar-unit.size
+        constraints:
+          - greater_or_equal: 0 MB
+
+  Storage.ObjectStorage:
+    description: >
+      The TOSCA ObjectStorage node represents storage that provides the ability
+      to store data as objects (or BLOBs of data) without consideration for the
+      underlying filesystem or devices.
+    derived_from: Abstract.Storage
+    properties:
+      name: 
+        description: >
+          The logical name of the object store (or container).
+        type: string
+      maxsize:
+        description: >
+          The requested maximum storage size.
+        type: scalar-unit.size
+        constraints:
+          - greater_or_equal: 0 GB
+    capabilities:
+      storage_endpoint:
+        type: Endpoint
+
+  Storage.BlockStorage:
+    description: >
+      The TOSCA BlockStorage node represents a server-local block
+      storage device (i.e., not shared) offering evenly sized blocks
+      of data from which raw storage volumes can be created.
+    derived_from: Abstract.Storage
+    properties:
+      size: 
+        description: >-
+          The requested storage size. Required when an existing
+          volume_id is not provided. If volume_id is provided, size is
+          ignored.
+        constraints:
+          - greater_or_equal: 1 MB
+      volume_id:
+        description: >-
+          ID of an existing volume (that is in the accessible scope of
+          the requesting application).
+        type: string
+        required: false
+      snapshot_id:
+        description: >-
+          Some identifier that represents an existing snapshot that
+          should be used when creating the block storage (volume).
+        type: string
+        required: false
+    capabilities:
+      attachment: 
+        type: Attachment
+
+  Container.Runtime:
+    description: >
+      The TOSCA Container Runtime node represents operating
+      system-level virtualization technology used to run multiple
+      application services on a single Compute host.
+    derived_from: SoftwareComponent
+    capabilities:
+      host: 
+        type: Compute
+      scalable:
+        type: Scalable
+
+  Container.Application:
+    description: >
+      The TOSCA Container Application node represents an application
+      that requires Container-level virtualization technology.
+    derived_from: Root
+    requirements:
+      - host: 
+          capability: Compute
+          node: Container.Runtime
+          relationship: HostedOn
+
+  Network:
+    description: >
+      The TOSCA Network node represents a simple, logical network
+      service.
+    derived_from: Root
+    properties:
+      ip_version:
+        description: >
+          The IP version of the requested  Valid values are 4 for ipv4
+          or 6 for ipv6.
+        type: integer
+        required: false
+        default: 4
+        constraints:
+          - valid_values: [ 4, 6 ]
+      cidr:
+        description: >
+          The cidr block of the requested 
+        type: string
+        required: false
+      start_ip:
+        description: >
+          The IP address to be used as the start of a pool of addresses within
+          the full IP range derived from the cidr block.
+        type: string
+        required: false
+      end_ip:
+        description: >
+          The IP address to be used as the end of a pool of addresses within
+          the full IP range derived from the cidr block.
+        type: string
+        required: false
+      gateway_ip:
+        description: >
+          The gateway IP address.
+        type: string
+        required: false
+      network_name:
+        description: >
+          An identifier that represents an existing Network instance
+          in the underlying cloud infrastructure or can be used as the
+          name of the newly created network. If network_name is
+          provided and no other properties are provided (with
+          exception of network_id), then an existing network instance
+          will be used. If network_name is provided alongside with
+          more properties then a new network with this name will be
+          created.
+        type: string
+        required: false
+      network_id:
+        description: >
+          An identifier that represents an existing Network instance
+          in the underlying cloud infrastructure. This property is
+          mutually exclusive with all other properties except
+          network_name. This can be used alone or together with
+          network_name to identify an existing network.
+        type: string
+        required: false
+      segmentation_id:
+        description: >
+          A segmentation identifier in the underlying cloud
+          infrastructure.  E.g. VLAN ID, GRE tunnel ID, etc..
+        type: string
+        required: false 
+      network_type:
+        description: >
+          Specifies the nature of the physical network in the underlying
+          cloud infrastructure. Examples are flat, vlan, gre or vxlan.
+          For flat and vlan types, physical_network should be provided too.
+        type: string
+        required: false 
+      physical_network:
+        description: >
+          Identifies the physical network on top of which the network is
+          implemented, e.g. physnet1. This property is required if network_type
+          is flat or vlan.
+        type: string
+        required: false 
+      dhcp_enabled: 
+        description: >
+          Indicates whether DHCP service should be enabled on the network or not.
+        type: boolean
+        default: false
+    capabilities:
+      link:
+        type: Linkable 
+
+  Port:
+    description: >
+      The TOSCA Port node represents a logical entity that associates
+      between Compute and Network normative types. The Port node type
+      effectively represents a single virtual NIC on the Compute node
+      instance.
+    derived_from: Root
+    properties:
+      ip_address:
+        type: string
+        required: false
+        description: >
+          Allows the user to set a static IP.
+      order:
+        description: >
+          The order of the NIC on the compute instance (e.g. eth2).
+        type: integer
+        required: true
+        default: 0 
+        constraints:
+          - greater_or_equal: 0
+      is_default:
+        description: >
+          If is_default=true this port will be used for the default gateway
+          route. Only one port that is associated to single compute node can
+          set as is_default=true.
+        type: boolean
+        required: false
+        default: false
+      ip_range_start:
+        description: >
+          Defines the starting IP of a range to be allocated for the compute
+          instances that are associated with this Port.
+        type: string
+        required: false
+      ip_range_end:
+        description: >
+          Defines the ending IP of a range to be allocated for the compute
+          instances that are associated with this Port.
+        type: string
+        required: false  
+    requirements:
+     - link: 
+        description: >
+          Expresses the relationship between Port and Network
+          nodes. It indicates the network to which this port will connect.
+        capability: Linkable
+        relationship: LinksTo
+     - binding:
+        description: >
+          Expresses the relationship between Port and
+          Compute nodes. Effectively it indicates that the Port will be
+          attached to a specific Compute node instance.
+        capability: Bindable
+        relationship: BindsTo
+
+  LoadBalancer:
+    description: >
+      The TOSCA Load Balancer node represents logical function that
+      can be used in conjunction with a Floating Address to distribute
+      an application’s traffic (load) across a number of instances of
+      the application (e.g., for a clustered or scaled application).
+    derived_from: Root
+    properties:
+      algorithm:
+        type: string
+        required: false
+        status: experimental
+    capabilities:
+      client: 
+        type: Endpoint.Public
+        occurrences: [0, UNBOUNDED]  
+        description: >
+          The floating IP to which clients on the public network can connect.
+    requirements:
+      - application: 
+          capability: Endpoint
+          relationship: RoutesTo
+          occurrences: [0, UNBOUNDED]  
+          description: >
+            Connection to one or more load balanced applications.

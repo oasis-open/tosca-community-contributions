@@ -1,22 +1,24 @@
-tosca_definitions_version: tosca_2_0
+##########################################################################
+# This file contains TOSCA Simple Profile type definitions.
+##########################################################################
 
-profile: org.oasis-open.tosca.simple:2.0
+tosca_definitions_version: tosca_2_0
 
 metadata:
   template_name: profile.yaml
-  template_author: TOSCA TC
-  template_version: 2.0.0
+  template_author: Oasis Open
+  template_version: 2.0
+ 
+description: TOSCA Simple Profile type definitions
 
-description: >-
-  This TOSCA definitions document contains the TOSCA Simple Profile
-  types. 
+profile: org.oasis-open.simple:2.0
 
 imports:
-  - data.yaml
-  - artifact.yaml
-  - capability.yaml
-  - interface.yaml
-  - relationship.yaml
-  - node.yaml
-  - group.yaml
-  - policy.yaml
+  - data_types.yaml
+  - artifact_types.yaml
+  - capability_types.yaml
+  - interface_types.yaml
+  - relationship_types.yaml
+  - node_types.yaml
+  - group_types.yaml
+  - policy_types.yaml

@@ -1,4 +1,3 @@
-TOSCA-Meta-File-Version: 1.0
-CSAR-Version: 1.1
+CSAR-Version: 2.0
 Created-By: OASIS TOSCA TC
 Entry-Definitions: profile.yaml

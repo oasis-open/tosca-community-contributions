@@ -1,0 +1,24 @@
+##########################################################################
+# This file contains TOSCA Simple Profile group type definitions.
+##########################################################################
+
+tosca_definitions_version: tosca_2_0
+
+description: >
+  TOSCA Simple Profile group type definitions
+
+metadata:
+  template_name: group_types.yaml
+  template_author: Oasis Open
+  template_version: 2.0
+
+imports:
+  - node_types.yaml
+  
+group_types:
+
+  Root:
+    description: >
+      The TOSCA base group type from which all other normative
+      TOSCA group types derive.
+    members: [ Root ]

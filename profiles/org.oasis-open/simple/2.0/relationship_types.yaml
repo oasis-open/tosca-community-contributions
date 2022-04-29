@@ -1,0 +1,99 @@
+##########################################################################
+# This file contains TOSCA Simple Profile relationship type
+# definitions.
+##########################################################################
+
+tosca_definitions_version: tosca_2_0
+
+description: >
+  TOSCA Simple Profile relationship type definitions
+
+metadata:
+  template_name: relationship_types.yaml
+  template_author: Oasis Open
+  template_version: 2.0
+
+imports:
+  - data_types.yaml
+  - capability_types.yaml
+  - interface_types.yaml
+  
+relationship_types:
+
+  Root:
+    description: >
+      The TOSCA base relationship type from which all other normative
+      TOSCA relationship types derive.
+    interfaces:
+      Configure: 
+        type: Relationship.Configure
+
+  DependsOn:
+    description: >-
+      The DependsOn type represents a general dependency relationship
+      between two nodes.
+    derived_from: Root
+    valid_target_types: [ Node ]
+
+  HostedOn:
+    description: >-
+      The HostedOn type represents a hosting relationship between two
+      nodes.
+    derived_from: Root
+    valid_target_types: [ Container ]
+
+  ConnectsTo:
+    description: >-
+      The ConnectsTo type represents a network connection relationship
+      between two nodes.
+    derived_from: Root
+    valid_target_types: [ Endpoint ]
+    properties:
+      credential: 
+        description: >-
+          The security credential to present to the target endpoint
+          for either authentication or authorization purposes.
+        type: Credential
+        required: false
+
+  AttachesTo:
+    description: >-
+      The AttachesTo type represents an attachment relationship
+      between two nodes (e.g. for attaching a storage node to a
+      Compute node).
+    derived_from: Root
+    valid_target_types: [ Attachment ]
+    properties:
+      location:
+        description: >-
+          The relative location (e.g., mount point on the file system)
+          that provides the root location to address the attached node.
+        type: string
+        constraints:
+          - min_length: 1
+      device:
+        description: >-
+          The logical device name for the attached device.
+        type: string
+        required: false
+
+  LinksTo:
+    description: >-
+      The LinksTo type represents an association relationship between
+      Port and Network node types.
+    derived_from: DependsOn
+    valid_target_types: [ Linkable ]
+
+  BindsTo:
+    description: >-
+      The BindsTo type represents an association relationship between
+      Port and Compute node types.
+    derived_from: DependsOn
+    valid_target_types: [ Bindable ]
+
+  RoutesTo:
+    description: >-
+      The RoutesTo type represents an intentional network routing
+      between two Endpoints in different networks.
+    derived_from: ConnectsTo
+    valid_target_types: [ Endpoint ]
