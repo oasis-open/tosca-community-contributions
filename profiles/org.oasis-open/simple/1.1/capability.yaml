@@ -10,6 +10,9 @@ description: >-
   capability types as defined in the TOSCA Simple Profile for YAML
   v1.1 specification.
 
+imports:
+  - data.yaml
+
 capability_types:
 
   tosca.capabilities.Root:
@@ -30,7 +33,7 @@ capability_types:
       definition, indicates that the node can provide hosting on a
       named compute resource.
     properties:
-      name: 
+      name:
         type: string
         description: >-
           The otional name (or identifier) of a specific compute
@@ -77,7 +80,7 @@ capability_types:
       definition, indicates that the node can provide addressiblity
       for the resource on a named network with the specified ports.
     properties:
-      name: 
+      name:
         type: string
         description: >-
           The otional name (or identifier) of a specific network
@@ -91,7 +94,7 @@ capability_types:
       definition, indicates that the node can provide a named storage
       location with specified size range.
     properties:
-      name: 
+      name:
         type: string
         description: >-
           The otional name (or identifier) of a specific storage

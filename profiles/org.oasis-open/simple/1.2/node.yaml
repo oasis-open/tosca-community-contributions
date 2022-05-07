@@ -10,6 +10,12 @@ description: >-
   node types as defined in the TOSCA Simple Profile for YAML v1.2
   specification.
 
+imports:
+  - data.yaml
+  - capability.yaml
+  - interface.yaml
+  - relationship.yaml
+
 node_types:
 
   tosca.nodes.Root:
@@ -60,7 +66,7 @@ node_types:
       resource without any requirements on storage or network
       resources.
     capabilities:
-      host: 
+      host:
         type: tosca.capabilities.Compute
         valid_source_types: []
 
@@ -236,11 +242,11 @@ node_types:
       resource without any requirements on compute or network
       resources.
     properties:
-      name: 
+      name:
         type: string
         description: >-
           The logical name (or ID) of the storage resource.
-      size: 
+      size:
         type: scalar-unit.size
         description: >-
           The requested initial storage size (default unit is in
@@ -304,7 +310,7 @@ node_types:
     capabilities:
       host:
         type: tosca.capabilities.Compute
-        valid_source_types: [tosca.nodes.Container.Application]        
+        valid_source_types: [tosca.nodes.Container.Application]
       scalable:
         type: tosca.capabilities.Scalable
 
@@ -338,7 +344,7 @@ node_types:
     capabilities:
       client:
         type: tosca.capabilities.Endpoint.Public
-        occurrences: [0, UNBOUNDED] 
+        occurrences: [0, UNBOUNDED]
         description: >-
           the Floating (IP) client’s on the public network can connect
           to
@@ -346,6 +352,6 @@ node_types:
       - application:
           capability: tosca.capabilities.Endpoint
           relationship: tosca.relationships.RoutesTo
-          occurrences: [0, UNBOUNDED] 
+          occurrences: [0, UNBOUNDED]
           description: >-
             Connection to one or more load balanced applications

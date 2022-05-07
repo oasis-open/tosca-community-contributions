@@ -10,6 +10,9 @@ description: >-
   capability types as defined in the TOSCA Simple Profile for YAML
   v1.0 specification.
 
+imports:
+  - data.yaml
+
 capability_types:
 
   tosca.capabilities.Root:

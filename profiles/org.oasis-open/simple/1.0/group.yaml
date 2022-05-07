@@ -5,6 +5,9 @@ metadata:
   template_author: TOSCA TC
   template_version: 1.0.0
 
+imports:
+  - interface.yaml
+
 description: >-
   This TOSCA definitions document contains the TOSCA Simple Profile
   group types as defined in the TOSCA Simple Profile for YAML v1.0

@@ -9,7 +9,7 @@ metadata:
   template_name: node_types.yaml
   template_author: Oasis Open
   template_version: 2.0
- 
+
 description: >
   TOSCA Simple Profile Version node type definitions
 
@@ -29,7 +29,7 @@ node_types:
       state:
         type: string
     capabilities:
-      feature: 
+      feature:
         type: Node
     requirements:
       - dependency:
@@ -37,9 +37,9 @@ node_types:
           node: Root
           relationship: DependsOn
           occurrences: [ 0, UNBOUNDED ]
-    interfaces: 
+    interfaces:
       Standard:
-        type: Lifecycle.Standard 
+        type: Lifecycle.Standard
 
   Abstract.Compute:
     description: >-
@@ -48,7 +48,7 @@ node_types:
       resources.
     derived_from: Root
     capabilities:
-      host: 
+      host:
         type: Compute
         valid_source_types: []
 
@@ -87,13 +87,13 @@ node_types:
         entry_schema:
           type: PortInfo
     requirements:
-      - local_storage: 
+      - local_storage:
           capability: Attachment
           node: Storage.BlockStorage
           relationship: AttachesTo
-          occurrences: [0, UNBOUNDED]  
+          occurrences: [0, UNBOUNDED]
     capabilities:
-      host: 
+      host:
         type: Compute
         valid_source_types: [SoftwareComponent]
       endpoint:
@@ -111,18 +111,18 @@ node_types:
       component that can be managed and run by a TOSCA compute node.
     derived_from: Root
     properties:
-      component_version: 
+      component_version:
         description: >
           Domain-specific software component version.
         type: version
         required: false
-      admin_credential: 
+      admin_credential:
         description: >-
           The optional credential that can be used to authenticate to the software component.
         type: Credential
         required: false
     requirements:
-      - host: 
+      - host:
           capability: Compute
           node: Compute
           relationship: HostedOn
@@ -139,7 +139,7 @@ node_types:
         description: Private layer 4 endpoints.
         type: Endpoint
       admin_endpoint: Endpoint.Admin
-      host: 
+      host:
         type: Compute
         valid_source_types: [ WebApplication ]
 
@@ -161,7 +161,7 @@ node_types:
     capabilities:
       app_endpoint: Endpoint
     requirements:
-      - host: 
+      - host:
           capability: Compute
           node: WebServer
           relationship: HostedOn
@@ -172,7 +172,7 @@ node_types:
       Management System software component or service.
     derived_from: SoftwareComponent
     properties:
-      root_password: 
+      root_password:
         type: string
         required: false
         description: >
@@ -183,8 +183,8 @@ node_types:
         description: >
           The port on which the DBMS service will listen for data and
           requests.
-    capabilities:    
-      host: 
+    capabilities:
+      host:
         type: Compute
         valid_source_types: [ Database ]
 
@@ -218,7 +218,7 @@ node_types:
           node: DBMS
           relationship: HostedOn
     capabilities:
-      database_endpoint: 
+      database_endpoint:
         type: Endpoint.Database
 
   Abstract.Storage:
@@ -228,7 +228,7 @@ node_types:
       resources.
     derived_from: Root
     properties:
-      size: 
+      size:
         type: scalar-unit.size
         constraints:
           - greater_or_equal: 0 MB
@@ -240,7 +240,7 @@ node_types:
       underlying filesystem or devices.
     derived_from: Abstract.Storage
     properties:
-      name: 
+      name:
         description: >
           The logical name of the object store (or container).
         type: string
@@ -261,7 +261,7 @@ node_types:
       of data from which raw storage volumes can be created.
     derived_from: Abstract.Storage
     properties:
-      size: 
+      size:
         description: >-
           The requested storage size. Required when an existing
           volume_id is not provided. If volume_id is provided, size is
@@ -281,7 +281,7 @@ node_types:
         type: string
         required: false
     capabilities:
-      attachment: 
+      attachment:
         type: Attachment
 
   Container.Runtime:
@@ -291,7 +291,7 @@ node_types:
       application services on a single Compute host.
     derived_from: SoftwareComponent
     capabilities:
-      host: 
+      host:
         type: Compute
       scalable:
         type: Scalable
@@ -302,7 +302,7 @@ node_types:
       that requires Container-level virtualization technology.
     derived_from: Root
     requirements:
-      - host: 
+      - host:
           capability: Compute
           node: Container.Runtime
           relationship: HostedOn
@@ -324,7 +324,7 @@ node_types:
           - valid_values: [ 4, 6 ]
       cidr:
         description: >
-          The cidr block of the requested 
+          The cidr block of the requested
         type: string
         required: false
       start_ip:
@@ -370,29 +370,29 @@ node_types:
           A segmentation identifier in the underlying cloud
           infrastructure.  E.g. VLAN ID, GRE tunnel ID, etc..
         type: string
-        required: false 
+        required: false
       network_type:
         description: >
           Specifies the nature of the physical network in the underlying
           cloud infrastructure. Examples are flat, vlan, gre or vxlan.
           For flat and vlan types, physical_network should be provided too.
         type: string
-        required: false 
+        required: false
       physical_network:
         description: >
           Identifies the physical network on top of which the network is
           implemented, e.g. physnet1. This property is required if network_type
           is flat or vlan.
         type: string
-        required: false 
-      dhcp_enabled: 
+        required: false
+      dhcp_enabled:
         description: >
           Indicates whether DHCP service should be enabled on the network or not.
         type: boolean
         default: false
     capabilities:
       link:
-        type: Linkable 
+        type: Linkable
 
   Port:
     description: >
@@ -412,7 +412,7 @@ node_types:
           The order of the NIC on the compute instance (e.g. eth2).
         type: integer
         required: true
-        default: 0 
+        default: 0
         constraints:
           - greater_or_equal: 0
       is_default:
@@ -434,9 +434,9 @@ node_types:
           Defines the ending IP of a range to be allocated for the compute
           instances that are associated with this Port.
         type: string
-        required: false  
+        required: false
     requirements:
-     - link: 
+     - link:
         description: >
           Expresses the relationship between Port and Network
           nodes. It indicates the network to which this port will connect.
@@ -463,15 +463,15 @@ node_types:
         required: false
         status: experimental
     capabilities:
-      client: 
+      client:
         type: Endpoint.Public
-        occurrences: [0, UNBOUNDED]  
+        occurrences: [0, UNBOUNDED]
         description: >
           The floating IP to which clients on the public network can connect.
     requirements:
-      - application: 
+      - application:
           capability: Endpoint
           relationship: RoutesTo
-          occurrences: [0, UNBOUNDED]  
+          occurrences: [0, UNBOUNDED]
           description: >
             Connection to one or more load balanced applications.

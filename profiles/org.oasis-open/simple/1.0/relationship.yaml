@@ -10,6 +10,11 @@ description: >-
   relationship types as defined in the TOSCA Simple Profile for YAML
   v1.0 specification.
 
+imports:
+  - data.yaml
+  - capability.yaml
+  - interface.yaml
+
 relationship_types:
 
   tosca.relationships.Root:

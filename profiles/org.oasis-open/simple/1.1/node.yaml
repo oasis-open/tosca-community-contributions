@@ -10,6 +10,12 @@ description: >-
   node types as defined in the TOSCA Simple Profile for YAML v1.1
   specification.
 
+imports:
+  - data.yaml
+  - capability.yaml
+  - interface.yaml
+  - relationship.yaml
+
 node_types:
 
   tosca.nodes.Root:
@@ -326,7 +332,7 @@ node_types:
     capabilities:
       client:
         type: tosca.capabilities.Endpoint.Public
-        occurrences: [0, UNBOUNDED] 
+        occurrences: [0, UNBOUNDED]
         description: >-
           the Floating (IP) client’s on the public network can connect
           to
@@ -334,6 +340,6 @@ node_types:
       - application:
           capability: tosca.capabilities.Endpoint
           relationship: tosca.relationships.RoutesTo
-          occurrences: [0, UNBOUNDED] 
+          occurrences: [0, UNBOUNDED]
           description: >-
             Connection to one or more load balanced applications
