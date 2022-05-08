@@ -91,3 +91,17 @@ relationship_types:
       This type represents an intentional network routing between two
       Endpoints in different networks.
     valid_target_types: [ tosca.capabilities.Endpoint ]
+
+  tosca.relationships.network.LinksTo:
+    derived_from: tosca.relationships.DependsOn
+    description: >
+      This relationship type represents an association relationship between
+      Port and Network node types.
+    valid_target_types: [ tosca.capabilities.network.Linkable ]
+
+  tosca.relationships.network.BindsTo:
+    derived_from: tosca.relationships.DependsOn
+    description: >
+      This type represents a network association relationship between Port
+      and Compute node types.
+    valid_target_types: [ tosca.capabilities.network.Bindable ]
