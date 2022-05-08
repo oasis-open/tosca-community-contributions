@@ -266,3 +266,9 @@ capability_types:
 
   tosca.capabilities.network.Bindable:
     derived_from: tosca.capabilities.Node
+
+  tosca.capabilities.network.Linkable:
+    derived_from: tosca.capabilities.Node
+    description: >
+      A node type that includes the Linkable capability indicates that it can
+      be pointed by tosca.relationships.network.LinksTo relationship type.
