@@ -138,7 +138,7 @@ node_types:
         required: false
     requirements:
       - host:
-          capability: tosca.capabilities.Container
+          capability: tosca.capabilities.Compute
           node: tosca.nodes.Compute
           relationship: tosca.relationships.HostedOn
 
@@ -153,7 +153,7 @@ node_types:
       data_endpoint: tosca.capabilities.Endpoint
       admin_endpoint: tosca.capabilities.Endpoint.Admin
       host:
-        type: tosca.capabilities.Container
+        type: tosca.capabilities.Compute
         valid_source_types: [ tosca.nodes.WebApplication ]
 
   tosca.nodes.WebApplication:
@@ -176,7 +176,7 @@ node_types:
         type: tosca.capabilities.Endpoint
     requirements:
       - host:
-          capability: tosca.capabilities.Container
+          capability: tosca.capabilities.Compute
           node: tosca.nodes.WebServer
           relationship: tosca.relationships.HostedOn
 
@@ -196,7 +196,7 @@ node_types:
         description: the port the DBMS service will listen to for data and requests
     capabilities:
       host:
-        type: tosca.capabilities.Container
+        type: tosca.capabilities.Compute
         valid_source_types: [ tosca.nodes.Database ]
 
   tosca.nodes.Database:
@@ -228,7 +228,7 @@ node_types:
         required: false
     requirements:
       - host:
-          capability: tosca.capabilities.Container
+          capability: tosca.capabilities.Compute
           node: tosca.nodes.DBMS
           relationship: tosca.relationships.HostedOn
     capabilities:
