@@ -53,18 +53,18 @@ data_types:
           credentials.
         required: false
 
-  tosca.datatypes.TimeInterval: 
+  tosca.datatypes.TimeInterval:
     derived_from: tosca.datatypes.Root
     description: >-
       The TimeInterval type describes a period of time using the YAML
       ISO 8601 format to declare the start and end times.
     properties:
-      start_time: 
+      start_time:
         type: timestamp
         description: >-
           The inclusive start time for the time interval.
         required: true
-      end_time: 
+      end_time:
         type: timestamp
         description: >-
           The inclusive end time for the time interval.
@@ -74,7 +74,7 @@ data_types:
     derived_from: tosca.datatypes.Root
     description: >-
       The Network type describes logical network information.
-    properties:  
+    properties:
       network_name:
         type: string
         description: >-
@@ -97,7 +97,7 @@ data_types:
     derived_from: tosca.datatypes.Root
     description: >-
       The PortInfo type describes network port information.
-    properties:  
+    properties:
       port_name:
         type: string
         description: >-
@@ -135,7 +135,7 @@ data_types:
     description: >-
       The PortSpec type describes port specifications for a network
       connection.
-    properties:  
+    properties:
       protocol:
         type: string
         description: >-
@@ -147,20 +147,24 @@ data_types:
       source:
         type: tosca.datatypes.network.PortDef
         description: >-
-          The optional source port.          
+          The optional source port.
+        required: false
       source_range:
         type: range
         description: >-
-          The optional range for the source port. 
+          The optional range for the source port.
+        required: false
         constraints:
           - in_range: [ 1, 65535 ]
-      target: 
+      target:
         type: tosca.datatypes.network.PortDef
         description: >-
-          The optional target port.  
+          The optional target port.
+        required: false
       target_range:
         type: range
         description: >-
           The optional range for the target port.
+        required: false
         constraints:
           - in_range: [ 1, 65535 ]
