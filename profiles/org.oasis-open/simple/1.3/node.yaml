@@ -355,3 +355,174 @@ node_types:
           occurrences: [0, UNBOUNDED]
           description: >-
             Connection to one or more load balanced applications
+
+  tosca.nodes.network.Network:
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA Network node represents a simple, logical network service.
+    properties:
+      ip_version:
+        description: >
+          The IP version of the requested network.
+        type: integer
+        required: false
+        default: 4
+        constraints:
+          - valid_values: [ 4, 6 ]
+      cidr:
+        description: >
+          The cidr block of the requested network.
+        type: string
+        required: false
+      start_ip:
+        description: >
+          The IP address to be used as the 1st one in a pool of addresses
+          derived from the cidr block full IP range.
+        type: string
+        required: false
+      end_ip:
+        description: >
+          The IP address to be used as the last one in a pool of addresses
+          derived from the cidr block full IP range.
+        type: string
+        required: false
+      gateway_ip:
+        description: >
+          The gateway IP address.
+        type: string
+        required: false
+      network_name:
+        description: >
+          An Identifier that represents an existing Network instance in the
+          underlying cloud infrastructure – OR – be used as the name of the
+          new created network.
+          . If network_name is provided along with network_id they will be
+          used to uniquely identify an existing network and not creating a
+          new one, means all other possible properties are not allowed.
+          . network_name should be more convenient for using. But in case
+          that network name uniqueness is not guaranteed then one should
+          provide a network_id as well.
+        type: string
+        required: false
+      network_id:
+        description: >
+          An Identifier that represents an existing Network instance in
+          the underlying cloud infrastructure.
+          This property is mutually exclusive with all other properties
+          except network_name.
+          . Appearance of network_id in network template instructs the
+          Tosca container to use an existing network instead of creating
+          a new one.
+          . network_name should be more convenient for using. But in case
+          that network name uniqueness is not guaranteed then one should
+          add a network_id as well.
+          . network_name and network_id can be still used together to achieve
+          both uniqueness and convenient.
+        type: string
+        required: false
+      segmentation_id:
+        description: >
+          A segmentation identifier in the underlying cloud infrastructure
+          (e.g., VLAN id, GRE tunnel id). If the segmentation_id is specified,
+          the network_type or physical_network properties should be provided
+          as well.
+        type: string
+        required: false
+      network_type:
+        description: >
+          Optionally, specifies the nature of the physical network in
+          the underlying cloud infrastructure. Examples are flat, vlan,
+          gre or vxlan. For flat and vlan types, physical_network should
+          be provided too.
+        type: string
+        required: false
+      physical_network:
+        description: >
+          Optionally, identifies the physical network on top of which the
+          network is implemented, e.g. physnet1. This property is required
+          if network_type is flat or vlan.
+        type: string
+        required: false
+      dhcp_enabled:
+        description: >
+          Indicates the TOSCA container to create a virtual network instance
+          with or without a DHCP service.
+        type: boolean
+        required: false
+        default: true
+    attributes:
+      segmentation_id:
+        description: >
+          The actual segmentation_id that is been assigned to the network
+          by the underlying cloud infrastructure.
+        type: string
+    capabilities:
+      link:
+        type: tosca.capabilities.network.Linkable
+
+  tosca.nodes.network.Port:
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA Port node represents a logical entity that associates
+      between Compute and Network normative types.
+      The Port node type effectively represents a single virtual NIC on
+      the Compute node instance.
+    properties:
+      ip_address:
+        description: >
+          Allow the user to set a fixed IP address.
+          Note that this address is a request to the provider which
+          they will attempt to fulfill but may not be able to dependent
+          on the network the port is associated with.
+        type: string
+        required: false
+      order:
+        description: >
+          The order of the NIC on the compute instance (e.g. eth2).
+          Note: when binding more than one port to a single compute
+          (aka multi vNICs) and ordering is desired, it is *mandatory*
+          that all ports will be set with an order value and. The order
+          values must represent a positive, arithmetic progression that
+          starts with 0 (e.g. 0, 1, 2, ..., n).
+        type: integer
+        required: true
+        default: 0
+        constraints:
+          - greater_or_equal: 0
+      is_default:
+        description: >
+          Set is_default=true to apply a default gateway route on the
+          running compute instance to the associated network gateway.
+          Only one port that is associated to single compute node can
+          set as default=true.
+        type: boolean
+        required: false
+        default: false
+      ip_range_start:
+        description: >
+          Defines the starting IP of a range to be allocated for the
+          compute instances that are associated by this Port.
+          Without setting this property the IP allocation is done from
+          the entire CIDR block of the network.
+        type: string
+        required: false
+      ip_range_end:
+        description: >
+          Defines the ending IP of a range to be allocated for the
+          compute instances that are associated by this Port.
+          Without setting this property the IP allocation is done from
+          the entire CIDR block of the network.
+        type: string
+        required: false
+    attributes:
+      ip_address:
+        description: >
+          The IP address would be assigned to the associated compute instance.
+        type: string
+    requirements:
+     - link:
+        capability: tosca.capabilities.network.Linkable
+        relationship: tosca.relationships.network.LinksTo
+     - binding:
+        capability: tosca.capabilities.network.Bindable
+        relationship: tosca.relationships.network.BindsTo
