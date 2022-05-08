@@ -310,3 +310,9 @@ capability_types:
       A node type that includes the Bindable capability indicates that
       it can be bound to a logical network association via a network
       port.
+
+  tosca.capabilities.network.Linkable:
+    description: >-
+      A node type that includes the Linkable capability indicates that
+      it can be pointed to by a tosca.relationships.network.LinksTo relationship type.
+    derived_from: tosca.capabilities.Node
