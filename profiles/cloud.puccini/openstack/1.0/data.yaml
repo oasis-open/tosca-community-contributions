@@ -225,7 +225,7 @@ data_types:
           The size of the local ephemeral block device, in GB.
         type: scalar-unit.size
         constraints:
-        - greater_or_equal: 1
+        - greater_or_equal: 1 GB
       image:
         description: >-
           The ID or name of the image to create a volume from.
