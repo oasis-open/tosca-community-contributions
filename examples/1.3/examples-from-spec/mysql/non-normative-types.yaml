@@ -3,8 +3,8 @@ tosca_definitions_version: tosca_simple_yaml_1_3
 metadata:
   template_name: OASIS TOSCA Non-Normative Type Definitions
   template_author: OASIS TOSCA TC
-  template_version: 1.3
- 
+  template_version: "1.3"
+
 description: >-
   OASIS TOSCA non-normative profile type definitions
 
@@ -27,12 +27,12 @@ artifact_types:
     file_ext: [ qcow2 ]
 
 capability_types:
-  
+
   tosca.capabilities.Container.Docker:
     description: >-
       The Container.Docker type is a non-normative type that indicates
       capabilities of a Docker runtime environment (client).
-    short_name: Container.Docker
+#    short_name: Container.Docker # commented as this is not a valid TOSCA keyname.
     derived_from: tosca.capabilities.Compute
     properties:
       version:
@@ -40,7 +40,7 @@ capability_types:
           List of supported Docker versions.
         type: list
         required: false
-        entry_schema: 
+        entry_schema:
           type: version
       publish_all:
         description: >-
@@ -54,7 +54,7 @@ capability_types:
           List of ports mappings from source (Docker container) to
           target (host) ports to publish.
         type: list
-        entry_schema: 
+        entry_schema:
           type: PortSpec
         required: false
       expose_ports:
@@ -98,7 +98,7 @@ node_types:
       a TOSCA MySQL DBMS node.
     derived_from: tosca.nodes.Database
     requirements:
-      - host: 
+      - host:
           node: tosca.nodes.DBMS.MySQL
 
   tosca.nodes.DBMS.MySQL:
@@ -115,7 +115,7 @@ node_types:
         required: true
     capabilities:
       # Further constrain the ‘host’ capability to only allow MySQL databases
-      host: 
+      host:
         valid_source_types: [ tosca.nodes.Database.MySQL ]
 
   tosca.nodes.WebServer.Apache:
@@ -143,8 +143,8 @@ node_types:
           The logical name of the server hosting the WordPress database.
         type: string
     requirements:
-      - database_endpoint: 
-          capability: tosca.capabilities.Endpoint.Database  
+      - database_endpoint:
+          capability: tosca.capabilities.Endpoint.Database
           node: tosca.nodes.Database
           relationship: tosca.relationships.ConnectsTo
 
@@ -171,7 +171,7 @@ node_types:
       runtime environment
     derived_from: tosca.nodes.Container.Runtime
     capabilities:
-      host: 
+      host:
         type: tosca.capabilities.Container.Docker
 
   tosca.nodes.Container.Application.Docker:

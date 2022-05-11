@@ -6,7 +6,7 @@ description: >-
 metadata:
   template_name: Hello World
   template_author: OASIS TOSCA TC
-  template_version: 1.3
+  template_version: "1.3"
   reference: TOSCA Simple Profile in YAML Version 1.3 Section 2.2
 
 imports:
@@ -34,13 +34,13 @@ topology_template:
         host:
           properties:
             # Compute properties
-            num_cpus: 2 
+            num_cpus: 2
             disk_size: 10 GB
             mem_size: 4 MB
         os:
           properties:
             # host Operating System image properties
-            architecture: x86_64 
-            type: linux  
-            distribution: rhel  
-            version: '6.5.0'  
+            architecture: x86_64
+            type: linux
+            distribution: rhel
+            version: '6.5.0'
