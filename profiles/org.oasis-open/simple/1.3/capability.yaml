@@ -10,6 +10,9 @@ description: >-
   capability types as defined in the TOSCA Simple Profile for YAML
   v1.3 specification.
 
+imports:
+  - data.yaml
+
 capability_types:
 
   tosca.capabilities.Root:
@@ -38,7 +41,7 @@ capability_types:
       definition, indicates that the node can provide hosting on a
       named compute resource.
     properties:
-      name: 
+      name:
         type: string
         description: >-
           The otional name (or identifier) of a specific compute
@@ -85,7 +88,7 @@ capability_types:
       definition, indicates that the node can provide addressiblity
       for the resource on a named network with the specified ports.
     properties:
-      name: 
+      name:
         type: string
         description: >-
           The otional name (or identifier) of a specific network
@@ -99,7 +102,7 @@ capability_types:
       definition, indicates that the node can provide a named storage
       location with specified size range.
     properties:
-      name: 
+      name:
         type: string
         description: >-
           The otional name (or identifier) of a specific storage
@@ -307,3 +310,9 @@ capability_types:
       A node type that includes the Bindable capability indicates that
       it can be bound to a logical network association via a network
       port.
+
+  tosca.capabilities.network.Linkable:
+    description: >-
+      A node type that includes the Linkable capability indicates that
+      it can be pointed to by a tosca.relationships.network.LinksTo relationship type.
+    derived_from: tosca.capabilities.Node

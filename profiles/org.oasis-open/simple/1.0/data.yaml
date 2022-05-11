@@ -55,7 +55,7 @@ data_types:
 
   tosca.datatypes.network.NetworkInfo:
     derived_from: tosca.datatypes.Root
-    properties:  
+    properties:
       network_name:
         type: string
       network_id:
@@ -67,7 +67,7 @@ data_types:
 
   tosca.datatypes.network.PortInfo:
     derived_from: tosca.datatypes.Root
-    properties:  
+    properties:
       port_name:
         type: string
       port_id:
@@ -88,22 +88,26 @@ data_types:
 
   tosca.datatypes.network.PortSpec:
     derived_from: tosca.datatypes.Root
-    properties:  
+    properties:
       protocol:
         type: string
         required: true
         default: tcp
         constraints:
           - valid_values: [ udp, tcp, igmp ]
-      target: 
+      target:
         type: tosca.datatypes.network.PortDef
+        required: false
       target_range:
         type: range
+        required: false
         constraints:
           - in_range: [ 1, 65535 ]
       source:
         type: tosca.datatypes.network.PortDef
+        required: false
       source_range:
         type: range
+        required: false
         constraints:
           - in_range: [ 1, 65535 ]

@@ -10,6 +10,9 @@ description: >-
   group types as defined in the TOSCA Simple Profile for YAML v1.1
   specification.
 
+imports:
+  - interface.yaml
+
 group_types:
   tosca.groups.Root:
     description: >-
