@@ -1,4 +1,4 @@
-# To enable the NFV profile use this reserved "tosca_definitions_version" 
+# To enable the NFV profile use this reserved "tosca_definitions_version"
 tosca_definitions_version: tosca_simple_profile_for_nfv_1_0
 
 # The Simple Profile for NFV is a work in progress
@@ -14,10 +14,14 @@ topology_template:
 
   node_templates:
 
-    cpd:
+    cpd-firewall:
       type: tosca:VduCpd
       requirements:
       - virtual_binding: firewall
+
+    cpd-router:
+      type: tosca:VduCpd
+      requirements:
       - virtual_binding: router
 
     firewall:
