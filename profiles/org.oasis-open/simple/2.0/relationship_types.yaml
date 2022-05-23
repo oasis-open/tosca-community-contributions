@@ -5,6 +5,8 @@
 
 tosca_definitions_version: tosca_2_0
 
+profile: org.oasis-open.tosca.simple:2.0
+
 description: >
   TOSCA Simple Profile relationship type definitions
 
@@ -17,7 +19,7 @@ imports:
   - data_types.yaml
   - capability_types.yaml
   - interface_types.yaml
-  
+
 relationship_types:
 
   Root:
@@ -25,7 +27,7 @@ relationship_types:
       The TOSCA base relationship type from which all other normative
       TOSCA relationship types derive.
     interfaces:
-      Configure: 
+      Configure:
         type: Relationship.Configure
 
   DependsOn:
@@ -49,7 +51,7 @@ relationship_types:
     derived_from: Root
     valid_target_types: [ Endpoint ]
     properties:
-      credential: 
+      credential:
         description: >-
           The security credential to present to the target endpoint
           for either authentication or authorization purposes.

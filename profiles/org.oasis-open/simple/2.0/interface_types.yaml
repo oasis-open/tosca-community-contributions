@@ -5,11 +5,13 @@
 
 tosca_definitions_version: tosca_2_0
 
+profile: org.oasis-open.tosca.simple:2.0
+
 metadata:
   template_name: interface_types.yaml
   template_author: Oasis Open
   template_version: 2.0
- 
+
 description: >
   TOSCA Simple Profile interface type definitions
 
@@ -55,7 +57,7 @@ interface_types:
         description: >-
           Operation to notify the source node of a target node being
           added via a relationship.
-      add_source: 
+      add_source:
         description: >-
           Operation to notify the target node of a source node which
           is now available via a relationship.
@@ -65,6 +67,4 @@ interface_types:
           attribute of the target node changed.
       remove_target:
         description: >-
-          Operation to remove a target node.  
-
-
+          Operation to remove a target node.
