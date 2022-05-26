@@ -9,9 +9,11 @@ metadata:
   template_name: artifact_types.yaml
   template_author: Oasis Open
   template_version: 2.0
- 
+
 description: >
   TOSCA Simple Profile artifact type definitions
+
+profile: org.oasis-open.tosca.simple:2.0
 
 artifact_types:
 
@@ -57,7 +59,7 @@ artifact_types:
 
   Implementation.Bash:
     description: >
-      Script artifact for the Unix Bash shell. 
+      Script artifact for the Unix Bash shell.
     derived_from: Implementation
     mime_type: application/x-sh
     file_ext: [ sh ]

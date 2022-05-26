@@ -5,6 +5,8 @@
 
 tosca_definitions_version: tosca_2_0
 
+profile: org.oasis-open.tosca.simple:2.0
+
 metadata:
   template_name: capability_types.yaml
   template_author: Oasis Open
@@ -12,7 +14,7 @@ metadata:
 
 imports:
   - data_types.yaml
-  
+
 description: >
   TOSCA Simple Profile capability type definitions
 
@@ -37,7 +39,7 @@ capability_types:
       named compute resource.
     derived_from: Container
     properties:
-      num_cpus: 
+      num_cpus:
         description: >-
           Number of (actual or virtual) CPUs associated with the
           Compute node.
@@ -54,7 +56,7 @@ capability_types:
         required: false
         constraints:
           - greater_or_equal: '0.1 GHz'
-      disk_size: 
+      disk_size:
         description: >-
           Size of the local disk available to applications running on
           the Compute node.
@@ -62,7 +64,7 @@ capability_types:
         required: false
         constraints:
           - greater_or_equal: 0 MB
-      mem_size: 
+      mem_size:
         description: >-
           Size of memory available to applications running on the
           Compute node.
@@ -93,7 +95,7 @@ capability_types:
         type: boolean
         required: false
         default: false
-      url_path: 
+      url_path:
         description: >-
           The optional URL path of the endpoint’s address if
           applicable for the protocol.
@@ -110,7 +112,7 @@ capability_types:
           The optional name (or ID) of the network to which this
           endpoint should be bound.
         type: string
-        required: false 
+        required: false
         default: PRIVATE
       initiator:
         description: >-
@@ -121,7 +123,7 @@ capability_types:
           - valid_values: [ source, target, peer ]
       ports:
         description: >-
-          The optional map of ports the Endpoint supports (if more than one).          
+          The optional map of ports the Endpoint supports (if more than one).
         type: map
         required: false
         constraints:
@@ -142,11 +144,11 @@ capability_types:
       address ranges).
     derived_from: Endpoint
     properties:
-      # Change network_name to use the default public network for the node 
+      # Change network_name to use the default public network for the node
       # this capability will be declared in.
       network_name: PUBLIC
       floating:
-        description: > 
+        description: >
           Indicates that the public address should be allocated from
           the pool of floating IPs that are associated with the PUBLIC
           network.
@@ -156,7 +158,7 @@ capability_types:
       dns_name:
         description: The optional name to register with DNS.
         type: string
-        required: false    
+        required: false
         status: experimental
 
   Endpoint.Admin:
@@ -190,7 +192,7 @@ capability_types:
           The Operating System (OS) architecture. Examples of valid
           values include: x86_32, x86_64, etc.
         type: string
-        required: false 
+        required: false
       type:
         description: >-
           The Operating System (OS) type. Examples of valid values
@@ -206,7 +208,7 @@ capability_types:
         required: false
       version:
         description: >-
-          The Operating System version.          
+          The Operating System version.
         type: version
         required: false
 
