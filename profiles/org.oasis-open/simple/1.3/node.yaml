@@ -70,7 +70,6 @@ node_types:
     capabilities:
       host:
         type: tosca.capabilities.Compute
-        valid_source_types: []
 
   tosca.nodes.Compute:
     derived_from: tosca.nodes.Abstract.Compute
