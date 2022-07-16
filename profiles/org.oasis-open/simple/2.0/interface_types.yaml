@@ -5,8 +5,6 @@
 
 tosca_definitions_version: tosca_2_0
 
-profile: org.oasis-open.tosca.simple:2.0
-
 metadata:
   template_name: interface_types.yaml
   template_author: Oasis Open
