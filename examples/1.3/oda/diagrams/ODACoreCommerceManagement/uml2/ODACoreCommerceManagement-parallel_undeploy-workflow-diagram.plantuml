@@ -1,0 +1,137 @@
+@startuml
+hide empty description
+skinparam shadowing false
+skinparam state {
+  ArrowColor blue
+  BorderColor blue
+  EndColor black
+  StartColor green
+  BackGroundColor<< step >> white
+  BorderColor<< step >> black
+  BackGroundColor<< delegate >> lightgrey
+  BackGroundColor<< set_state >> white
+  BackGroundColor<< call_operation >> lightblue
+  BackGroundColor<< inline >> white
+}
+skinparam ActivityBarColor<<fork>> DarkGreen
+skinparam ActivityBarColor<<join>> DarkOrange
+
+state "stop_PrdCtgMgmt" as step_parallel_undeploy_stop_PrdCtgMgmt << step >> {
+  state "PrdCtgMgmt stopping" as step_parallel_undeploy_stop_PrdCtgMgmt_PrdCtgMgmt_stopping << set_state >>
+  state "PrdCtgMgmt Standard.stop" as step_parallel_undeploy_stop_PrdCtgMgmt_PrdCtgMgmt_Standard.stop << call_operation >>
+  state "PrdCtgMgmt stopped" as step_parallel_undeploy_stop_PrdCtgMgmt_PrdCtgMgmt_stopped << set_state >>
+  step_parallel_undeploy_stop_PrdCtgMgmt_PrdCtgMgmt_stopping --> step_parallel_undeploy_stop_PrdCtgMgmt_PrdCtgMgmt_Standard.stop
+  step_parallel_undeploy_stop_PrdCtgMgmt_PrdCtgMgmt_Standard.stop --> step_parallel_undeploy_stop_PrdCtgMgmt_PrdCtgMgmt_stopped
+}
+state "delete_PrdCtgMgmt" as step_parallel_undeploy_delete_PrdCtgMgmt << step >> {
+  state "PrdCtgMgmt deleting" as step_parallel_undeploy_delete_PrdCtgMgmt_PrdCtgMgmt_deleting << set_state >>
+  state "PrdCtgMgmt Standard.delete" as step_parallel_undeploy_delete_PrdCtgMgmt_PrdCtgMgmt_Standard.delete << call_operation >>
+  state "PrdCtgMgmt initial" as step_parallel_undeploy_delete_PrdCtgMgmt_PrdCtgMgmt_initial << set_state >>
+  step_parallel_undeploy_delete_PrdCtgMgmt_PrdCtgMgmt_deleting --> step_parallel_undeploy_delete_PrdCtgMgmt_PrdCtgMgmt_Standard.delete
+  step_parallel_undeploy_delete_PrdCtgMgmt_PrdCtgMgmt_Standard.delete --> step_parallel_undeploy_delete_PrdCtgMgmt_PrdCtgMgmt_initial
+}
+state "stop_PrdOrdCptVd" as step_parallel_undeploy_stop_PrdOrdCptVd << step >> {
+  state "PrdOrdCptVd stopping" as step_parallel_undeploy_stop_PrdOrdCptVd_PrdOrdCptVd_stopping << set_state >>
+  state "PrdOrdCptVd Standard.stop" as step_parallel_undeploy_stop_PrdOrdCptVd_PrdOrdCptVd_Standard.stop << call_operation >>
+  state "PrdOrdCptVd stopped" as step_parallel_undeploy_stop_PrdOrdCptVd_PrdOrdCptVd_stopped << set_state >>
+  step_parallel_undeploy_stop_PrdOrdCptVd_PrdOrdCptVd_stopping --> step_parallel_undeploy_stop_PrdOrdCptVd_PrdOrdCptVd_Standard.stop
+  step_parallel_undeploy_stop_PrdOrdCptVd_PrdOrdCptVd_Standard.stop --> step_parallel_undeploy_stop_PrdOrdCptVd_PrdOrdCptVd_stopped
+}
+state "delete_PrdOrdCptVd" as step_parallel_undeploy_delete_PrdOrdCptVd << step >> {
+  state "PrdOrdCptVd deleting" as step_parallel_undeploy_delete_PrdOrdCptVd_PrdOrdCptVd_deleting << set_state >>
+  state "PrdOrdCptVd Standard.delete" as step_parallel_undeploy_delete_PrdOrdCptVd_PrdOrdCptVd_Standard.delete << call_operation >>
+  state "PrdOrdCptVd initial" as step_parallel_undeploy_delete_PrdOrdCptVd_PrdOrdCptVd_initial << set_state >>
+  step_parallel_undeploy_delete_PrdOrdCptVd_PrdOrdCptVd_deleting --> step_parallel_undeploy_delete_PrdOrdCptVd_PrdOrdCptVd_Standard.delete
+  step_parallel_undeploy_delete_PrdOrdCptVd_PrdOrdCptVd_Standard.delete --> step_parallel_undeploy_delete_PrdOrdCptVd_PrdOrdCptVd_initial
+}
+state "stop_Poom" as step_parallel_undeploy_stop_Poom << step >> {
+  state "Poom stopping" as step_parallel_undeploy_stop_Poom_Poom_stopping << set_state >>
+  state "Poom Standard.stop" as step_parallel_undeploy_stop_Poom_Poom_Standard.stop << call_operation >>
+  state "Poom stopped" as step_parallel_undeploy_stop_Poom_Poom_stopped << set_state >>
+  step_parallel_undeploy_stop_Poom_Poom_stopping --> step_parallel_undeploy_stop_Poom_Poom_Standard.stop
+  step_parallel_undeploy_stop_Poom_Poom_Standard.stop --> step_parallel_undeploy_stop_Poom_Poom_stopped
+}
+state "delete_Poom" as step_parallel_undeploy_delete_Poom << step >> {
+  state "Poom deleting" as step_parallel_undeploy_delete_Poom_Poom_deleting << set_state >>
+  state "Poom Standard.delete" as step_parallel_undeploy_delete_Poom_Poom_Standard.delete << call_operation >>
+  state "Poom initial" as step_parallel_undeploy_delete_Poom_Poom_initial << set_state >>
+  step_parallel_undeploy_delete_Poom_Poom_deleting --> step_parallel_undeploy_delete_Poom_Poom_Standard.delete
+  step_parallel_undeploy_delete_Poom_Poom_Standard.delete --> step_parallel_undeploy_delete_Poom_Poom_initial
+}
+state "stop_PI" as step_parallel_undeploy_stop_PI << step >> {
+  state "PI stopping" as step_parallel_undeploy_stop_PI_PI_stopping << set_state >>
+  state "PI Standard.stop" as step_parallel_undeploy_stop_PI_PI_Standard.stop << call_operation >>
+  state "PI stopped" as step_parallel_undeploy_stop_PI_PI_stopped << set_state >>
+  step_parallel_undeploy_stop_PI_PI_stopping --> step_parallel_undeploy_stop_PI_PI_Standard.stop
+  step_parallel_undeploy_stop_PI_PI_Standard.stop --> step_parallel_undeploy_stop_PI_PI_stopped
+}
+state "delete_PI" as step_parallel_undeploy_delete_PI << step >> {
+  state "PI deleting" as step_parallel_undeploy_delete_PI_PI_deleting << set_state >>
+  state "PI Standard.delete" as step_parallel_undeploy_delete_PI_PI_Standard.delete << call_operation >>
+  state "PI initial" as step_parallel_undeploy_delete_PI_PI_initial << set_state >>
+  step_parallel_undeploy_delete_PI_PI_deleting --> step_parallel_undeploy_delete_PI_PI_Standard.delete
+  step_parallel_undeploy_delete_PI_PI_Standard.delete --> step_parallel_undeploy_delete_PI_PI_initial
+}
+state "stop_Cpq" as step_parallel_undeploy_stop_Cpq << step >> {
+  state "Cpq stopping" as step_parallel_undeploy_stop_Cpq_Cpq_stopping << set_state >>
+  state "Cpq Standard.stop" as step_parallel_undeploy_stop_Cpq_Cpq_Standard.stop << call_operation >>
+  state "Cpq stopped" as step_parallel_undeploy_stop_Cpq_Cpq_stopped << set_state >>
+  step_parallel_undeploy_stop_Cpq_Cpq_stopping --> step_parallel_undeploy_stop_Cpq_Cpq_Standard.stop
+  step_parallel_undeploy_stop_Cpq_Cpq_Standard.stop --> step_parallel_undeploy_stop_Cpq_Cpq_stopped
+}
+state "delete_Cpq" as step_parallel_undeploy_delete_Cpq << step >> {
+  state "Cpq deleting" as step_parallel_undeploy_delete_Cpq_Cpq_deleting << set_state >>
+  state "Cpq Standard.delete" as step_parallel_undeploy_delete_Cpq_Cpq_Standard.delete << call_operation >>
+  state "Cpq initial" as step_parallel_undeploy_delete_Cpq_Cpq_initial << set_state >>
+  step_parallel_undeploy_delete_Cpq_Cpq_deleting --> step_parallel_undeploy_delete_Cpq_Cpq_Standard.delete
+  step_parallel_undeploy_delete_Cpq_Cpq_Standard.delete --> step_parallel_undeploy_delete_Cpq_Cpq_initial
+}
+state "stop_Dummy" as step_parallel_undeploy_stop_Dummy << step >> {
+  state "Dummy stopping" as step_parallel_undeploy_stop_Dummy_Dummy_stopping << set_state >>
+  state "Dummy Standard.stop" as step_parallel_undeploy_stop_Dummy_Dummy_Standard.stop << call_operation >>
+  state "Dummy stopped" as step_parallel_undeploy_stop_Dummy_Dummy_stopped << set_state >>
+  step_parallel_undeploy_stop_Dummy_Dummy_stopping --> step_parallel_undeploy_stop_Dummy_Dummy_Standard.stop
+  step_parallel_undeploy_stop_Dummy_Dummy_Standard.stop --> step_parallel_undeploy_stop_Dummy_Dummy_stopped
+}
+state "delete_Dummy" as step_parallel_undeploy_delete_Dummy << step >> {
+  state "Dummy deleting" as step_parallel_undeploy_delete_Dummy_Dummy_deleting << set_state >>
+  state "Dummy Standard.delete" as step_parallel_undeploy_delete_Dummy_Dummy_Standard.delete << call_operation >>
+  state "Dummy initial" as step_parallel_undeploy_delete_Dummy_Dummy_initial << set_state >>
+  step_parallel_undeploy_delete_Dummy_Dummy_deleting --> step_parallel_undeploy_delete_Dummy_Dummy_Standard.delete
+  step_parallel_undeploy_delete_Dummy_Dummy_Standard.delete --> step_parallel_undeploy_delete_Dummy_Dummy_initial
+}
+  state step_parallel_undeploy_stop_PrdCtgMgmt_join <<join>>
+  step_parallel_undeploy_stop_PrdCtgMgmt_join --> step_parallel_undeploy_stop_PrdCtgMgmt
+  state step_parallel_undeploy_stop_PrdOrdCptVd_join <<join>>
+  step_parallel_undeploy_stop_PrdOrdCptVd_join --> step_parallel_undeploy_stop_PrdOrdCptVd
+  state step_parallel_undeploy_stop_PI_join <<join>>
+  step_parallel_undeploy_stop_PI_join --> step_parallel_undeploy_stop_PI
+step_parallel_undeploy_stop_PrdCtgMgmt --> step_parallel_undeploy_delete_PrdCtgMgmt
+step_parallel_undeploy_stop_PrdOrdCptVd --> step_parallel_undeploy_delete_PrdOrdCptVd
+state step_parallel_undeploy_delete_PrdOrdCptVd_fork <<fork>>
+step_parallel_undeploy_delete_PrdOrdCptVd --> step_parallel_undeploy_delete_PrdOrdCptVd_fork
+step_parallel_undeploy_delete_PrdOrdCptVd_fork --> step_parallel_undeploy_stop_PrdCtgMgmt_join
+step_parallel_undeploy_delete_PrdOrdCptVd_fork --> step_parallel_undeploy_stop_PI_join
+step_parallel_undeploy_delete_PrdOrdCptVd_fork --> step_parallel_undeploy_stop_Cpq
+step_parallel_undeploy_stop_Poom --> step_parallel_undeploy_delete_Poom
+state step_parallel_undeploy_delete_Poom_fork <<fork>>
+step_parallel_undeploy_delete_Poom --> step_parallel_undeploy_delete_Poom_fork
+step_parallel_undeploy_delete_Poom_fork --> step_parallel_undeploy_stop_PrdCtgMgmt_join
+step_parallel_undeploy_delete_Poom_fork --> step_parallel_undeploy_stop_PrdOrdCptVd_join
+step_parallel_undeploy_delete_Poom_fork --> step_parallel_undeploy_stop_PI_join
+step_parallel_undeploy_stop_PI --> step_parallel_undeploy_delete_PI
+step_parallel_undeploy_stop_Cpq --> step_parallel_undeploy_delete_Cpq
+state step_parallel_undeploy_delete_Cpq_fork <<fork>>
+step_parallel_undeploy_delete_Cpq --> step_parallel_undeploy_delete_Cpq_fork
+step_parallel_undeploy_delete_Cpq_fork --> step_parallel_undeploy_stop_PrdCtgMgmt_join
+step_parallel_undeploy_delete_Cpq_fork --> step_parallel_undeploy_stop_PI_join
+step_parallel_undeploy_delete_Cpq_fork --> step_parallel_undeploy_stop_Dummy
+step_parallel_undeploy_delete_Cpq_fork --> step_parallel_undeploy_stop_PrdOrdCptVd_join
+step_parallel_undeploy_stop_Dummy --> step_parallel_undeploy_delete_Dummy
+[*] --> step_parallel_undeploy_stop_Poom
+state parallel_undeploy_join <<join>>
+parallel_undeploy_join --> [*]
+step_parallel_undeploy_delete_PrdCtgMgmt --> parallel_undeploy_join
+step_parallel_undeploy_delete_PI --> parallel_undeploy_join
+step_parallel_undeploy_delete_Dummy --> parallel_undeploy_join
+@enduml

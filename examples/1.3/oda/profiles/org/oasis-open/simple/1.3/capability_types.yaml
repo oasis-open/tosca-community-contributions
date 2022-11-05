@@ -1,0 +1,290 @@
+##########################################################################
+# The content of this file reflects TOSCA Simple Profile in YAML
+# version 1.3.0. It describes the definition for TOSCA normative
+# capability types.
+##########################################################################
+
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+  template_name: capabilitytypes.yaml
+  template_author: Oasis Open
+  template_version: 1.3
+ 
+description: >
+  TOSCA Simple Profile Version 1.3 normative capability types
+
+capability_types:
+
+  tosca.capabilities.Root:
+    description: >
+      The TOSCA base capability type from which all other normative
+      TOSCA capability types derive.
+
+
+  tosca.capabilities.Node:
+    description: >-
+      The Node capability indicates the base capabilities of a TOSCA
+      Node Type.
+    short_name: Node
+    derived_from: tosca.capabilities.Root
+
+
+  tosca.capabilities.Container:
+    description: >-
+      The Container capability, when included on a Node Type or
+      Template definition, indicates that the node can act as a
+      container for (or a host for) one or more other declared Node
+      Types.
+    short_name: Container
+    derived_from: tosca.capabilities.Root
+
+
+  tosca.capabilities.Compute:
+    description: >-
+      The Compute capability, when included on a Node Type or Template
+      definition, indicates that the node can provide hosting on a
+      named compute resource.
+    derived_from: tosca.capabilities.Container
+    short_name: Compute
+    properties:
+      num_cpus: 
+        description: >-
+          Number of (actual or virtual) CPUs associated with the
+          Compute node.
+        type: integer
+        required: false
+        constraints:
+          - greater_or_equal: 1
+      cpu_frequency:
+        description: >-
+          Specifies the operating frequency of CPU's core.  This
+          property expresses the expected frequency of one (1) CPU as
+          provided by the property “num_cpus”.
+        type: scalar-unit.frequency
+        required: false
+        constraints:
+          - greater_or_equal: '0.1 GHz'
+      disk_size: 
+        description: >-
+          Size of the local disk available to applications running on
+          the Compute node.
+        type: scalar-unit.size
+        required: false
+        constraints:
+          - greater_or_equal: 0 MB
+      mem_size: 
+        description: >-
+          Size of memory available to applications running on the
+          Compute node.
+        type: scalar-unit.size
+        required: false
+        constraints:
+          - greater_or_equal: 0 MB
+
+
+  tosca.capabilities.Endpoint:
+    description: >-
+      The Endpoint capability is the default TOSCA type for defining a
+      network endpoint capability.
+    short_name: Endpoint
+    derived_from: tosca.capabilities.Root
+    properties:
+      protocol:
+        description: >-
+          The name of the (Layer 4 through 7) protocol that the endpoint accepts.
+        type: string
+        default: tcp
+      port:
+        description: >-
+          The optional port of the endpoint.
+        type: tosca.datatypes.network.PortDef
+        required: false
+      secure:
+        description: >-
+          If set, the endpoint accepts only secure connections (using
+          credentials supplied on the ConnectsTo relationship).
+        type: boolean
+        required: false
+        default: false
+      url_path: 
+        description: >-
+          The optional URL path of the endpoint’s address if
+          applicable for the protocol.
+        type: string
+        required: false
+      port_name:
+        description: >-
+          The optional name (or ID) of the network port to which this
+          endpoint should be bound.
+        type: string
+        required: false
+      network_name:
+        description: >-
+          The optional name (or ID) of the network to which this
+          endpoint should be bound.
+        type: string
+        required: false 
+        default: PRIVATE
+      initiator:
+        description: >-
+          The optional indicator of the direction of the connection.
+        type: string
+        default: source
+        constraints:
+          - valid_values: [ source, target, peer ]
+      ports:
+        description: >-
+          The optional map of ports the Endpoint supports (if more than one).          
+        type: map
+        required: false
+        constraints:
+          - min_length: 1
+        entry_schema:
+          type: tosca.datatypes.network.PortSpec
+    attributes:
+      ip_address:
+        description: >-
+          The Endpoint's IP address as propagated up by the associated
+          node’s host (Compute) container.
+        type: string
+
+
+  tosca.capabilities.Endpoint.Public:
+    description: >-
+      The Endpoint.Public capability represents a public endpoint that
+      is accessible from the general internet (and its public IP
+      address ranges).
+    short_name: Endpoint.Public
+    derived_from: tosca.capabilities.Endpoint
+    properties:
+      # Change network_name to use the default public network for the node 
+      # this capability will be declared in.
+      network_name: PUBLIC
+      floating:
+        description: > 
+          Indicates that the public address should be allocated from
+          the pool of floating IPs that are associated with the PUBLIC
+          network.
+        type: boolean
+        default: false
+        status: experimental
+      dns_name:
+        description: The optional name to register with DNS.
+        type: string
+        required: false    
+        status: experimental
+
+
+  tosca.capabilities.Endpoint.Admin:
+    description: >-
+      The Endpoint.Admin capability is the default TOSCA type for
+      defining a specialized administrator endpoint capability.
+    short_name: Endpoint.Admin
+    derived_from: tosca.capabilities.Endpoint
+    # Change Endpoint secure indicator to true from its default of false
+    properties:
+      secure: true
+
+  tosca.capabilities.Endpoint.Database:
+    description: >-
+      The Endpoint.Admin capability is the default TOSCA type for
+      defining a specialized database endpoint capability.
+    short_name: Endpoint.Database
+    derived_from: tosca.capabilities.Endpoint
+
+
+  tosca.capabilities.Attachment:
+    description: >-
+      The Attachment capability is the default TOSCA type for defining
+      an attachment capability of a (logical) infrastructure device
+      node (e.g., BlockStorage node).
+    short_name: Attachment
+    derived_from: tosca.capabilities.Root
+
+
+  tosca.capabilities.OperatingSystem:
+    description: >-
+      The OperatingSystem capability is the default TOSCA type for
+      expressing an Operating System capability for a node.
+    short_name: OperatingSystem
+    derived_from: tosca.capabilities.Root
+    properties:
+      architecture:
+        description: >-
+          The Operating System (OS) architecture. Examples of valid
+          values include: x86_32, x86_64, etc.
+        type: string
+        required: false 
+      type:
+        description: >-
+          The Operating System (OS) type. Examples of valid values
+          include: linux, aix, mac, windows, etc.
+        type: string
+        required: false
+      distribution:
+        description: >-
+          The Operating System (OS) distribution. Examples of valid
+          values for an “type” of “Linux” would include: debian,
+          fedora, rhel and ubuntu.
+        type: string
+        required: false
+      version:
+        description: >-
+          The Operating System version.          
+        type: version
+        required: false
+
+
+  tosca.capabilities.Scalable:
+    description: >-
+      The OperatingSystem capability is the default TOSCA type for
+      expressing a scalability capability for a node.
+    short_name: Scalable
+    derived_from: tosca.capabilities.Root
+    properties:
+      min_instances:
+        description: >-
+          The minimum number of instances that should be created for
+          the associated TOSCA Node Template by a TOSCA orchestrator.
+        type: integer
+        default: 1
+      max_instances:
+        description: >-
+          The maximum number of instances that should be created for
+          the associated TOSCA Node Template by a TOSCA orchestrator.
+        type: integer
+        default: 1
+      default_instances:
+        description: >-
+          The default number of instances a TOSCA orchestrator should
+          attempt to allocate.
+        type: integer
+        required: false
+
+
+  tosca.capabilities.Network:
+    description: >-
+      The Network capability, when included on a Node Type or Template
+      definition, indicates that the node can provide addressiblity
+      for the named network with the specified ports.
+    derived_from: tosca.capabilities.Root
+    short_name: Network
+
+
+  tosca.capabilities.network.Bindable:
+    description: >-
+      A node type that includes the Bindable capability indicates that
+      it can be bound to a logical network association via a network
+      port.
+    short_name: network.Bindable
+    derived_from: tosca.capabilities.Node
+
+
+  tosca.capabilities.network.Linkable:
+    description: >-
+      A node type that includes the Linkable capability indicates that
+      it can be pointed by tosca.relationships.network.LinksTo
+      relationship type.
+    short_name: network.Linkable
+    derived_from: tosca.capabilities.Node

@@ -1,0 +1,31 @@
+graph ToscaDiagram {
+  rankdir="LR"
+    subgraph clustermy_platform {
+      color=white
+      label=""
+      my_platform[label="my_platform: tmforum:oda_platform_emulator|\l\l\l\l" shape=record style=rounded]
+      my_platform_capability_feature[label="feature" shape=cds style=filled fillcolor=orange]
+      my_platform_capability_feature -- my_platform
+    }
+    subgraph clustermy_sigscale_ocs {
+      color=white
+      label=""
+      my_sigscale_ocs[label="my_sigscale_ocs: tmforum:sigscale_ocs|\l\l\l\l" shape=record style=rounded]
+      my_sigscale_ocs_requirement_dependency[label="dependency" shape=cds style=filled fillcolor=turquoise]
+      my_sigscale_ocs -- my_sigscale_ocs_requirement_dependency
+      my_sigscale_ocs_requirement_TMF632_requirement[label="TMF632_requirement" shape=cds style=filled fillcolor=turquoise]
+      my_sigscale_ocs -- my_sigscale_ocs_requirement_TMF632_requirement
+    }
+    subgraph clustermy_vodaphone_product_catalog {
+      color=white
+      label=""
+      my_vodaphone_product_catalog[label="my_vodaphone_product_catalog: tmforum:vodaphone_product_catalog|\l\l\l\l" shape=record style=rounded]
+      my_vodaphone_product_catalog_capability_TMF632_capability[label="TMF632_capability" shape=cds style=filled fillcolor=orange]
+      my_vodaphone_product_catalog_capability_TMF632_capability -- my_vodaphone_product_catalog
+      my_vodaphone_product_catalog_requirement_dependency[label="dependency" shape=cds style=filled fillcolor=turquoise]
+      my_vodaphone_product_catalog -- my_vodaphone_product_catalog_requirement_dependency
+    }
+    my_sigscale_ocs_requirement_dependency -- my_platform_capability_feature[style=dotted]
+    my_sigscale_ocs_requirement_TMF632_requirement -- my_vodaphone_product_catalog_capability_TMF632_capability[style=dotted]
+    my_vodaphone_product_catalog_requirement_dependency -- my_platform_capability_feature[style=dotted]
+}

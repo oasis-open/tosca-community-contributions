@@ -1,0 +1,36 @@
+@startuml
+set namespaceSeparator none
+class "tmforum:TMFC002" << (N,green) >> #DDDDDD
+"tmforum:TMFC002" <|-- "TMFC002_c648_c663_r679"
+class "TMFC002_c648_c663_r679" << (N,green) >> {
+.. capabilities ..
++TMF648_capability
+ type : tmforum:TMF648[1..*]
++TMF663_capability
+ type : tmforum:TMF663[1..*]
+.. requirements ..
++<b>TMF679_requirement
+ capability : tmforum:TMF679[1]
+ relationship : tmforum:oda_component_depends_on_TMF_API
+}
+class "tmforum:TMF648" << (C,green) >> #DDDDDD
+"tmforum:TMF648" "1..*" -* "TMFC002_c648_c663_r679" : TMF648_capability
+class "tmforum:TMF663" << (C,green) >> #DDDDDD
+"tmforum:TMF663" "1..*" -* "TMFC002_c648_c663_r679" : TMF663_capability
+class "tmforum:TMF679" << (C,green) >> #DDDDDD
+"TMFC002_c648_c663_r679" *- "1" "tmforum:TMF679" : TMF679_requirement
+class "tmforum:oda_component_depends_on_TMF_API" << (R,green) >> #DDDDDD
+"TMFC002_c648_c663_r679" ..> "tmforum:oda_component_depends_on_TMF_API" : TMF679_requirement.relationship
+class "tmforum:TMFC027" << (N,green) >> #DDDDDD
+"tmforum:TMFC027" <|-- "TMFC027_r622"
+class "TMFC027_r622" << (N,green) >> {
+.. requirements ..
++<b>TMF622_requirement
+ capability : tmforum:TMF622[1]
+ relationship : tmforum:oda_component_depends_on_TMF_API
+}
+class "tmforum:TMF622" << (C,green) >> #DDDDDD
+"TMFC027_r622" *- "1" "tmforum:TMF622" : TMF622_requirement
+class "tmforum:oda_component_depends_on_TMF_API" << (R,green) >> #DDDDDD
+"TMFC027_r622" ..> "tmforum:oda_component_depends_on_TMF_API" : TMF622_requirement.relationship
+@enduml

@@ -1,0 +1,81 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: TMForum APIs for Profile Type Definitions for ODA by Paul Jordan
+
+capability_types:
+
+  TMFAPI:
+    derived_from: tosca.capabilities.Node
+    description: a TMForum defined REST API
+    properties:
+      id:
+        type: string
+        description: the id e.g TMF632
+        required: True
+      name:
+        type: string
+        description: the name, e.g. party
+      swagger_file:
+        type: string
+        required: False
+
+  TMF401:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF401
+      name: Process Flow
+
+  TMF620:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF620
+      name: Product Catalog Mgmt
+
+  TMF622:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF622
+      name: Product Ordering
+
+  TMF632:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF632
+      name: party
+
+  TMF637:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF637
+      name: Product Inventory Management
+
+  TMF645:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF645
+      name: Service Qualification
+      swagger_file: https://github.com/tmforum-rand/Open_API_And_Data_Model/blob/v4.0-Sprint-2020-03/apis/TMF645_Service_Qualification/swaggers/TMF645-ServiceQualification-v4.0.1.swagger.json
+
+  TMF648:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF648
+      name: Quote
+
+  TMF663:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF648
+      name: Shopping Cart
+      
+  TMF679:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF679
+      name: Product Offering Qualification
+
+  TMF688:
+    derived_from: TMFAPI 
+    properties:
+      id: TMF688
+      name: Product Order State Change

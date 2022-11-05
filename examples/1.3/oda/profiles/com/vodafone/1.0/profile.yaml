@@ -1,0 +1,39 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+namespace: com.vodafone:1.0
+
+description: Profile Type Definitions for items created by Vodafone in TMForum ODA. Integration into TOSCA by Paul Jordan
+
+
+imports:
+  # Include TOSCA representing TMForum ODA concepts
+  - file: org.tmforum:1.0
+    namespace_prefix: tmforum
+    
+node_types:
+  vodafone_TMFC001:
+    derived_from: tmforum:TMFC001
+    properties:
+      definition_file: /home/jordanpm/Workspace/tosca/profiles/com/vodafone/1.0/artifacts/vodafone-BOS-productCatalog.component.yaml
+    requirements:
+      - platform:
+          node: tmforum:oda_sailcloth
+          relationship: tmforum:running_on_sailcloth
+          # Version 1.3 requires a capability declaration here but it doesn't do much
+          capability: tosca.capabilities.Node
+    interfaces:
+      Standard:
+        create:
+          inputs:
+            oda_component_sailcloth:
+              type: string
+              value: { get_property: [ SELF, platform, sailcloth_directory] }
+          implementation:
+            # The artifacts referenced below are published by TMForum in profiles at org/tmforum/1.0/artifacts
+            # But they must be included in the casr for this profile. 
+            # One way to do this is for the csar create script to cp -r ../../../org/tmforum/1.0/artifacts/component_sailcloth/ to com/sigscale/1.0/artifacts/component_sailcloth 
+            # before the csar is created
+            primary: artifacts/component_sailcloth/create.sh
+        delete:
+          implementation:
+            primary: artifacts/component_sailcloth/delete.sh

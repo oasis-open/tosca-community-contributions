@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: >-
+  Create a single local file
+
+imports:
+  - file: org.tmforum:1.0
+    namespace_prefix: tmforum
+
+topology_template:
+
+  node_templates:
+    myBOS:
+      type: tmforum:oda_component_sailcloth
+      properties:
+        component_class_name: productCatalog
+        component_class_ID: TMFC000
+        node_instance_name: myBOS
+        definition_file: /home/jordanpm/Workspace/tosca/profiles/org/tmforum/1.0/artifacts/component_sailcloth/vodafone-BOS-productCatalog.component.yaml
+ 
+    my_platform:
+      type: tmforum:oda_sailcloth
+      properties:
+        sailcloth_directory: /home/jordanpm/Workspace/tosca/sailcloth
+        create_fresh: false
+
+

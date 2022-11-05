@@ -1,0 +1,83 @@
+graph ToscaDiagram {
+  rankdir="LR"
+    subgraph clusterPrdCtgMgmt {
+      color=white
+      label=""
+      PrdCtgMgmt[label="PrdCtgMgmt: tmforum:TMFC001|\l\l\l\l" shape=record style=rounded]
+      PrdCtgMgmt_capability_TMF620_capability[label="TMF620_capability" shape=cds style=filled fillcolor=orange]
+      PrdCtgMgmt_capability_TMF620_capability -- PrdCtgMgmt
+    }
+    subgraph clusterPrdOrdCptVd {
+      color=white
+      label=""
+      PrdOrdCptVd[label="PrdOrdCptVd: TMFC002_c648_c663_r679|\l\l\l\l" shape=record style=rounded]
+      PrdOrdCptVd_capability_TMF622_capability[label="TMF622_capability" shape=cds style=filled fillcolor=orange]
+      PrdOrdCptVd_capability_TMF622_capability -- PrdOrdCptVd
+      PrdOrdCptVd_capability_TMF648_capability[label="TMF648_capability" shape=cds style=filled fillcolor=orange]
+      PrdOrdCptVd_capability_TMF648_capability -- PrdOrdCptVd
+      PrdOrdCptVd_capability_TMF663_capability[label="TMF663_capability" shape=cds style=filled fillcolor=orange]
+      PrdOrdCptVd_capability_TMF663_capability -- PrdOrdCptVd
+      PrdOrdCptVd_requirement_TMF620_requirement[label="TMF620_requirement" shape=cds style=filled fillcolor=turquoise]
+      PrdOrdCptVd -- PrdOrdCptVd_requirement_TMF620_requirement
+      PrdOrdCptVd_requirement_TMF637_requirement[label="TMF637_requirement" shape=cds style=filled fillcolor=turquoise]
+      PrdOrdCptVd -- PrdOrdCptVd_requirement_TMF637_requirement
+      PrdOrdCptVd_requirement_TMF679_requirement[label="TMF679_requirement" shape=cds style=filled fillcolor=turquoise]
+      PrdOrdCptVd -- PrdOrdCptVd_requirement_TMF679_requirement
+    }
+    subgraph clusterPoom {
+      color=white
+      label=""
+      Poom[label="Poom: tmforum:TMFC003|\l\l\l\l" shape=record style=rounded]
+      Poom_requirement_TMF620_requirement[label="TMF620_requirement" shape=cds style=filled fillcolor=turquoise]
+      Poom -- Poom_requirement_TMF620_requirement
+      Poom_requirement_TMF622_requirement[label="TMF622_requirement" shape=cds style=filled fillcolor=turquoise]
+      Poom -- Poom_requirement_TMF622_requirement
+      Poom_requirement_TMF637_requirement[label="TMF637_requirement" shape=cds style=filled fillcolor=turquoise]
+      Poom -- Poom_requirement_TMF637_requirement
+    }
+    subgraph clusterPI {
+      color=white
+      label=""
+      PI[label="PI: tmforum:TMFC005|\l\l\l\l" shape=record style=rounded]
+      PI_capability_TMF637_capability[label="TMF637_capability" shape=cds style=filled fillcolor=orange]
+      PI_capability_TMF637_capability -- PI
+    }
+    subgraph clusterCpq {
+      color=white
+      label=""
+      Cpq[label="Cpq: TMFC027_r622|\l\l\l\l" shape=record style=rounded]
+      Cpq_capability_TMF679_capability[label="TMF679_capability" shape=cds style=filled fillcolor=orange]
+      Cpq_capability_TMF679_capability -- Cpq
+      Cpq_requirement_TMF620_requirement[label="TMF620_requirement" shape=cds style=filled fillcolor=turquoise]
+      Cpq -- Cpq_requirement_TMF620_requirement
+      Cpq_requirement_TMF637_requirement[label="TMF637_requirement" shape=cds style=filled fillcolor=turquoise]
+      Cpq -- Cpq_requirement_TMF637_requirement
+      Cpq_requirement_TMF645_requirement[label="TMF645_requirement" shape=cds style=filled fillcolor=turquoise]
+      Cpq -- Cpq_requirement_TMF645_requirement
+      Cpq_requirement_TMF648_requirement[label="TMF648_requirement" shape=cds style=filled fillcolor=turquoise]
+      Cpq -- Cpq_requirement_TMF648_requirement
+      Cpq_requirement_TMF663_requirement[label="TMF663_requirement" shape=cds style=filled fillcolor=turquoise]
+      Cpq -- Cpq_requirement_TMF663_requirement
+      Cpq_requirement_TMF622_requirement[label="TMF622_requirement" shape=cds style=filled fillcolor=turquoise]
+      Cpq -- Cpq_requirement_TMF622_requirement
+    }
+    subgraph clusterDummy {
+      color=white
+      label=""
+      Dummy[label="Dummy: tmforum:TMFC999|\l\l\l\l" shape=record style=rounded]
+      Dummy_capability_TMF645_capability[label="TMF645_capability" shape=cds style=filled fillcolor=orange]
+      Dummy_capability_TMF645_capability -- Dummy
+    }
+    PrdOrdCptVd_requirement_TMF620_requirement -- PrdCtgMgmt_capability_TMF620_capability[style=dotted]
+    PrdOrdCptVd_requirement_TMF637_requirement -- PI_capability_TMF637_capability[style=dotted]
+    PrdOrdCptVd_requirement_TMF679_requirement -- Cpq_capability_TMF679_capability[style=dotted]
+    Poom_requirement_TMF620_requirement -- PrdCtgMgmt_capability_TMF620_capability[style=dotted]
+    Poom_requirement_TMF622_requirement -- PrdOrdCptVd_capability_TMF622_capability[style=dotted]
+    Poom_requirement_TMF637_requirement -- PI_capability_TMF637_capability[style=dotted]
+    Cpq_requirement_TMF620_requirement -- PrdCtgMgmt_capability_TMF620_capability[style=dotted]
+    Cpq_requirement_TMF637_requirement -- PI_capability_TMF637_capability[style=dotted]
+    Cpq_requirement_TMF645_requirement -- Dummy_capability_TMF645_capability[style=dotted]
+    Cpq_requirement_TMF648_requirement -- PrdOrdCptVd_capability_TMF648_capability[style=dotted]
+    Cpq_requirement_TMF663_requirement -- PrdOrdCptVd_capability_TMF663_capability[style=dotted]
+    Cpq_requirement_TMF622_requirement -- PrdOrdCptVd_capability_TMF622_capability[style=dotted]
+}

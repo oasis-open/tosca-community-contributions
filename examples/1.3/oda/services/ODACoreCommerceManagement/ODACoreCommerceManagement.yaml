@@ -1,0 +1,110 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: >-
+  Abstract template (no deployable nodes) used to reproduce diagram in https://projects.tmforum.org/wiki/display/TAC/Components+Interactions+in+Core+Commerce+Management
+imports:
+  - file: org.tmforum:1.0
+    namespace_prefix: tmforum
+
+node_types:
+  TMFC002_c648_c663_r679:
+    derived_from: tmforum:TMFC002
+    description: Adds the optional capabilities of TMF622 and TMF663 to the mandatory capabilities defined in the tmforum profile
+    # It is likely that OSCA 2.0 will allow the profile to include optional capabilities which would make this step unecessary.
+    requirements:
+      - TMF679_requirement:
+          capability: tmforum:TMF679
+          relationship:
+            type: tmforum:oda_component_depends_on_TMF_API
+          #node: tmforum:TMFC027
+    capabilities:
+      TMF648_capability:
+        type: tmforum:TMF648
+      TMF663_capability:
+        type: tmforum:TMF663
+
+  TMFC027_r622:
+    derived_from: tmforum:TMFC027
+    description: Add the optional requirement on TMF622
+    # It is likely that TOSCA 2.0 will allow the profile to include optional capabilities which would make this step unecessary.
+    requirements:
+      - TMF622_requirement:
+          capability: tmforum:TMF622
+          relationship:
+            type: tmforum:oda_component_depends_on_TMF_API
+          #node: TMFC002_c648_c663_r679
+
+topology_template:
+
+  node_templates:
+
+    PrdCtgMgmt:
+      type: tmforum:TMFC001
+      properties:
+        node_instance_name: PrdCtgMgmt
+        # This node may not yet have a defintion file, we don't need one to draw a diagram so stub it
+        definition_file: /dev/null
+
+    PrdOrdCptVd:
+      type: TMFC002_c648_c663_r679
+      properties:
+        node_instance_name: PrdOrdCptVd
+        # This node may not yet have a defintion file, we don't need one to draw a diagram so stub it
+        definition_file: /dev/null
+      requirements:
+        - TMF620_requirement:
+            node: PrdCtgMgmt
+        - TMF637_requirement:
+            node: PI
+        - TMF679_requirement:
+            node: Cpq
+
+    Poom:
+      type: tmforum:TMFC003
+      properties:
+        node_instance_name: Poom
+        # This node may not yet have a defintion file, we don't need one to draw a diagram so stub it
+        definition_file: /dev/null
+      requirements:
+        - TMF620_requirement:
+            node: PrdCtgMgmt
+        - TMF622_requirement:
+            node: PrdOrdCptVd
+        - TMF637_requirement:
+            node: PI
+
+    PI:
+      type: tmforum:TMFC005
+      properties:
+        node_instance_name: PI
+        # This node may not yet have a defintion file, we don't need one to draw a diagram so stub it
+        definition_file: /dev/null
+
+    Cpq:
+      type: TMFC027_r622
+      properties:
+        node_instance_name: Cpq
+        # This node may not yet have a defintion file, we don't need one to draw a diagram so stub it
+        definition_file: /dev/null
+      requirements:
+        - TMF620_requirement:
+            node: PrdCtgMgmt
+        - TMF637_requirement:
+            node: PI
+        - TMF645_requirement:
+          #This mandatory requirement for TMFC027 is not satisfied in the diagram and so we leave it connect to the dummy. This line below just highlights that. 
+            node: Dummy
+        - TMF648_requirement:
+            node: PrdOrdCptVd
+        - TMF663_requirement:
+            node: PrdOrdCptVd
+
+    Dummy:
+      type: tmforum:TMFC999
+      properties:
+        node_instance_name: Dummy
+        # This node may not yet have a defintion file, we don't need one to draw a diagram so stub it
+        definition_file: /dev/null
+      description: Dummy node to terminate Mandatory API TMF645 which is not shown on the diagram
+
+

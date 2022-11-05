@@ -1,0 +1,242 @@
+apiVersion: oda.tmforum.org/v1alpha1
+kind: component
+metadata:
+  name: vodafone-productcatalog
+  labels:
+    oda.tmforum.org/componentName: vodafone-productcatalog
+spec:
+  type: productcatalog
+  selector:
+    matchLabels:
+     oda.tmforum.org/componentName: vodafone-productcatalog
+  componentKinds:
+    - group: core
+      kind: Service
+    - group: apps
+      kind: Deployment  
+  version: "0.0.1"
+  description: "Vodafone simple reference implementation of ODA Product Catalog." 
+  maintainers:
+    - name: Lester Thomas
+      email: lester.thomas@vodafone.com
+  owners:
+    - name: Lester Thomas
+      email: lester.thomas@vodafone.com   
+  coreFunction:
+    exposedAPIs: 
+    - name: productCatalog
+      specification: https://open-api.tmforum.org/TMF620-ProductCatalog-v4.0.0.swagger.json
+      implementation: productcatalog
+      path: /admin/productCatalogManagement/v2/catalog
+      port: 8080
+      scopes:
+      - name: admin
+      - name: regular
+    - name: processFlow
+      specification: https://open-api.tmforum.org/TMF701-ProcessFlow-v4.0.0.swagger.json
+      implementation: camunda
+      path: /camunda
+      port: 8080
+    dependantAPIs: []
+  eventNotification:
+    publishedEvents:
+    - name: Catalog
+      href: https://schema.tmforum.org/Product/Catalog.schema.json   
+    - name: Category
+      href: https://schema.tmforum.org/Product/Category.schema.json
+    - name: ProductOffering
+      href: https://schema.tmforum.org/Product/ProductOffering.schema.json
+    - name: ProductOfferingPrice
+      href: https://schema.tmforum.org/Product/ProductOfferingPrice.schema.json
+    - name: ProductSpecification
+      href: https://schema.tmforum.org/Product/ProductSpecification.schema.json
+    - name: Usage
+      href: https://schema.tmforum.org/Product/Usage.schema.json
+    subscribedEvents:
+    - name: ImportJob
+      href: https://schema.tmforum.org/Product/ImportJob.schema.json
+  management:
+  - name: serviceTest
+    href: https://manager.local/healthCheck
+    specification: https://open-api.tmforum.org/TMF653-ServiceTest-v4.0.0.swagger.json
+  - name: alarm
+    href: https://manager.local/alarm
+    specification: https://open-api.tmforum.org/TMF642-Alarm-v4.0.0.swagger.json
+  - name: serviceActivationConfiguration
+    href: https://manager.local/serviceConfiguration
+    specification: https://open-api.tmforum.org/TMF640-ServiceActivationConfiguration-v4.0.0.swagger.json
+  security:
+    securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productcatalog
+  labels:
+    oda.tmforum.org/componentName: vodafone-productcatalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productcatalog
+  template:
+    metadata:
+      labels:
+        app: productcatalog
+    spec:
+      containers:
+      - name: productcatalog
+        image: lesterthomas/productcatalog-admin:0.22
+        ports:
+        - name: productcatalog
+          containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productcatalog
+  labels:
+    app: productcatalog
+    oda.tmforum.org/componentName: vodafone-productcatalog
+spec:
+  ports:
+  - port: 8080
+    targetPort: productcatalog
+    name: productcatalog
+  type: NodePort
+  selector:
+    app: productcatalog
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productcatalog-componentmanager
+  labels:
+    oda.tmforum.org/componentName: vodafone-productcatalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productcatalog-componentmanager
+  template:
+    metadata:
+      labels:
+        app: productcatalog-componentmanager
+    spec:
+      containers:
+      - name: productcatalog-componentmanager
+        image: lesterthomas/productcatalog-manager:0.18
+        ports:
+        - name: pc-regular
+          containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-tmf
+  labels:
+    oda.tmforum.org/componentName: vodafone-productcatalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo-tmf
+  template:
+    metadata:
+      labels:
+        app: mongo-tmf
+    spec:
+      containers:
+      - name: mongo-tmf
+        image: mongo:latest
+        ports:
+        - name: mongo-tmf
+          containerPort: 27017
+        volumeMounts:
+        - name: mongo-tmf-pv-storage
+          mountPath: "/data/db"
+      volumes:
+      - name: mongo-tmf-pv-storage
+        persistentVolumeClaim:
+          claimName: mongo-tmf-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-tmf
+  labels:
+    app: mongo-tmf
+    oda.tmforum.org/componentName: vodafone-productcatalog
+spec:
+  ports:
+  - port: 27017
+    targetPort: mongo-tmf
+    name: mongo-tmf
+  type: NodePort
+  selector:
+    app: mongo-tmf
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda
+  labels:
+    oda.tmforum.org/componentName: vodafone-productcatalog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda
+  template:
+    metadata:
+      labels:
+        app: camunda
+    spec:
+      containers:
+      - name: camunda
+        image: camunda/camunda-bpm-platform:latest
+        ports:
+        - name: camunda
+          containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: camunda
+  labels:
+    app: camunda
+    oda.tmforum.org/componentName: vodafone-productcatalog
+spec:
+  ports:
+  - port: 8080
+    targetPort: camunda
+    name: camunda
+  type: NodePort
+  selector:
+    app: camunda
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mongo-tmf-pv-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: camunda-pv-claim
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi

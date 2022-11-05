@@ -1,0 +1,156 @@
+@startuml
+set namespaceSeparator none
+class "tosca.capabilities.Node" << (C,green) >> #DDDDDD
+"tosca.capabilities.Node" <|-- "run_oda_component"
+class "run_oda_component" << (C,green) >> {
+}
+"run_oda_component" <|-- "run_oda_component_on_emulator"
+class "run_oda_component_on_emulator" << (C,green) >> {
+}
+class "tosca.capabilities.Node" << (C,green) >> #DDDDDD
+"tosca.capabilities.Node" <|-- "TMFAPI"
+class "TMFAPI" << (C,green) >> {
+.. properties ..
++<b>id : string
++<b>name : string
+}
+"TMFAPI" <|-- "TMF632"
+class "TMF632" << (C,green) >> {
+.. properties ..
++<b>id = TMF632
++<b>name = party
+}
+class "tosca.relationships.DependsOn" << (R,green) >> #DDDDDD
+"tosca.relationships.DependsOn" <|-- "oda_component_depends_on_TMF_API"
+class "oda_component_depends_on_TMF_API" << (R,green) >> {
+.. attributes ..
++<b>api_provider_sap : string
+}
+"oda_component_depends_on_TMF_API" ..> "TMFAPI" : valid_target_types
+class "tosca.relationships.DependsOn" << (R,green) >> #DDDDDD
+"tosca.relationships.DependsOn" <|-- "running_on_emulator"
+class "running_on_emulator" << (R,green) >> {
+}
+class "tosca.nodes.Root" << (N,green) >> #DDDDDD
+"tosca.nodes.Root" <|-- "oda_platform"
+class "oda_platform" << (N,green) >> {
+}
+"oda_platform" <|-- "oda_platform_canvas"
+class "oda_platform_canvas" << (N,green) >> {
+}
+"oda_platform" <|-- "oda_platform_emulator"
+class "oda_platform_emulator" << (N,green) >> {
+.. properties ..
++<b>emulator_directory : string = /home/jordanpm/Workspace/tosca/em_dir
++create_fresh : boolean
+.. capabilities ..
++feature
+ type : run_oda_component_on_emulator[1..*]
+}
+"run_oda_component_on_emulator" "1..*" -* "oda_platform_emulator" : feature
+class "tosca.nodes.Root" << (N,green) >> #DDDDDD
+"tosca.nodes.Root" <|-- "oda_component"
+class "oda_component" << (N,green) >> {
+.. attributes ..
++<b>state : string
+.. properties ..
++<b>component_class_name : string
++component_class_short_name : string
++component_class_ID : string
++<b>node_instance_name : string
++<b>definition_file : string
+}
+"oda_component" <|-- "product_catalog"
+class "product_catalog" << (N,green) >> {
+.. properties ..
++<b>component_class_name = product_catalog
++<b>component_class_ID = TMFC001
+.. capabilities ..
++TMF632_capability
+ type : TMF632[1..*]
+}
+"TMF632" "1..*" -* "product_catalog" : TMF632_capability
+"oda_component" <|-- "ocs"
+class "ocs" << (N,green) >> {
+.. properties ..
++<b>component_class_name = ocs
++<b>component_class_ID = TMFC002
+.. requirements ..
++<b>TMF632_requirement
+ capability : TMF632[1]
+ relationship : oda_component_depends_on_TMF_API
+ node : product_catalog
+}
+"ocs" *- "1" "TMF632" : TMF632_requirement
+"ocs" ..> "oda_component_depends_on_TMF_API" : TMF632_requirement.relationship
+"ocs" ..> "product_catalog" : TMF632_requirement.node
+"ocs" <|-- "sigscale_ocs"
+class "sigscale_ocs" << (N,green) >> {
+.. properties ..
++<b>definition_file = /home/jordanpm/Workspace/tosca/profiles/org/tmforum/1.0/artifacts/component_emulator/sigscale-ocs.component.yaml
+.. requirements ..
++<b>dependency
+ capability : tosca.capabilities.Node[1]
+ relationship : running_on_emulator
+ node : oda_platform_emulator
++<b>TMF632_requirement
+ capability : TMF632[1]
+ relationship : oda_component_depends_on_TMF_API
+}
+class "tosca.capabilities.Node" << (C,green) >> #DDDDDD
+"sigscale_ocs" *- "1" "tosca.capabilities.Node" : dependency
+"sigscale_ocs" ..> "running_on_emulator" : dependency.relationship
+"sigscale_ocs" ..> "oda_platform_emulator" : dependency.node
+"sigscale_ocs" *- "1" "TMF632" : TMF632_requirement
+"sigscale_ocs" ..> "oda_component_depends_on_TMF_API" : TMF632_requirement.relationship
+"product_catalog" <|-- "vodaphone_product_catalog"
+class "vodaphone_product_catalog" << (N,green) >> {
+.. properties ..
++<b>definition_file = /home/jordanpm/Workspace/tosca/profiles/org/tmforum/1.0/artifacts/component_emulator/vodafone-BOS-productCatalog.component.yaml
+.. requirements ..
++<b>dependency
+ capability : tosca.capabilities.Node[1]
+ relationship : running_on_emulator
+ node : oda_platform_emulator
+}
+class "tosca.capabilities.Node" << (C,green) >> #DDDDDD
+"vodaphone_product_catalog" *- "1" "tosca.capabilities.Node" : dependency
+"vodaphone_product_catalog" ..> "running_on_emulator" : dependency.relationship
+"vodaphone_product_catalog" ..> "oda_platform_emulator" : dependency.node
+"oda_component" <|-- "oda_component_emulator"
+class "oda_component_emulator" << (N,green) >> {
+.. requirements ..
++<b>dependency
+ capability : tosca.capabilities.Node[1]
+ relationship : running_on_emulator
+ node : oda_platform_emulator
+}
+class "tosca.capabilities.Node" << (C,green) >> #DDDDDD
+"oda_component_emulator" *- "1" "tosca.capabilities.Node" : dependency
+"oda_component_emulator" ..> "running_on_emulator" : dependency.relationship
+"oda_component_emulator" ..> "oda_platform_emulator" : dependency.node
+class "tosca.nodes.Root" << (N,green) >> #DDDDDD
+"tosca.nodes.Root" <|-- "oda_component_canvas"
+class "oda_component_canvas" << (N,green) >> {
+.. attributes ..
++<b>state : string
+.. properties ..
++<b>definition_file : string
++<b>name : string
+.. requirements ..
++<b>dependency
+ capability : tosca.capabilities.Node[1]
+ node : oda_platform_canvas
+}
+class "tosca.capabilities.Node" << (C,green) >> #DDDDDD
+"oda_component_canvas" *- "1" "tosca.capabilities.Node" : dependency
+"oda_component_canvas" ..> "oda_platform_canvas" : dependency.node
+"oda_platform" <|-- "linuxfile"
+class "linuxfile" << (N,green) >> {
+.. attributes ..
++<b>mtime : string
+.. properties ..
++<b>path : string
++<b>content : string
+}
+@enduml

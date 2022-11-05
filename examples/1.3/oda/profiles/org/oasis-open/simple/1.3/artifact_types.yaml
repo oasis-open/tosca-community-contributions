@@ -1,0 +1,79 @@
+##########################################################################
+# The content of this file reflects TOSCA Simple Profile in YAML
+# version 1.3.0. It describes the definition for TOSCA normative
+# artifact types.
+##########################################################################
+
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+  template_name: artifacttypes.yaml
+  template_author: Oasis Open
+  template_version: 1.3
+ 
+description: >
+  TOSCA Simple Profile Version 1.3 normative artifact types
+
+artifact_types:
+
+  tosca.artifacts.Root:
+    description: >
+      The TOSCA base artifact type from which all other normative
+      TOSCA artifact types derive.
+
+  tosca.artifacts.File:
+    description: >-
+      The File artifact type is used when an artifact definition needs
+      to have its associated file simply treated as a file without any
+      special handling.
+    short_name: File
+    derived_from: tosca.artifacts.Root
+
+  tosca.artifacts.Deployment:
+    description: >-
+      The Deployment artifact type represents a binary packaging of an
+      application or service that is used to install/create or deploy
+      it as part of a node’s lifecycle.
+    derived_from: tosca.artifacts.Root
+
+  tosca.artifacts.Deployment.Image:
+    description: >-
+      The Deployment.Image artifact type represents any “image” that
+      is an opaque packaging of a TOSCA Node whose contents are
+      already installed and pre-configured (i.e., “stateful”) and
+      prepared to be run on a known target container.
+    short_name: Deployment.Image
+    derived_from: tosca.artifacts.Deployment
+
+
+  tosca.artifacts.Deployment.Image.VM:
+    description: >-
+      The VM artifact type represents all Virtual Machine (VM) image
+      and container formatted deployment artifacts.
+    short_name: Deployment.Image.VM
+    derived_from: tosca.artifacts.Deployment.Image
+
+  tosca.artifacts.Implementation:
+    description: >-
+      The Implementation artifact type represents artifacts that are
+      used to implement operations of TOSCA interfaces either directly
+      (e.g., scripts) or indirectly (e.g., config. files).
+    derived_from: tosca.artifacts.Root
+
+
+  tosca.artifacts.Implementation.Bash:
+    description: >
+      Script artifact for the Unix Bash shell. 
+    short_name: Bash
+    derived_from: tosca.artifacts.Implementation
+    mime_type: application/x-sh
+    file_ext: [ sh ]
+
+
+  tosca.artifacts.Implementation.Python:
+    description: >
+      Artifact for the interpreted Python language.
+    short_name: Python
+    derived_from: tosca.artifacts.Implementation
+    mime_type: application/x-python
+    file_ext: [ py ]

@@ -1,0 +1,159 @@
+apiVersion: oda.tmforum.org/v1alpha1
+kind: component
+metadata:
+  name: sigscale-ocs
+  labels:
+    oda.tmforum.org/componentName: sigscale-ocs
+spec:
+  type: ocs
+  selector:
+    matchLabels:
+     oda.tmforum.org/componentName: sigscale-ocs
+  componentKinds:
+    - group: core
+      kind: Service
+    - group: apps
+      kind: Deployment  
+  version: "1.0.0"
+  description: "SigScale Online Charging System (OCS)" 
+  maintainers:
+    - name: SigScale
+      email: support@sigscale.com
+  owners:
+    - name: SigScale
+      email:  support@sigscale.com 
+  coreFunction:
+    exposedAPIs:
+    - name: serviceCatalog
+      specification: https://github.com/tmforum/TMFAPISWAGGER/blob/develop/serviceCatalogManagement/v2/swagger2.json
+      implementation: sigscale-ocs-service
+      path: /serviceCatalogManagement/v2/
+      port: 8080
+    - name: resourceCatalog
+      specification:
+      implementation: sigscale-ocs-service
+      path: /resourceCatalogManagement/v2/
+      port: 8080
+    - name: resourceInventory
+      specification: https://github.com/tmforum/TMFAPISWAGGER/blob/develop/resourceInventoryManagement/v3/swagger2.json
+      implementation: sigscale-ocs-service
+      path: /resourceInventoryManagement/v1/
+      port: 8080
+    - name: productInventory
+      specification: https://github.com/tmforum/TMFAPISWAGGER/blob/develop/productInventory/v2/swagger2.json
+      implementation: sigscale-ocs-service
+      path: /productInventoryManagement/v2/
+      port: 8080
+    - name: serviceInventory
+      specification:
+      implementation: sigscale-ocs-service
+      path: /serviceInventoryManagement/v2/
+      port: 8080
+    - name: usage
+      specification: https://github.com/tmforum/TMFAPISWAGGER/blob/develop/usageManagement/v2/swagger2.json
+      implementation: sigscale-ocs-service
+      path: /usageManagement/v1/
+      port: 8080
+    - name: balance
+      specification:
+      implementation: sigscale-ocs-service
+      path: /balanceManagement/v1/
+      port: 8080
+    dependantAPIs:  
+    - name: TMF620
+      specification: https://open-api.tmforum.org/TMF620-ProductCatalog-v4.0.0.swagger.json
+      ref: next-prodcatui.env.PRODUCTCATALOG_API_URL
+  eventNotification:
+    publishedEvents: []
+    subscribedEvents: []
+  management: []
+  security:
+    securitySchemes:
+      bearerAuth:
+        type: http
+        scheme: bearer
+        bearerFormat: JWT    
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sigscale-ocs
+  labels:
+    app.kubernetes.io/name: ocs
+    app: sigscale-ocs
+    oda.tmforum.org/componentName: sigscale-ocs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ocs
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ocs
+        app.kubernetes.io/component: 3gpp-ocf
+        app.kubernetes.io/component: rest
+        app: sigscale-ocs
+    spec:
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+      - name: ocs-install
+        image: sigscale/ocs
+        command:
+        - sh
+        - bin/initialize
+        stdin: true
+        tty: true
+        volumeMounts:
+        - mountPath: /home/otp/db
+          name: db
+      containers:
+      - name: ocs
+        image: sigscale/ocs
+        ports:
+        - name: diameter
+          protocol: TCP
+          containerPort: 3868
+        - name: radius
+          protocol: UDP
+          containerPort: 1812
+        - name: radius-acct
+          protocol: UDP
+          containerPort: 1813
+        - name: http
+          protocol: TCP
+          containerPort: 8080
+        volumeMounts:
+        - mountPath: /home/otp/db
+          name: db
+      volumes:
+      - name: db
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sigscale-ocs-service
+  labels:
+    app: sigscale-ocs
+    oda.tmforum.org/componentName: sigscale-ocs
+spec:
+  ports:
+  - port: 8080
+    targetPort: http
+    name: sigscale-ocs-service
+  type: LoadBalancer
+  selector:
+    app: sigscale-ocs
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ocs-data
+spec:
+  resources:
+    requests:
+      storage: 20Gi
+  accessModes:
+  - ReadWriteOnce

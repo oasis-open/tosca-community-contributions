@@ -1,0 +1,109 @@
+@startuml
+hide empty description
+skinparam shadowing false
+skinparam state {
+  ArrowColor blue
+  BorderColor blue
+  EndColor black
+  StartColor green
+  BackGroundColor<< step >> white
+  BorderColor<< step >> black
+  BackGroundColor<< delegate >> lightgrey
+  BackGroundColor<< set_state >> white
+  BackGroundColor<< call_operation >> lightblue
+  BackGroundColor<< inline >> white
+}
+skinparam ActivityBarColor<<fork>> DarkGreen
+skinparam ActivityBarColor<<join>> DarkOrange
+
+state "create_my_platform" as step_parallel_deploy_create_my_platform << step >> {
+  state "my_platform creating" as step_parallel_deploy_create_my_platform_my_platform_creating << set_state >>
+  state "my_platform Standard.create" as step_parallel_deploy_create_my_platform_my_platform_Standard.create << call_operation >>
+  state "my_platform created" as step_parallel_deploy_create_my_platform_my_platform_created << set_state >>
+  step_parallel_deploy_create_my_platform_my_platform_creating --> step_parallel_deploy_create_my_platform_my_platform_Standard.create
+  step_parallel_deploy_create_my_platform_my_platform_Standard.create --> step_parallel_deploy_create_my_platform_my_platform_created
+}
+state "pre_configure_my_platform" as step_parallel_deploy_pre_configure_my_platform << step >> {
+  state "my_platform configuring" as step_parallel_deploy_pre_configure_my_platform_my_platform_configuring << set_state >>
+}
+state "configure_my_platform" as step_parallel_deploy_configure_my_platform << step >> {
+  state "my_platform Standard.configure" as step_parallel_deploy_configure_my_platform_my_platform_Standard.configure << call_operation >>
+}
+state "post_configure_my_platform" as step_parallel_deploy_post_configure_my_platform << step >> {
+  state "my_platform configured" as step_parallel_deploy_post_configure_my_platform_my_platform_configured << set_state >>
+}
+state "start_my_platform" as step_parallel_deploy_start_my_platform << step >> {
+  state "my_platform starting" as step_parallel_deploy_start_my_platform_my_platform_starting << set_state >>
+  state "my_platform Standard.start" as step_parallel_deploy_start_my_platform_my_platform_Standard.start << call_operation >>
+  state "my_platform started" as step_parallel_deploy_start_my_platform_my_platform_started << set_state >>
+  step_parallel_deploy_start_my_platform_my_platform_starting --> step_parallel_deploy_start_my_platform_my_platform_Standard.start
+  step_parallel_deploy_start_my_platform_my_platform_Standard.start --> step_parallel_deploy_start_my_platform_my_platform_started
+}
+state "create_my_sigscale_ocs" as step_parallel_deploy_create_my_sigscale_ocs << step >> {
+  state "my_sigscale_ocs creating" as step_parallel_deploy_create_my_sigscale_ocs_my_sigscale_ocs_creating << set_state >>
+  state "my_sigscale_ocs Standard.create" as step_parallel_deploy_create_my_sigscale_ocs_my_sigscale_ocs_Standard.create << call_operation >>
+  state "my_sigscale_ocs created" as step_parallel_deploy_create_my_sigscale_ocs_my_sigscale_ocs_created << set_state >>
+  step_parallel_deploy_create_my_sigscale_ocs_my_sigscale_ocs_creating --> step_parallel_deploy_create_my_sigscale_ocs_my_sigscale_ocs_Standard.create
+  step_parallel_deploy_create_my_sigscale_ocs_my_sigscale_ocs_Standard.create --> step_parallel_deploy_create_my_sigscale_ocs_my_sigscale_ocs_created
+}
+state "pre_configure_my_sigscale_ocs" as step_parallel_deploy_pre_configure_my_sigscale_ocs << step >> {
+  state "my_sigscale_ocs configuring" as step_parallel_deploy_pre_configure_my_sigscale_ocs_my_sigscale_ocs_configuring << set_state >>
+}
+state "configure_my_sigscale_ocs" as step_parallel_deploy_configure_my_sigscale_ocs << step >> {
+  state "my_sigscale_ocs Standard.configure" as step_parallel_deploy_configure_my_sigscale_ocs_my_sigscale_ocs_Standard.configure << call_operation >>
+}
+state "post_configure_my_sigscale_ocs" as step_parallel_deploy_post_configure_my_sigscale_ocs << step >> {
+  state "my_sigscale_ocs configured" as step_parallel_deploy_post_configure_my_sigscale_ocs_my_sigscale_ocs_configured << set_state >>
+}
+state "start_my_sigscale_ocs" as step_parallel_deploy_start_my_sigscale_ocs << step >> {
+  state "my_sigscale_ocs starting" as step_parallel_deploy_start_my_sigscale_ocs_my_sigscale_ocs_starting << set_state >>
+  state "my_sigscale_ocs Standard.start" as step_parallel_deploy_start_my_sigscale_ocs_my_sigscale_ocs_Standard.start << call_operation >>
+  state "my_sigscale_ocs started" as step_parallel_deploy_start_my_sigscale_ocs_my_sigscale_ocs_started << set_state >>
+  step_parallel_deploy_start_my_sigscale_ocs_my_sigscale_ocs_starting --> step_parallel_deploy_start_my_sigscale_ocs_my_sigscale_ocs_Standard.start
+  step_parallel_deploy_start_my_sigscale_ocs_my_sigscale_ocs_Standard.start --> step_parallel_deploy_start_my_sigscale_ocs_my_sigscale_ocs_started
+}
+state "create_my_vodaphone_product_catalog" as step_parallel_deploy_create_my_vodaphone_product_catalog << step >> {
+  state "my_vodaphone_product_catalog creating" as step_parallel_deploy_create_my_vodaphone_product_catalog_my_vodaphone_product_catalog_creating << set_state >>
+  state "my_vodaphone_product_catalog Standard.create" as step_parallel_deploy_create_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.create << call_operation >>
+  state "my_vodaphone_product_catalog created" as step_parallel_deploy_create_my_vodaphone_product_catalog_my_vodaphone_product_catalog_created << set_state >>
+  step_parallel_deploy_create_my_vodaphone_product_catalog_my_vodaphone_product_catalog_creating --> step_parallel_deploy_create_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.create
+  step_parallel_deploy_create_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.create --> step_parallel_deploy_create_my_vodaphone_product_catalog_my_vodaphone_product_catalog_created
+}
+state "pre_configure_my_vodaphone_product_catalog" as step_parallel_deploy_pre_configure_my_vodaphone_product_catalog << step >> {
+  state "my_vodaphone_product_catalog configuring" as step_parallel_deploy_pre_configure_my_vodaphone_product_catalog_my_vodaphone_product_catalog_configuring << set_state >>
+}
+state "configure_my_vodaphone_product_catalog" as step_parallel_deploy_configure_my_vodaphone_product_catalog << step >> {
+  state "my_vodaphone_product_catalog Standard.configure" as step_parallel_deploy_configure_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.configure << call_operation >>
+}
+state "post_configure_my_vodaphone_product_catalog" as step_parallel_deploy_post_configure_my_vodaphone_product_catalog << step >> {
+  state "my_vodaphone_product_catalog configured" as step_parallel_deploy_post_configure_my_vodaphone_product_catalog_my_vodaphone_product_catalog_configured << set_state >>
+}
+state "start_my_vodaphone_product_catalog" as step_parallel_deploy_start_my_vodaphone_product_catalog << step >> {
+  state "my_vodaphone_product_catalog starting" as step_parallel_deploy_start_my_vodaphone_product_catalog_my_vodaphone_product_catalog_starting << set_state >>
+  state "my_vodaphone_product_catalog Standard.start" as step_parallel_deploy_start_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.start << call_operation >>
+  state "my_vodaphone_product_catalog started" as step_parallel_deploy_start_my_vodaphone_product_catalog_my_vodaphone_product_catalog_started << set_state >>
+  step_parallel_deploy_start_my_vodaphone_product_catalog_my_vodaphone_product_catalog_starting --> step_parallel_deploy_start_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.start
+  step_parallel_deploy_start_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.start --> step_parallel_deploy_start_my_vodaphone_product_catalog_my_vodaphone_product_catalog_started
+}
+  state step_parallel_deploy_create_my_sigscale_ocs_join <<join>>
+  step_parallel_deploy_create_my_sigscale_ocs_join --> step_parallel_deploy_create_my_sigscale_ocs
+step_parallel_deploy_create_my_platform --> step_parallel_deploy_pre_configure_my_platform
+step_parallel_deploy_pre_configure_my_platform --> step_parallel_deploy_configure_my_platform
+step_parallel_deploy_configure_my_platform --> step_parallel_deploy_post_configure_my_platform
+step_parallel_deploy_post_configure_my_platform --> step_parallel_deploy_start_my_platform
+state step_parallel_deploy_start_my_platform_fork <<fork>>
+step_parallel_deploy_start_my_platform --> step_parallel_deploy_start_my_platform_fork
+step_parallel_deploy_start_my_platform_fork --> step_parallel_deploy_create_my_sigscale_ocs_join
+step_parallel_deploy_start_my_platform_fork --> step_parallel_deploy_create_my_vodaphone_product_catalog
+step_parallel_deploy_create_my_sigscale_ocs --> step_parallel_deploy_pre_configure_my_sigscale_ocs
+step_parallel_deploy_pre_configure_my_sigscale_ocs --> step_parallel_deploy_configure_my_sigscale_ocs
+step_parallel_deploy_configure_my_sigscale_ocs --> step_parallel_deploy_post_configure_my_sigscale_ocs
+step_parallel_deploy_post_configure_my_sigscale_ocs --> step_parallel_deploy_start_my_sigscale_ocs
+step_parallel_deploy_create_my_vodaphone_product_catalog --> step_parallel_deploy_pre_configure_my_vodaphone_product_catalog
+step_parallel_deploy_pre_configure_my_vodaphone_product_catalog --> step_parallel_deploy_configure_my_vodaphone_product_catalog
+step_parallel_deploy_configure_my_vodaphone_product_catalog --> step_parallel_deploy_post_configure_my_vodaphone_product_catalog
+step_parallel_deploy_post_configure_my_vodaphone_product_catalog --> step_parallel_deploy_start_my_vodaphone_product_catalog
+step_parallel_deploy_start_my_vodaphone_product_catalog --> step_parallel_deploy_create_my_sigscale_ocs_join
+[*] --> step_parallel_deploy_create_my_platform
+step_parallel_deploy_start_my_sigscale_ocs --> [*]
+@enduml

@@ -1,0 +1,710 @@
+description: Abstract template (no deployable nodes) used to reproduce diagram in
+  https://projects.tmforum.org/wiki/display/TAC/Components+Interactions+in+Core+Commerce+Management
+imports:
+- file: org.tmforum:1.0
+  namespace_prefix: tmforum
+node_types:
+  TMFC002_c648_c663_r679:
+    capabilities:
+      TMF648_capability:
+        type: tmforum:TMF648
+      TMF663_capability:
+        type: tmforum:TMF663
+    derived_from: tmforum:TMFC002
+    description: Adds the optional capabilities of TMF622 and TMF663 to the mandatory
+      capabilities defined in the tmforum profile
+    requirements:
+      TMF679_requirement:
+        capability: tmforum:TMF679
+        relationship:
+          type: tmforum:oda_component_depends_on_TMF_API
+  TMFC027_r622:
+    derived_from: tmforum:TMFC027
+    description: Add the optional requirement on TMF622
+    requirements:
+      TMF622_requirement:
+        capability: tmforum:TMF622
+        relationship:
+          type: tmforum:oda_component_depends_on_TMF_API
+topology_template:
+  node_templates:
+    Cpq:
+      properties:
+        definition_file: /dev/null
+        node_instance_name: Cpq
+      requirements:
+      - TMF620_requirement:
+          node: PrdCtgMgmt
+      - TMF637_requirement:
+          node: PI
+      - TMF645_requirement:
+          node: Dummy
+      - TMF648_requirement:
+          node: PrdOrdCptVd
+      - TMF663_requirement:
+          node: PrdOrdCptVd
+      - TMF622_requirement: PrdOrdCptVd
+      type: TMFC027_r622
+    Dummy:
+      description: Dummy node to terminate Mandatory API TMF645 which is not shown
+        on the diagram
+      properties:
+        definition_file: /dev/null
+        node_instance_name: Dummy
+      type: tmforum:TMFC999
+    PI:
+      properties:
+        definition_file: /dev/null
+        node_instance_name: PI
+      type: tmforum:TMFC005
+    Poom:
+      properties:
+        definition_file: /dev/null
+        node_instance_name: Poom
+      requirements:
+      - TMF620_requirement:
+          node: PrdCtgMgmt
+      - TMF622_requirement:
+          node: PrdOrdCptVd
+      - TMF637_requirement:
+          node: PI
+      type: tmforum:TMFC003
+    PrdCtgMgmt:
+      properties:
+        definition_file: /dev/null
+        node_instance_name: PrdCtgMgmt
+      type: tmforum:TMFC001
+    PrdOrdCptVd:
+      properties:
+        definition_file: /dev/null
+        node_instance_name: PrdOrdCptVd
+      requirements:
+      - TMF620_requirement:
+          node: PrdCtgMgmt
+      - TMF637_requirement:
+          node: PI
+      - TMF679_requirement:
+          node: Cpq
+      type: TMFC002_c648_c663_r679
+  workflows:
+    declarative_deploy:
+      description: Deployment declarative workflow
+      steps:
+        configure_Cpq:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_Cpq
+          target: Cpq
+        configure_Dummy:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_Dummy
+          target: Dummy
+        configure_PI:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_PI
+          target: PI
+        configure_Poom:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_Poom
+          target: Poom
+        configure_PrdCtgMgmt:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_PrdCtgMgmt
+          target: PrdCtgMgmt
+        configure_PrdOrdCptVd:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_PrdOrdCptVd
+          target: PrdOrdCptVd
+        create_Cpq:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_Cpq
+          target: Cpq
+        create_Dummy:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_Dummy
+          target: Dummy
+        create_PI:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_PI
+          target: PI
+        create_Poom:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_Poom
+          target: Poom
+        create_PrdCtgMgmt:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_PrdCtgMgmt
+          target: PrdCtgMgmt
+        create_PrdOrdCptVd:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_PrdOrdCptVd
+          target: PrdOrdCptVd
+        post_configure_Cpq:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_Cpq
+          target: Cpq
+        post_configure_Dummy:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_Dummy
+          target: Dummy
+        post_configure_PI:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_PI
+          target: PI
+        post_configure_Poom:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_Poom
+          target: Poom
+        post_configure_PrdCtgMgmt:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_PrdCtgMgmt
+          target: PrdCtgMgmt
+        post_configure_PrdOrdCptVd:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_PrdOrdCptVd
+          target: PrdOrdCptVd
+        pre_configure_Cpq:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_Cpq
+          target: Cpq
+        pre_configure_Dummy:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_Dummy
+          target: Dummy
+        pre_configure_PI:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_PI
+          target: PI
+        pre_configure_Poom:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_Poom
+          target: Poom
+        pre_configure_PrdCtgMgmt:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_PrdCtgMgmt
+          target: PrdCtgMgmt
+        pre_configure_PrdOrdCptVd:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_PrdOrdCptVd
+          target: PrdOrdCptVd
+        start_Cpq:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_PrdOrdCptVd
+          target: Cpq
+        start_Dummy:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_Cpq
+          target: Dummy
+        start_PI:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_PrdOrdCptVd
+          - create_Poom
+          - create_Cpq
+          target: PI
+        start_Poom:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          target: Poom
+        start_PrdCtgMgmt:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_PrdOrdCptVd
+          - create_Poom
+          - create_Cpq
+          target: PrdCtgMgmt
+        start_PrdOrdCptVd:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_Poom
+          - create_Cpq
+          target: PrdOrdCptVd
+    declarative_undeploy:
+      description: Undeployment declarative workflow
+      steps:
+        delete_Cpq:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          on_success:
+          - stop_PrdCtgMgmt
+          - stop_PI
+          - stop_Dummy
+          - stop_PrdOrdCptVd
+          target: Cpq
+        delete_Dummy:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          target: Dummy
+        delete_PI:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          target: PI
+        delete_Poom:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          on_success:
+          - stop_PrdCtgMgmt
+          - stop_PrdOrdCptVd
+          - stop_PI
+          target: Poom
+        delete_PrdCtgMgmt:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          target: PrdCtgMgmt
+        delete_PrdOrdCptVd:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          on_success:
+          - stop_PrdCtgMgmt
+          - stop_PI
+          - stop_Cpq
+          target: PrdOrdCptVd
+        stop_Cpq:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_Cpq
+          target: Cpq
+        stop_Dummy:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_Dummy
+          target: Dummy
+        stop_PI:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_PI
+          target: PI
+        stop_Poom:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_Poom
+          target: Poom
+        stop_PrdCtgMgmt:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_PrdCtgMgmt
+          target: PrdCtgMgmt
+        stop_PrdOrdCptVd:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_PrdOrdCptVd
+          target: PrdOrdCptVd
+    parallel_deploy:
+      description: Parallel deployment declarative workflow
+      steps:
+        configure_Cpq:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_Cpq
+          target: Cpq
+        configure_Dummy:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_Dummy
+          target: Dummy
+        configure_PI:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_PI
+          target: PI
+        configure_Poom:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_Poom
+          target: Poom
+        configure_PrdCtgMgmt:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_PrdCtgMgmt
+          target: PrdCtgMgmt
+        configure_PrdOrdCptVd:
+          activities:
+          - call_operation: Standard.configure
+          on_success:
+          - post_configure_PrdOrdCptVd
+          target: PrdOrdCptVd
+        create_Cpq:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_Cpq
+          target: Cpq
+        create_Dummy:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_Dummy
+          target: Dummy
+        create_PI:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_PI
+          target: PI
+        create_Poom:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_Poom
+          target: Poom
+        create_PrdCtgMgmt:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_PrdCtgMgmt
+          target: PrdCtgMgmt
+        create_PrdOrdCptVd:
+          activities:
+          - set_state: creating
+          - call_operation: Standard.create
+          - set_state: created
+          on_success:
+          - pre_configure_PrdOrdCptVd
+          target: PrdOrdCptVd
+        post_configure_Cpq:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_Cpq
+          target: Cpq
+        post_configure_Dummy:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_Dummy
+          target: Dummy
+        post_configure_PI:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_PI
+          target: PI
+        post_configure_Poom:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_Poom
+          target: Poom
+        post_configure_PrdCtgMgmt:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_PrdCtgMgmt
+          target: PrdCtgMgmt
+        post_configure_PrdOrdCptVd:
+          activities:
+          - set_state: configured
+          on_success:
+          - start_PrdOrdCptVd
+          target: PrdOrdCptVd
+        pre_configure_Cpq:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_Cpq
+          target: Cpq
+        pre_configure_Dummy:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_Dummy
+          target: Dummy
+        pre_configure_PI:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_PI
+          target: PI
+        pre_configure_Poom:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_Poom
+          target: Poom
+        pre_configure_PrdCtgMgmt:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_PrdCtgMgmt
+          target: PrdCtgMgmt
+        pre_configure_PrdOrdCptVd:
+          activities:
+          - set_state: configuring
+          on_success:
+          - configure_PrdOrdCptVd
+          target: PrdOrdCptVd
+        start_Cpq:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_PrdOrdCptVd
+          target: Cpq
+        start_Dummy:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_Cpq
+          target: Dummy
+        start_PI:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_PrdOrdCptVd
+          - create_Poom
+          - create_Cpq
+          target: PI
+        start_Poom:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          target: Poom
+        start_PrdCtgMgmt:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_PrdOrdCptVd
+          - create_Poom
+          - create_Cpq
+          target: PrdCtgMgmt
+        start_PrdOrdCptVd:
+          activities:
+          - set_state: starting
+          - call_operation: Standard.start
+          - set_state: started
+          on_success:
+          - create_Poom
+          - create_Cpq
+          target: PrdOrdCptVd
+    parallel_undeploy:
+      description: Parallel undeployment declarative workflow
+      steps:
+        delete_Cpq:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          on_success:
+          - stop_PrdCtgMgmt
+          - stop_PI
+          - stop_Dummy
+          - stop_PrdOrdCptVd
+          target: Cpq
+        delete_Dummy:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          target: Dummy
+        delete_PI:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          target: PI
+        delete_Poom:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          on_success:
+          - stop_PrdCtgMgmt
+          - stop_PrdOrdCptVd
+          - stop_PI
+          target: Poom
+        delete_PrdCtgMgmt:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          target: PrdCtgMgmt
+        delete_PrdOrdCptVd:
+          activities:
+          - set_state: deleting
+          - call_operation: Standard.delete
+          - set_state: initial
+          on_success:
+          - stop_PrdCtgMgmt
+          - stop_PI
+          - stop_Cpq
+          target: PrdOrdCptVd
+        stop_Cpq:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_Cpq
+          target: Cpq
+        stop_Dummy:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_Dummy
+          target: Dummy
+        stop_PI:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_PI
+          target: PI
+        stop_Poom:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_Poom
+          target: Poom
+        stop_PrdCtgMgmt:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_PrdCtgMgmt
+          target: PrdCtgMgmt
+        stop_PrdOrdCptVd:
+          activities:
+          - set_state: stopping
+          - call_operation: Standard.stop
+          - set_state: stopped
+          on_success:
+          - delete_PrdOrdCptVd
+          target: PrdOrdCptVd
+tosca_definitions_version: tosca_simple_yaml_1_3

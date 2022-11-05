@@ -1,0 +1,110 @@
+##########################################################################
+# The content of this file reflects TOSCA Simple Profile in YAML
+# version 1.3.0. It describes the definition for TOSCA normative
+# relationship types.
+##########################################################################
+
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+  template_name: relationshiptypes.yaml
+  template_author: Oasis Open
+  template_version: 1.3.0
+ 
+description: >
+  TOSCA Simple Profile Version 1.3 normative relationship types
+
+
+relationship_types:
+
+  tosca.relationships.Root:
+    description: >
+      The TOSCA base relationship type from which all other normative
+      TOSCA relationship types derive.
+    interfaces:
+      Configure: 
+        type: tosca.interfaces.relationship.Configure
+
+
+  tosca.relationships.DependsOn:
+    description: >-
+      The DependsOn type represents a general dependency relationship
+      between two nodes.
+    derived_from: tosca.relationships.Root
+    short_name: DependsOn
+    valid_target_types: [ tosca.capabilities.Node ]
+
+
+  tosca.relationships.HostedOn:
+    description: >-
+      The HostedOn type represents a hosting relationship between two
+      nodes.
+    short_name: HostedOn
+    derived_from: tosca.relationships.Root
+    valid_target_types: [ tosca.capabilities.Container ]
+
+
+  tosca.relationships.ConnectsTo:
+    description: >-
+      The ConnectsTo type represents a network connection relationship
+      between two nodes.
+    short_name: ConnectsTo
+    derived_from: tosca.relationships.Root
+    valid_target_types: [ tosca.capabilities.Endpoint ]
+    properties:
+      credential: 
+        description: >-
+          The security credential to present to the target endpoint
+          for either authentication or authorization purposes.
+        type: Credential
+        required: false
+
+
+  tosca.relationships.AttachesTo:
+    description: >-
+      The AttachesTo type represents an attachment relationship
+      between two nodes (e.g. for attaching a storage node to a
+      Compute node).
+    short_name: AttachesTo
+    derived_from: tosca.relationships.Root
+    valid_target_types: [ tosca.capabilities.Attachment ]
+    properties:
+      location:
+        description: >-
+          The relative location (e.g., mount point on the file system)
+          that provides the root location to address the attached node.
+        type: string
+        constraints:
+          - min_length: 1
+      device:
+        description: >-
+          The logical device name for the attached device.
+        type: string
+        required: false
+
+
+  tosca.relationships.network.LinksTo:
+    description: >-
+      The LinksTo type represents an association relationship between
+      Port and Network node types.
+    short_name: LinksTo
+    derived_from: tosca.relationships.DependsOn
+    valid_target_types: [ tosca.capabilities.network.Linkable ]
+
+
+  tosca.relationships.network.BindsTo:
+    description: >-
+      The BindsTo type represents an association relationship between
+      Port and Compute node types.
+    short_name: BindsTo
+    derived_from: tosca.relationships.DependsOn
+    valid_target_types: [ tosca.capabilities.network.Bindable ]
+
+
+  tosca.relationships.RoutesTo:
+    description: >-
+      The RoutesTo type represents an intentional network routing
+      between two Endpoints in different networks.
+    short_name: RoutesTo
+    derived_from: tosca.relationships.ConnectsTo
+    valid_target_types: [ tosca.capabilities.Endpoint ]
