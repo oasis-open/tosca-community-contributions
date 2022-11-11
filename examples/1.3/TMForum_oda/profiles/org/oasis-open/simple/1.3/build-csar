@@ -1,0 +1,37 @@
+#!/bin/bash
+set -e
+
+HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
+. "$HERE/../../../scripts/_env"
+. "$ROOT/scripts/_trap"
+
+mkdir --parents "$ROOT/dist"
+
+function build () {
+	local ARCHIVE=$1
+	local WORK=$(mktemp --directory)
+
+	pushd "$HERE/.." > /dev/null
+	rsync --recursive --relative "${@:2}" "$WORK/"
+	popd > /dev/null
+
+	pushd "$ROOT/assets/tosca" > /dev/null
+	rsync --recursive --relative profiles "$WORK/"
+	popd > /dev/null
+
+	puccini-csar "$ROOT/dist/$ARCHIVE.csar" "$WORK"
+
+	#rm --recursive --force "$WORK"
+
+	m "built $ROOT/dist/$ARCHIVE.csar"
+}
+
+build org.oasis-open.simple.1.3 \
+	artifact_types.yaml \
+	group_types.yaml \
+	relationship_types.yaml \
+    capability_types.yaml \
+    interface_types.yaml \
+    policy_types.yaml \
+    data_types.yaml \
+    node_types.yaml 

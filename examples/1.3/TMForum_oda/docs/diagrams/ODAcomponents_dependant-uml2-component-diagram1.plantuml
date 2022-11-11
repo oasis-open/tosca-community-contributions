@@ -1,0 +1,17 @@
+@startuml
+skinparam componentStyle uml2
+
+component "my_platform: tmforum:oda_platform_emulator" <<node>> as node_my_platform
+
+component "my_sigscale_ocs: tmforum:sigscale_ocs" <<node>> as node_my_sigscale_ocs
+
+component "my_vodaphone_product_catalog: tmforum:vodaphone_product_catalog" <<node>> as node_my_vodaphone_product_catalog
+
+interface "feature" as node_my_platform_feature
+node_my_platform_feature -- node_my_platform
+node_my_sigscale_ocs "dependency" --( node_my_platform_feature
+interface "TMF632_capability" as node_my_vodaphone_product_catalog_TMF632_capability
+node_my_vodaphone_product_catalog_TMF632_capability -- node_my_vodaphone_product_catalog
+node_my_sigscale_ocs "TMF632_requirement" --( node_my_vodaphone_product_catalog_TMF632_capability
+node_my_vodaphone_product_catalog "dependency" --( node_my_platform_feature
+@enduml

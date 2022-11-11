@@ -1,0 +1,80 @@
+##########################################################################
+# The content of this file reflects TOSCA Simple Profile in YAML
+# version 1.3.0. It describes the definition for TOSCA normative
+# interface types.
+##########################################################################
+
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+  template_name: interfacetypes.yaml
+  template_author: Oasis Open
+  template_version: 1.3
+ 
+description: >
+  TOSCA Simple Profile Version 1.3 normative interface types
+
+interface_types:
+
+  tosca.interfaces.Root: 
+    description: >-
+      The TOSCA root Interface Type from which all other TOSCA base
+      Interface Types derive
+
+  tosca.interfaces.node.lifecycle.Standard:
+    description: >-
+      The Standard lifecycle interface defines the essential normative
+      operations that TOSCA nodes may support.
+    derived_from: tosca.interfaces.Root
+    short_name: Standard
+    operations:
+      create:
+        description: Standard lifecycle create operation.
+      configure:
+        description: Standard lifecycle configure operation.
+      start:
+        description: Standard lifecycle start operation.
+      modify:
+        description: Standard lifecycle modify operation.
+      stop:
+        description: Standard lifecycle stop operation.
+      delete:
+        description: Standard lifecycle delete operation.
+
+
+  tosca.interfaces.relationship.Configure:
+    description: >-
+      The Configure lifecycle interface defines the essential
+      normative operations that TOSCA relationships may support.
+    derived_from: tosca.interfaces.Root
+    short_name: Configure
+    operations:
+      pre_configure_source:
+        description: >-
+          Operation to pre-configure the source endpoint.
+      pre_configure_target:
+        description: >-
+          Operation to pre-configure the target endpoint.
+      post_configure_source:
+        description: >-
+          Operation to post-configure the source endpoint.
+      post_configure_target:
+        description: >-
+          Operation to post-configure the target endpoint.
+      add_target:
+        description: >-
+          Operation to notify the source node of a target node being
+          added via a relationship.
+      add_source: 
+        description: >-
+          Operation to notify the target node of a source node which
+          is now available via a relationship.
+      target_changed:
+        description: >-
+          Operation to notify the source node that some property or
+          attribute of the target node changed.
+      remove_target:
+        description: >-
+          Operation to remove a target node.  
+
+

@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+  template_name: artifact.yaml
+  template_author: OASIS TOSCA TC
+  template_version: 1.3.0
+ 
+description: >-
+  OASIS TOSCA non-normative profile artifact types
+
+artifact_types:
+
+  tosca.artifacts.Deployment.Image.Container.Docker:
+    derived_from: tosca.artifacts.Deployment.Image
+    description: Docker Container Image
+
+  tosca.artifacts.Deployment.Image.VM.ISO:
+    derived_from: tosca.artifacts.Deployment.Image.VM
+    description: Virtual Machine (VM) image in ISO disk format.
+    mime_type: application/octet-stream
+    file_ext: [ iso ]
+
+  tosca.artifacts.Deployment.Image.VM.QCOW2:
+    derived_from: tosca.artifacts.Deployment.Image.VM
+    description: Virtual Machine (VM) image in QCOW v2 standard disk format.
+    mime_type: application/octet-stream
+    file_ext: [ qcow2 ]

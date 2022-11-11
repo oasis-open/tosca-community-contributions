@@ -1,0 +1,42 @@
+@startuml
+skinparam componentStyle uml2
+
+component "PrdCtgMgmt: tmforum:TMFC001" <<node>> as node_PrdCtgMgmt
+interface "TMF620_capability" as node_PrdCtgMgmt_TMF620_capability
+node_PrdCtgMgmt_TMF620_capability -- node_PrdCtgMgmt
+
+component "PrdOrdCptVd: TMFC002_c648_c663_r679" <<node>> as node_PrdOrdCptVd
+interface "TMF622_capability" as node_PrdOrdCptVd_TMF622_capability
+node_PrdOrdCptVd_TMF622_capability -- node_PrdOrdCptVd
+interface "TMF648_capability" as node_PrdOrdCptVd_TMF648_capability
+node_PrdOrdCptVd_TMF648_capability -- node_PrdOrdCptVd
+interface "TMF663_capability" as node_PrdOrdCptVd_TMF663_capability
+node_PrdOrdCptVd_TMF663_capability -- node_PrdOrdCptVd
+
+component "Poom: tmforum:TMFC003" <<node>> as node_Poom
+
+component "PI: tmforum:TMFC005" <<node>> as node_PI
+interface "TMF637_capability" as node_PI_TMF637_capability
+node_PI_TMF637_capability -- node_PI
+
+component "Cpq: TMFC027_r622" <<node>> as node_Cpq
+interface "TMF679_capability" as node_Cpq_TMF679_capability
+node_Cpq_TMF679_capability -- node_Cpq
+
+component "Dummy: tmforum:TMFC999" <<node>> as node_Dummy
+interface "TMF645_capability" as node_Dummy_TMF645_capability
+node_Dummy_TMF645_capability -- node_Dummy
+
+node_PrdOrdCptVd "TMF620_requirement" --( node_PrdCtgMgmt_TMF620_capability
+node_PrdOrdCptVd "TMF637_requirement" --( node_PI_TMF637_capability
+node_PrdOrdCptVd "TMF679_requirement" --( node_Cpq_TMF679_capability
+node_Poom "TMF620_requirement" --( node_PrdCtgMgmt_TMF620_capability
+node_Poom "TMF622_requirement" --( node_PrdOrdCptVd_TMF622_capability
+node_Poom "TMF637_requirement" --( node_PI_TMF637_capability
+node_Cpq "TMF620_requirement" --( node_PrdCtgMgmt_TMF620_capability
+node_Cpq "TMF637_requirement" --( node_PI_TMF637_capability
+node_Cpq "TMF645_requirement" --( node_Dummy_TMF645_capability
+node_Cpq "TMF648_requirement" --( node_PrdOrdCptVd_TMF648_capability
+node_Cpq "TMF663_requirement" --( node_PrdOrdCptVd_TMF663_capability
+node_Cpq "TMF622_requirement" --( node_PrdOrdCptVd_TMF622_capability
+@enduml

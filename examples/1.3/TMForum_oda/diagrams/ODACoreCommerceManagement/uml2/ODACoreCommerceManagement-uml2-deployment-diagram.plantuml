@@ -1,0 +1,23 @@
+@startuml
+skinparam componentStyle uml2
+allowmixing
+
+component "PrdCtgMgmt: tmforum:TMFC001" as node_PrdCtgMgmt
+component "PrdOrdCptVd: TMFC002_c648_c663_r679" as node_PrdOrdCptVd
+component "Poom: tmforum:TMFC003" as node_Poom
+component "PI: tmforum:TMFC005" as node_PI
+component "Cpq: TMFC027_r622" as node_Cpq
+component "Dummy: tmforum:TMFC999" as node_Dummy
+node_PrdOrdCptVd ..> node_PrdCtgMgmt : <<oda_component_depends_on_TMF_API>>
+node_PrdOrdCptVd ..> node_PI : <<oda_component_depends_on_TMF_API>>
+node_PrdOrdCptVd ..> node_Cpq : <<tmforum:oda_component_depends_on_TMF_API>>
+node_Poom ..> node_PrdCtgMgmt : <<oda_component_depends_on_TMF_API>>
+node_Poom ..> node_PrdOrdCptVd : <<oda_component_depends_on_TMF_API>>
+node_Poom ..> node_PI : <<oda_component_depends_on_TMF_API>>
+node_Cpq ..> node_PrdCtgMgmt : <<oda_component_depends_on_TMF_API>>
+node_Cpq ..> node_PI : <<oda_component_depends_on_TMF_API>>
+node_Cpq ..> node_Dummy : <<oda_component_depends_on_TMF_API>>
+node_Cpq ..> node_PrdOrdCptVd : <<oda_component_depends_on_TMF_API>>
+node_Cpq ..> node_PrdOrdCptVd : <<oda_component_depends_on_TMF_API>>
+node_Cpq ..> node_PrdOrdCptVd : <<tmforum:oda_component_depends_on_TMF_API>>
+@enduml

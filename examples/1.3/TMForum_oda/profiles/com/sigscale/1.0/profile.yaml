@@ -1,0 +1,74 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+namespace: com.sigscale:1.0
+
+description: Profile Type Definitions for items created by Sigscale in TMForum ODA. Integration into TOSCA by Paul Jordan
+
+
+imports:
+  # Include TOSCA representing TMForum ODA concepts
+  - file: org.tmforum:1.0
+    namespace_prefix: tmforum
+
+node_types:
+  sigscale_ocs:
+    derived_from: tmforum:ocs
+    properties:
+      definition_file: /home/jordanpm/Workspace/tosca/profiles/com/sigscale/1.0/artifacts/sigscale-ocs.component.yaml
+    requirements:
+      - platform:
+          node: tmforum:oda_sailcloth
+          relationship: tmforum:running_on_sailcloth
+          # Version 1.3 requires a capability declaration here but it doesn't do much
+          capability: tosca.capabilities.Node
+      - TMF620_requirement:
+          # This is a refinement of an existing requirement. The refinement adds a further input value
+          capability: tmforum:TMF620
+          relationship:
+            type: tmforum:oda_component_depends_on_TMF_API
+            interfaces:
+              Configure:
+                operations:
+                  pre_configure_source:
+                    inputs:
+                      oda_component_api_connection_source:
+                        type: string
+                        value: { get_property: [ SOURCE, node_instance_name ] }
+                      oda_component_api_connection_target: 
+                        type: string
+                        value: { get_property: [ TARGET, node_instance_name  ] }
+                      oda_api_connection_name: 
+                        type: string
+                        description: This value must be equal to the name of the capability to which this interface relates. TODO record that it can't be collected from the capability properties because of short commings in the TOSCA 1.3 syntax
+                        value: "TMF620"
+                      # Note that the value sailcloth_directory comes from the platform on which we have a dependency 
+                      sailcloth_directory: 
+                        type: string
+                        value: { get_property: [ SOURCE, platform, sailcloth_directory ] }
+                    outputs:
+                      oda_component_sap: [ SELF, api_provider_sap ] 
+                    implementation:
+                      # The artifacts referenced below are published by TMForum in profiles at org/tmforum/1.0/artifacts
+                      # But they must be included in the csar for this profile. 
+                      # One way to do this is for the csar create script to cp -r ../../../org/tmforum/1.0/artifacts/connection_sailcloth to com/sigscale/1.0/artifacts/connection_sailcloth
+                      # before the csar is created
+                      primary: artifacts/connection_sailcloth/add_target.py
+          # TODO Don't really want to declare a node type here as the node will provided by the CSP in the topology template
+          # see https://github.com/oasis-open/tosca-community-contributions/issues/86
+          node: tmforum:TMFC001
+    interfaces:
+      Standard:
+        create:
+          inputs:
+            oda_component_sailcloth:
+              type: string
+              value: { get_property: [ SELF, platform, sailcloth_directory] }
+          implementation:
+            # The artifacts referenced below are published by TMForum in profiles at org/tmforum/1.0/artifacts
+            # But they must be included in the casr for this profile. 
+            # One way to do this is for the csar create script to cp -r ../../../org/tmforum/1.0/artifacts/component_sailcloth/ to com/sigscale/1.0/artifacts/component_sailcloth 
+            # before the csar is created
+            primary: artifacts/component_sailcloth/create.sh
+        delete:
+          implementation:
+            primary: artifacts/component_sailcloth/delete.sh

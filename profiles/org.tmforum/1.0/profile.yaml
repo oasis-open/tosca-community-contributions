@@ -1,0 +1,343 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+namespace: org.tmforum:1.0
+
+description: Profile Type Definitions for TMForum ODA by Paul Jordan
+#For example usage see https://github.com/oasis-open/tosca-community-contributions/tree/master/examples/TMForum_oda
+#Note To get this to parse with puccini and 'Cloudnet TOSCA toolbox' comment out interfaces becuase they use a v2 syntax
+
+# Include some other YAML files
+imports:
+  # Include all the APIs which TMF defines, declared as TOSCA capability types
+  - apis.yaml
+
+capability_types:
+  run_oda_component:
+    description: >-
+      The capability to run ODA Components
+    derived_from: tosca.capabilities.Node
+
+  run_oda_component_on_sailcloth:
+    description: >-
+      The capability to run ODA Components
+    derived_from: run_oda_component
+
+relationship_types:
+  oda_component_depends_on_TMF_API:
+    derived_from: tosca.relationships.Root
+    description: Used to connect an ODA component which requires an API with an ODA component which has such an API
+    valid_target_types: [ TMFAPI ] # i.e. This relationship is only to be used to connect to nodes which have a capability derived from TMFAPI
+    attributes:
+      api_provider_sap:
+        description: The IP address of the server providing the API
+        type: string
+
+  running_on_sailcloth:
+    derived_from: tosca.relationships.DependsOn
+    description: Used to connect an ODA component written to run on an emulator to an emulator platform
+
+
+node_types:
+
+  oda_platform:
+    derived_from: tosca.nodes.Root
+
+  oda_platform_canvas:
+    derived_from: oda_platform
+
+  oda_sailcloth:
+    derived_from: oda_platform
+    properties:
+      sailcloth_directory:
+        type: string
+        description: >-
+          A full path name to the directory where emulator instances are stored. Must be the same for all emulated Components
+        required: True
+        default: /tmp/sailcloth
+      create_fresh:
+        type: boolean
+        description: >-
+          When true any existing content in sailcloth_directory is deleted
+        required: False
+        default: False
+    capabilities:
+      feature:
+        type: run_oda_component_on_sailcloth
+    interfaces:
+      Standard:
+        create:
+          inputs:
+            oda_sailcloth: { get_property: [ SELF, sailcloth_directory ] }
+            oda_sailcloth_fresh: { get_property: [ SELF, create_fresh ] }
+          implementation:
+            primary: artifacts/platform_sailcloth/create.sh
+
+  oda_component:
+    derived_from: tosca.nodes.Root
+    properties:
+      component_class_ID:
+        type: string
+        description: >-
+          ID of the component, e.g TMFC001.
+          Values to be taken from IG1242 ODA Component Inventory
+          The node type name must be the same value as component_class_ID
+        required: True
+      component_class_name:
+        type: string
+        description: >-
+          Name of the core function provided by this class of component. 
+          Values to be taken from IG1242 ODA Component Inventory
+        required: False
+      component_class_short_name:
+        type: string
+        description: >-
+          Short Name of the core function provided by this class of component. 
+          Values to be taken from IG1242 ODA Component Inventory
+        required: False
+        constraints:
+          - pattern: ^\S+$
+      node_instance_name:
+        type: string
+        description: Must be set to the same value as the name of the node template as used in the service template
+        required: true
+      definition_file:
+        type: string
+        description: >-
+          A full path name to an ODA component definition yaml file the class of ODA Component
+        required: True
+    attributes:
+      state:
+        type: string    
+    # requirements:
+    # Requirements are of the form below and listed in alphabetcial order
+          # - TMF620_requirement:
+          # capability: TMF620
+          # relationship:
+          #   type: oda_component_depends_on_TMF_API
+    #
+    #
+    # Exposed APIs are to be defined as capabilities using the pattern below
+    # The TMForum profile should only define mandatory exposed APIs; optional exposed APIs are to be defined in the vendor component profile 
+    # capabilities. It is likely that TOSCA v2.0 will have an optional directive which could be here so with optional APIs:
+    #   TMF632_capability:
+    #     type: TMF632
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              oda_component_instance_name: { get_property:  [SELF, node_instance_name ] }
+              oda_component_defn: { get_property: [ SELF, definition_file ]}
+          delete:
+            inputs:
+              oda_component_definition_name: { get_property: [ SELF, node_instance_name] }
+
+  TMFC001:
+    derived_from: oda_component
+    properties:
+      component_class_ID: TMFC001
+      component_class_name: TMFC001
+      component_class_short_name: TMFC001
+    capabilities:
+      TMF620_capability:
+        type: TMF620
+
+  TMFC002:
+    derived_from: oda_component
+    properties:
+      component_class_ID: TMFC002
+      component_class_name: Product Order Capture & Validation
+      component_class_short_name: PrdOrdCptVd
+    requirements:
+      - TMF620_requirement:
+          capability: TMF620
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as a node with the required capability will be allocated by the topology template designer. 
+          # But some parsers can't resolve the referenced properties on the TARGET node without knowing the node type of the node.
+          # In this use case it would be acceptable to supply the name of the parent, abstract, node type and that does does define the referenced properties but that is not allowed because that parent node type does not have the capability TMF620
+          # See https://github.com/oasis-open/tosca-community-contributions/issues/86
+          #node: TMFC001
+      - TMF637_requirement:
+          capability: TMF637
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as a node with the required capability will be allocated by the topology template designer. 
+          # But some parsers can't resolve the referenced properties on the TARGET node without knowing the node type of the node.
+          # In this use case it would be acceptable to supply the name of the parent, abstract, node type and that does does define the referenced properties but that is not allowed because that parent node type does not have the capability TMF620
+          # See https://github.com/oasis-open/tosca-community-contributions/issues/86
+          #node: TMFC005
+    capabilities:
+      TMF622_capability:
+        type: TMF622
+
+  TMFC003:
+    derived_from: oda_component
+    properties:
+      component_class_ID: TMFC003
+      component_class_name: product_order_delivery_orchestration_&_management
+      component_class_short_name: Poom
+    requirements:
+      - TMF620_requirement:
+          capability: TMF620
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as a node with the required capability will be allocated by the topology template designer. 
+          # But some parsers can't resolve the referenced properties on the TARGET node without knowing the node type of the node.
+          # In this use case it would be acceptable to supply the name of the parent, abstract, node type and that does does define the referenced properties but that is not allowed because that parent node type does not have the capability TMF620
+          # See https://github.com/oasis-open/tosca-community-contributions/issues/86
+          #node: TMFC001
+      - TMF622_requirement:
+          capability: TMF622
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as a node with the required capability will be allocated by the topology template designer. 
+          # But some parsers can't resolve the referenced properties on the TARGET node without knowing the node type of the node.
+          # In this use case it would be acceptable to supply the name of the parent, abstract, node type and that does does define the referenced properties but that is not allowed because that parent node type does not have the capability TMF620
+          # See https://github.com/oasis-open/tosca-community-contributions/issues/86          
+          #node: TMFC002
+      - TMF637_requirement:
+          capability: TMF637
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as a node with the required capability will be allocated by the topology template designer. 
+          # But some parsers can't resolve the referenced properties on the TARGET node without knowing the node type of the node.
+          # In this use case it would be acceptable to supply the name of the parent, abstract, node type and that does does define the referenced properties but that is not allowed because that parent node type does not have the capability TMF620
+          # See https://github.com/oasis-open/tosca-community-contributions/issues/86
+          #node: TMFC005
+    capabilities:
+      TMF637_capability:
+        type: TMF637
+
+  TMFC005:
+    derived_from: oda_component
+    properties:
+      component_class_ID: TMFC005
+      component_class_name: product_inventory
+      component_class_short_name: PI
+    capabilities:
+      TMF637_capability:
+        type: TMF637
+
+  TMFC027:
+    derived_from: oda_component
+    properties:
+      component_class_ID: TMFC027
+      component_class_name: Configure Price and Quote
+      component_class_short_name: Cpq
+    capabilities:
+      TMF679_capability:
+        type: TMF679
+    requirements:
+      - TMF620_requirement:
+          capability: TMF620
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as a node with the required capability will be allocated by the topology template designer. 
+          # But some parsers can't resolve the referenced properties on the TARGET node without knowing the node type of the node.
+          # In this use case it would be acceptable to supply the name of the parent, abstract, node type and that does does define the referenced properties but that is not allowed because that parent node type does not have the capability TMF620
+          # See https://github.com/oasis-open/tosca-community-contributions/issues/86
+          #node: TMFC001
+      - TMF637_requirement:
+          capability: TMF637
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as a node with the required capability will be allocated by the topology template designer. 
+          # But some parsers can't resolve the referenced properties on the TARGET node without knowing the node type of the node.
+          # In this use case it would be acceptable to supply the name of the parent, abstract, node type and that does does define the referenced properties but that is not allowed because that parent node type does not have the capability TMF620
+          # See https://github.com/oasis-open/tosca-community-contributions/issues/86
+          #node: TMFC005
+      - TMF645_requirement:
+          capability: TMF645
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as the node will provided by the CSP in the topology template
+          # But ubcity can't resolve the referenced properties on the TARGET without knowing the node type of the target.
+          # can't give the name of the parent node type which does have the property because that does not have the capability referenced here (which seems an unecessary check)
+          # May be a different outcome if this whole node type definition appeared in a topology template rather than a profile
+          #node: TMFC999
+      - TMF648_requirement:
+          capability: TMF648
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as the node will provided by the CSP in the topology template
+          # But ubcity can't resolve the referenced properties on the TARGET without knowing the node type of the target.
+          # can't give the name of the parent node type which does have the property because that does not have the capability referenced here (which seems an unecessary check)
+          # May be a different outcome if this whole node type definition appeared in a topology template rather than a profile
+          #node: TMFC999
+      - TMF663_requirement:
+          capability: TMF663
+          relationship:
+            type: oda_component_depends_on_TMF_API
+          # TODO Don't really want to declare a node type here as a node with the required capability will be allocated by the topology template designer. 
+          # But some parsers can't resolve the referenced properties on the TARGET node without knowing the node type of the node.
+          # In this use case it would be acceptable to supply the name of the parent, abstract, node type and that does does define the referenced properties but that is not allowed because that parent node type does not have the capability TMF620
+          # See https://github.com/oasis-open/tosca-community-contributions/issues/86
+          #node: TMFC999
+
+  TMFC999:
+    derived_from: oda_component
+    description: This is a dummy component and should not be deployed. It is used to terminate relationships from mandatory requirements to capabilities which are optional and thus not added to a component node type until vendor supplied component profile
+    properties:
+      component_class_ID: TMFC999
+      component_class_name: Dummy
+      component_class_short_name: dummy
+    capabilities:
+      TMF645_capability:
+        type: TMF645
+      TMF648_capability:
+        type: TMF648
+      TMF663_capability:
+        type: TMF663
+
+  ocs:
+    derived_from: oda_component
+    properties:
+      component_class_ID: TMFC999
+      component_class_name: Online Charging System
+      component_class_short_name: ocs
+    requirements:
+      - TMF620_requirement:
+          capability: TMF620
+          relationship:
+            type: oda_component_depends_on_TMF_API
+
+  linuxfile: 
+    derived_from: oda_platform
+    description: This is just for testing. 
+    properties:
+      path:
+        type: string
+        description: >-
+          A full path name to the file to be created including the file name
+        required: True
+      content:
+        type: string
+        description: >-
+          A single word to be placed in the file
+        required: True
+        constraints:
+          - pattern: ^\S+$
+    attributes:
+      mtime:
+        type: string
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              linux_file_path: { get_property: [ SELF, path] }
+              linux_file_content :  { get_property: [ SELF, content ] }
+            outputs:
+              linux_file_mtime: [ SELF, mtime]
+            implementation:
+              primary: artifacts/linuxfile/create.sh
+          delete:
+            inputs:
+              linux_file_path: { get_property: [ SELF, path] }
+            implementation:
+              primary: artifacts/linuxfile/delete.sh
+
+
+
+

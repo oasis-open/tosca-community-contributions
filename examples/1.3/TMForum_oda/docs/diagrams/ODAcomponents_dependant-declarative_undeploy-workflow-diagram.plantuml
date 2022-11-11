@@ -1,0 +1,73 @@
+@startuml
+hide empty description
+skinparam shadowing false
+skinparam state {
+  ArrowColor blue
+  BorderColor blue
+  EndColor black
+  StartColor green
+  BackGroundColor<< step >> white
+  BorderColor<< step >> black
+  BackGroundColor<< delegate >> lightgrey
+  BackGroundColor<< set_state >> white
+  BackGroundColor<< call_operation >> lightblue
+  BackGroundColor<< inline >> white
+}
+skinparam ActivityBarColor<<fork>> DarkGreen
+skinparam ActivityBarColor<<join>> DarkOrange
+
+state "stop_my_platform" as step_declarative_undeploy_stop_my_platform << step >> {
+  state "my_platform stopping" as step_declarative_undeploy_stop_my_platform_my_platform_stopping << set_state >>
+  state "my_platform Standard.stop" as step_declarative_undeploy_stop_my_platform_my_platform_Standard.stop << call_operation >>
+  state "my_platform stopped" as step_declarative_undeploy_stop_my_platform_my_platform_stopped << set_state >>
+  step_declarative_undeploy_stop_my_platform_my_platform_stopping --> step_declarative_undeploy_stop_my_platform_my_platform_Standard.stop
+  step_declarative_undeploy_stop_my_platform_my_platform_Standard.stop --> step_declarative_undeploy_stop_my_platform_my_platform_stopped
+}
+state "delete_my_platform" as step_declarative_undeploy_delete_my_platform << step >> {
+  state "my_platform deleting" as step_declarative_undeploy_delete_my_platform_my_platform_deleting << set_state >>
+  state "my_platform Standard.delete" as step_declarative_undeploy_delete_my_platform_my_platform_Standard.delete << call_operation >>
+  state "my_platform initial" as step_declarative_undeploy_delete_my_platform_my_platform_initial << set_state >>
+  step_declarative_undeploy_delete_my_platform_my_platform_deleting --> step_declarative_undeploy_delete_my_platform_my_platform_Standard.delete
+  step_declarative_undeploy_delete_my_platform_my_platform_Standard.delete --> step_declarative_undeploy_delete_my_platform_my_platform_initial
+}
+state "stop_my_sigscale_ocs" as step_declarative_undeploy_stop_my_sigscale_ocs << step >> {
+  state "my_sigscale_ocs stopping" as step_declarative_undeploy_stop_my_sigscale_ocs_my_sigscale_ocs_stopping << set_state >>
+  state "my_sigscale_ocs Standard.stop" as step_declarative_undeploy_stop_my_sigscale_ocs_my_sigscale_ocs_Standard.stop << call_operation >>
+  state "my_sigscale_ocs stopped" as step_declarative_undeploy_stop_my_sigscale_ocs_my_sigscale_ocs_stopped << set_state >>
+  step_declarative_undeploy_stop_my_sigscale_ocs_my_sigscale_ocs_stopping --> step_declarative_undeploy_stop_my_sigscale_ocs_my_sigscale_ocs_Standard.stop
+  step_declarative_undeploy_stop_my_sigscale_ocs_my_sigscale_ocs_Standard.stop --> step_declarative_undeploy_stop_my_sigscale_ocs_my_sigscale_ocs_stopped
+}
+state "delete_my_sigscale_ocs" as step_declarative_undeploy_delete_my_sigscale_ocs << step >> {
+  state "my_sigscale_ocs deleting" as step_declarative_undeploy_delete_my_sigscale_ocs_my_sigscale_ocs_deleting << set_state >>
+  state "my_sigscale_ocs Standard.delete" as step_declarative_undeploy_delete_my_sigscale_ocs_my_sigscale_ocs_Standard.delete << call_operation >>
+  state "my_sigscale_ocs initial" as step_declarative_undeploy_delete_my_sigscale_ocs_my_sigscale_ocs_initial << set_state >>
+  step_declarative_undeploy_delete_my_sigscale_ocs_my_sigscale_ocs_deleting --> step_declarative_undeploy_delete_my_sigscale_ocs_my_sigscale_ocs_Standard.delete
+  step_declarative_undeploy_delete_my_sigscale_ocs_my_sigscale_ocs_Standard.delete --> step_declarative_undeploy_delete_my_sigscale_ocs_my_sigscale_ocs_initial
+}
+state "stop_my_vodaphone_product_catalog" as step_declarative_undeploy_stop_my_vodaphone_product_catalog << step >> {
+  state "my_vodaphone_product_catalog stopping" as step_declarative_undeploy_stop_my_vodaphone_product_catalog_my_vodaphone_product_catalog_stopping << set_state >>
+  state "my_vodaphone_product_catalog Standard.stop" as step_declarative_undeploy_stop_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.stop << call_operation >>
+  state "my_vodaphone_product_catalog stopped" as step_declarative_undeploy_stop_my_vodaphone_product_catalog_my_vodaphone_product_catalog_stopped << set_state >>
+  step_declarative_undeploy_stop_my_vodaphone_product_catalog_my_vodaphone_product_catalog_stopping --> step_declarative_undeploy_stop_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.stop
+  step_declarative_undeploy_stop_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.stop --> step_declarative_undeploy_stop_my_vodaphone_product_catalog_my_vodaphone_product_catalog_stopped
+}
+state "delete_my_vodaphone_product_catalog" as step_declarative_undeploy_delete_my_vodaphone_product_catalog << step >> {
+  state "my_vodaphone_product_catalog deleting" as step_declarative_undeploy_delete_my_vodaphone_product_catalog_my_vodaphone_product_catalog_deleting << set_state >>
+  state "my_vodaphone_product_catalog Standard.delete" as step_declarative_undeploy_delete_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.delete << call_operation >>
+  state "my_vodaphone_product_catalog initial" as step_declarative_undeploy_delete_my_vodaphone_product_catalog_my_vodaphone_product_catalog_initial << set_state >>
+  step_declarative_undeploy_delete_my_vodaphone_product_catalog_my_vodaphone_product_catalog_deleting --> step_declarative_undeploy_delete_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.delete
+  step_declarative_undeploy_delete_my_vodaphone_product_catalog_my_vodaphone_product_catalog_Standard.delete --> step_declarative_undeploy_delete_my_vodaphone_product_catalog_my_vodaphone_product_catalog_initial
+}
+  state step_declarative_undeploy_stop_my_platform_join <<join>>
+  step_declarative_undeploy_stop_my_platform_join --> step_declarative_undeploy_stop_my_platform
+step_declarative_undeploy_stop_my_platform --> step_declarative_undeploy_delete_my_platform
+step_declarative_undeploy_stop_my_sigscale_ocs --> step_declarative_undeploy_delete_my_sigscale_ocs
+state step_declarative_undeploy_delete_my_sigscale_ocs_fork <<fork>>
+step_declarative_undeploy_delete_my_sigscale_ocs --> step_declarative_undeploy_delete_my_sigscale_ocs_fork
+step_declarative_undeploy_delete_my_sigscale_ocs_fork --> step_declarative_undeploy_stop_my_platform_join
+step_declarative_undeploy_delete_my_sigscale_ocs_fork --> step_declarative_undeploy_stop_my_vodaphone_product_catalog
+step_declarative_undeploy_stop_my_vodaphone_product_catalog --> step_declarative_undeploy_delete_my_vodaphone_product_catalog
+step_declarative_undeploy_delete_my_vodaphone_product_catalog --> step_declarative_undeploy_stop_my_platform_join
+[*] --> step_declarative_undeploy_stop_my_sigscale_ocs
+step_declarative_undeploy_delete_my_platform --> [*]
+@enduml

@@ -1,0 +1,4 @@
+- name: TMF620
+  ref: next-prodcatui.env.PRODUCTCATALOG_API_URL
+  source_instance_name: my_vodafone_TMFC001
+  specification: https://open-api.tmforum.org/TMF620-ProductCatalog-v4.0.0.swagger.json

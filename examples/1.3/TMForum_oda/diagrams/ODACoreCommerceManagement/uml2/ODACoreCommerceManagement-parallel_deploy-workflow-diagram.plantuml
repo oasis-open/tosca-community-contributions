@@ -1,0 +1,209 @@
+@startuml
+hide empty description
+skinparam shadowing false
+skinparam state {
+  ArrowColor blue
+  BorderColor blue
+  EndColor black
+  StartColor green
+  BackGroundColor<< step >> white
+  BorderColor<< step >> black
+  BackGroundColor<< delegate >> lightgrey
+  BackGroundColor<< set_state >> white
+  BackGroundColor<< call_operation >> lightblue
+  BackGroundColor<< inline >> white
+}
+skinparam ActivityBarColor<<fork>> DarkGreen
+skinparam ActivityBarColor<<join>> DarkOrange
+
+state "create_PrdCtgMgmt" as step_parallel_deploy_create_PrdCtgMgmt << step >> {
+  state "PrdCtgMgmt creating" as step_parallel_deploy_create_PrdCtgMgmt_PrdCtgMgmt_creating << set_state >>
+  state "PrdCtgMgmt Standard.create" as step_parallel_deploy_create_PrdCtgMgmt_PrdCtgMgmt_Standard.create << call_operation >>
+  state "PrdCtgMgmt created" as step_parallel_deploy_create_PrdCtgMgmt_PrdCtgMgmt_created << set_state >>
+  step_parallel_deploy_create_PrdCtgMgmt_PrdCtgMgmt_creating --> step_parallel_deploy_create_PrdCtgMgmt_PrdCtgMgmt_Standard.create
+  step_parallel_deploy_create_PrdCtgMgmt_PrdCtgMgmt_Standard.create --> step_parallel_deploy_create_PrdCtgMgmt_PrdCtgMgmt_created
+}
+state "pre_configure_PrdCtgMgmt" as step_parallel_deploy_pre_configure_PrdCtgMgmt << step >> {
+  state "PrdCtgMgmt configuring" as step_parallel_deploy_pre_configure_PrdCtgMgmt_PrdCtgMgmt_configuring << set_state >>
+}
+state "configure_PrdCtgMgmt" as step_parallel_deploy_configure_PrdCtgMgmt << step >> {
+  state "PrdCtgMgmt Standard.configure" as step_parallel_deploy_configure_PrdCtgMgmt_PrdCtgMgmt_Standard.configure << call_operation >>
+}
+state "post_configure_PrdCtgMgmt" as step_parallel_deploy_post_configure_PrdCtgMgmt << step >> {
+  state "PrdCtgMgmt configured" as step_parallel_deploy_post_configure_PrdCtgMgmt_PrdCtgMgmt_configured << set_state >>
+}
+state "start_PrdCtgMgmt" as step_parallel_deploy_start_PrdCtgMgmt << step >> {
+  state "PrdCtgMgmt starting" as step_parallel_deploy_start_PrdCtgMgmt_PrdCtgMgmt_starting << set_state >>
+  state "PrdCtgMgmt Standard.start" as step_parallel_deploy_start_PrdCtgMgmt_PrdCtgMgmt_Standard.start << call_operation >>
+  state "PrdCtgMgmt started" as step_parallel_deploy_start_PrdCtgMgmt_PrdCtgMgmt_started << set_state >>
+  step_parallel_deploy_start_PrdCtgMgmt_PrdCtgMgmt_starting --> step_parallel_deploy_start_PrdCtgMgmt_PrdCtgMgmt_Standard.start
+  step_parallel_deploy_start_PrdCtgMgmt_PrdCtgMgmt_Standard.start --> step_parallel_deploy_start_PrdCtgMgmt_PrdCtgMgmt_started
+}
+state "create_PrdOrdCptVd" as step_parallel_deploy_create_PrdOrdCptVd << step >> {
+  state "PrdOrdCptVd creating" as step_parallel_deploy_create_PrdOrdCptVd_PrdOrdCptVd_creating << set_state >>
+  state "PrdOrdCptVd Standard.create" as step_parallel_deploy_create_PrdOrdCptVd_PrdOrdCptVd_Standard.create << call_operation >>
+  state "PrdOrdCptVd created" as step_parallel_deploy_create_PrdOrdCptVd_PrdOrdCptVd_created << set_state >>
+  step_parallel_deploy_create_PrdOrdCptVd_PrdOrdCptVd_creating --> step_parallel_deploy_create_PrdOrdCptVd_PrdOrdCptVd_Standard.create
+  step_parallel_deploy_create_PrdOrdCptVd_PrdOrdCptVd_Standard.create --> step_parallel_deploy_create_PrdOrdCptVd_PrdOrdCptVd_created
+}
+state "pre_configure_PrdOrdCptVd" as step_parallel_deploy_pre_configure_PrdOrdCptVd << step >> {
+  state "PrdOrdCptVd configuring" as step_parallel_deploy_pre_configure_PrdOrdCptVd_PrdOrdCptVd_configuring << set_state >>
+}
+state "configure_PrdOrdCptVd" as step_parallel_deploy_configure_PrdOrdCptVd << step >> {
+  state "PrdOrdCptVd Standard.configure" as step_parallel_deploy_configure_PrdOrdCptVd_PrdOrdCptVd_Standard.configure << call_operation >>
+}
+state "post_configure_PrdOrdCptVd" as step_parallel_deploy_post_configure_PrdOrdCptVd << step >> {
+  state "PrdOrdCptVd configured" as step_parallel_deploy_post_configure_PrdOrdCptVd_PrdOrdCptVd_configured << set_state >>
+}
+state "start_PrdOrdCptVd" as step_parallel_deploy_start_PrdOrdCptVd << step >> {
+  state "PrdOrdCptVd starting" as step_parallel_deploy_start_PrdOrdCptVd_PrdOrdCptVd_starting << set_state >>
+  state "PrdOrdCptVd Standard.start" as step_parallel_deploy_start_PrdOrdCptVd_PrdOrdCptVd_Standard.start << call_operation >>
+  state "PrdOrdCptVd started" as step_parallel_deploy_start_PrdOrdCptVd_PrdOrdCptVd_started << set_state >>
+  step_parallel_deploy_start_PrdOrdCptVd_PrdOrdCptVd_starting --> step_parallel_deploy_start_PrdOrdCptVd_PrdOrdCptVd_Standard.start
+  step_parallel_deploy_start_PrdOrdCptVd_PrdOrdCptVd_Standard.start --> step_parallel_deploy_start_PrdOrdCptVd_PrdOrdCptVd_started
+}
+state "create_Poom" as step_parallel_deploy_create_Poom << step >> {
+  state "Poom creating" as step_parallel_deploy_create_Poom_Poom_creating << set_state >>
+  state "Poom Standard.create" as step_parallel_deploy_create_Poom_Poom_Standard.create << call_operation >>
+  state "Poom created" as step_parallel_deploy_create_Poom_Poom_created << set_state >>
+  step_parallel_deploy_create_Poom_Poom_creating --> step_parallel_deploy_create_Poom_Poom_Standard.create
+  step_parallel_deploy_create_Poom_Poom_Standard.create --> step_parallel_deploy_create_Poom_Poom_created
+}
+state "pre_configure_Poom" as step_parallel_deploy_pre_configure_Poom << step >> {
+  state "Poom configuring" as step_parallel_deploy_pre_configure_Poom_Poom_configuring << set_state >>
+}
+state "configure_Poom" as step_parallel_deploy_configure_Poom << step >> {
+  state "Poom Standard.configure" as step_parallel_deploy_configure_Poom_Poom_Standard.configure << call_operation >>
+}
+state "post_configure_Poom" as step_parallel_deploy_post_configure_Poom << step >> {
+  state "Poom configured" as step_parallel_deploy_post_configure_Poom_Poom_configured << set_state >>
+}
+state "start_Poom" as step_parallel_deploy_start_Poom << step >> {
+  state "Poom starting" as step_parallel_deploy_start_Poom_Poom_starting << set_state >>
+  state "Poom Standard.start" as step_parallel_deploy_start_Poom_Poom_Standard.start << call_operation >>
+  state "Poom started" as step_parallel_deploy_start_Poom_Poom_started << set_state >>
+  step_parallel_deploy_start_Poom_Poom_starting --> step_parallel_deploy_start_Poom_Poom_Standard.start
+  step_parallel_deploy_start_Poom_Poom_Standard.start --> step_parallel_deploy_start_Poom_Poom_started
+}
+state "create_PI" as step_parallel_deploy_create_PI << step >> {
+  state "PI creating" as step_parallel_deploy_create_PI_PI_creating << set_state >>
+  state "PI Standard.create" as step_parallel_deploy_create_PI_PI_Standard.create << call_operation >>
+  state "PI created" as step_parallel_deploy_create_PI_PI_created << set_state >>
+  step_parallel_deploy_create_PI_PI_creating --> step_parallel_deploy_create_PI_PI_Standard.create
+  step_parallel_deploy_create_PI_PI_Standard.create --> step_parallel_deploy_create_PI_PI_created
+}
+state "pre_configure_PI" as step_parallel_deploy_pre_configure_PI << step >> {
+  state "PI configuring" as step_parallel_deploy_pre_configure_PI_PI_configuring << set_state >>
+}
+state "configure_PI" as step_parallel_deploy_configure_PI << step >> {
+  state "PI Standard.configure" as step_parallel_deploy_configure_PI_PI_Standard.configure << call_operation >>
+}
+state "post_configure_PI" as step_parallel_deploy_post_configure_PI << step >> {
+  state "PI configured" as step_parallel_deploy_post_configure_PI_PI_configured << set_state >>
+}
+state "start_PI" as step_parallel_deploy_start_PI << step >> {
+  state "PI starting" as step_parallel_deploy_start_PI_PI_starting << set_state >>
+  state "PI Standard.start" as step_parallel_deploy_start_PI_PI_Standard.start << call_operation >>
+  state "PI started" as step_parallel_deploy_start_PI_PI_started << set_state >>
+  step_parallel_deploy_start_PI_PI_starting --> step_parallel_deploy_start_PI_PI_Standard.start
+  step_parallel_deploy_start_PI_PI_Standard.start --> step_parallel_deploy_start_PI_PI_started
+}
+state "create_Cpq" as step_parallel_deploy_create_Cpq << step >> {
+  state "Cpq creating" as step_parallel_deploy_create_Cpq_Cpq_creating << set_state >>
+  state "Cpq Standard.create" as step_parallel_deploy_create_Cpq_Cpq_Standard.create << call_operation >>
+  state "Cpq created" as step_parallel_deploy_create_Cpq_Cpq_created << set_state >>
+  step_parallel_deploy_create_Cpq_Cpq_creating --> step_parallel_deploy_create_Cpq_Cpq_Standard.create
+  step_parallel_deploy_create_Cpq_Cpq_Standard.create --> step_parallel_deploy_create_Cpq_Cpq_created
+}
+state "pre_configure_Cpq" as step_parallel_deploy_pre_configure_Cpq << step >> {
+  state "Cpq configuring" as step_parallel_deploy_pre_configure_Cpq_Cpq_configuring << set_state >>
+}
+state "configure_Cpq" as step_parallel_deploy_configure_Cpq << step >> {
+  state "Cpq Standard.configure" as step_parallel_deploy_configure_Cpq_Cpq_Standard.configure << call_operation >>
+}
+state "post_configure_Cpq" as step_parallel_deploy_post_configure_Cpq << step >> {
+  state "Cpq configured" as step_parallel_deploy_post_configure_Cpq_Cpq_configured << set_state >>
+}
+state "start_Cpq" as step_parallel_deploy_start_Cpq << step >> {
+  state "Cpq starting" as step_parallel_deploy_start_Cpq_Cpq_starting << set_state >>
+  state "Cpq Standard.start" as step_parallel_deploy_start_Cpq_Cpq_Standard.start << call_operation >>
+  state "Cpq started" as step_parallel_deploy_start_Cpq_Cpq_started << set_state >>
+  step_parallel_deploy_start_Cpq_Cpq_starting --> step_parallel_deploy_start_Cpq_Cpq_Standard.start
+  step_parallel_deploy_start_Cpq_Cpq_Standard.start --> step_parallel_deploy_start_Cpq_Cpq_started
+}
+state "create_Dummy" as step_parallel_deploy_create_Dummy << step >> {
+  state "Dummy creating" as step_parallel_deploy_create_Dummy_Dummy_creating << set_state >>
+  state "Dummy Standard.create" as step_parallel_deploy_create_Dummy_Dummy_Standard.create << call_operation >>
+  state "Dummy created" as step_parallel_deploy_create_Dummy_Dummy_created << set_state >>
+  step_parallel_deploy_create_Dummy_Dummy_creating --> step_parallel_deploy_create_Dummy_Dummy_Standard.create
+  step_parallel_deploy_create_Dummy_Dummy_Standard.create --> step_parallel_deploy_create_Dummy_Dummy_created
+}
+state "pre_configure_Dummy" as step_parallel_deploy_pre_configure_Dummy << step >> {
+  state "Dummy configuring" as step_parallel_deploy_pre_configure_Dummy_Dummy_configuring << set_state >>
+}
+state "configure_Dummy" as step_parallel_deploy_configure_Dummy << step >> {
+  state "Dummy Standard.configure" as step_parallel_deploy_configure_Dummy_Dummy_Standard.configure << call_operation >>
+}
+state "post_configure_Dummy" as step_parallel_deploy_post_configure_Dummy << step >> {
+  state "Dummy configured" as step_parallel_deploy_post_configure_Dummy_Dummy_configured << set_state >>
+}
+state "start_Dummy" as step_parallel_deploy_start_Dummy << step >> {
+  state "Dummy starting" as step_parallel_deploy_start_Dummy_Dummy_starting << set_state >>
+  state "Dummy Standard.start" as step_parallel_deploy_start_Dummy_Dummy_Standard.start << call_operation >>
+  state "Dummy started" as step_parallel_deploy_start_Dummy_Dummy_started << set_state >>
+  step_parallel_deploy_start_Dummy_Dummy_starting --> step_parallel_deploy_start_Dummy_Dummy_Standard.start
+  step_parallel_deploy_start_Dummy_Dummy_Standard.start --> step_parallel_deploy_start_Dummy_Dummy_started
+}
+  state step_parallel_deploy_create_PrdOrdCptVd_join <<join>>
+  step_parallel_deploy_create_PrdOrdCptVd_join --> step_parallel_deploy_create_PrdOrdCptVd
+  state step_parallel_deploy_create_Poom_join <<join>>
+  step_parallel_deploy_create_Poom_join --> step_parallel_deploy_create_Poom
+  state step_parallel_deploy_create_Cpq_join <<join>>
+  step_parallel_deploy_create_Cpq_join --> step_parallel_deploy_create_Cpq
+step_parallel_deploy_create_PrdCtgMgmt --> step_parallel_deploy_pre_configure_PrdCtgMgmt
+step_parallel_deploy_pre_configure_PrdCtgMgmt --> step_parallel_deploy_configure_PrdCtgMgmt
+step_parallel_deploy_configure_PrdCtgMgmt --> step_parallel_deploy_post_configure_PrdCtgMgmt
+step_parallel_deploy_post_configure_PrdCtgMgmt --> step_parallel_deploy_start_PrdCtgMgmt
+state step_parallel_deploy_start_PrdCtgMgmt_fork <<fork>>
+step_parallel_deploy_start_PrdCtgMgmt --> step_parallel_deploy_start_PrdCtgMgmt_fork
+step_parallel_deploy_start_PrdCtgMgmt_fork --> step_parallel_deploy_create_PrdOrdCptVd_join
+step_parallel_deploy_start_PrdCtgMgmt_fork --> step_parallel_deploy_create_Poom_join
+step_parallel_deploy_start_PrdCtgMgmt_fork --> step_parallel_deploy_create_Cpq_join
+step_parallel_deploy_create_PrdOrdCptVd --> step_parallel_deploy_pre_configure_PrdOrdCptVd
+step_parallel_deploy_pre_configure_PrdOrdCptVd --> step_parallel_deploy_configure_PrdOrdCptVd
+step_parallel_deploy_configure_PrdOrdCptVd --> step_parallel_deploy_post_configure_PrdOrdCptVd
+step_parallel_deploy_post_configure_PrdOrdCptVd --> step_parallel_deploy_start_PrdOrdCptVd
+state step_parallel_deploy_start_PrdOrdCptVd_fork <<fork>>
+step_parallel_deploy_start_PrdOrdCptVd --> step_parallel_deploy_start_PrdOrdCptVd_fork
+step_parallel_deploy_start_PrdOrdCptVd_fork --> step_parallel_deploy_create_Poom_join
+step_parallel_deploy_start_PrdOrdCptVd_fork --> step_parallel_deploy_create_Cpq_join
+step_parallel_deploy_create_Poom --> step_parallel_deploy_pre_configure_Poom
+step_parallel_deploy_pre_configure_Poom --> step_parallel_deploy_configure_Poom
+step_parallel_deploy_configure_Poom --> step_parallel_deploy_post_configure_Poom
+step_parallel_deploy_post_configure_Poom --> step_parallel_deploy_start_Poom
+step_parallel_deploy_create_PI --> step_parallel_deploy_pre_configure_PI
+step_parallel_deploy_pre_configure_PI --> step_parallel_deploy_configure_PI
+step_parallel_deploy_configure_PI --> step_parallel_deploy_post_configure_PI
+step_parallel_deploy_post_configure_PI --> step_parallel_deploy_start_PI
+state step_parallel_deploy_start_PI_fork <<fork>>
+step_parallel_deploy_start_PI --> step_parallel_deploy_start_PI_fork
+step_parallel_deploy_start_PI_fork --> step_parallel_deploy_create_PrdOrdCptVd_join
+step_parallel_deploy_start_PI_fork --> step_parallel_deploy_create_Poom_join
+step_parallel_deploy_start_PI_fork --> step_parallel_deploy_create_Cpq_join
+step_parallel_deploy_create_Cpq --> step_parallel_deploy_pre_configure_Cpq
+step_parallel_deploy_pre_configure_Cpq --> step_parallel_deploy_configure_Cpq
+step_parallel_deploy_configure_Cpq --> step_parallel_deploy_post_configure_Cpq
+step_parallel_deploy_post_configure_Cpq --> step_parallel_deploy_start_Cpq
+step_parallel_deploy_start_Cpq --> step_parallel_deploy_create_PrdOrdCptVd_join
+step_parallel_deploy_create_Dummy --> step_parallel_deploy_pre_configure_Dummy
+step_parallel_deploy_pre_configure_Dummy --> step_parallel_deploy_configure_Dummy
+step_parallel_deploy_configure_Dummy --> step_parallel_deploy_post_configure_Dummy
+step_parallel_deploy_post_configure_Dummy --> step_parallel_deploy_start_Dummy
+step_parallel_deploy_start_Dummy --> step_parallel_deploy_create_Cpq_join
+state parallel_deploy_fork <<fork>>
+[*] --> parallel_deploy_fork
+parallel_deploy_fork --> step_parallel_deploy_create_PrdCtgMgmt
+parallel_deploy_fork --> step_parallel_deploy_create_PI
+parallel_deploy_fork --> step_parallel_deploy_create_Dummy
+step_parallel_deploy_start_Poom --> [*]
+@enduml

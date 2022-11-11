@@ -1,0 +1,11 @@
+@startuml
+skinparam componentStyle uml2
+allowmixing
+
+component "my_platform: tmforum:oda_platform_emulator" as node_my_platform
+component "my_sigscale_ocs: tmforum:sigscale_ocs" as node_my_sigscale_ocs
+component "my_vodaphone_product_catalog: tmforum:vodaphone_product_catalog" as node_my_vodaphone_product_catalog
+node_my_sigscale_ocs ..> node_my_platform : <<running_on_emulator>>
+node_my_sigscale_ocs ..> node_my_vodaphone_product_catalog : <<oda_component_depends_on_TMF_API>>
+node_my_vodaphone_product_catalog ..> node_my_platform : <<running_on_emulator>>
+@enduml

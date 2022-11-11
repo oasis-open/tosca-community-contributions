@@ -1,0 +1,108 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+metadata:
+  template_name: node_types.yaml
+  template_author: OASIS TOSCA TC
+  template_version: 1.3.0
+ 
+description: OASIS TOSCA non-normative profile node types
+
+imports:
+  - capability.yaml
+
+node_types:
+
+  tosca.nodes.Database.MySQL:
+    description: >-
+      The TOSCA Database.MySQL node type is a non-normative type that
+      represents a logical database that can be managed and hosted by
+      a TOSCA MySQL DBMS node.
+    derived_from: tosca.nodes.Database
+    requirements:
+      - host: 
+          node: tosca.nodes.DBMS.MySQL
+
+  tosca.nodes.DBMS.MySQL:
+    description: >-
+      The TOSCA DBMS node type is a non-normative type that represents
+      MySQL Database Management System software.
+    derived_from: tosca.nodes.DBMS
+    properties:
+      port:
+        description: The default MySQL server port.
+        default: 3306
+      root_password:
+        # MySQL requires a root_password for configuration
+        required: true
+    capabilities:
+      # Further constrain the ‘host’ capability to only allow MySQL databases
+      host: 
+        valid_source_types: [ tosca.nodes.Database.MySQL ]
+
+  tosca.nodes.WebServer.Apache:
+    description: >-
+      The TOSCA WebServer.Apache node type is a non-normative type
+      that represents Apache Web Server software.
+    derived_from: tosca.nodes.WebServer
+
+  tosca.nodes.WebApplication.WordPress:
+    description: >-
+      The TOSCA WebApplication.WordPress node type is a non-normative
+      type that represents the WordPress web application.
+    derived_from: tosca.nodes.WebApplication
+    properties:
+      admin_user:
+        description: >
+          The user account name for WordPress administration.
+        type: string
+      admin_password:
+        description: >
+          The password for the WordPress admin user account.
+        type: string
+      db_host:
+        description: >
+          The logical name of the server hosting the WordPress database.
+        type: string
+    requirements:
+      - database_endpoint: 
+          capability: tosca.capabilities.Endpoint.Database  
+          node: tosca.nodes.Database
+          relationship: tosca.relationships.ConnectsTo
+
+  tosca.nodes.WebServer.Nodejs:
+    description: >-
+      The TOSCA WebServer.NodeJS node type is a non-normative type
+      that represents NodeJS Web Server software.
+    derived_from: tosca.nodes.WebServer
+    properties:
+      github_url:
+        required: false
+        type: string
+        description: Location of the the desired implementation in the Github repository.
+        default: https://github.com/mmm/testnode.git
+    interfaces:
+      Standard:
+        inputs:
+          github_url:
+            type: string
+
+  tosca.nodes.Container.Runtime.Docker:
+    description: >
+      The TOSCA Container.Docker Runtime node represents a Docker
+      runtime environment
+    derived_from: tosca.nodes.Container.Runtime
+    capabilities:
+      host: 
+        type: tosca.capabilities.Container.Docker
+
+  tosca.nodes.Container.Application.Docker:
+    description: >-
+      The TOSCA Container.Application.Docker node type is a
+      non-normative type that represents application software packaged
+      to run in a Docker container.
+    derived_from: tosca.nodes.Container.Application
+    requirements:
+      - host:
+          capability: tosca.capabilities.Container.Docker
+          node: tosca.nodes.Container.Runtime.Docker
+
