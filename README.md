@@ -78,7 +78,7 @@ Note that this repository is not intended to track implementations of the TOSCA 
 
 <ul>
 <li><a href="mailto:lauwers@ubicity.com">Chris Lauwers</a>; GitHub ID: <a href="https://github.com/lauwers/">https://github.com/lauwers/</a>; WWW: <a href="http://www.ubicity.com/">Ubicity Corp.</a></li>
-<li><a href="mailto:tliron@redhat.com">Tal Liron</a>; GitHub ID: <a href="https://github.com/tliron/">https://github.com/tliron/</a>; WWW: <a href="https://about.google/">Google</a></li>
+<li><a href="mailto:tliron@google.com">Tal Liron</a>; GitHub ID: <a href="https://github.com/tliron/">https://github.com/tliron/</a>; WWW: <a href="https://about.google/">Google</a></li>
 <li><a href="mailto:calin.curescu@ericsson.com">Calin Curescu</a>; GitHub ID: <a href="https://github.com/calincurescu/">https://github.com/calincurescu/</a>; WWW: <a href="http://www.ericsson.com/">Ericsson</a></li>
 </ul>
 
