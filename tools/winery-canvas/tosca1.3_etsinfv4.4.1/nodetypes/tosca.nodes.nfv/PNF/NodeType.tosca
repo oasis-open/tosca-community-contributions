@@ -1,0 +1,57 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_pnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.PNF:
+    derived_from: tosca.nodes.Root
+    properties: 
+      descriptor_id: # instead of pnfd_id
+        type: string # UUID
+        required: true
+        description: Identifier of this PNFD information element. It uniquely identifies the PNFD.
+      function_description:
+        type: string
+        required: true
+        description: Describes the PNF function.
+      provider:
+        type: string
+        required: true
+        description: Identifies the provider of the PNFD.
+      version:
+        type: string
+        required: true
+        description: Identifies the version of the PNFD.
+      descriptor_invariant_id: # instead of pnfd-invariant-id
+        type: string # UUID
+        required: true
+        description: Identifier of this PNFD in a version independent manner. This attribute is invariant across versions of PNFD with no constraint on the changes across versions.
+      ext_invariant_id:  
+        type: string # UUID
+        required: false
+        description: Identifies a PNFD in a version independent manner. This attribute is invariant across versions of the PNFD that expose the same external connectivity, i.e. same number and name of the requirements for VirtualLinkable capability that represent PnfExtCps. When used in a PNF node template in an NSD it allows for PNF instances during NS LCM the use of a PNFD different from the one referenced by the descriptor_id attribute, provided they have the same ext_invariant_id. 
+      name:
+        type: string
+        required: true
+        description: Name to identify the PNFD.
+      geographical_location_info: 
+        type: tosca.datatypes.nfv.LocationInfo 
+        required: false
+        description: Provides information about the geographical location (e.g. geographic coordinates or address of the building, etc.) of the PNF
+      version_dependency:
+        type: list
+        description: Identifies versions of descriptors of other constituents in the NSD upon which the PNF depends. The dependencies may be described for the PNFD referenced with descriptor_id  and for PNFDs with the same ext_invariant_id.
+        required: false
+        entry_schema: 
+          type: tosca.datatypes.nfv.VersionDependency
+    requirements:
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [ 0, 1 ]
+  # Additional requirements shall be defined in the PNF specific node type (deriving from tosca.nodes.nfv.PNF) corresponding to NS virtual links that need to connect to PnfExtCps

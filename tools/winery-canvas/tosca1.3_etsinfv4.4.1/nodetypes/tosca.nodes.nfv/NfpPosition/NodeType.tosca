@@ -1,0 +1,35 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.NfpPosition:
+    derived_from: tosca.nodes.Root
+    description: node definition of NFP position
+    properties:
+      forwarding_behaviour:
+        type: string
+        description: Identifies a rule to apply to forward traffic to CP or SAP instances corresponding to the referenced NfpPositionElement(s).
+        constraints:
+          - valid_values: [ all, lb, ff ]
+        required: false
+      forwarding_behaviour_input_parameters:
+        description: Provides input parameters to configure the forwarding behaviour.
+        type: map
+        required: false
+        entry_schema:
+          type: string
+    capabilities:
+      forwarding:
+        type: tosca.capabilities.nfv.Forwarding
+    requirements:
+      - element:
+          capability: tosca.capabilities.nfv.Forwarding
+          node: tosca.nodes.nfv.NfpPositionElement
+          relationship: tosca.relationships.nfv.ForwardTo
+          occurrences: [ 1, UNBOUNDED ]

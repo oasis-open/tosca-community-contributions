@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VirtualLinkProtocolData:
+   derived_from: tosca.datatypes.Root
+   description: describes one protocol layer and associated protocol data for a given virtual link used in a specific VNF deployment flavour
+   properties:
+     associated_layer_protocol:
+        type: string
+        description: Identifies one of the protocols a virtualLink gives access to (ethernet, mpls, odu2, ipv4, ipv6, pseudo-wire) as specified by the connectivity_type property.
+        required: true
+        constraints:
+          - valid_values: [ ethernet, mpls, odu2, ipv4, ipv6, pseudo-wire ]
+     l2_protocol_data:
+        type: tosca.datatypes.nfv.L2ProtocolData
+        description: Specifies the L2 protocol data for a virtual link. Shall be present when the associatedLayerProtocol attribute indicates a L2 protocol and shall be absent otherwise.
+        required: false
+     l3_protocol_data:
+        type: tosca.datatypes.nfv.L3ProtocolData
+        description: Specifies the L3 protocol data for this virtual link.  Shall be present when the associatedLayerProtocol attribute indicates a L3 protocol and shall be absent otherwise.
+        required: false

@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.NsDataFlowMirroring:
+    derived_from: tosca.datatypes.Root
+    description: describes the data flow mirroring information to be associated to the NS instance.
+    properties:
+      mirroring_job_name:
+        type: string
+        description: Name of Data Flow Mirroring Job
+        required: true
+      description:
+        type: string
+        description: Information description of Data Flow Mirroring Job
+        required: false

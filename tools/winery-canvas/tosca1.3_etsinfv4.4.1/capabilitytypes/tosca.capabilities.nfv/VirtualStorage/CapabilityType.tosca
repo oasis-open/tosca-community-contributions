@@ -1,0 +1,13 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 capability types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+capability_types:
+  tosca.capabilities.nfv.VirtualStorage:
+    derived_from: tosca.capabilities.Root
+    description: Describes the attachment capabilities related to Vdu.Storage

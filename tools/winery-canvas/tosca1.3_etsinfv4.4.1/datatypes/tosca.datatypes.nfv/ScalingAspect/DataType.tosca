@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.ScalingAspect:
+   derived_from: tosca.datatypes.Root
+   description: describes the details of an aspect used for horizontal scaling
+   properties:
+     name:
+       type: string
+       description: Human readable name of the aspect
+       required: true
+     description:
+       type: string
+       description: Human readable description of the aspect
+       required: true
+     max_scale_level:
+       type: integer # positiveInteger
+       description: Total number of scaling steps that can be applied w.r.t. this aspect. The value of this property corresponds to the number of scaling steps can be applied to this aspect when scaling it from the minimum scale level (i.e. 0) to the maximum scale level defined by this property
+       required: true
+       constraints:
+         - greater_or_equal: 0
+     step_deltas:
+       type: list
+       description: List of scaling deltas to be applied for the different subsequent scaling steps of this aspect. The first entry in the array shall correspond to the first scaling step (between scale levels 0 to 1) and the last entry in the array shall correspond to the last scaling step (between maxScaleLevel-1 and maxScaleLevel)
+       required: false
+       entry_schema:
+         type: string # Identifier

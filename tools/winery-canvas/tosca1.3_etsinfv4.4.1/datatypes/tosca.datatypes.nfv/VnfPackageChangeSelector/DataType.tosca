@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfPackageChangeSelector:
+    derived_from: tosca.datatypes.Root
+    description: data type describes the source and destination VNFDs as well as source deployment flavour for a change current VNF Package.
+    properties:
+      source_descriptor_id:
+        type: string
+        description: Identifier of the source VNFD and the source VNF package.
+        required: true
+      destination_descriptor_id:
+        type: string
+        description: Identifier of the destination VNFD and the destination VNF package.
+        required: true
+      source_flavour_id:
+        type: string
+        description: Identifier of the deployment flavour in the source VNF package for which this data type applies.
+        required: true

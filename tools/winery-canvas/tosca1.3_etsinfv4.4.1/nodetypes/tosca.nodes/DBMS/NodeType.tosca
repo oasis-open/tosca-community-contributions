@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative node types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-node-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+node_types:
+  tosca.nodes.DBMS:
+    derived_from: tosca.nodes.SoftwareComponent
+    description: >-
+      The TOSCA DBMS node represents a typical relational, SQL
+      Database Management System software component or service.
+    properties:
+      root_password:
+        type: string
+        required: false
+        description: the optional root password for the DBMS service
+      port:
+        type: integer
+        required: false
+        description: the port the DBMS service will listen to for data and requests
+    capabilities:
+      host:
+        type: tosca.capabilities.Compute
+        valid_source_types: [ tosca.nodes.Database ]

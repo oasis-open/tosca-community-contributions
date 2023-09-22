@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.McioIdentificationData:
+    derived_from: tosca.datatypes.Root
+    description: contains data needed to identify an MCIO when interworking with the CISM.
+    properties: 
+      name:
+        type: string
+        description: The name of the mcio.
+        required: true
+      type:
+        type: string
+        description: The type of the mcio.
+        required: true
+        constraints:
+          - valid_values: [ Deployment, StatefulSet ] #Name capitalized as in k8s 

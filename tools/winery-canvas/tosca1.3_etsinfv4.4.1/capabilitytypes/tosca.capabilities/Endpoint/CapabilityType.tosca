@@ -1,0 +1,83 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative capability types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-capability-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+capability_types:
+  tosca.capabilities.Endpoint:
+    derived_from: tosca.capabilities.Root
+    description: >
+      This is the default TOSCA type that should be used or extended
+      to define a network endpoint capability.  This includes the
+      information to express a basic endpoint with a single port or a
+      complex endpoint with multiple ports.  By default the Endpoint
+      is assumed to represent an address on a private network unless
+      otherwise specified.
+    properties:
+      protocol:
+        type: string
+        description: >
+          The name of the protocol (i.e., the protocol prefix) that
+          the endpoint accepts (any OSI Layer 4-7 protocols) Examples:
+          http, https, ftp, tcp, udp, etc.
+        default: tcp
+      port:
+        type: tosca.datatypes.network.PortDef
+        description: >-
+          The optional port of the endpoint.
+        required: false
+      secure:
+        type: boolean
+        description: >-
+          Requests for the endpoint to be secure and use credentials
+          supplied on the ConnectsTo relationship.
+        required: false
+        default: false
+      url_path:
+        type: string
+        description: >-
+          The optional URL path of the endpoint's address if
+          applicable for the protocol.
+        required: false
+      port_name:
+        type: string
+        description: >-
+          The optional name (or ID) of the network port this endpoint
+          should be bound to.
+        required: false
+      network_name:
+        type: string
+        description: >
+          The optional name (or ID) of the network this endpoint
+          should be bound to.  network_name: PRIVATE | PUBLIC
+          |<network_name> | <network_id>
+        required: false
+        default: PRIVATE
+      initiator:
+        type: string
+        description: >-
+          The optional indicator of the direction of the connection.
+        required: false
+        default: source
+        constraints:
+          - valid_values: [ source, target, peer ]
+      ports:
+        type: map
+        description: >-
+          The optional map of ports the Endpoint supports (if more
+          than one).
+        required: false
+        constraints:
+          - min_length: 1
+        entry_schema:
+          type: tosca.datatypes.network.PortSpec
+    attributes:
+      ip_address:
+        type: string
+        description: >-
+          This is the IP address as propagated up by the associated
+          node's host (Compute) container.

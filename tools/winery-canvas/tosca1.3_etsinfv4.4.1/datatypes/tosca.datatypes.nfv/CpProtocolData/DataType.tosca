@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.CpProtocolData:
+    derived_from: tosca.datatypes.Root
+    description: Describes and associates the protocol layer that a CP uses together with other protocol and connection point information
+    properties:
+      associated_layer_protocol:
+        type: string
+        required: true
+        description: One of the values of the property layer_protocols of the CP 
+        constraints:
+          - valid_values: [ ethernet, mpls, odu2, ipv4, ipv6, pseudo-wire ]
+      address_data:
+        type: list
+        description: Provides information on the addresses to be assigned to the CP
+        entry_schema: 
+          type: tosca.datatypes.nfv.AddressData
+        required: false

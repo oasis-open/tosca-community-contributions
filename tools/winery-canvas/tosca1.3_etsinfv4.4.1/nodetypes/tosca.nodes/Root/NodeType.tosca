@@ -1,0 +1,50 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative node types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-node-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+node_types:
+  tosca.nodes.Root:
+    description: >
+      This is the default (root) TOSCA Node Type that all other TOSCA
+      nodes should extends.  This allows all TOSCA nodes to have a
+      consistent set of features for modeling and management (e.g,
+      consistent definitions for requirements, capabilities, and
+      lifecycle interfaces).
+    attributes:
+      tosca_id:
+        type: string
+        description: >-
+          A unique identifier of the realized instance of a Node
+          Template that derives from any TOSCA normative type.
+      tosca_name:
+        type: string
+        description: >
+          This attribute reflects the name of the Node Template as
+          defined in the TOSCA service template.  This name is not
+          unique to the realized instance model of corresponding
+          deployed application as each template in the model can
+          result in one or more instances (e.g., scaled) when
+          orchestrated to a provider environment.
+      state:
+        type: string
+        description: >-
+          The state of the node instance. See section "Node States"
+          for allowed values.
+        default: initial
+    capabilities:
+      feature:
+        type: tosca.capabilities.Node
+    requirements:
+      - dependency:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.Root
+          relationship: tosca.relationships.DependsOn
+          occurrences: [ 0, UNBOUNDED ]
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard

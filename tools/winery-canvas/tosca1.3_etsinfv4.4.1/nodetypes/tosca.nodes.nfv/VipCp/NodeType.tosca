@@ -1,0 +1,35 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.VipCp:
+    derived_from: tosca.nodes.nfv.Cp
+    description: Describes a connection point to allocate one or a set of virtual IP addresses 
+    properties:
+      dedicated_ip_address:
+        type: boolean
+        description: Indicates whether the VIP address shall be different from the addresses allocated to all associated VduCp instances or shall be the same as one of them.
+        required: true
+        default: true
+      vip_function:
+        type: string
+        description: "Indicates the function the virtual IP address is used for: high availability or load balancing. When used for high availability, only one of the internal VDU CP instances or VNF external CP instances that share the virtual IP is bound to the VIP address at a time. When used for load balancing purposes all CP instances that share the virtual IP are bound to it." 
+        required: true
+        constraints:
+          - valid_values: [ high_availability, load_balance ]
+    requirements:
+      - target:
+          capability: tosca.capabilities.Node
+          node: tosca.nodes.nfv.VduCp
+          relationship: tosca.relationships.DependsOn
+          occurrences: [ 1, UNBOUNDED ]
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VipVirtualLinksTo
+          occurrences: [1, 1]

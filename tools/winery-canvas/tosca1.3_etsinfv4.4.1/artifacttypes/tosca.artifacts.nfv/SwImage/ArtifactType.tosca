@@ -1,0 +1,68 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 artifact types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+artifact_types:
+  tosca.artifacts.nfv.SwImage:
+    derived_from: tosca.artifacts.Deployment.Image
+    description: describes the software image which is directly loaded on the virtualisation container realizing of the VDU or is to be loaded on a virtual storage resource
+    properties:
+      name:
+        type: string
+        description: Name of this software image 
+        required: true
+      version:
+        type: string
+        description: Version of this software image 
+        required: true
+      provider:
+        type: string
+        description: Provider of this software image
+        required: false
+      checksum:
+        type: tosca.datatypes.nfv.ChecksumData
+        description:  Checksum of the software image file 
+        required: false
+      container_format:
+        type: string
+        description: The container format describes the container file format in which software image is provided 
+        required: true
+        constraints:
+          - valid_values: [ aki, ami, ari, bare, docker, ova, ovf ]
+      disk_format:
+        type: string
+        description: The disk format of a software image is the format of the underlying disk image 
+        required: false
+        constraints:
+          - valid_values: [ aki, ami, ari, iso, qcow2, raw, vdi, vhd, vhdx, vmdk ]  
+      min_disk:
+        type: scalar-unit.size # Number
+        description:  The minimal disk size requirement for this software image 
+        required: false
+        constraints:
+          - greater_or_equal: 0 B
+      min_ram:
+        type: scalar-unit.size # Number
+        description: The minimal RAM requirement for this software image 
+        required: false
+        constraints:
+          - greater_or_equal: 0 B
+      size:
+        type: scalar-unit.size # Number
+        description: The size of this software image 
+        required: false
+      operating_system:
+        type: string
+        description: Identifies the operating system used in the software image 
+        required: false
+      supported_virtualisation_environments:
+        type: list
+        description: Identifies the virtualisation environments (e.g. hypervisor) compatible with this software image 
+        required: false
+        entry_schema:
+          type: string

@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.UriAuthority:
+    derived_from: tosca.datatypes.Root
+    description: information that corresponds to the authority component of a URI as specified in IETF RFC 3986 [8]
+    properties:
+     user_info:
+      type: string # shall comply with IETF RFC 3986 
+      description: user_info field of the authority component of a URI
+      required: false
+     host:
+      type: string # shall comply with IETF RFC 3986
+      description: host field of the authority component of a URI
+      required: false
+     port:
+      type: string # shall comply with IETF RFC 3986
+      description: port field of the authority component of a URI
+      required: false

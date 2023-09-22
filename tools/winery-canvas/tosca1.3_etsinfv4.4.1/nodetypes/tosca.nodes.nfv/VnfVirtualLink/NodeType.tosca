@@ -1,0 +1,53 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.VnfVirtualLink:
+    derived_from: tosca.nodes.Root
+    description: Describes the information about an internal VNF VL 
+    properties:
+      connectivity_type:
+        type: tosca.datatypes.nfv.ConnectivityType
+        description: Specifies the protocol exposed by the VL and the flow pattern supported by the VL 
+        required: true
+      description:
+        type: string
+        description: Provides human-readable information on the purpose of the VL 
+        required: false
+      test_access:
+        type: list
+        description: Test access facilities available on the VL 
+        required: false
+        entry_schema:
+          type: string
+          constraints:
+            - valid_values: [ passive_monitoring, active_loopback ]
+      vl_profile:
+        type: tosca.datatypes.nfv.VlProfile
+        description: Defines additional data for the VL 
+        required: true
+      monitoring_parameters:
+        type: map #key: id
+        entry_schema:
+          type: tosca.datatypes.nfv.VirtualLinkMonitoringParameter
+        description: Describes monitoring parameters applicable to the VL
+        required: false
+      nfvi_maintenance_info:
+        type: tosca.datatypes.nfv.NfviMaintenanceInfo
+        description: Provides information on the rules to be observed when an instance based on this VnfVirtualLink is impacted during NFVI operation and maintenance (e.g. NFVI resource upgrades). 
+        required: false
+      externally_managed:
+        type: string
+        description: Specifies the intent of the VNF designer w.r.t. the external management of the internal VL instances created from this descriptor, i.e. whether it is "allowed" or "required" that these are externally managed. If this property is absent, the value "allowed" is assumed. If the VNFD does not reference any LCM script and if the "vnfm_info" property in the VNF-specific node type derived from the tosca.nodes.nfv.VNF node type indicates that the VNF can be managed by any ETSI NFV compliant VNFM, this property shall not be present. 
+        required: false
+        constraints:
+          - valid_values: [ allowed, required ]
+    capabilities:
+      virtual_linkable:
+       type: tosca.capabilities.nfv.VirtualLinkable

@@ -1,0 +1,46 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.L3AddressData:
+    derived_from: tosca.datatypes.Root
+    description: Provides information about Layer 3 level addressing scheme and parameters applicable to a CP 
+    properties:
+      ip_address_assignment:
+        type: boolean
+        description: Specify which mode is used for the IP address assignment. If it is set to True and this property is not used in the context of the VirtualCp node type, IP configuration information shall be provided for the VNF by a management entity using the NFV MANO interfaces towards the VNFM. If it is set to True and this property is used in the context of the VirtualCp node type, IP configuration information should be provided for the VNF by a management entity using the NFV MANO interfaces towards the VNFM. If it is not provided, the CISM assigns an IP address. If it is set to False, the value of the ip_address_assignment_subtype property defines the method of IP address assignment. Shall be present if the fixed_ip_address property is not present and should be absent otherwise.
+        required: false
+      ip_address_assignment_subtype:
+        type: string
+        description: "Method of IP address assignment in case the IP configuration is not provided using the NFV MANO interfaces towards the VNFM. Description of the valid values: (1) dynamic: the VNF gets an IP address that is dynamically assigned by the NFVI/VIM/CISM without receiving IP configuration information from the MANO interfaces, (2) vnf_pkg: an IP address defined by the VNF provider is assigned by means included as part of the VNF package (e.g., LCM script); (3) external: an IP address is provided by an external management entity (such as EM) directly towards the VNF. Shall be present in case the ip_address_assignment property is set to False and shall be absent otherwise."
+        required: false
+        constraints:
+          - valid_values: [ dynamic, vnf_pkg, external ]
+      floating_ip_activated:
+        type: boolean
+        description: Specifies if the floating IP scheme is activated on the Connection Point or not 
+        required: true
+      ip_address_type:
+        type: string
+        description: Defines address type. The address type should be aligned with the address type supported by the layer_protocols properties of the connetion point
+        required: false
+        constraints:
+          - valid_values: [ ipv4, ipv6 ]
+      number_of_ip_address:
+        type: integer
+        description: Minimum number of IP addresses to be assigned 
+        required: false
+        constraints:
+          - greater_than: 0
+      fixed_ip_address:
+        type: list
+        description: Fixed IP addresses to be assigned to the internal CP instance. This property enables the VNF provider to define fixed IP addresses for internal CP instances to be assigned by the VNFM or the NFVO. This attribute property is only permitted for Cpds without external connectivity, i.e. connectivity outside the VNF. If present, it shall be compatible with the values of the L3ProtocolData of the VnfVirtualLink referred to by the Cp, if L3ProtocolData is included in the VnfVirtualLink
+        required: false
+        entry_schema:
+          type: string

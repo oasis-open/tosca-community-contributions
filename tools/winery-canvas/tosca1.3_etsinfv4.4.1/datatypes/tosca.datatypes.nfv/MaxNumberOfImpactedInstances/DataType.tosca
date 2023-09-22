@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.MaxNumberOfImpactedInstances:
+    derived_from: tosca.datatypes.Root
+    description: Specifies the maximum number of instances of a given Vdu.Compute node or VnfVirtualLink node that may be impacted simultaneously without impacting the functionality of the group of a given size. 
+    properties:
+      group_size:
+        type: integer
+        description: Determines the size of the group for which the max_number_of_impacted_instances is specified. If not present the size is not limited.   
+        required: false
+        constraints:
+          - greater_than: 0
+      max_number_of_impacted_instances:
+        type: integer
+        description: The maximum number of instances that can be impacted simultaneously within the group of the specified size.   
+        required: true
+        constraints:
+          - greater_than: 0
+ 

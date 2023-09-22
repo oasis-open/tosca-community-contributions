@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative interface types definitions version 1.3.0 for Winery
+
+metadata:
+
+  template_name: tosca-normative-interface-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+interface_types:
+  tosca.interfaces.node.lifecycle.Standard:
+    derived_from: tosca.interfaces.Root
+    operations:
+      create:
+        description: >-
+          Standard lifecycle create operation.
+      configure:
+        description: >-
+          Standard lifecycle configure operation.
+      start:
+        description: >-
+          Standard lifecycle start operation.
+      stop:
+        description: >-
+          Standard lifecycle stop operation.
+      delete:
+        description: >-
+          Standard lifecycle delete operation.

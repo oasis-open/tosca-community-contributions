@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VirtualLinkMonitoringParameter:
+    derived_from: tosca.datatypes.Root
+    description: Represents information on virtualised resource related performance metrics applicable to the VNF.
+    properties:
+      name:
+       type: string
+       description: Human readable name of the monitoring parameter
+       required: true
+      performance_metric:
+       type: string
+       description: Identifies a performance metric to be monitored.
+       required: true
+       constraints:
+         - valid_values: [ byte_incoming, byte_outgoing, packet_incoming, packet_outgoing ] 
+      collection_period:
+       type: scalar-unit.time
+       description: Describes the periodicity at which to collect the performance information. 
+       required: false
+       constraints: 
+        - greater_than: 0 s

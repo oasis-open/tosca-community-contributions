@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VirtualCpuPinning:
+   derived_from: tosca.datatypes.Root
+   description: Supports the specification of requirements related to the virtual CPU pinning configuration of a virtual compute resource 
+   properties:
+     virtual_cpu_pinning_policy:
+       type: string 
+       description: Indicates the policy for CPU pinning. The policy can take values of "static" or "dynamic". In case of "dynamic" the allocation of virtual CPU cores to logical CPU cores is decided by the VIM. (e.g. SMT (Simultaneous Multi-Threading) requirements). In case of "static" the allocation is requested to be according to the virtual_cpu_pinning_rule.
+       required: false
+       constraints:
+         - valid_values: [ static, dynamic ]
+     virtual_cpu_pinning_rule:
+       type: list
+       description: Provides the list of rules for allocating virtual CPU cores to logical  CPU cores/threads 
+       required: false
+       entry_schema:
+         type: string
+       

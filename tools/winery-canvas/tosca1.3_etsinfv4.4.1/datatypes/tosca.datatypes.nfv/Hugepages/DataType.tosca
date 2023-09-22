@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.Hugepages:
+    derived_from: tosca.datatypes.Root
+    description: Supports the specification of requirements on a particular hugepage size in terms of total memory needs. 
+    properties:
+      hugepage_size:
+        type: scalar-unit.size
+        description: Specifies the size of the hugepage.
+        required: true
+      requested_size:
+        type: scalar-unit.size
+        description: Specifies the total size required for all the hugepages of the size indicated by hugepage_size. 
+        required: true

@@ -1,0 +1,113 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative node types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-node-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+node_types:
+  tosca.nodes.network.Network:
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA Network node represents a simple, logical network service.
+    properties:
+      ip_version:
+        description: >
+          The IP version of the requested network.
+        type: integer
+        required: false
+        default: 4
+        constraints:
+          - valid_values: [ 4, 6 ]
+      cidr:
+        description: >
+          The cidr block of the requested network.
+        type: string
+        required: false
+      start_ip:
+        description: >
+          The IP address to be used as the 1st one in a pool of addresses
+          derived from the cidr block full IP range.
+        type: string
+        required: false
+      end_ip:
+        description: >
+          The IP address to be used as the last one in a pool of addresses
+          derived from the cidr block full IP range.
+        type: string
+        required: false
+      gateway_ip:
+        description: >
+          The gateway IP address.
+        type: string
+        required: false
+      network_name:
+        description: >
+          An Identifier that represents an existing Network instance in the
+          underlying cloud infrastructure - OR - be used as the name of the
+          new created network.
+          . If network_name is provided along with network_id they will be
+          used to uniquely identify an existing network and not creating a
+          new one, means all other possible properties are not allowed.
+          . network_name should be more convenient for using. But in case
+          that network name uniqueness is not guaranteed then one should
+          provide a network_id as well.
+        type: string
+        required: false
+      network_id:
+        description: >
+          An Identifier that represents an existing Network instance in
+          the underlying cloud infrastructure.
+          This property is mutually exclusive with all other properties
+          except network_name.
+          . Appearance of network_id in network template instructs the
+          Tosca container to use an existing network instead of creating
+          a new one.
+          . network_name should be more convenient for using. But in case
+          that network name uniqueness is not guaranteed then one should
+          add a network_id as well.
+          . network_name and network_id can be still used together to achieve
+          both uniqueness and convenient.
+        type: string
+        required: false
+      segmentation_id:
+        description: >
+          A segmentation identifier in the underlying cloud infrastructure
+          (e.g., VLAN id, GRE tunnel id). If the segmentation_id is specified,
+          the network_type or physical_network properties should be provided
+          as well.
+        type: string
+        required: false
+      network_type:
+        description: >
+          Optionally, specifies the nature of the physical network in
+          the underlying cloud infrastructure. Examples are flat, vlan,
+          gre or vxlan. For flat and vlan types, physical_network should
+          be provided too.
+        type: string
+        required: false
+      physical_network:
+        description: >
+          Optionally, identifies the physical network on top of which the
+          network is implemented, e.g. physnet1. This property is required
+          if network_type is flat or vlan.
+        type: string
+        required: false
+      dhcp_enabled:
+        description: >
+          Indicates the TOSCA container to create a virtual network instance
+          with or without a DHCP service.
+        type: boolean
+        required: false
+        default: true
+    attributes:
+      segmentation_id:
+        description: >
+          The actual segmentation_id that is been assigned to the network
+          by the underlying cloud infrastructure.
+        type: string
+    capabilities:
+      link:
+        type: tosca.capabilities.network.Linkable

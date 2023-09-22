@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfInfoModifiableAttributes:
+   derived_from: tosca.datatypes.Root
+   description: Describes VNF-specific extension and metadata for a given VNF 
+   properties:
+     extensions:
+       type: tosca.datatypes.nfv.VnfInfoModifiableAttributesExtensions
+       description: Extension properties of VnfInfo that are writeable 
+       required: false
+       # derived types are expected to introduce
+       # extensions with its type derived from
+       # tosca.datatypes.nfv.VnfInfoModifiableAttributesExtensions
+     metadata:
+       type: tosca.datatypes.nfv.VnfInfoModifiableAttributesMetadata
+       description: Metadata properties of VnfInfo that are writeable 
+       required: false
+       # derived types are expected to introduce
+       # metadata with its type derived from
+       # tosca.datatypes.nfv.VnfInfoModifiableAttributesMetadata

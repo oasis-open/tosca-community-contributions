@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.Qos:
+    derived_from: tosca.datatypes.Root
+    description: describes QoS data for a given VL used in a VNF deployment flavour 
+    properties:
+      latency:
+        type: scalar-unit.time #Number
+        description: Specifies the maximum latency 
+        required: true
+        constraints: 
+          - greater_than: 0 s
+      packet_delay_variation:
+        type: scalar-unit.time #Number
+        description: Specifies the maximum jitter  
+        required: true
+        constraints: 
+          - greater_or_equal: 0 s
+      packet_loss_ratio:
+        type: float
+        description: Specifies the maximum packet loss ratio 
+        required: false
+        constraints:
+           - in_range: [ 0.0, 1.0 ]

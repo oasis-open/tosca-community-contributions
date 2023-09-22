@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.ScalingAspects:
+    derived_from: tosca.policies.Root
+    description: The ScalingAspects type is a policy type representing the scaling aspects used for horizontal scaling as defined in ETSI GS NFV-IFA 011 [1]
+    properties:
+      aspects:
+       type: map # key: aspectId
+       description: Describe maximum scale level for total number of scaling steps that can be applied to a particular aspect
+       required: true
+       entry_schema:
+        type: tosca.datatypes.nfv.ScalingAspect
+       constraints:
+         - min_length: 1

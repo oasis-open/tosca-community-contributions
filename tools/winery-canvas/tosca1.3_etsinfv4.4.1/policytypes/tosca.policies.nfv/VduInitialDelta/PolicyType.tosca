@@ -1,0 +1,19 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.VduInitialDelta:
+    derived_from: tosca.policies.Root
+    description: The VduInitialDelta type is a policy type representing the Vdu.Compute detail of an initial delta used for horizontal scaling, as defined in ETSI GS NFV-IFA 011 [1].
+    properties:
+     initial_delta:
+       type: tosca.datatypes.nfv.VduLevel
+       description: Represents the initial minimum size of the VNF.
+       required: true
+    targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.Vdu.OsContainerDeployableUnit ]

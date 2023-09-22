@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.VirtualLinkToInstantiationLevelMapping:
+    derived_from: tosca.policies.Root
+    description: The VirtualLinkToInstantiationLevelMapping type is a policy type describing the bitrate requirements of a VL at each NS instantiation level of the composite NS, as defined in ETSI GS NFV-IFA 014 [2]
+    properties:
+      bit_rate_requirements:
+        type: map # key: Ns instantiation level
+        description: Bitrate requirements of a VL for each NS instantiation level.
+        required: true
+        entry_schema:
+          type: tosca.datatypes.nfv.LinkBitrateRequirements
+        constraints:
+          - min_length: 1
+    targets: [ tosca.nodes.nfv.NsVirtualLink ]

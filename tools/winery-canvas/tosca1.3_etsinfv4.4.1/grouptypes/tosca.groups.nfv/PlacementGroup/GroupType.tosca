@@ -1,0 +1,19 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 group types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+group_types:
+  tosca.groups.nfv.PlacementGroup:
+    derived_from: tosca.groups.Root
+    description: PlacementGroup is used for describing the affinity or anti-affinity relationship applicable between the virtualization containers to be created based on different VDUs, or between internal VLs to be created based on different VnfVirtualLinkDesc(s) or between the workloads being deployed based on different Mciops
+    properties:
+      description:
+       type: string
+       description: Human readable description of the group
+       required: true
+    members: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.Vdu.OsContainerDeployableUnit, tosca.nodes.nfv.VnfVirtualLink, tosca.nodes.nfv.Mciop ]

@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements:
+   derived_from: tosca.datatypes.Root
+   description: Describes requirements on a virtual network interface 
+   properties:
+     name:
+       type: string
+       description: Provides a human readable name for the requirement.    
+       required: false
+     description:
+       type: string
+       description: Provides a human readable description of the requirement.
+       required: false
+     network_interface_requirements:
+       type: map
+       description: The network interface requirements. A map of strings that contain a set of key-value pairs that describes the hardware platform specific  network interface deployment requirements.
+       required: true
+       entry_schema:
+         type: string 
+     nic_io_requirements:
+       type: tosca.datatypes.nfv.LogicalNodeData
+       description: references (couples) the CP with any logical node I/O requirements (for network devices) that may have been created. Linking these attributes is necessary so that so that I/O requirements that need to be articulated at the logical node level can be associated with the network interface requirements associated with the CP.
+       required: false

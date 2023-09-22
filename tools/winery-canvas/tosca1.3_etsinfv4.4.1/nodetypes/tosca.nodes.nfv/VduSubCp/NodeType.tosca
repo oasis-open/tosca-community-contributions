@@ -1,0 +1,33 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.VduSubCp:
+    derived_from: tosca.nodes.nfv.VduCp
+    description: describes network connectivity between a VNFC instance based on this VDU and an internal VL through a trunk port 
+    properties:
+      segmentation_type:
+        type: string
+        description: Specifies the encapsulation type for the traffics coming in and out of the trunk subport.
+        required: false
+        constraints:
+          - valid_values: [ vlan, inherit ]
+      segmentation_id:
+        type: integer
+        description: Specifies the segmentation ID for the subport, which is used to differentiate the traffics on different networks coming in and out of the trunk port.
+        required: false
+        constraints:
+          - greater_or_equal: 0
+    requirements:
+      - trunk_binding:
+          capability: tosca.capabilities.nfv.TrunkBindable
+          relationship: tosca.relationships.nfv.TrunkBindsTo
+          node: tosca.nodes.nfv.VduCp
+          occurrences: [1, 1]
+ 

@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VirtualBlockStorageData:
+   derived_from: tosca.datatypes.Root
+   description: VirtualBlockStorageData describes block storage requirements associated with compute resources in a particular VDU, either as a local disk or as virtual attached storage
+   properties:
+     size_of_storage:
+       type: scalar-unit.size
+       description: Size of virtualised storage resource
+       required: true
+       constraints:
+         - greater_or_equal: 0 B
+     vdu_storage_requirements:
+       type: map
+       description: The hardware platform specific storage requirements. A map of strings that contains a set of key-value pairs that represents the hardware platform specific storage deployment requirements 
+       required: false 
+       entry_schema:
+         type: string
+     rdma_enabled:
+       type: boolean
+       description: Indicates if the storage support RDMA 
+       required: true
+       default: false

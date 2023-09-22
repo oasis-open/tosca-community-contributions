@@ -1,0 +1,48 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative data types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-data-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+data_types:
+  tosca.datatypes.network.PortSpec:
+    derived_from: tosca.datatypes.Root
+    description: >-
+      The PortSpec type describes port specifications for a network
+      connection.
+    properties:
+      protocol:
+        type: string
+        description: >-
+          The required protocol used on the port.
+        required: true
+        default: tcp
+        constraints:
+          - valid_values: [ udp, tcp, igmp ]
+      source:
+        type: tosca.datatypes.network.PortDef
+        description: >-
+          The optional source port.
+        required: false
+      source_range:
+        type: range
+        description: >-
+          The optional range for the source port.
+        required: false
+        constraints:
+          - in_range: [ 1, 65535 ]
+      target:
+        type: tosca.datatypes.network.PortDef
+        description: >-
+          The optional target port.
+        required: false
+      target_range:
+        type: range
+        description: >-
+          The optional range for the target port.
+        required: false
+        constraints:
+          - in_range: [ 1, 65535 ]

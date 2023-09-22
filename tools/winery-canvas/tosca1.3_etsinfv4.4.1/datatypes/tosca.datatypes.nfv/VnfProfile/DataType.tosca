@@ -1,0 +1,48 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfProfile:
+    derived_from: tosca.datatypes.Root
+    description: describes a profile for instantiating VNFs of a particular NS DF according to a specific VNFD and VNF DF.
+    properties:
+      instantiation_level:
+        type: string
+        description: Identifier of the instantiation level of the VNF DF to be used for instantiation. If not present, the default instantiation level as declared in the VNFD shall be used.
+        required: false
+      target_vnf_scale_level_info:
+        type: map # key: aspectId
+        description: For each scaling aspect of the current VNF deployment flavour, it specifies the scale level of VNF constituents (e.g., VDU level) to be instantiated. If the property is present it shall contain all scaling aspects
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.ScaleInfo
+      min_number_of_instances:
+        type: integer
+        description: Minimum number of instances of the VNF based on this VNFD that is permitted to exist for this VnfProfile.
+        required: true
+        constraints:
+          - greater_or_equal: 0
+      max_number_of_instances:
+        type: integer
+        description: Maximum number of instances of the VNF based on this VNFD that is permitted to exist for this VnfProfile.
+        required: true
+        constraints:
+          - greater_or_equal: 0
+      service_availability_level:
+        type: integer
+        description: Specifies the service availability level for the VNF instance created from this profile.
+        required: false
+        constraints:
+          - greater_or_equal: 1
+      version_dependency:
+        type: list
+        description: Identifies versions of descriptors of other constituents in the NSD upon which the VNF depends. The dependencies may be described for the VNFD referenced with descriptor_id in the VNF node where this profile is defined and for VNFDs with the same ext_invariant_id.
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.VersionDependency

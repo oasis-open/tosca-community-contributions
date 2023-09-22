@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.Mask:
+    derived_from: tosca.datatypes.Root
+    properties:
+      starting_point:
+        description: Indicates the offset between the last bit of the source mac address and the first bit of the sequence of bits to be matched.
+        type: integer
+        constraints:
+          - greater_or_equal: 1
+        required: true
+      length:
+        description: Indicates the number of bits to be matched.
+        type: integer
+        constraints:
+          - greater_or_equal: 1
+        required: true
+      value:
+        description: Provide the sequence of bit values to be matched.
+        type: string
+        required: true

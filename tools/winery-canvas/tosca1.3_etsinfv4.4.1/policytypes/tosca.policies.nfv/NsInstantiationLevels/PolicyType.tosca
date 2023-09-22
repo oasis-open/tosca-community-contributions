@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.NsInstantiationLevels:
+    derived_from: tosca.policies.Root
+    description: The NsInstantiationLevels type is a policy type representing all the instantiation levels of resources to be instantiated within a deployment flavour and including default instantiation level in term of the number of VNF and nested NS instances to be created as defined in ETSI GS NFV-IFA 014 [2].
+    properties:
+      ns_levels:
+        type: map # key: levelId
+        description: Describes the various levels of resources that can be used to instantiate the VNF using this flavour.
+        required: true
+        entry_schema:
+          type: tosca.datatypes.nfv.NsLevels
+        constraints:
+          - min_length: 1
+      default_level:
+        type: string # levelId
+        description: The default instantiation level for this flavour.
+        required: false # required if multiple entries in ns_levels

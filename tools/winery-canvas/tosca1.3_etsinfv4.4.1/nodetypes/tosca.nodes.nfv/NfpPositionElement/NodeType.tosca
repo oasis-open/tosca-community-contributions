@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.NfpPositionElement:
+    derived_from: tosca.nodes.Root
+    description: node definition of NfpPositionElement
+    capabilities:
+      forwarding:
+        type: tosca.capabilities.nfv.Forwarding
+    requirements:
+      - profile_element:
+          capability: tosca.capabilities.nfv.Forwarding
+          relationship: tosca.relationships.nfv.ForwardTo
+          occurrences: [ 1, 2 ] # When the number of occurrences is 1, the ingress and egress traffic is associated to a single VnfExtCp or Sap; When the number of occurrences is 2, the ingress VnfExtCp or Sap is associated to the first value and the egress VnfExtCp or Sap is associated to the second value.

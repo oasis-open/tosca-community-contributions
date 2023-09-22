@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.NsVirtualLink:
+    derived_from: tosca.nodes.Root
+    description: node definition of Virtual Links
+    properties:
+      vl_profile:
+        type: tosca.datatypes.nfv.NsVlProfile # only covers min/max bitrate requirements
+        description: Specifies instantiation parameters for a virtual link of a particular NS deployment flavour.
+        required: true
+      connectivity_type:
+        type: tosca.datatypes.nfv.ConnectivityType
+        required: true
+      test_access:
+        type: list
+        description: Test access facilities available on the VL
+        required: false
+        entry_schema:
+          type: string
+          constraints:
+            - valid_values: [ passive_monitoring, active_loopback ]
+      description:
+        type: string
+        required: false
+        description: Human readable information on the purpose of the virtual link (e.g. VL for control plane traffic).
+    capabilities:
+      virtual_linkable:
+        type: tosca.capabilities.nfv.VirtualLinkable

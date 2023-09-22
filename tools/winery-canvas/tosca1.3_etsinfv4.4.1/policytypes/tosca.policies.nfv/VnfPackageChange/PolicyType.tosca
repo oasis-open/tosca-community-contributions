@@ -1,0 +1,54 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.VnfPackageChange:
+    derived_from: tosca.policies.Root
+    description: policy type specifying the processes and rules to be used for performing the resource related tasks, to change VNF instance to a different VNF Package (destination package)
+    properties:
+      selector:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.VnfPackageChangeSelector
+        description: Information to identify the source and destination VNFD for the change, and the related deployment flavours.
+        required: true
+        constraints:
+          - min_length: 1
+      modification_qualifier:
+        type: string
+        description: Specifies the type of modification resulting from transitioning from srcVnfdId to dstVnfdId. The possible values are UP indicating that the destination VNF version is newer than the source version, DOWN indicating that the destination VNF version is older than the source version.
+        constraints: [ valid_values: [ up, down ] ]
+        required: true
+      additional_modification_description:
+        type: string
+        description: Additional information to qualify further the change between the two versions.
+        required: false
+      component_mappings:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.VnfPackageChangeComponentMapping
+        description: Mapping information related to identifiers of components in source VNFD and destination VNFD that concern to the change process.
+        required: false
+      destination_flavour_id:
+        type: string
+        description: Identifies the deployment flavour in the destination VNF package for which this change applies. The flavour ID is defined in the destination VNF package.
+        required: true
+      actions:
+        type: list
+        description: List of applicable supported LCM coordination action names (action_name) specified in this VNFD as a TOSCA policy of a type derived from tosca.policies.nfv.LcmCoordinationAction.
+        required: false
+        entry_schema:
+          type: string
+      referenced_coordination_actions:
+        type: list
+        description: List of names of coordination actions not specified within this VNFD as a TOSCA policy of a type derived from tosca.policies.nfv.LcmCoordinationAction.
+        required: false
+        entry_schema:
+          type: string
+    targets: [ tosca.nodes.nfv.VNF ]

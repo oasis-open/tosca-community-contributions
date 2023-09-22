@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.AdditionalServiceData:
+    derived_from: tosca.datatypes.Root
+    description: describes the additional service data of the VirtualCp used to expose properties of the VirtualCp to NFV-MANO.
+    properties: 
+      portData:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.ServicePortData
+        description: Service port numbers exposed by the VirtualCp.
+        required: true
+      serviceData:
+        type: tosca.datatypes.nfv.ServiceData
+        description: Service matching information exposed by the VirtualCp.
+        required: false

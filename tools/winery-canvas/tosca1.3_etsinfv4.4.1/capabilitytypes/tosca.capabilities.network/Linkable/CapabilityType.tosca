@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative capability types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-capability-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+capability_types:
+  tosca.capabilities.network.Linkable:
+    description: >-
+      A node type that includes the Linkable capability indicates that
+      it can be pointed to by a tosca.relationships.network.LinksTo relationship type.
+    derived_from: tosca.capabilities.Node

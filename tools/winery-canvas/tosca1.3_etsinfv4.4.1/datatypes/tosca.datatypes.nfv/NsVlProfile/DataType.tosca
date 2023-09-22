@@ -1,0 +1,44 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.NsVlProfile:
+    derived_from: tosca.datatypes.Root
+    description: Describes additional instantiation data for a given NsVirtualLink used in a specific NS deployment flavour.
+    properties:
+      max_bitrate_requirements:
+        type: tosca.datatypes.nfv.LinkBitrateRequirements
+        description: Specifies the maximum bitrate requirements for a VL instantiated according to this profile.
+        required: true
+      min_bitrate_requirements:
+        type: tosca.datatypes.nfv.LinkBitrateRequirements
+        description: Specifies the minimum bitrate requirements for a VL instantiated according to this profile.
+        required: true
+      qos:
+        type: tosca.datatypes.nfv.NsVirtualLinkQos
+        description: Specifies the QoS requirements of a VL instantiated according to this profile.
+        required: false
+      service_availability_level:
+        type: integer
+        description: Specifies the service availability level for the VL instance created from this profile
+        required: false
+        constraints:
+          - greater_or_equal: 1
+      virtual_link_protocol_data:
+        type: list
+        description: Specifies the protocol data for a virtual link.
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.NsVirtualLinkProtocolData
+      data_flow_mirroring:
+        type: list
+        description: It describes the data flow mirroring to be associated to the NS instance containing the NS VL created from this NsVlProfile..
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.NsDataFlowMirroring

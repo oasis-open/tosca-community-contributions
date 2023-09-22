@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.ScaleInfo:
+   derived_from: tosca.datatypes.Root
+   description: Indicates for a given scaleAspect the corresponding scaleLevel 
+   properties:
+     scale_level:
+       type: integer
+       description: The scale level for a particular aspect 
+       required: true
+       constraints:
+         - greater_or_equal: 0
+       

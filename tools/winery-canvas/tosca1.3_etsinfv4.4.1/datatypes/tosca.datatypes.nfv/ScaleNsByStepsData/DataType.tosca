@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.ScaleNsByStepsData:
+    derived_from: tosca.datatypes.Root
+    description: describes the information needed to scale an NS instance by one or more scaling steps, with respect to a particular NS scaling aspect
+    properties:
+      scaling_direction:
+        type: string
+        description: Indicates the type of the scale operation requested.
+        required: true
+        constraints:
+          - valid_values: [ scale_out, scale_in ]
+      aspect:
+        type: string
+        description: Identifier of the scaling aspect.
+        required: true
+      number_of_steps:
+        type: integer
+        description: Number of scaling steps to be executed.
+        required: true
+        constraints:
+          - greater_than: 0
+        default: 1

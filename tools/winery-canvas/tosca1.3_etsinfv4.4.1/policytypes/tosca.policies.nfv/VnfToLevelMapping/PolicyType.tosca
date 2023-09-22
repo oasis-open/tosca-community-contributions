@@ -1,0 +1,33 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.VnfToLevelMapping:
+    derived_from: tosca.policies.Root
+    description: The VnfToLevelMapping type is a policy type representing the number of VNF instances to be deployed at each NS level, as defined in ETSI GS NFV-IFA 014 [2]
+    properties:
+      aspect:
+        type: string
+        description: Represents the scaling aspect to which this policy applies
+        required: true
+      number_of_instances:
+        type: map # key: Ns level
+        description: Number of VNF instances to be deployed for each NS level.
+        required: true
+        key_schema:
+          type: integer # First level is level 0.
+          constraints:
+            - greater_or_equal: 0
+        entry_schema:
+          type: integer
+          constraints:
+            - greater_or_equal: 0
+        constraints:
+          - min_length: 1
+    targets: [ tosca.nodes.nfv.VNF ]

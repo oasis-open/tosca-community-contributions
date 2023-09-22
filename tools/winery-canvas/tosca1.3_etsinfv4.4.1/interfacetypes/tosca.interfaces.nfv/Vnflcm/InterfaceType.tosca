@@ -1,0 +1,196 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 interface types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+interface_types:
+  tosca.interfaces.nfv.Vnflcm:
+    derived_from: tosca.interfaces.Root
+    description: This interface encompasses a set of TOSCA operations corresponding to the VNF LCM operations defined in ETSI GS NFV-IFA 007 as well as to preamble and postamble procedures to the execution of the VNF LCM operations.
+    operations:
+      instantiate:
+        description: Invoked upon receipt of an Instantiate VNF request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+            # derived types are expected to introduce additional_parameters with its
+            # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+      instantiate_start:
+        description: Invoked before instantiate
+      instantiate_end:
+        description: Invoked after instantiate
+      terminate:
+        description: Invoked upon receipt Terminate VNF request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+            # derived types are expected to introduce additional_parameters with its
+            # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+      terminate_start:
+        description: Invoked before terminate
+      terminate_end:
+        description: Invoked after terminate
+      modify_information:
+        description: Invoked upon receipt of a Modify VNF Information request
+      modify_information_start:
+        description: Invoked before modify_information
+      modify_information_end:
+        description: Invoked after modify_information
+      change_flavour:
+        description: Invoked upon receipt of a Change VNF Flavour request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+            # derived types are expected to introduce additional_parameters with its
+            # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+      change_flavour_start:
+        description: Invoked before change_flavour
+      change_flavour_end:
+        description: Invoked after change_flavour
+      change_external_connectivity:
+        description: Invoked upon receipt of a Change External VNF Connectivity  request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+          # derived types are expected to introduce additional_parameters with its
+          # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+      change_external_connectivity_start:
+        description: Invoked before change_external_connectivity
+      change_external_connectivity_end:
+        description: Invoked after change_external_connectivity
+      operate:
+        description: Invoked upon receipt of an Operate VNF request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+            # derived types are expected to introduce additional_parameters with its
+            # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+      operate_start:
+        description: Invoked before operate
+      operate_end:
+        description: Invoked after operate
+      heal:
+        description: Invoked upon receipt of a Heal VNF request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+            # derived types are expected to introduce additional_parameters with its
+            # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+          cause:
+            type: string
+            description: Indicates the reason why a healing procedure is required.
+            required: false
+          vnfc_instance_ids:
+            type: list
+            entry_schema:
+              type: string
+            description: List of VNFC instances requiring a healing action.
+            required: false
+      heal_start:
+        description: Invoked before heal
+      heal_end:
+        description: Invoked after heal
+      scale:
+        description: Invoked upon receipt of a Scale VNF request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+            # derived types are expected to introduce additional_parameters with its
+            # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+          type:
+            type: string
+            description: Indicates the type of the scale operation requested.
+            required: false
+            constraints:
+              - valid_values: [ scale_out, scale_in ]
+          aspect:
+            type: string
+            description: Identifier of the scaling aspect.
+            required: false
+          number_of_steps:
+            type: integer
+            description: Number of scaling steps to be executed.
+            required: true
+            constraints:
+              - greater_than: 0
+            default: 1
+      scale_start:
+        description: Invoked before scale
+      scale_end:
+        description: Invoked after scale 
+      scale_to_level:
+        description: Invoked upon receipt of a Scale VNF to Level request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+     # derived types are expected to introduce additional_parameters with its
+     # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+          instantiation_level:
+            type: string
+            description: Identifier of the target instantiation level of the current deployment flavour to which the VNF is requested to be scaled. Either instantiation_level or scale_info shall be provided.
+            required: false
+          scale_info:
+            type: map # key: aspectId
+            description: For each scaling aspect of the current deployment flavour, indicates the target scale level to which the VNF is to be scaled. Either instantiation_level or scale_info shall be provided.
+            required: false
+            entry_schema:
+              type: tosca.datatypes.nfv.ScaleInfo
+      scale_to_level_start:
+        description: Invoked before scale_to_level
+      scale_to_level_end:
+        description: Invoked after scale_to_level
+      create_snapshot:
+        description: Invoked upon receipt of a Create VNF snapshot request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+            # derived types are expected to introduce additional_parameters with its
+            # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+      create_snapshot_start:
+        description: Invoked before create_snapshot
+      create_snapshot_end:
+        description: Invoked after create_snapshot
+      revert_to_snapshot:
+        description: Invoked upon receipt of a Revert to VNF snapshot request
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+            # derived types are expected to introduce additional_parameters with its
+            # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+      revert_to_snapshot_start:
+        description: Invoked before revert_to_snapshot
+      revert_to_snapshot_end:
+        description: Invoked after revert_to_snapshot
+      change_current_package:
+        description: Invoked by tosca.policies.nfv.VnfPackageChange
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+            required: false
+            # derived types are expected to introduce additional_parameters with its
+            # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters
+      change_current_package_start:
+        description: Invoked by tosca.policies.nfv.VnfPackageChange 
+      change_current_package_end:
+        description: Invoked by tosca.policies.nfv.VnfPackageChange
+    notifications:
+      change_current_package_notification:
+        description: Invoked upon receipt of a ChangeCurrentVnfPackage request
+      change_current_package_start_notification:
+        description: Invoked before the operation designated to changing the current VNF package
+      change_current_package_end_notification:
+        description: Invoked after the operation designated to changing the current VNF package

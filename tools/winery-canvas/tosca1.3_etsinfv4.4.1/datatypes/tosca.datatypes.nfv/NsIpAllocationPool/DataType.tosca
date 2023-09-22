@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.NsIpAllocationPool:
+    derived_from: tosca.datatypes.Root
+    description: Specifies a range of IP addresses
+    properties:
+      start_ip_address:
+        type: string
+        description: The IP address to be used as the first one in a pool of addresses derived from the cidr block full IP range
+        required: true
+      end_ip_address:
+        type: string
+        description: The IP address to be used as the last one in a pool of addresses derived from the cidr block full IP range
+        required: true

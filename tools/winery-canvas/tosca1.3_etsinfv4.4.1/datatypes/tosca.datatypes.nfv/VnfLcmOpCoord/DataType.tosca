@@ -1,0 +1,38 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfLcmOpCoord:
+    derived_from: tosca.datatypes.Root
+    description: describes a set of information used for a coordination action in a VNF lifecycle management operation for a given VNF.
+    properties:
+      description:
+        type: string
+        description: Human readable description of the coordination action. 
+        required: false
+      endpoint_type:
+        type: string
+        description: Specifies the type of the endpoint exposing the LCM operation coordination such as other operations supporting or management systems (e.g. an EM) or the VNF instance. If the VNF produces the LCM coordination interface, this property may be omitted or may have the value "vnf". If this attribute is omitted, the type of endpoint that provides the interface is determined at deployment time. If the VNF does not produce the LCM coordination interface but coordination via this interface is needed, it is expected that a management entity such as the EM exposes the coordination interface, and consequently, this attribute shall be present and shall have the value "mgmt".
+        required: false
+        constraints:
+          - valid_values: [ mgmt, vnf ]
+      coordination_stage:
+        type: string
+        description: Indicates whether the coordination action is invoked before or after all other changes performed by the VNF LCM operation. coordination_stage property shall be omitted if the coordination action is intended to be invoked at an intermediate stage of the LCM operation, i.e. neither at the start nor at the end. In this case, the time at which to invoke the coordination during the execution of the LCM operation is determined by means outside the scope of the present document such as VNFM-internal logic or LCM script.
+        required: false
+        constraints:
+          - valid_values: [ start, end ]
+      input_parameters:
+        type: tosca.datatypes.nfv.InputOpCoordParams
+        description: Input parameters to be provided in the LCM coordination request.
+        required: false
+      output_parameters:
+        type: tosca.datatypes.nfv.OutputOpCoordParams
+        description: Output parameters provided in the LCM coordination response.
+        required: false

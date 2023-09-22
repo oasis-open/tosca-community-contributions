@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.AntiAffinityRule:
+    derived_from: tosca.policies.Placement
+    description: The AntiAffinityRule describes the anti-affinity rules applicable for the defined targets
+    properties:
+      scope:
+        type: string
+        description: scope of the rule is an NFVI_node, an NFVI_PoP, etc.
+        required: true
+        constraints:
+          - valid_values: [ nfvi_node, zone, zone_group, nfvi_pop, network_link_and_node, container_namespace, cis_node ]
+      nfvi_maintenance_group_info:
+        type: tosca.datatypes.nfv.NfviMaintenanceInfo
+        description: Provides information on the impact tolerance and rules to be observed when a group of instances based on the same Vdu.Compute node is impacted during NFVI operation and maintenance (e.g. NFVI resource upgrades).  
+        required: false
+    targets: [ tosca.nodes.nfv.Vdu.Compute, tosca.nodes.nfv.VnfVirtualLink, tosca.groups.nfv.PlacementGroup, tosca.nodes.nfv.Mciop, tosca.nodes.nfv.Vdu.OsContainerDeployableUnit ]
+  

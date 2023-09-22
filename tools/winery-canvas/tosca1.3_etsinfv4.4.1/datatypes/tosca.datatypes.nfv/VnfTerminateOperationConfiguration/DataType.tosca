@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfTerminateOperationConfiguration:
+   derived_from: tosca.datatypes.Root
+   description: represents information that affect the invocation of the TerminateVnf 
+   properties:
+     min_graceful_termination_timeout:
+       type: scalar-unit.time
+       description: Minimum timeout value for graceful termination of a VNF instance 
+       required: true
+     max_recommended_graceful_termination_timeout:
+       type: scalar-unit.time
+       description: Maximum recommended timeout value that can be needed to gracefully terminate a VNF instance of a particular type under certain conditions, such as maximum load condition. This is provided by VNF provider as information for the operator facilitating the selection of optimal timeout value. This value is not used as constraint
+       required: false

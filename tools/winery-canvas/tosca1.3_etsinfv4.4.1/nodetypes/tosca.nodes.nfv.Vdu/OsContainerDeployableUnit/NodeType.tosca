@@ -1,0 +1,105 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.Vdu.OsContainerDeployableUnit:
+    derived_from: tosca.nodes.Root
+    description: Describes the aggregate of container of a VDU (when realized as OS containers) which supporting the description of the deployment and operational behavior of a VNFC 
+    properties:
+      name:
+        type: string
+        description: Human readable name of the VDU 
+        required: true
+      description:
+        type: string
+        description: Human readable description of the VDU 
+        required: true
+      logical_node:
+       type: map
+       description: Describes the Logical Node requirements 
+       required: false
+       entry_schema:
+         type: tosca.datatypes.nfv.LogicalNodeData
+      requested_additional_capabilities:
+       type: map
+       description: Describes additional capability for a particular OS container 
+       required: false
+       entry_schema:
+         type: tosca.datatypes.nfv.RequestedAdditionalCapability
+      nfvi_constraints:
+        type: map
+        description: Describes constraints on the NFVI for the VNFC instance(s) created from this VDU. This property is reserved for future use in the present document.
+        required: false
+        entry_schema:
+          type: string
+      configurable_properties:
+        type: tosca.datatypes.nfv.VnfcConfigurableProperties
+        required: false 
+     #    derived types are expected to introduce
+     #    configurable_properties with its type derived from
+     #    tosca.datatypes.nfv.VnfcConfigurableProperties
+      vdu_profile:
+        type: tosca.datatypes.nfv.VduProfile
+        description: Defines additional instantiation data for the Vdu.OsContainerDeployableUnit node
+        required: true
+      mcio_constraint_params:
+        type: list
+        entry_schema:
+          type: string
+          constraints:
+            - valid_values:
+                - affinity_nfvi_pop
+                - affinity_zone
+                - affinity_zone_group
+                - affinity_nfvi_node
+                - affinity_cis_node
+                - anti_affinity_nfvi_pop
+                - anti_affinity_zone
+                - anti_affinity_zone_group
+                - anti_affinity_nfvi_node
+                - anti_affinity_cis_node
+                - local_affinity_nfvi_pop
+                - local_affinity_zone
+                - local_affinity_zoneGroup
+                - local_affinity_nfvi_node
+                - local_affinity_cis_node
+                - local_anti_affinity_nfvi_pop
+                - local_anti_affinity_zone
+                - local_anti_affinity_zone_group
+                - local_anti_affinity_nfvi_node
+                - local_anti_affinity_cis_node
+                - node_additional_capability_ssd
+                - node_additional_capability_dpdk
+                - node_additional_capability_sriov
+                - node_additional_capability_gpu
+                - node_additional_capability_fpga
+                - node_additional_capability_cpu_pin
+                - node_capability_logical_numa
+                - node_pool
+        description: Defines the parameter names for constraints expected to be assigned to MCIOs realizing this Vdu.OsContainerDeployableUnit. The value specifies the standardized semantical context of the MCIO constraints.
+        required: false
+      mcio_identification_data:
+        type: tosca.datatypes.nfv.McioIdentificationData
+        description: Name and type of the MCIO that realizes this Vdu.OsContainerDeployableUnit. It allows the VNFM to identify the MCIO e.g. when querying the CISM.
+    capabilities:
+      virtual_binding:
+        type: tosca.capabilities.nfv.VirtualBindable
+        occurrences: [ 0, UNBOUNDED ]
+      associable:
+        type: tosca.capabilities.nfv.AssociableVdu
+        occurrences: [ 1, 1 ]
+    requirements:
+      - virtual_storage:
+          capability: tosca.capabilities.nfv.VirtualStorage
+          relationship: tosca.relationships.nfv.AttachesTo
+          occurrences: [ 0, UNBOUNDED ]
+      - container:
+          capability: tosca.capabilities.nfv.ContainerDeployable
+          relationship: tosca.relationships.nfv.DeploysTo
+          occurrences: [ 1, UNBOUNDED ]

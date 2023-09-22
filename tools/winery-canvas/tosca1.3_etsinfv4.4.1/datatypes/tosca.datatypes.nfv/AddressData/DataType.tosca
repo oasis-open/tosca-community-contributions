@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.AddressData:
+    derived_from: tosca.datatypes.Root
+    description: Describes information about the addressing scheme and parameters applicable to a CP 
+    properties:
+      address_type:
+        type: string
+        description: Describes the type of the address to be assigned to a connection point. The content type shall be aligned with the address type supported by the layerProtocol property of the connection point
+        required: true
+        constraints:
+          - valid_values: [ mac_address, ip_address ]
+      l2_address_data:
+        type: tosca.datatypes.nfv.L2AddressData
+        description: Provides the information on the MAC addresses to be assigned to a connection point.
+        required: false
+      l3_address_data:
+        type: tosca.datatypes.nfv.L3AddressData
+        description: Provides the information on the IP addresses to be assigned to a connection point 
+        required: false

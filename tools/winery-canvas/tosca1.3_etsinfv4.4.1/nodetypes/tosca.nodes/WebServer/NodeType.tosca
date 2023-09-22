@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative node types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-node-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+node_types:
+  tosca.nodes.WebServer:
+    derived_from: tosca.nodes.SoftwareComponent
+    description: >
+      This TOSCA WebServer Node Type represents an abstract software
+      component or service that is capable of hosting and providing
+      management operations for one or more WebApplication nodes.
+    capabilities:
+      # Private, layer 4 endpoints
+      data_endpoint: tosca.capabilities.Endpoint
+      admin_endpoint: tosca.capabilities.Endpoint.Admin
+      host:
+        type: tosca.capabilities.Compute
+        valid_source_types: [ tosca.nodes.WebApplication ]

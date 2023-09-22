@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.MinNumberOfPreservedInstances:
+    derived_from: tosca.datatypes.Root
+    description: Specifies the minimum number of instances of a given Vdu.Compute node or VnfVirtualLink node which need to be preserved simultaneously. 
+    properties:
+      group_size:
+        type: integer
+        description: Determines the size of the group for which the min_number_of_preserved_instances is specified. If not present the size is not limited.   
+        required: false
+        constraints:
+          - greater_than: 0
+      min_number_of_preserved_instances:
+        type: integer
+        description: The minimum number of instances which need to be preserved simultaneously within the group of the specified size.   
+        required: true
+        constraints:
+          - greater_than: 0

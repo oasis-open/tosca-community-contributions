@@ -1,0 +1,19 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfInstantiateOperationConfiguration:
+   derived_from: tosca.datatypes.Root
+   description: represents information that affect the invocation of the InstantiateVnf operation.
+   properties:
+      target_scale_levels_supported:
+        type: boolean
+        description: Signals whether passing a value larger than one in the numScalingSteps parameter of the ScaleVnf operation is supported by this VNF.
+        required: true
+        default: false

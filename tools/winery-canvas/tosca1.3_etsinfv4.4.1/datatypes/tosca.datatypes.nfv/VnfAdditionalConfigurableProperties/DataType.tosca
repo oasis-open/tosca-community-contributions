@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfAdditionalConfigurableProperties:
+   derived_from: tosca.datatypes.Root 
+   description: is an empty base type for deriving data types for describing additional configurable properties for a given VNF
+   properties:
+     is_writable_anytime:
+       type: boolean
+       description: It specifies whether these additional configurable properties are writeable (TRUE) at any time (i.e. prior to / at instantiation time as well as after instantiation).or (FALSE) only prior to / at instantiation time. If this property is not present, the additional configurable properties are writable anytime.
+       required: true
+       default : true
+   
