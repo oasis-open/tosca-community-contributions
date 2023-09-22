@@ -1,0 +1,46 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 capability types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+capability_types:
+  tosca.capabilities.nfv.VirtualCompute:    
+    derived_from: tosca.capabilities.Node
+    description: Describes the capabilities related to virtual compute resources 
+    properties:
+      logical_node:
+       type: map
+       description: Describes the Logical Node requirements 
+       required: false
+       entry_schema:
+         type: tosca.datatypes.nfv.LogicalNodeData
+      requested_additional_capabilities:
+       type: map
+       description: Describes additional capability for a particular VDU 
+       required: false
+       entry_schema:
+         type: tosca.datatypes.nfv.RequestedAdditionalCapability
+      compute_requirements:
+       type: map
+       required: false 
+       entry_schema:
+         type: string
+      virtual_memory:
+       type: tosca.datatypes.nfv.VirtualMemory
+       description: Describes virtual memory of the virtualized compute 
+       required: true
+      virtual_cpu:
+       type: tosca.datatypes.nfv.VirtualCpu
+       description: Describes virtual CPU(s) of the virtualized compute 
+       required: true
+      virtual_local_storage:
+       type: list
+       description: A list of virtual system disks created and destroyed as part of the VM lifecycle 
+       required: false
+       entry_schema:
+        type: tosca.datatypes.nfv.VirtualBlockStorageData
+        description: virtual system disk definition 

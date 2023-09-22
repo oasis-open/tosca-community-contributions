@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative node types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-node-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+node_types:
+  tosca.nodes.Abstract.Storage:
+    derived_from: tosca.nodes.Root
+    description: >-
+      The TOSCA Abstract.Storage node represents an abstract storage
+      resource without any requirements on compute or network
+      resources.
+    properties:
+      name:
+        type: string
+        description: >-
+          The logical name (or ID) of the storage resource.
+      size:
+        type: scalar-unit.size
+        description: >-
+          The requested initial storage size (default unit is in
+          Gigabytes).
+        default: 0 MB
+        constraints:
+          - greater_or_equal: 0 MB

@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.LcmCoordinationAction:
+    derived_from: tosca.policies.Root
+    description: The LcmCoordinationAction type is a policy type representing the LCM coordination actions supported by a VNF and/or expected to be supported by its EM for a particular VNF LCM operation. This policy concerns the whole VNF (deployment flavour) represented by the topology_template and thus has no explicit target list.
+    properties:
+      action_name:
+        type: string
+        description: Coordination action name.
+        required: true
+      action:  #represents a place holder for specifying actions of a VNF-specific type derived from tosca.datatypes.nfv.VnfLcmOpCoord
+        type: tosca.datatypes.nfv.VnfLcmOpCoord
+        description: Describes a set of information needed for coordination action in the VNF LCM operation.
+        required: true

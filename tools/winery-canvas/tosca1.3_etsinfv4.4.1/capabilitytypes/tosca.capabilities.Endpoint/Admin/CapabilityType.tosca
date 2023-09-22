@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative capability types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-capability-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+capability_types:
+  tosca.capabilities.Endpoint.Admin:
+    derived_from: tosca.capabilities.Endpoint
+    description: >-
+      This is the default TOSCA type that should be used or extended
+      to define a specialized administrator endpoint capability.
+    properties:
+      # Change Endpoint secure indicator to true from its default of false
+      secure:
+        type: boolean
+        default: true
+        constraints:
+          - equal: true

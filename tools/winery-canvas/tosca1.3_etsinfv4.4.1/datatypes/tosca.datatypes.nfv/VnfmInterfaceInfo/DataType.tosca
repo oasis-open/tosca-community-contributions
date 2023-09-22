@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfmInterfaceInfo:
+    derived_from: tosca.datatypes.Root
+    description: describes information enabling the VNF instance to access the NFV-MANO interfaces produced by the VNFM
+    properties:
+      interface_name: 
+        type: string 
+        description: Identifies an interface produced by the VNFM. 
+        required: true 
+        constraints: 
+          - valid_values: [ vnf_lcm, vnf_pm, vnf_fm ] 
+      details: 
+        type: tosca.datatypes.nfv.InterfaceDetails 
+        description: Provide additional data to access the interface endpoint 
+        required: false  
+      credentials: 
+        type: map
+        description: Provides credential enabling access to the interface
+        required: false
+        entry_schema:
+          type: string

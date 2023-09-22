@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.ChecksumData:
+     derived_from: tosca.datatypes.Root
+     description: Describes information about the result of performing a checksum operation over some arbitrary data 
+     properties:
+       algorithm:
+         type: string
+         description: Describes the algorithm used to obtain the checksum value
+         required: true
+         constraints:
+           - valid_values: [sha-224, sha-256, sha-384, sha-512 ]
+       hash:
+         type: string
+         description: Contains the result of applying the algorithm indicated by the algorithm property to the data to which this ChecksumData refers 
+         required: true

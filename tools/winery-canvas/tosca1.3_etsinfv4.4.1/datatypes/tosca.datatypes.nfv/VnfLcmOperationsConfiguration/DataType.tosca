@@ -1,0 +1,61 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfLcmOperationsConfiguration:
+   derived_from: tosca.datatypes.Root
+   description: Represents information to configure lifecycle management operations  
+   properties:
+     instantiate:
+       type: tosca.datatypes.nfv.VnfInstantiateOperationConfiguration
+       description: Configuration parameters for the InstantiateVnf operation 
+       required: false
+     scale:
+       type: tosca.datatypes.nfv.VnfScaleOperationConfiguration
+       description: Configuration parameters for the ScaleVnf operation 
+       required: false
+     scale_to_level:
+       type: tosca.datatypes.nfv.VnfScaleToLevelOperationConfiguration
+       description: Configuration parameters for the ScaleVnfToLevel operation 
+       required: false
+     change_flavour:
+       type: tosca.datatypes.nfv.VnfChangeFlavourOperationConfiguration
+       description: Configuration parameters for the changeVnfFlavourOpConfig operation 
+       required: false
+     heal:
+       type: tosca.datatypes.nfv.VnfHealOperationConfiguration
+       description: Configuration parameters for the HealVnf operation 
+       required: false
+     terminate:
+       type: tosca.datatypes.nfv.VnfTerminateOperationConfiguration
+       description: Configuration parameters for the TerminateVnf operation 
+       required: false
+     operate:
+       type: tosca.datatypes.nfv.VnfOperateOperationConfiguration
+       description: Configuration parameters for the OperateVnf operation 
+       required: false
+     change_ext_connectivity:
+       type:   tosca.datatypes.nfv.VnfChangeExtConnectivityOperationConfiguration
+       description: Configuration parameters for the changeExtVnfConnectivityOpConfig operation 
+       required: false
+     change_current_package:
+       type: tosca.datatypes.nfv.VnfChangeCurrentPackageOperationConfiguration
+       description: Configuration parameters for the ChangeCurrentVnfPackage operation
+       required: false
+       # derived types are expected to introduce new properties, with their type derived from
+       # tosca.datatypes.nfv.VnfChangeCurrentPackageOperationConfiguration,
+       # with the same name as the operation designated to the ChangeCurrentVnfPackage request
+     create_snapshot:
+       type: tosca.datatypes.nfv.VnfCreateSnapshotOperationConfiguration
+       description: Configuration parameters for the CreateVnfSnapshot operation 
+       required: false
+     revert_to_snapshot:
+       type: tosca.datatypes.nfv.VnfRevertToSnapshotOperationConfiguration
+       description: Configuration parameters for the RevertToVnfSnapshot operation 
+       required: false

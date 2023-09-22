@@ -1,0 +1,41 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative capability types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-capability-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+capability_types:
+  tosca.capabilities.Endpoint.Public:
+    derived_from: tosca.capabilities.Endpoint
+    description: >
+      This capability represents a public endpoint which is accessible
+      to the general internet (and its public IP address ranges).
+      This public endpoint capability also can be used to create a
+      floating (IP) address that the underlying network assigns from a
+      pool allocated from the application's underlying public network.
+      This floating address is managed by the underlying network such
+      that can be routed an application's private address and remains
+      reliable to internet clients.
+    properties:
+      # Change the default network_name to use the first public network found
+      network_name:
+        type: string
+        default: PUBLIC
+        constraints:
+          - equal: PUBLIC
+      floating:
+        description: >
+          Indicates that the public address should be allocated from a
+          pool of floating IPs that are associated with the network.
+        type: boolean
+        default: false
+        status: experimental
+      dns_name:
+        description: >-
+          The optional name to register with DNS
+        type: string
+        required: false
+        status: experimental

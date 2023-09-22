@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative node types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-node-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+node_types:
+  tosca.nodes.LoadBalancer:
+    derived_from: tosca.nodes.Root
+    description: >
+      The TOSCA Load Balancer node represents logical function that be
+      used in conjunction with a Floating Address to distribute an
+      application's traffic (load) across a number of instances of the
+      application (e.g., for a clustered or scaled application).
+    properties:
+      algorithm:
+        type: string
+        required: false
+        status: experimental
+    capabilities:
+      client:
+        type: tosca.capabilities.Endpoint.Public
+        occurrences: [0, UNBOUNDED]
+        description: >-
+          the Floating (IP) client's on the public network can connect
+          to
+    requirements:
+      - application:
+          capability: tosca.capabilities.Endpoint
+          relationship: tosca.relationships.RoutesTo
+          occurrences: [0, UNBOUNDED]
+          description: >-
+            Connection to one or more load balanced applications

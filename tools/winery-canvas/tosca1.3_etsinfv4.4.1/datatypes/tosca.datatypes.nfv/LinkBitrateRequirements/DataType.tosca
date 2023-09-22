@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.LinkBitrateRequirements:
+    derived_from: tosca.datatypes.Root
+    description: describes the requirements in terms of bitrate for a virtual link 
+    properties:
+      root:
+        type: integer # in bits per second
+        description: Specifies the throughput requirement in bits per second of the link (e.g. bitrate of E-Line, root bitrate of E-Tree, aggregate capacity of E-LAN).
+        required: true
+        constraints:
+          - greater_or_equal: 0
+      leaf:
+        type: integer # in bits per second
+        description: Specifies the throughput requirement in bits per second of leaf connections to the link when applicable to the connectivity type (e.g. for E-Tree and E LAN branches).
+        required: false
+        constraints:
+          - greater_or_equal: 0

@@ -1,0 +1,48 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.Cp:
+    derived_from: tosca.nodes.Root
+    description:  Provides information regarding the purpose of the connection point 
+    properties:
+      layer_protocols:
+        type: list
+        description: Identifies which protocol the connection point uses for connectivity purposes 
+        required: true
+        entry_schema:
+          type: string
+          constraints:
+            - valid_values: [ ethernet, mpls, odu2, ipv4, ipv6, pseudo-wire ]
+      ip_stack_mode:
+        type: string
+        description: Specifies the capability of the CP to support IP dual stack or tunnelling
+        required: false
+        constraints:
+          - valid_values: [ ipv4_xor_ipv6, ipv4_or_ipv6, tunnel_ipv6_over_ipv4, tunnel_ipv4_over_ipv6 ]
+      role: #Name in ETSI NFV IFA011: cpRole
+        type: string
+        description: Identifies the role of the port in the context of the traffic flow patterns in the VNF or parent NS 
+        required: false
+        constraints:
+          - valid_values: [ root, leaf ]
+      description:
+        type: string
+        description: Provides human-readable information on the purpose of the connection point 
+        required: false
+      protocol:
+        type: list
+        description: Provides information on the addresses to be assigned to the connection point(s) instantiated from this Connection Point Descriptor 
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.CpProtocolData
+      trunk_mode:
+        type: boolean
+        description: Provides information about whether the CP instantiated from this Cp is in Trunk mode (802.1Q or other), When operating in "trunk mode", the Cp is capable of carrying traffic for several VLANs. Absence of this property implies that trunkMode is not configured for the Cp i.e. It is equivalent to boolean value "false".
+        required: false

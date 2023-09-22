@@ -1,0 +1,56 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative capability types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-capability-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+capability_types:
+  tosca.capabilities.Compute:
+    derived_from: tosca.capabilities.Container
+    description: >
+      The Compute capability, when included on a Node Type or Template
+      definition, indicates that the node can provide hosting on a
+      named compute resource.
+    properties:
+      name:
+        type: string
+        description: >-
+          The otional name (or identifier) of a specific compute
+          resource for hosting.
+        required: false
+      num_cpus:
+        type: integer
+        description: >-
+          Number of (actual or virtual) CPUs associated with the
+          Compute node.
+        required: false
+        constraints:
+          - greater_or_equal: 1
+      cpu_frequency:
+        type: scalar-unit.frequency
+        description: >
+          Specifies the operating frequency of CPU's core.  This
+          property expresses the expected frequency of one (1) CPU as
+          provided by the property "num_cpus".
+        required: false
+        constraints:
+          - greater_or_equal: 0.1 GHz
+      disk_size:
+        type: scalar-unit.size
+        description: >-
+          Size of the local disk available to applications running on
+          the Compute node (default unit is MB).
+        required: false
+        constraints:
+          - greater_or_equal: 0 MB
+      mem_size:
+        type: scalar-unit.size
+        description: >-
+          Size of memory available to applications running on the
+          Compute node (default unit is MB).
+        required: false
+        constraints:
+          - greater_or_equal: 0 MB

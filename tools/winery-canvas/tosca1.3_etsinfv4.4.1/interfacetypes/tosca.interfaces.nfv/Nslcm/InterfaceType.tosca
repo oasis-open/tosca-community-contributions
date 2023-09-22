@@ -1,0 +1,64 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 interface types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+interface_types:
+  tosca.interfaces.nfv.Nslcm:
+    derived_from: tosca.interfaces.Root
+    description: This interface encompasses a set of TOSCA operations corresponding to NS LCM operations defined in ETSI GS NFV-IFA 013. as well as to preamble and postamble procedures to the execution of the NS LCM operations.
+    operations:
+      instantiate_start:
+        description: Preamble to execution of the instantiate operation
+      instantiate:
+        description: Base procedure for instantiating an NS, corresponding to the Instantiate NS operation defined in ETSI GS NFV-IFA 013.
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.NsOperationAdditionalParameters
+            required: false
+      instantiate_end:
+        description: Postamble to the execution of the instantiate operation
+      terminate_start:
+        description: Preamble to execution of the terminate operation
+      terminate:
+        description: Base procedure for terminating an NS, corresponding to the Terminate NS operation defined in ETSI GS NFV-IFA 013.
+      terminate_end:
+        description: Postamble to the execution of the terminate operation
+      update_start:
+        description: Preamble to execution of the update operation
+      update:
+        description: Base procedure for updating an NS, corresponding to the Update NS operation defined in ETSI GS NFV-IFA 013.
+      update_end:
+        description: Postamble to the execution of the update operation
+      scale_start:
+        description: Preamble to execution of the scale operation
+      scale:
+        description: Base procedure for scaling an NS, corresponding to the Scale NS operation defined in ETSI GS NFV-IFA 013.
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.NsOperationAdditionalParameters
+            required: false
+          scale_ns_by_steps_data:
+            type: tosca.datatypes.nfv.ScaleNsByStepsData
+            description: Describes the information needed to scale an NS instance by one or more scaling steps, with respect to a particular NS scaling aspect as defined in ETSI GS NFV-IFA 013. Either scale_ns_by_steps_data or scale_ns_to_level_data shall be provided.
+            required: false
+          scale_ns_to_level_data:
+            type: tosca.datatypes.nfv.ScaleNsToLevelData
+            description: Describes the information needed to scale an NS instance to a target size as defined in ETSI GS NFV-IFA 013. Either scale_ns_by_steps_data or scale_ns_to_level_data shall be provided.
+            required: false
+      scale_end:
+        description: Postamble to the execution of the scale operation
+      heal_start:
+        description: Preamble to execution of the heal operation
+      heal:
+        description: Base procedure for healing an NS, corresponding to the Heal NS operation defined in ETSI GS NFV-IFA 013.
+        inputs:
+          additional_parameters:
+            type: tosca.datatypes.nfv.NsOperationAdditionalParameters
+            required: false
+      heal_end:
+        description: Postamble to the execution of the heal operation

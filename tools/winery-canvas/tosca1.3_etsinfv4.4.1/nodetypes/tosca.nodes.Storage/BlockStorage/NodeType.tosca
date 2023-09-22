@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative node types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-node-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+node_types:
+  tosca.nodes.Storage.BlockStorage:
+    derived_from: tosca.nodes.Abstract.Storage
+    description: >
+      The TOSCA BlockStorage node currently represents a server-local
+      block storage device (i.e., not shared) offering evenly sized
+      blocks of data from which raw storage volumes can be created.
+    properties:
+      size:
+        default: 1 MB
+        constraints:
+          - greater_or_equal: 1 MB
+      volume_id:
+        type: string
+        description: >-
+          ID of an existing volume (that is in the accessible scope of
+          the requesting application).
+        required: false
+      snapshot_id:
+        type: string
+        description: >-
+          Some identifier that represents an existing snapshot that
+          should be used when creating the block storage (volume).
+        required: false
+    capabilities:
+      attachment:
+        type: tosca.capabilities.Attachment

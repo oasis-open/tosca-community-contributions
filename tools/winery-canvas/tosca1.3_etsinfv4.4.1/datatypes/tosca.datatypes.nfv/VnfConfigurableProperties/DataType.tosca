@@ -1,0 +1,43 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfConfigurableProperties:
+   derived_from: tosca.datatypes.Root
+   description: indicates configuration properties for a given VNF (e.g. related to auto scaling and auto healing).
+   properties:
+     is_autoscale_enabled:
+       type: boolean
+       description: It permits to enable (TRUE)/disable (FALSE) the auto-scaling functionality. If the property is not present, then configuring this VNF property is not supported 
+       required: false
+     is_autoheal_enabled:
+       type: boolean
+       description: It permits to enable (TRUE)/disable (FALSE) the auto-healing functionality. If the property is not present, then configuring this VNF property is not supported 
+       required: false
+     vnfm_interface_info:
+       type: list
+       description: Contains information enabling access to the NFV-MANO interfaces produced by the VNFM (e.g. URIs and credentials), If the property is not present, then configuring this VNF property is not supported.
+       required: false
+       entry_schema:
+         type: tosca.datatypes.nfv.VnfmInterfaceInfo
+     vnfm_oauth_server_info:
+       type: tosca.datatypes.nfv.OauthServerInfo
+       description: Contains information to enable discovery of the authorization server protecting access to VNFM interfaces. If the property is not present, then configuring this VNF property is not supported.
+       required: false
+     vnf_oauth_server_info:
+       type: tosca.datatypes.nfv.OauthServerInfo
+       description: Contains information to enable discovery of the authorization server to validate the access tokens provided by the VNFM when  the VNFM accesses the VNF interfaces, if that functionality (token introspection) is supported by the authorization server. If the property is not present, then configuring this VNF property is not supported.
+       required: false
+     additional_configurable_properties:
+       description: It provides VNF specific configurable properties that can be modified using the ModifyVnfInfo operation 
+       required: false
+       type: tosca.datatypes.nfv.VnfAdditionalConfigurableProperties
+     # derived types are expected to introduce
+     # additional_configurable_properties with its type derived from
+     # tosca.datatypes.nfv.VnfAdditionalConfigurableProperties

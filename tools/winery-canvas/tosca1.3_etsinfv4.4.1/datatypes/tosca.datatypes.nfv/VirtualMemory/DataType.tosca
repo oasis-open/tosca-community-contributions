@@ -1,0 +1,39 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VirtualMemory:
+     derived_from: tosca.datatypes.Root
+     description: supports the specification of requirements related to virtual memory of a virtual compute resource
+     properties:
+       virtual_mem_size:
+         type: scalar-unit.size 
+         description: Amount of virtual memory.
+         required: true
+       virtual_mem_oversubscription_policy:
+         type: string
+         description: The memory core oversubscription policy in terms of virtual memory to physical memory on the platform.
+         required: false
+       vdu_mem_requirements:
+         type: map
+         description: The hardware platform specific VDU memory requirements. A map of strings that contains a set of key-value pairs that describes hardware platform specific VDU memory requirements.
+         required: false
+         entry_schema:
+           type: string
+       numa_enabled:
+         type: boolean
+         description: It specifies the memory allocation to be cognisant of the relevant process/core allocation.
+         required: true
+         default: false
+       huge_pages_requirements:
+         type: list
+         description: The requirement for huge pages resources. Each element in the list indicates a hugepage size and the total memory requested for hugepages of that size.
+         required: false
+         entry_schema: 
+           type: tosca.datatypes.nfv.Hugepages

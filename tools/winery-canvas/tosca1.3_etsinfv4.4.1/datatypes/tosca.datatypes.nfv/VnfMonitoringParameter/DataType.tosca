@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfMonitoringParameter:
+    derived_from: tosca.datatypes.Root
+    description: Represents information on virtualised resource related performance metrics applicable to the VNF.
+    properties:
+      name:
+       type: string
+       description: Human readable name of the monitoring parameter
+       required: true
+      performance_metric:
+       type: string
+       description: Identifies a performance metric to be monitored, according to ETSI GS NFV-IFA 027. 
+       required: true
+       constraints:
+        - valid_values: [ v_cpu_usage_mean_vnf, v_cpu_usage_peak_vnf, v_memory_usage_mean_vnf, v_memory_usage_peak_vnf, v_disk_usage_mean_vnf, v_disk_usage_peak_vnf, byte_incoming_vnf_ext_cp, byte_outgoing_vnf_ext_cp, packet_incoming_vnf_ext_cp, packet_outgoing_vnf_ext_cp ] 
+      collection_period:
+       type: scalar-unit.time
+       description: Describes the periodicity at which to collect the performance information. 
+       required: false
+       constraints: 
+        - greater_than: 0 s

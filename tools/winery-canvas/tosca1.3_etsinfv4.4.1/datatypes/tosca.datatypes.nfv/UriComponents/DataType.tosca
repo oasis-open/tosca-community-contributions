@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.UriComponents:
+    derived_from: tosca.datatypes.Root
+    description: information used to build a URI that complies with IETF RFC 3986 [8].
+    properties:
+      scheme:
+       type: string # shall comply with IETF RFC 3986
+       description: scheme component of a URI.
+       required: true
+      authority: 
+       type: tosca.datatypes.nfv.UriAuthority
+       description: Authority component of a URI
+       required: false
+      path:
+       type: string # shall comply with IETF RFC 3986
+       description: path component of a URI.
+       required: false
+      query:
+       type: string # shall comply with IETF RFC 3986
+       description: query component of a URI.
+       required: false
+      fragment:
+       type: string # shall comply with IETF RFC 3986
+       description: fragment component of a URI.
+       required: false

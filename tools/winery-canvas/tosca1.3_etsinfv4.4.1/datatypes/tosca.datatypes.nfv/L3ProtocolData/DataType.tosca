@@ -1,0 +1,48 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.L3ProtocolData:
+   derived_from: tosca.datatypes.Root
+   description: describes L3 protocol data for a given virtual link used in a specific VNF deployment flavour.
+   properties:
+     name:
+       type: string
+       description: Identifies the network name associated with this L3 protocol.
+       required: false
+     ip_version:
+       type: string
+       description: Specifies IP version of this L3 protocol. The value of the ip_version property shall be consistent with the value of the layer_protocol in the connectivity_type property of the virtual link node.
+       required: true
+       constraints:
+         - valid_values: [ ipv4, ipv6 ]
+     cidr:
+       type: string
+       description: Specifies the CIDR (Classless Inter-Domain Routing) of this L3 protocol. The value may be overridden at run-time.
+       required: true  
+     ip_allocation_pools:
+       type: list
+       description: Specifies the allocation pools with start and end IP addresses for this L3 protocol. The value may be overridden at run-time.
+       required: false
+       entry_schema:
+         type: tosca.datatypes.nfv.IpAllocationPool
+     gateway_ip:
+       type: string
+       description: Specifies the gateway IP address for this L3 protocol. The value may be overridden at run-time.
+       required: false
+     dhcp_enabled:
+       type: boolean
+       description: Indicates whether DHCP (Dynamic Host Configuration Protocol) is enabled or disabled for this L3 protocol. The value may be overridden at run-time.
+       required: false
+     ipv6_address_mode:
+       type: string
+       description: Specifies IPv6 address mode. May be present when the value of the ipVersion attribute is "ipv6" and shall be absent otherwise. The value may be overridden at run-time.
+       required: false
+       constraints:
+         - valid_values: [ slaac, dhcpv6-stateful, dhcpv6-stateless ] 

@@ -1,0 +1,52 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.NfviMaintenanceInfo:
+    derived_from: tosca.datatypes.Root
+    description: Provides information related to the constraints and rules applicable to virtualised resources and their groups impacted due to NFVI maintenance operations 
+    properties:
+      impact_notification_lead_time:
+        type: scalar-unit.time
+        description: Specifies the minimum notification lead time requested for upcoming impact of the virtualised resource or their group (i.e. between the notification and the action causing the impact).    
+        required: true
+      is_impact_mitigation_requested:
+        type: boolean
+        description: Indicates whether it is requested that at the time of the notification of an upcoming change that is expected to have an impact on the VNF, virtualised resource(s) of the same characteristics as the impacted ones is/are provided to compensate for the impact (TRUE) or not (FALSE).  
+        required: true
+        default: false
+      supported_migration_type:
+        type: list
+        description: Specifies the allowed migration types in the order of preference in case of an impact starting with the most preferred type. It is applicable to the Vdu.Compute node and to the VirtualBlockStorage, VirtualObjectStorage and VirtualFileStorage nodes.
+        required: false
+        entry_schema:
+          type: string
+          constraints:
+            - valid_values: [ no_migration, offline_migration, live_migration ]
+      max_undetectable_interruption_time:
+        type: scalar-unit.time
+        description: Specifies the maximum interruption time that can go undetected at the VNF level and therefore which will not trigger VNF-internal recovery during live migration. It is applicable to the Vdu.Compute node and to the VirtualBlockStorage, VirtualObjectStorage and VirtualFileStorage nodes.
+        required: false
+      min_recovery_time_between_impacts:
+        type: scalar-unit.time
+        description: Specifies the time required by the group to recover from an impact, thus, the minimum time requested between consecutive impacts of the group..
+        required: false
+      max_number_of_impacted_instances:
+        type: list
+        description: Specifies for different group sizes the maximum number of instances that can be impacted simultaneously within the group of virtualised resources without losing functionality.
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.MaxNumberOfImpactedInstances
+      min_number_of_preserved_instances:
+        type: list
+        description: Specifies for different group sizes the minimum number of instances which need to be preserved simultaneously within the group of virtualised resources. 
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.MinNumberOfPreservedInstances
+ 

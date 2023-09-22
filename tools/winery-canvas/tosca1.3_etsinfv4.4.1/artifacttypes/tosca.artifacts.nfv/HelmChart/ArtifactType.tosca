@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 artifact types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+artifact_types:
+  tosca.artifacts.nfv.HelmChart:
+    derived_from: tosca.artifacts.File
+    description: describes the Helm chart artifact.
+    file_ext: [ tar, tar.gz, tgz ]
+  

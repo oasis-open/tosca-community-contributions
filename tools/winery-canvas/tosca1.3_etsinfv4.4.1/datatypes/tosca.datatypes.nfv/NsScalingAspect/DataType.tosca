@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.NsScalingAspect:
+    derived_from: tosca.datatypes.Root
+    description: describes the details of an aspect used for horizontal scaling
+    properties:
+      name:
+        type: string
+        description: Human readable name of the aspect
+        required: true
+      description:
+        type: string
+        description: Human readable description of the aspect
+        required: true
+      ns_scale_levels:
+        type: map
+        description: Description of the NS levels for this scaling aspect.
+        required: true
+        key_schema:
+          type: integer # Integer type in order to number the levels. First level is level 0.
+          constraints:
+            - greater_or_equal: 0
+        entry_schema:
+          type: tosca.datatypes.nfv.NsLevels

@@ -1,0 +1,45 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative node types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-node-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+node_types:
+  tosca.nodes.Database:
+    derived_from: tosca.nodes.Root
+    description: >-
+      The TOSCA Database node represents a logical database that can
+      be managed and hosted by a TOSCA DBMS node.
+    properties:
+      name:
+        type: string
+        description: >-
+          the logical name of the database
+        required: true
+      port:
+        type: integer
+        description: >-
+          the port the underlying database service will listen to for
+          data
+        required: false
+      user:
+        type: string
+        description: >-
+          the optional user account name for DB administration
+        required: false
+      password:
+        type: string
+        description: >-
+          the optional password for the DB user account
+        required: false
+    requirements:
+      - host:
+          capability: tosca.capabilities.Compute
+          node: tosca.nodes.DBMS
+          relationship: tosca.relationships.HostedOn
+    capabilities:
+      database_endpoint:
+        type: tosca.capabilities.Endpoint.Database

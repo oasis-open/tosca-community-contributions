@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_pnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.LocationInfo:
+    derived_from: tosca.datatypes.Root
+    description: Represents geographical information on the location where a PNF is deployed.
+    properties:
+      country_code:
+        type: string # two-letter ISO 3166 country code
+        description: Country code
+        required: true
+      civic_address_element:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.CivicAddressElement
+        description: Elements composing the civic address where the PNF is deployed.
+        required: false
+      geographic_coordinates:
+        type: tosca.datatypes.nfv.GeographicCoordinates
+        description: Geographic coordinates (e.g. Altitude, Longitude, Latitude) where the PNF is deployed.
+        required: false
+  

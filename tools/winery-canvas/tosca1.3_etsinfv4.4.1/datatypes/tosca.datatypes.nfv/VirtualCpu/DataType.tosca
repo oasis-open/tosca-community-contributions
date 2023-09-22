@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VirtualCpu:
+   derived_from: tosca.datatypes.Root
+   description: Supports the specification of requirements related to virtual CPU(s) of a virtual compute resource
+   properties:
+     cpu_architecture:
+       type: string
+       description: CPU architecture type. Examples are x86, ARM
+       required: false
+     num_virtual_cpu:
+       type: integer
+       description: Number of virtual CPUs
+       required: true
+       constraints:
+         - greater_than: 0
+     virtual_cpu_clock:
+       type: scalar-unit.frequency
+       description: Minimum virtual CPU clock rate
+       required: false
+     virtual_cpu_oversubscription_policy:
+       type: string
+       description: CPU core oversubscription policy e.g. the relation of virtual CPU cores to physical CPU cores/threads.
+       required: false
+     vdu_cpu_requirements:
+       type: map
+       description: The hardware platform specific VDU CPU requirements. A map of strings that contains a set of key-value pairs describing VDU CPU specific hardware platform requirements.
+       required: false
+       entry_schema:
+         type: string 
+     virtual_cpu_pinning:
+       type: tosca.datatypes.nfv.VirtualCpuPinning
+       description: The virtual CPU pinning configuration for the virtualised compute resource.
+       required: false

@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VirtualFileStorageData:
+       derived_from: tosca.datatypes.Root
+       description: VirtualFileStorageData describes file storage requirements associated with compute resources in a particular VDU
+       properties:
+         size_of_storage:
+           type: scalar-unit.size
+           description: Size of virtualized storage resource
+           required: true
+           constraints:
+             - greater_or_equal: 0 B
+         file_system_protocol:
+           type: string
+           description: The shared file system protocol
+           required: true
+           constraints:
+             - valid_values: [ nfs, cifs ]

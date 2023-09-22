@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.BootData:
+    derived_from: tosca.datatypes.Root
+    description: describes the information used to customize a virtualised compute resource at boot time.
+    properties:
+      vim_specific_properties:
+        type: tosca.datatypes.nfv.BootDataVimSpecificProperties
+        description: Properties used for selecting VIM specific capabilities when setting the boot data.
+        required: false
+      kvp_data:
+        type: tosca.datatypes.nfv.KvpData
+        description: A set of key-value pairs for configuring a virtual compute resource.
+        required: false
+      content_or_file_data:
+        type: tosca.datatypes.nfv.ContentOrFileData
+        description: A string content or a file for configuring a virtual compute resource. 
+        required: false

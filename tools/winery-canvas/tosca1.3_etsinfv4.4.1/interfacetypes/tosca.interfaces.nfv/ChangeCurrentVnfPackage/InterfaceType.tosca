@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 interface types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+interface_types:
+  tosca.interfaces.nfv.ChangeCurrentVnfPackage:
+    derived_from: tosca.interfaces.Root
+    description: This interface is an empty base interface type for deriving VNF specific interface types that include VNF Change Current VNF Package specific operation.
+  # operations:
+      # operation_name: name of a VNF-specific operation serving the Change current VNF Package request.
+        # description: Invoked by tosca.policies.nfv.VnfPackageChange
+        # inputs:
+          # additional_parameters:
+          #   type: tosca.datatypes.nfv.VnfOperationAdditionalParameters
+          #   required: false
+      # derived types are expected to introduce additional_parameters with its
+      # type derived from tosca.datatypes.nfv.VnfOperationAdditionalParameters

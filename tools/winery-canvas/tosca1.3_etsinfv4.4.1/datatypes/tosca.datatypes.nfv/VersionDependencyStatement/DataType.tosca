@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_common_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VersionDependencyStatement:
+    derived_from: tosca.datatypes.Root
+    description: Lists one or more VNF, NS or PNF descriptor identifiers which describe one single dependency.
+    properties:
+      descriptor_id: 
+        description: List of identifiers of VNFDs, NSDs or PNFDs upon which the entity using this information element depends. When more than one descriptor is indicated, they shall correspond to versions of the same VNF, NS or PNF and they represent. alternatives, i.e. the presence of one of them fulfills the dependency.
+        type: list
+        entry_schema: 
+          type: string
+        required: true
+ 

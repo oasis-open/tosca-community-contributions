@@ -1,0 +1,37 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.RequestedAdditionalCapability:
+   derived_from: tosca.datatypes.Root
+   description: describes requested additional capability for a particular VDU
+   properties:
+     requested_additional_capability_name:
+       type: string
+       description: Identifies a requested additional capability for the VDU.
+       required: true
+     support_mandatory:
+       type: boolean
+       description: Indicates whether the requested additional capability is mandatory for successful operation.
+       required: true
+     min_requested_additional_capability_version:
+       type: string
+       description: Identifies the minimum version of the requested additional capability.
+       required: false
+     preferred_requested_additional_capability_version:
+       type: string
+       description: Identifies the preferred version of the requested additional capability.
+       required: false
+     target_performance_parameters:
+       type: map
+       description: Identifies specific attributes, dependent on the requested additional capability type.
+       required: true
+       entry_schema:
+         type: string
+       

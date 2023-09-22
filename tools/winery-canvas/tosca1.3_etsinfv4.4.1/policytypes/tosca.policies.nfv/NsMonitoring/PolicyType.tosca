@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.NsMonitoring:
+    derived_from: tosca.policies.Root
+    description: Policy type is used to identify information to be monitored during the lifetime of a network service instance as defined in ETSI GS NFV-IFA 014 [2].
+    properties:
+      ns_monitoring_parameters:
+        type: map #key: id
+        description: Specifies a virtualised resource related performance metric to be monitored on the NS level.
+        required: true
+        entry_schema:
+          type: tosca.datatypes.nfv.NsMonitoringParameter
+        constraints:
+          - min_length: 1
+    targets: [ tosca.nodes.nfv.NS ]

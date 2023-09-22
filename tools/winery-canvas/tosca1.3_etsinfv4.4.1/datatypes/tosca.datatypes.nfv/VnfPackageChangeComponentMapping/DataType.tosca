@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.VnfPackageChangeComponentMapping:
+    derived_from: tosca.datatypes.Root
+    description: A mapping between the identifier of a components or property in the source VNFD and the identifier of the corresponding component or property in the destination VNFD.
+    properties:
+      component_type:
+        type: string
+        description: The type of component or property. Possible values differentiate whether changes concern to some VNF component (e.g. VDU, internal VLD, etc.) or property (e.g. a Scaling Aspect, etc.).
+        constraints:
+          - valid_values: [ vdu, cp, virtual_link, virtual_storage, instantiation_level, scaling_aspect ]
+        required: true
+      source_id:
+        type: string
+        description: Identifier of the component or property in the source VNFD.
+        required: true
+      destination_id:
+        type: string
+        description: Identifier of the component or property in the destination VNFD.
+        required: true
+      description:
+        type: string
+        description: Human readable description of the component changes.
+        required: false

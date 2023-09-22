@@ -1,0 +1,51 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.VduCp:
+     derived_from: tosca.nodes.nfv.Cp
+     description: describes network connectivity between a VNFC instance based on this VDU and an internal VL 
+     properties:
+       bitrate_requirement:
+         type: integer   # in bits per second
+         description: Bitrate requirement in bit per second on this connection point 
+         required: false
+         constraints: 
+           - greater_or_equal: 0
+       virtual_network_interface_requirements:
+         type: list
+         description: Specifies requirements on a virtual network interface realising the CPs instantiated from this CPD 
+         required: false
+         entry_schema:
+           type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
+       order:
+         type: integer
+         description: The order of the NIC on the compute instance (e.g.eth2)
+         required: false
+         constraints:
+           - greater_or_equal: 0
+       vnic_type: 
+         type: string
+         description: Describes the type of the virtual network interface realizing the CPs instantiated from this CPD
+         required: false
+         constraints:
+         - valid_values: [ normal, macvtap, direct, baremetal, virtio-forwarder, direct-physical, smart-nic, bridge, ipvlan, loopback, macvlan, ptp, vlan, host-device ]
+     capabilities: 
+       trunk_binding: # This capability is available only the trunk_mode property value of this VduCp is true and there is at least one VduSubCp defined as subport of the same trunk.
+         type: tosca.capabilities.nfv.TrunkBindable
+         occurrences: [ 0, UNBOUNDED ]
+     requirements:
+       - virtual_link:
+           capability: tosca.capabilities.nfv.VirtualLinkable
+           relationship: tosca.relationships.nfv.VirtualLinksTo
+           occurrences: [1, 1]
+       - virtual_binding:
+           capability: tosca.capabilities.nfv.VirtualBindable
+           relationship: tosca.relationships.nfv.VirtualBindsTo
+           occurrences: [0, 1]

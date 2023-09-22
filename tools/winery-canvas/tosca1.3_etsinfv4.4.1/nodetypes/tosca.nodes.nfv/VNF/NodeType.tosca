@@ -1,0 +1,118 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.VNF:
+    derived_from: tosca.nodes.Root
+    description: The generic abstract type from which all VNF specific node types shall be derived to form, together with other node types, the TOSCA service template(s) representing the VNFD
+    properties:
+      descriptor_id: # instead of vnfd_id
+        type: string # UUID
+        description: Identifier of this VNFD information element. This attribute shall be globally unique
+        required: true
+      ext_invariant_id:
+        type: string # UUID
+        description: Identifies the VNFD in a version independent manner. This property is invariant across versions of the VNFD that fulfil certain conditions related to the external connectivity and management of the VNF. When used in a VNF node template in an NSD it allows for VNF instances during NS LCM the use of a VNFD different from the one referenced by the descriptor_id property, provided they have the same ext_invariant_id. This attribute shall be globally unique.
+        required: false
+      descriptor_version: # instead of vnfd_version
+        type: string
+        description: Identifies the version of the VNFD
+        required: true
+      provider: # instead of vnf_provider
+        type: string
+        description: Provider of the VNF and of the VNFD
+        required: true
+      product_name: # instead of vnf_product_name
+        type: string
+        description: Human readable name for the VNF Product
+        required: true
+      software_version: # instead of vnf_software_version
+        type: string
+        description: Software version of the VNF
+        required: true
+      product_info_name: # instead of vnf_product_info_name
+        type: string
+        description: Human readable name for the VNF Product
+        required: false
+      product_info_description: # instead of vnf_product_info_description
+        type: string
+        description: Human readable description of the VNF Product
+        required: false
+      vnfm_info:
+       type: list
+       required: true
+       description: Identifies VNFM(s) compatible with the VNF
+       entry_schema:
+        type: string
+        constraints:
+          - pattern: (^etsivnfm:v[0-9]?[0-9]\.[0-9]?[0-9]\.[0-9]?[0-9]$)|(^[0-9]+:[a-zA-Z0-9.-]+$)
+      localization_languages:
+       type: list
+       description: Information about localization languages of the VNF
+       required: false
+       entry_schema:
+        type: string #IETF RFC 5646 string
+      default_localization_language:
+       type: string #IETF RFC 5646 string
+       description: Default localization language that is instantiated if no information about selected localization language is available
+       required: false
+      configurable_properties:
+       type: tosca.datatypes.nfv.VnfConfigurableProperties
+       description: Describes the configurable properties of the VNF
+       required: false
+       # derived types are expected to introduce configurable_properties 
+       # with its type derived from tosca.datatypes.nfv.VnfConfigurableProperties
+      modifiable_attributes:
+       type: tosca.datatypes.nfv.VnfInfoModifiableAttributes
+       description: Describes the modifiable attributes of the VNF
+       required: false 
+       # derived types are expected to introduce modifiable_attributes
+       # with its type derived from
+       # tosca.datatypes.nfv.VnfInfoModifiableAttributes
+      lcm_operations_configuration:
+       type: tosca.datatypes.nfv.VnfLcmOperationsConfiguration
+       description: Describes the configuration parameters for the VNF LCM operations
+       required: false
+      monitoring_parameters:
+       type: map # key: id
+       entry_schema:
+        type: tosca.datatypes.nfv.VnfMonitoringParameter
+       description: Describes monitoring parameters applicable to the VNF.
+       required: false
+      flavour_id:
+       type: string
+       description: Identifier of the Deployment Flavour within the VNFD
+       required: true
+      flavour_description:
+       type: string
+       description: Human readable description of the DF
+       required: true
+      vnf_profile:
+       type: tosca.datatypes.nfv.VnfProfile
+       description: Describes a profile for instantiating VNFs of a particular NS DF according to a specific VNFD and VNF DF
+       required: false
+    attributes:
+      scale_status:
+        type: map # key: aspectId
+        description: Scale status of the VNF, one entry per aspect. Represents for every scaling aspect how "big" the VNF has been scaled w.r.t. that aspect.
+        entry_schema:
+          type: tosca.datatypes.nfv.ScaleInfo
+    requirements:
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [ 0, 1 ]
+    # Additional requirements shall be defined in the VNF specific node type (deriving from tosca.nodes.nfv.VNF) corresponding to NS virtual links that need to connect to VnfExtCps
+    interfaces:
+      Vnflcm:
+        type: tosca.interfaces.nfv.Vnflcm
+      VnfIndicator:
+        type: tosca.interfaces.nfv.VnfIndicator
+        # derived types are expected to introduce Vnf Indicator interfaces 
+        # with their type derived from tosca.interfaces.nfv.VnfIndicator

@@ -1,0 +1,56 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative node types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-node-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+node_types:
+  tosca.nodes.Compute:
+    derived_from: tosca.nodes.Abstract.Compute
+    description: >
+      The TOSCA Compute node represents one or more real or virtual
+      processors of software applications or services along with other
+      essential local resources.  Collectively, the resources the
+      compute node represents can logically be viewed as a (real or
+      virtual) "server".
+    attributes:
+      private_address:
+        type: string
+        description: >-
+          The primary private IP address assigned by the cloud
+          provider that applications may use to access the Compute
+          node.
+      public_address:
+        type: string
+        description: >-
+          The primary public IP address assigned by the cloud provider
+          that applications may use to access the Compute node.
+      networks:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.NetworkInfo
+      ports:
+        type: map
+        entry_schema:
+          type: tosca.datatypes.network.PortInfo
+    requirements:
+      - local_storage:
+          capability: tosca.capabilities.Attachment
+          node: tosca.nodes.Storage.BlockStorage
+          relationship: tosca.relationships.AttachesTo
+          occurrences: [0, UNBOUNDED]
+    capabilities:
+      host:
+        type: tosca.capabilities.Compute
+        valid_source_types: [tosca.nodes.SoftwareComponent]
+      os:
+        type: tosca.capabilities.OperatingSystem
+      endpoint:
+        type: tosca.capabilities.Endpoint.Admin
+      scalable:
+        type: tosca.capabilities.Scalable
+      binding:
+        type: tosca.capabilities.network.Bindable

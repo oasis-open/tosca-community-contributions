@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.VipCpScalingAspectDeltas:
+    derived_from: tosca.policies.Root
+    description: The VipCpScalingAspectDeltas type is a policy type representing the VipCp detail of an aspect deltas used for horizontal scaling, as defined in ETSI GS NFV-IFA 011 [1]
+    properties:
+      aspect:
+        type: string
+        description: Represents the scaling aspect to which this policy applies
+        required: true
+      deltas:
+        type: map # key: scalingDeltaId
+        description: Describes the VipCp scaling deltas to be applied for every scaling steps of a particular aspect.
+        required: true
+        entry_schema:
+          type: tosca.datatypes.nfv.VipCpLevel
+        constraints:
+          - min_length: 1
+    targets: [ tosca.nodes.nfv.VipCp ]

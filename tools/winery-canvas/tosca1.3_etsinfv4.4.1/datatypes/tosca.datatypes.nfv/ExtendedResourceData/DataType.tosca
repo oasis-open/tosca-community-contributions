@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.ExtendedResourceData:
+    derived_from: tosca.datatypes.Root
+    description: Supports the specification of requirements related to extended resources of a container.
+    properties:
+      extended_resource:
+        type: map
+        description: The hardware platform specific extended resource. A map of string that contains one single key-value pair that describes one hardware platform specific container requirement.
+        required: true
+        entry_schema:
+          type: string 
+        constraints:
+          - min_length: 1
+          - max_length: 1
+      amount:
+        type: integer
+        description: Requested amount of the indicated extended resource.
+        required: true
+        constraints:
+          - greater_than: 0
+          

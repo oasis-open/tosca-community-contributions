@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative artifact types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-artifact-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+artifact_types:
+  tosca.artifacts.Deployment.Image:
+    derived_from: tosca.artifacts.Deployment
+    description: >
+      This artifact type represents a parent type for any "image"
+      which is an opaque packaging of a TOSCA Node's deployment
+      (whether real or virtual) whose contents are typically already
+      installed and pre-configured (i.e., "stateful") and prepared to
+      be run on a known target container.

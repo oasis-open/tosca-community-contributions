@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_pnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.GeographicCoordinates:
+    derived_from: tosca.datatypes.Root
+    description: Represents an element of a geographic coordinate location as specified in IETF RFC?6225. 
+    properties:
+      latitude_uncertainty:
+        type: string # RFC 6225
+        description: LatUnc as per RFC 6225
+        required: false
+      latitude:
+        type: string # RFC 6225
+        description: Latitude value as per RFC 6225
+        required: true
+      longitude_uncertainty:
+        type: string # RFC 6225
+        description: LongUnc as per RFC 6225
+        required: false
+      longitude:
+        type: string # RFC 6225
+        description: Longitude value as per RFC 6225
+        required: true
+      altitude_type:
+        type: string # RFC 6225
+        description: AType value as per RFC 6225
+        required: true      
+      altitude_uncertainty:
+        type: string # RFC 6225
+        description: AltUnc as per RFC 6225
+        required: false
+      altitude:
+        type: string # RFC 6225
+        description: Altitude value as per RFC 6225
+        required: true

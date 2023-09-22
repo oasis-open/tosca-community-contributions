@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative relationship types definitions version 1.3.0 for Winery
+
+metadata:
+
+  template_name: tosca-normative-relationship-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+relationship_types:
+  tosca.relationships.ConnectsTo:
+    derived_from: tosca.relationships.Root
+    description: >-
+      This type represents a network connection relationship between
+      two nodes.
+    valid_target_types: [ tosca.capabilities.Endpoint ]
+    properties:
+      credential:
+        type: tosca.datatypes.Credential
+        description: >-
+          The security credential to use to present to the target
+          endpoint to for either authentication or authorization
+          purposes.
+        required: false

@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.VirtualCp:
+    derived_from: tosca.nodes.nfv.Cp
+    description: Describes a virtual connection point allowing access to a number of VNFC instances (based on their respective VDUs).
+    properties:
+      additionalServiceData:
+        type: list
+        entry_schema:
+          type: tosca.datatypes.nfv.AdditionalServiceData
+        description: Additional service identification data of the VirtualCp exposed to NFV-MANO
+        required: false
+      address_pool_name_configurable:
+        type: boolean
+        description: Indicates whether the corresponding MCIO supports configuration of an address pool name.
+        required: true
+        default: false        
+    requirements:
+      - target:
+          capability: tosca.capabilities.Node
+          relationship: tosca.relationships.DependsOn
+          node: tosca.nodes.nfv.Vdu.OsContainerDeployableUnit 
+          occurrences: [ 1, UNBOUNDED ]
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [0, 1]
+          

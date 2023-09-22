@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.ContentOrFileData:
+    derived_from: tosca.datatypes.Root
+    description: describes a string content or a file information used to customize a virtualised compute resource at boot time by using string content or file.
+    properties:
+      data:
+        type: map
+        description: A map of strings that contains a set of key-value pairs that carries the dynamic deployment values which used to replace the corresponding variable parts in the file as identify by a URL as described in source_path. Shall be present if "source_path" is present and shall be absent otherwise..
+        required: false
+        entry_schema:
+          type: string
+      content:
+        type: string
+        description: The string information used to customize a virtualised compute resource at boot time.
+        required: false
+      source_path:
+        type: string
+        description: The URL to a file contained in the VNF package used to customize a virtualised compute resource. The content shall comply with IETF RFC 3986 [8].
+        required: false
+      destination_path:
+        type: string
+        description: The URL address when inject a file into the virtualised compute resource. The content shall comply with IETF RFC 3986 [8].
+        required: false

@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.VnfIndicator:
+    derived_from: tosca.policies.Root
+    description: The VnfIndicator policy type is a base policy type for defining VNF indicator specific policies that define the conditions to assess and the action to perform when a VNF indicator changes value as defined in ETSI GS NFV-IFA 011 [1].
+    properties:
+      source:
+        type: string
+        description: Describe the source of the indicator.
+        required: true
+        constraints:
+          - valid_values: [ vnf, em, both_vnf_and_em ]
+    targets: [ tosca.nodes.nfv.VNF ]

@@ -1,0 +1,79 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_nsd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.NS:
+    derived_from: tosca.nodes.Root
+    properties:
+      descriptor_id:
+        type: string # UUID
+        description: Identifier of this NS descriptor
+        required: true
+      designer:
+        type: string
+        description: Identifies the designer of the NSD.
+        required: true
+      version:
+        type: string
+        description: Identifies the version of the NSD.
+        required: true
+      name:
+        type: string
+        description: Provides the human readable name of the NSD.
+        required: true
+      invariant_id: # UUID
+        type: string
+        description: Identifies an NSD in a version independent manner. This attribute is invariant across versions of NSD with no constraints on the changes across versions.
+        required: true
+      ext_invariant_id: # UUID
+        type: string
+        description: Identifies an NSD in a version independent manner. This attribute is invariant across versions of the NSD that fulfil certain conditions related to the external connectivity and management of the NS. When used in a nested NS node template in a composite NSD it allows for nested NS instances during NS LCM the use of an NSD different from the one referenced by the descriptor_id property, provided they have the same ext_invariant_id.
+        required: false
+      flavour_id:
+        type: string
+        description: Identifier of the NS Deployment Flavour within the NSD
+        required: true
+      ns_profile:
+        type: tosca.datatypes.nfv.NsProfile
+        description: Specifies a profile of a NS, when this NS is used as nested NS within another NS.
+        required: false
+      service_availability_level:
+        type: integer
+        description: Specifies the service availability level for the NS instance.
+        required: false
+        constraints:
+          - greater_or_equal: 1
+      priority:
+        type: integer
+        description: Specifies the priority for the NS instance. Examples for the usage of priority include conflict resolution in case of resource shortage.
+        required: false
+        constraints:
+          - greater_or_equal: 0
+      strict_nsd_constituent_onboarding:
+        type: boolean
+        description: Indicates if all NSD constituents referenced by this NSD shall be onboarded before onboarding the NSD identified by this information element. If true all referenced constituents shall be onboarded.
+        required: true
+        default: true
+    attributes:
+      scale_status:
+        type: map # key: aspectId
+        description: Scale status of the NS, one entry per aspect. Represents for every scaling aspect how "big" the NS has been scaled w.r.t. that aspect.
+        entry_schema:
+          type: integer
+          constraints:
+            - greater_or_equal: 0
+    requirements:
+      - virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          node: tosca.nodes.nfv.NsVirtualLink
+          occurrences: [ 0, 1 ]
+    interfaces:
+      Nslcm:
+        type: tosca.interfaces.nfv.Nslcm

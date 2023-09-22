@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 data types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+data_types:
+  tosca.datatypes.nfv.InstantiationLevel:
+   derived_from: tosca.datatypes.Root
+   description: Describes the scale level for each aspect that corresponds to a given level of resources to be instantiated within a deployment flavour in term of the number VNFC instances 
+   properties:
+     description:
+       type: string
+       description: Human readable description of the level 
+       required: true
+     scale_info:
+       type: map # key: aspectId
+       description: Represents for each aspect the scale level that corresponds to this instantiation level. scale_info shall be present if the VNF supports scaling.
+       required: false
+       entry_schema:
+         type: tosca.datatypes.nfv.ScaleInfo

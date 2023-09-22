@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative data types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-data-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+data_types:
+  tosca.datatypes.TimeInterval:
+    derived_from: tosca.datatypes.Root
+    description: >-
+      The TimeInterval type describes a period of time using the YAML
+      ISO 8601 format to declare the start and end times.
+    properties:
+      start_time:
+        type: timestamp
+        description: >-
+          The inclusive start time for the time interval.
+        required: true
+      end_time:
+        type: timestamp
+        description: >-
+          The inclusive end time for the time interval.
+        required: true

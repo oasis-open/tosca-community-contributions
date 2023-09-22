@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.Vdu.VirtualObjectStorage: 
+    derived_from: tosca.nodes.Root
+    description: This node type describes the specifications of requirements related to virtual object storage resources
+    properties:
+      virtual_object_storage_data:
+        type: tosca.datatypes.nfv.VirtualObjectStorageData
+        description: Describes the object storage characteristics.
+        required: true
+      per_vnfc_instance:
+        type: boolean
+        description: Indicates whether the virtual storage descriptor shall be instantiated per VNFC instance.
+        required: true
+        default: true
+      nfvi_maintenance_info:
+        type: tosca.datatypes.nfv.NfviMaintenanceInfo
+        description: Provides information on the rules to be observed when an instance based on this VirtualObjectStorage is impacted during NFVI operation and maintenance (e.g. NFVI resource upgrades). 
+        required: false
+    capabilities:
+      virtual_storage:
+        type: tosca.capabilities.nfv.VirtualStorage
+        description: Defines the capabilities of virtual_storage.

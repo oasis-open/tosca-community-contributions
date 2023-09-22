@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.LcmCoordinationsForLcmOperation:
+    derived_from: tosca.policies.Root
+    description: The LcmCoordinationsForLcmOperation type is a policy type representing supported LCM coordination actions associated to a VNF LCM operation. This policy concerns the whole VNF (deployment flavour) represented by the topology_template and thus has no explicit target list.
+    properties:
+      vnf_lcm_operation:
+        type: string
+        description: The VNF LCM operation the LCM coordination actions are associated with.
+        required: true
+        constraints:
+          - valid_values: [instantiate, scale, scale_to_level, change_flavour, terminate, heal, operate, change_ext_conn, modify_info, create_snapshot, revert_to_snapshot ]
+      actions:
+        type: list
+        description: List of applicable supported LCM coordination action names (action_name) specified in this VNFD as a TOSCA policy of a type derived from tosca.policies.nfv.LcmCoordinationAction.
+        required: false
+        entry_schema:
+          type: string
+      referenced_coordination_actions:
+        type: list
+        description: List of names of coordination actions not specified within this VNFD as a TOSCA policy of a type derived from tosca.policies.nfv.LcmCoordinationAction.
+        required: false
+        entry_schema:
+          type: string

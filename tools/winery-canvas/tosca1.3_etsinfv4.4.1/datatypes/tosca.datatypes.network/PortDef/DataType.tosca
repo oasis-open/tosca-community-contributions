@@ -1,0 +1,16 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: OASIS TOSCA normative data types definitions version 1.3.0 for Winery
+
+metadata:
+  template_name: tosca-normative-data-types
+  template_author: TOSCA TC
+  template_version: 1.3.0
+
+data_types:
+  tosca.datatypes.network.PortDef:
+    derived_from: integer
+    description: >-
+      The PortDef type defines a network port.
+    constraints:
+      - in_range: [ 1, 65535 ]

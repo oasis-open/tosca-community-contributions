@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 policy types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+policy_types:
+  tosca.policies.nfv.SupportedVnfInterface:
+   derived_from: tosca.policies.Root
+   description:  this policy type represents interfaces produced by a VNF, the details to access them and the applicable connection points to use to access these interfaces
+   properties:
+     interface_name:
+       type: string
+       description: Identifies an interface produced by the VNF.
+       required: true
+       constraints:
+         - valid_values: [ vnf_indicator, vnf_configuration, vnf_lcm_coordination ]
+     details:
+       type: tosca.datatypes.nfv.InterfaceDetails
+       description: Provide additional data to access the interface endpoint
+       required: false 
+   targets: [ tosca.nodes.nfv.VnfExtCp, tosca.nodes.nfv.VduCp ]

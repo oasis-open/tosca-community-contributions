@@ -1,0 +1,65 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.Vdu.Compute:
+    derived_from: tosca.nodes.Root
+    description: Describes the virtual compute part of a VDU which is a construct  supporting the description of the deployment and operational behavior of a VNFC 
+    properties:
+      name:
+        type: string
+        description: Human readable name of the VDU 
+        required: true
+      description:
+        type: string
+        description: Human readable description of the VDU 
+        required: true
+      boot_order:
+        type: boolean
+        description: indicates whether the order of the virtual_storage requirements is used as the boot index (the first requirement represents the lowest index and defines highest boot priority) 
+        required: true
+        default: false
+      nfvi_constraints:
+        type: map
+        description: Describes constraints on the NFVI for the VNFC instance(s) created from this VDU. This property is reserved for future use in the present document.
+        required: false
+        entry_schema:
+          type: string
+      monitoring_parameters:
+        type: map # key: id
+        description: Describes monitoring parameters applicable to a VNFC instantiated from this VDU
+        required: false
+        entry_schema: 
+          type: tosca.datatypes.nfv.VnfcMonitoringParameter
+      configurable_properties:
+        type: tosca.datatypes.nfv.VnfcConfigurableProperties
+        required: false 
+        # derived types are expected to introduce
+        # configurable_properties with its type derived from
+        # tosca.datatypes.nfv.VnfcConfigurableProperties
+      vdu_profile:
+        type: tosca.datatypes.nfv.VduProfile
+        description: Defines additional instantiation data for the VDU.Compute node 
+        required: true
+      boot_data:
+        type: tosca.datatypes.nfv.BootData
+        description: Contains the information used to customize a virtualised compute resource at boot time. The bootData may contain variable parts that are replaced by deployment specific values before being sent to the VIM.
+        required: false  
+    capabilities:
+      virtual_compute:
+        type: tosca.capabilities.nfv.VirtualCompute
+        occurrences: [ 1, 1 ]
+      virtual_binding:
+        type: tosca.capabilities.nfv.VirtualBindable
+        occurrences: [ 1, UNBOUNDED ]
+    requirements:
+      - virtual_storage:
+          capability: tosca.capabilities.nfv.VirtualStorage
+          relationship: tosca.relationships.nfv.AttachesTo
+          occurrences: [ 0, UNBOUNDED ]

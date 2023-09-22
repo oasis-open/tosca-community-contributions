@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.VnfExtCp:
+    derived_from: tosca.nodes.nfv.Cp
+    description: Describes a logical external connection point, exposed by the VNF enabling connection with an external Virtual Link 
+    properties:
+      virtual_network_interface_requirements:
+       type: list
+       description: The actual virtual NIC requirements that is been assigned when instantiating the connection point 
+       required: false
+       entry_schema:
+        type: tosca.datatypes.nfv.VirtualNetworkInterfaceRequirements
+    requirements:
+      - external_virtual_link:
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [0, 1]
+      - internal_virtual_link: 
+          capability: tosca.capabilities.nfv.VirtualLinkable
+          relationship: tosca.relationships.nfv.VirtualLinksTo
+          occurrences: [1, 1]

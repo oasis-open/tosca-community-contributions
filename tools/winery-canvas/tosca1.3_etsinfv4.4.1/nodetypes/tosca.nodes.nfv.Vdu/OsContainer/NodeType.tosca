@@ -1,0 +1,73 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+description: ETSI NFV SOL 001 node types definitions version 4.4.1 for Winery
+
+metadata:
+  template_name: etsi_nfv_sol001_vnfd_types
+  template_author: ETSI_NFV
+  template_version: 4.4.1
+
+node_types:
+  tosca.nodes.nfv.Vdu.OsContainer:    
+    derived_from: tosca.nodes.Root
+    description: Describes the resources of a single OS container within a VDU 
+    properties:
+      name:
+        type: string
+        description: Human readable name of the OS container 
+        required: true
+      description:
+        type: string
+        description: Human readable description of the OS container 
+        required: true
+      requested_cpu_resources:
+        type: integer
+        description: Number of CPU resources requested for the OS container in milli-CPU.
+        required: false
+        constraints:
+          - greater_or_equal: 0
+      cpu_resource_limit:
+        type: integer
+        description: Number of CPU resources the OS container can maximally use in milli-CPU.
+        required: false
+        constraints:
+          - greater_or_equal: 0
+      requested_memory_resources:
+        type: scalar-unit.size 
+        description: Amount of memory resources requested for the OS container (e.g. in MB).
+        required: false
+      memory_resource_limit:
+        type: scalar-unit.size 
+        description: Amount of memory resources the OS container can maximum use (e.g. in MB).
+        required: false
+      requested_ephemeral_storage_resources:
+        type: scalar-unit.size 
+        description: Size of ephemeral storage resources requested for the OS container (e.g. in GB).
+        required: false
+      ephemeral_storage_resource_limit:
+        type: scalar-unit.size 
+        description: Size of ephemeral storage resources the OS container can maximum use (e.g. in GB).
+        required: false
+      extended_resource_requests:
+        type: list
+        description: Extended resources and their respective amount required by the container.
+        required: false
+        entry_schema:
+          type: tosca.datatypes.nfv.ExtendedResourceData
+        constraints:
+          - min_length: 1
+      huge_pages_resources:
+        type: list
+        description: The requirement for huge pages resources. Each element in the list indicates a hugepage size and the total memory requested for hugepages of that size.
+        required: false
+        entry_schema: 
+          type: tosca.datatypes.nfv.Hugepages
+      cpu_pinning_requirements:
+        type: tosca.datatypes.nfv.VirtualCpuPinning
+        description: Requirements for CPU pinning configuration.
+        required: false          
+    capabilities:
+      container_deployable:
+        type: tosca.capabilities.nfv.ContainerDeployable
+        occurrences: [ 1, UNBOUNDED ]
+ 
