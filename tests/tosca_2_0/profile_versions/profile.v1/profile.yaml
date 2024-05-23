@@ -9,5 +9,5 @@ data_types:
         type: string
       sex:
         type: string
-        constraints:
-          - valid_values: [ male, female ]
+        validation: 
+          $valid_values: [ $value, [ male, female ] ]

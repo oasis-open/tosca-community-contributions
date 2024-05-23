@@ -21,7 +21,7 @@ node_types:
       person:
         type: p2:Woman
 
-topology_template:
+service_template:
 
   node_templates:
 
