@@ -3,6 +3,8 @@
 # definitions.
 ##########################################################################
 
+tosca_definitions_version: tosca_2_0
+
 metadata:
   template_name: artifact_types.yaml
   template_author: Oasis Open
