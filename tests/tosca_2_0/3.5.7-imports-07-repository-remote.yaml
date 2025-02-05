@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  oasis.testAssertion.id: 3.5.7-imports-07-repository-remote
+  oasis.testAssertion.description: Parsing a document with an single line import from a remote file MUST be successful.
+  oasis.testAssertion.target: a tosca template that defines an import to a remote file resolved through a repository definition.
+  oasis.testAssertion.prerequisite: >
+    TODO Add reference to the node template parsing test.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert there is no errors
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.5.7, 3.5.7.2.1, 3.9.3.9
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+repositories:
+  my_repository:
+    description: A repository
+    url: https://github.com/oasis-open/tosca-test-assertions/raw/master
+
+imports:
+  - url: tests/tosca_2_0/dependencies/my-types/my-types.yml
+    repository: my_repository
+
+service_template:
+  node_templates:
+    my_node:
+      type: tosca.tests.nodes.MyType
+      description: Template for an instance of my_company.my_types.my_type defined in the imported file

@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  oasis.testAssertion.id: 3.5.5-repositories-02-valid-simple-definition
+  oasis.testAssertion.description: Parsing a document with valid repository MUST succeed.
+  oasis.testAssertion.target: a tosca template that defines a valid single line repository.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    Then The repository out of the parsing
+    assert 'url' value is equal to 'https://github.com/my-other-project/'
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.5.5, 3.9.3.8
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+repositories:
+  simple_repository: https://github.com/my-other-project/
