@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  oasis.testAssertion.id: 3.5.7-imports-03-no-file
+  oasis.testAssertion.description: Parsing a document with an import that does not specifies a file MUST fail.
+  oasis.testAssertion.target: a tosca template that defines an import without a file key.
+  oasis.testAssertion.predicate:  >
+    When parsing the template
+    assert raises the error 'MissingRequiredKeyname'
+  oasis.testAssertion.tags.errors: MissingRequiredKeyname
+  oasis.testAssertion.tags.errors_lines: 19
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.textSourceItem.section: 3.5.7, 3.5.7.2.2, 3.9.3.9
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+imports:
+  - namespace: my_types
+    # url is missing and required
