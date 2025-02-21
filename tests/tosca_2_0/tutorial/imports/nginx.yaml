@@ -1,0 +1,8 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+namespace: nginx
+
+node_types:
+
+  NginX:
+    derived_from: tosca:WebServer

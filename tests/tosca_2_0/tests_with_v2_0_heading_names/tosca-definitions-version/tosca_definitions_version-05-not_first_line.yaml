@@ -1,0 +1,19 @@
+description: >
+  This is a document with no tosca definitions version, it is not a valid TOSCA document and parsing SHOULD fail.
+
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  oasis.testAssertion.id: tosca_definitions_version-05-not_first_line
+  oasis.testAssertion.description: Parsing a document where tosca definition is not the first line version SHOULD fail.
+  oasis.testAssertion.target: a tosca template where description is defined before tosca_definitions_version.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the error 'TOSCAVersionMustBeFirstLine'
+  oasis.testAssertion.tags.errors: TOSCAVersionMustBeFirstLine
+  oasis.testAssertion.tags.errors_lines: 4
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.parsing_result: ERROR, tosca_definitions_version is required and MUST be first line of the TOSCA document
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator

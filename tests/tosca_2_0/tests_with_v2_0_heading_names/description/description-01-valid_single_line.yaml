@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  oasis.testAssertion.id: description-01-valid_single_line
+  oasis.testAssertion.description: Parsing a document with valid description MUST succeed.
+  oasis.testAssertion.target: a tosca template that has a valid description value equals to 'This is an example of a single line description (no folding).'.
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert 'description' value is equal to 'This is an example of a single line description (no folding).'
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+description: This is an example of a single line description (no folding).
