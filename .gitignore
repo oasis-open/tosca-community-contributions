@@ -6,3 +6,4 @@ uploads
 *.csar
 repo
 .idea
+tests/__init__.py
