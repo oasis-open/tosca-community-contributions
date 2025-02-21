@@ -1,0 +1,33 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+
+  template_name: DSL Definitions Example
+  template_author: Puccini
+
+dsl_definitions:
+
+  # This area is allowed but otherwise ignored by TOSCA
+  # Its intended use is as a scratch space for YAML anchors
+  # See: http://yaml.org/spec/1.2/spec.html#id2785586
+
+  # (Note that the key name doesn't matter here
+  # It's just a placeholder)
+  port: &PORT
+    properties:
+      protocol: udp
+      port: 9100
+
+service_template:
+
+  node_templates:
+
+    web:
+      type: tosca:WebServer
+      capabilities:
+        # Here we'll use the anchor
+        data_endpoint: *PORT
+        admin_endpoint: *PORT
+
+    host:
+      type: tosca:Compute

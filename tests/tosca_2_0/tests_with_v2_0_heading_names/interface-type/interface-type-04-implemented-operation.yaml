@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  oasis.testAssertion.id: interface-type-04-implemented-operation
+  oasis.testAssertion.description: Parsing an interface type with an operation that defines an implementation artifact should fail
+  oasis.testAssertion.target: a tosca template that defines interface type with an operation that defines an implementation artifact
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the error 'ImplementationArtifactInvalidOnInterfaceType'
+  oasis.testAssertion.tags.warnings: ImplementationArtifactInvalidOnInterfaceType
+  oasis.testAssertion.tags.warnings_lines: 24
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+interface_types:
+  tosca.example.interfaces.MyInterface:
+    derived_from: tosca.interfaces.Root
+    description: A sample interface for tests
+    operations:
+      do_something:
+        description: An operation that do something
+        implementation: dependencies/scripts/hello.sh

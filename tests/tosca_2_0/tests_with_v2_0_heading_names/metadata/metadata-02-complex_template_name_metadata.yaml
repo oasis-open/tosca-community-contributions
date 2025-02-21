@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  template_name:
+    complex: value
+  oasis.testAssertion.id: metadata-02-complex_template_name_metadata
+  oasis.testAssertion.description: Parser should be fail if metadata is a complex yaml value and template_name type is a string.
+  oasis.testAssertion.target: a tosca template that has a complex yaml value (map/list) defined for template_name metadata
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the error 'InvalidType'
+  oasis.testAssertion.tags.errors: InvalidType
+  oasis.testAssertion.tags.errors_lines: 5
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator

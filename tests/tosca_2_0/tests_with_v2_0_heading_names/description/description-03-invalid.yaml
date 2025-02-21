@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  oasis.testAssertion.id: description-03-invalid
+  oasis.testAssertion.description: Parser MUST fail if description is not a string ( e.g. symbols, number).
+  oasis.testAssertion.target: a tosca template where the description value is a complex yaml value (map/list)
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the error 'InvalidType'
+  oasis.testAssertion.tags.errors: InvalidType
+  oasis.testAssertion.tags.errors_lines: 19
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+description:
+  complex: >
+    This is an example of a multi-line description using YAML. It permits for line
+    breaks for easier readability...
+
+    if needed.  However, (multiple) line breaks are folded into a single space
+    character when processed into a single string value.

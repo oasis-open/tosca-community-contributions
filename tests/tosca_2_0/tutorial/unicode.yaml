@@ -1,0 +1,64 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+
+  template_name: Unicode Example
+  template_author: Puccini
+
+node_types:
+
+  燈泡:
+    requirements:
+    - 插座: 插座
+
+  電源面板:
+    properties:
+      年齡:
+        type: scalar-unit.time
+    capabilities:
+      主要: 插座
+
+capability_types:
+
+  插座:
+    properties:
+      標準:
+        type: string
+      電壓:
+        type: float
+      電頻:
+        type: scalar-unit.frequency
+
+relationship_types:
+
+  插頭:
+    properties:
+      供應商:
+        type: string
+    attributes:
+      IP地址:
+        type: string
+
+service_template:
+
+  node_templates:
+
+    燈:
+      type: 燈泡
+      requirements:
+      - 插座:
+          relationship:
+            type: 插頭
+            properties:
+              供應商: 智能家電行業
+
+    主面板:
+      type: 電源面板
+      properties:
+        年齡: 5 d
+      capabilities:
+        主要:
+          properties:
+            標準: 高頻
+            電壓: 110.0
+            電頻: 120 hz

@@ -1,0 +1,98 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+
+  template_name: Functions Example
+  template_author: Puccini
+
+node_types:
+
+  Ports:
+    properties:
+      user_port:
+        type: tosca:PortInfo
+        required: false
+      admin_port:
+        type: tosca:PortInfo
+        required: false
+      management_port:
+        type: tosca:PortInfo
+        required: false
+    capabilities:
+      ingress: Ingress
+    requirements:
+    - egress:
+        capability: Ingress
+        relationship: Connection
+
+capability_types:
+
+  Ingress:
+    properties:
+      ingress_port:
+        type: tosca:PortInfo
+        required: false
+
+relationship_types:
+
+  Connection:
+    properties:
+      connection_port:
+        type: tosca:PortInfo
+        required: false
+
+service_template:
+
+  node_templates:
+
+    ports1:
+      type: Ports
+      properties:
+        user_port:
+          addresses:
+          # You can call functions in property, attribute, input, or output assignments
+          # (and *only* there)
+          - { concat: [ local, host ] }
+          - { token: [ ip=10.0.0.2, =, 1 ] }
+          - { join: [ [ 192, 168, 1, 1 ], . ] }
+          # Function calls can be nested
+          - { concat: [ 127, ., 0, ., { concat: [ 0, ., 1 ] } ] }
+          # Also note that YAML allows this multiline notation for function calls:
+          - concat:
+            - '::'
+            - 1
+        admin_port:
+          addresses:
+          - ::1
+        # Some functions support special "modelable entity names", such as "SELF":
+        management_port: { get_property: [ SELF, admin_port ] }
+        # (Also see: examples/tosca/source-and-target.yaml)
+      capabilities:
+        ingress:
+          properties:
+            ingress_port:
+              addresses:
+              - 192.168.1.2
+
+    ports2:
+      type: Ports
+      properties:
+        user_port:
+          # This function returns a list
+          addresses: { get_nodes_of_type: Ports }
+        management_port:
+          addresses:
+          # "get_property" can extract nested values, even from lists:
+          - { get_property: [ ports1, management_port, addresses, 0 ] }
+          # The second argument for "get_property" can be a cabability name:
+          - { get_property: [ ports1, ingress, ingress_port, addresses, 0 ] }
+          # Or a requirement name (in which case the properties would be that of the relationship):
+          - { get_property: [ SELF, egress, connection_port, addresses, 0 ] }
+      requirements:
+      - egress:
+          node: ports1
+          relationship:
+            properties:
+              connection_port:
+                addresses:
+                - 192.168.1.3
