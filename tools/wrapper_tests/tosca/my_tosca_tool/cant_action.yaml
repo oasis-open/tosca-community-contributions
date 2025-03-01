@@ -1,0 +1,56 @@
+tosca_definitions_version: tosca_2_0
+metadata:
+  template_type: not deployable
+description: >
+  This is an example of a valid TOSCA which cannot be used to create an instance
+  because the requirements of the node filter cannot be not satisfied
+data_types:
+  scalar-unit.size:
+    derived_from: scalar
+    data_type: integer
+    units:
+      B: 1
+      MB: 1000000
+node_types:
+  Compute:
+    description: A compute node
+    properties:
+      num-cpus:
+        type: integer
+      mem-size:
+        type: scalar-unit.size
+    capabilities:
+      host:
+        type: host_capability
+  Database:
+    description: A database node
+    requirements:
+      - host:
+          node: Compute
+          relationship: HostedOn
+requirements:
+  - host:
+      node: Compute
+      relationship: HostedOn
+capability_types:
+  host_capability:
+    description: A host capability
+
+service_template:
+  node_templates:
+    my-node:
+      type: Compute
+      properties:
+        num-cpus: 1
+        mem-size: 1 B
+      requirements:
+      - host:
+          node_filter:
+            $and:
+              - $in_range:
+                - $get_property: [ SELF, CAPABILITY, num-cpus ]
+                - [ 100, 1000 ]
+              - $greater_or_equal:
+                - $get_property: [ SELF, CAPABILITY, mem-size ]
+                - 512 MB 
+

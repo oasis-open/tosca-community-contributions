@@ -2,7 +2,7 @@
     "python.testing.unittestArgs": [
         "-v",
         "-s",
-        "./tests",
+        "",
         "-p",
         "*_test.py"
     ],
@@ -10,6 +10,6 @@
     "python.testing.unittestEnabled": false,
     "code-runner.defaultLanguage": "python3",
     "python.testing.pytestArgs": [
-        "tests"
+        "-v"
     ]
 }
