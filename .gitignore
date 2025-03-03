@@ -7,3 +7,4 @@ uploads
 repo
 .idea
 tests/__init__.py
+.vscode
