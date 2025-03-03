@@ -23,8 +23,14 @@ class TestFrameworkWithStubTool(unittest.TestCase):
         tosca_file_path = here + '/valid.yaml'
         command = (f'python3 {wrapper_path} {tosca_file_path}')
         result = subprocess.run(command, capture_output=True, text=True, shell=True)
+        response = json.loads(result.stdout)
+        # The two asserts below have the same effect,
+        # the first is simpler, 
+        # the second can be expanded to check for more complex conditions in the response JSON
         self.assertEqual(result.returncode, 0, 
-                         f"Expected return code 0, but got {result.returncode} with message\n {result.stdout}")
+                         f"Expected return code 0, but got {result.returncode} with response:\n {result.stdout}")
+        self.assertEqual(response["wrapper"]["success"], True,
+                          f"Expected success True, but response was: {result.stdout}")
 
     def test_invalid_tosca(self):
         tosca_file_path = here + '/not_valid.yaml'
@@ -46,13 +52,6 @@ class TestFrameworkWithStubTool(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True, shell=True)
         self.assertEqual(result.returncode, 2, 
                          f"Expected return code 2, but got {result.returncode} with message\n {result.stdout}")
-
-    def test_read_json(self):
-        json_file_path = here + '/json_reply.json'
-        with open(json_file_path, mode="r", encoding="utf-8") as read_file:
-            frie_data = json.load(read_file)
-        print(frie_data)
-        self.assertEqual(frie_data["wrapper"]["name"], "Friedax")
         
 
 if __name__ == '__main__':
