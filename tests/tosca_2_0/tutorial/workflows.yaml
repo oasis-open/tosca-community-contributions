@@ -1,0 +1,83 @@
+tosca_definitions_version: tosca_2_0
+
+# See: interfaces.yaml
+
+metadata:
+
+  template_name: Workflows Example
+  template_author: Puccini
+
+interface_types:
+
+  Backup:
+    operations:
+      start_backup: {}
+
+node_types:
+
+  MyDB:
+    derived_from: tosca:DBMS
+    interfaces:
+      Backup:
+        type: Backup
+
+service_template:
+
+  node_templates:
+
+    web:
+      type: tosca:WebServer
+
+    db:
+      type: MyDB
+
+    server:
+      type: tosca:Compute
+
+  workflows:
+
+    backup:
+      # Workflows are made of steps
+      # The order of execution is a graph with sequential and parallel branches
+      steps:
+        notify_users:
+          # Each step targets a node template (or a relationship of that node template)
+          target: web
+          activities: []
+          # Here we'll launch 2 steps in parallel
+          on_success:
+          - shutdown
+          - backup
+          filter:
+          - or:
+            - assert:
+              - foo: [ { equals: true } ]
+            - assert:
+              - bar: [ { greater_than: 2 }, { less_than: 20 } ]
+        shutdown:
+          target: web
+          # You can specify 0 or more activities for the step
+          activities:
+          - set_state: down
+          on_success:
+          - restart
+        backup:
+          target: db
+          activities:
+          - set_state: down
+          # We can call an operation on an interface on the target node
+          # (Note that it *cannot* accept inputs)
+          - call_operation: Backup.start_backup
+          on_failure:
+          - notify_admins
+          on_success:
+          - restart
+        # Because two other steps launch this step
+        # *Both* of them have to conclude successfully before this one starts 
+        restart:
+          target: db
+          activities:
+          - set_state: up
+        notify_admins:
+          target: web
+          activities: []
