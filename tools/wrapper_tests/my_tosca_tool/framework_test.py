@@ -15,7 +15,7 @@ tosca_file_path = here + '/' + Path(__file__).stem.split("_test")[0] + ".yaml"
 # tosca_file_path = here + '/version.yaml'
 
 # Set the path to the wrapper
-wrapper_path = here + '/../../../../tools/wrappers/wrapper.py'
+wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
 class TestFrameworkWithStubTool(unittest.TestCase):
 
