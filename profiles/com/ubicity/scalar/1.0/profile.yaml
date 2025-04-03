@@ -56,22 +56,22 @@ data_types:
       measured in bits or bytes per second.
     derived_from: scalar
     units:
-      bps:    1.0
-      Kbps:   1.0e3
-      Kibps:  1.024e3
-      Mbps:   1.0e6
-      Mibps:  1.048576e6
-      Gbps:   1.0e9
-      Gibps:  1.073741824e9
-      Tbps:   1.0e12
-      Tibps': 1.099511627776e12
-      Bps:    8.0
-      KBps:   8.0e3
-      KiBps:  8.192e3
-      MBps:   8.0e6
-      MiBps:  8.388608e6
-      GBps:   8.0e9
-      GiBps:  8.589934592e9
-      TBps:   8.0e12
-      TiBps': 8.796093022208e12
+      bps:   1.0
+      Kbps:  1.0e3
+      Kibps: 1.024e3
+      Mbps:  1.0e6
+      Mibps: 1.048576e6
+      Gbps:  1.0e9
+      Gibps: 1.073741824e9
+      Tbps:  1.0e12
+      Tibps: 1.099511627776e12
+      Bps:   8.0
+      KBps:  8.0e3
+      KiBps: 8.192e3
+      MBps:  8.0e6
+      MiBps: 8.388608e6
+      GBps:  8.0e9
+      GiBps: 8.589934592e9
+      TBps:  8.0e12
+      TiBps: 8.796093022208e12
   
