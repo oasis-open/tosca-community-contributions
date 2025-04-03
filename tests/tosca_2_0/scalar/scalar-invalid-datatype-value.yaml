@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_2_0
+metadata:
+  author: Chris Lauwers
+description: >-
+  Test case for the built-in 'scalar' type. This test fails because
+  the value of a scalar property is incompatible with its data type.
+data_types:
+  PositiveInteger:
+    derived_from: integer
+    validation: { $greater_or_equal: [ $value, 1 ] }
+  Bitrate:
+    derived_from: scalar
+    data_type: PositiveInteger
+    units:
+      bits/s: 1 
+      Kbits/s: 1000 
+      Kibits/s: 1024
+      Mbits/s: 1000000
+      Mibits/s: 1048576
+      Gbits/s: 1000000000
+      Gibits/s: 1073741824
+      Tbits/s: 1000000000000
+      Tibits/s: 1099511627776
+node_types:
+  BitrateTester:
+    properties:
+      throughput:
+        type: Bitrate
+service_template:
+  node_templates:
+    node:
+      type: BitrateTester
+      properties:
+        throughput: -1 Mbits/s

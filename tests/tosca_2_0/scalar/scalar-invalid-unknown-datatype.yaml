@@ -1,0 +1,13 @@
+tosca_definitions_version: tosca_2_0
+metadata:
+  author: Chris Lauwers
+description: >-
+  Test case for the built-in 'scalar' type. This test fails because
+  the specified data type can not be found.
+data_types:
+  InvalidScalar:
+    derived_from: scalar
+    data_type: UnknownType
+    units:
+      bits/s: 0.1
+      bps: 1.1

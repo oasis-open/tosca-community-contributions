@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_2_0
+metadata:
+  author: Chris Lauwers
+description: >-
+  Test case for the built-in 'scalar' type. This test fails because
+  the canonical unit is not found.
+data_types:
+  InvalidScalar:
+    derived_from: scalar
+    units:
+      bits/s: 1.0
+    prefixes:
+      "": 1
+      K: 1000 
+      Ki: 1024
+      M: 1000000
+      Mi: 1048576
+      G: 1000000000
+      Gi: 1073741824
+      T: 1000000000000
+      Ti: 1099511627776
+    canonical_unit: b/s
