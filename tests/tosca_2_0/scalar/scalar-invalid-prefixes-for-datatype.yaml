@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_2_0
+metadata:
+  author: Chris Lauwers
+description: >-
+  Test case for the built-in 'scalar' type. This test fails because
+  the prefixes are not valid for the specified data type.
+data_types:
+  PositiveInteger:
+    derived_from: integer
+    validation: {$greater_or_equal: [$value,1]}
+  InvalidScalar:
+    derived_from: scalar
+    data_type: PositiveInteger
+    units:
+      bits/s: 1
+    prefixes:
+      '': 1
+      k:  1000 
+      Ki: -1024
+      M:  1000000
+      Mi: 1048576
+      G:  1000000000
+      Gi: 1073741824
+      T:  1000000000000
+      Ti: 1099511627776

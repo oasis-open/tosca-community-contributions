@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_2_0
+metadata:
+  author: Chris Lauwers
+description: >-
+  Test case for the built-in 'scalar' type. This test fails because
+  defining units, canonical_type, and data_type when the parent type
+  is not a scalar is not allowed.
+data_types:
+  InvalidScalar:
+    derived_from: string
+    units:
+      bits/s: 1 
+      b/s: 1 
+      Kibits/s: 1024
+      Mbits/s: 1000000
+      Mibits/s: 1048576
+      Gbits/s: 1000000000
+      Gibits/s: 1073741824
+      Tbits/s: 1000000000000
+      Tibits/s: 1099511627776
+    canonical_unit: bps
+    data_type: integer

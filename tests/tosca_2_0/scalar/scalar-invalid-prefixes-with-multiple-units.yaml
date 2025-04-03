@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_2_0
+metadata:
+  author: Chris Lauwers
+description: >-
+  Test case for the built-in 'scalar' type. This test fails because it
+  defines prefixes when more than one unit multiplier is specified.
+data_types:
+  Invalid11:
+    derived_from: scalar
+    units:
+      bits/s: 1
+      bytes/s: 8
+    prefixes:
+      μ: 0.0001
+      m: 0.001
+      c: 0.01
+      d: 0.1
+      "": 1.0 
+      da: 10  
+      h: 100 
+      k: 1000
+      M: 1000000
