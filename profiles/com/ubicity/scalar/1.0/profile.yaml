@@ -1,0 +1,77 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.ubicity.scalar:1.0
+
+description: >-
+  TOSCA Version 2.0 equivalents of the scalar-unit types defined in
+  TOSCA Simple Profile in YAML v1.3.
+
+data_types:
+  scalar-unit.size: 
+    description: >-
+      Represents scalar values measured in size units. The size unit
+      values are a subset of those defined by GNU at
+      http://www.gnu.org/software/parted/manual/html_node/unit.html.
+    derived_from: scalar
+    units:
+      B:   1.0
+      kB:  1.0e3
+      KiB: 1.024e3
+      MB:  1.0e6
+      MiB: 1.048576e6
+      GB:  1.0e9
+      GiB: 1.073741824e9
+      TB:  1.0e12
+      TiB: 1.099511627776e12
+  scalar-unit.time: 
+    description: >-
+      Represents scalar values measured in time units. The time unit
+      values are a subset of those defined by International System of
+      Units in
+      http://www.ewh.ieee.org/soc/ias/pub-dept/abbreviation.pdf
+    derived_from: scalar
+    units:
+      d:  8.64e4
+      h:  3.6e3
+      m:  6.0e1
+      s:  1.0
+      ms: 1.0e-3
+      us: 1.0e-6
+      ns: 1.0e-9
+  scalar-unit.frequency: 
+    description: >-
+      Represents scalar values measured in units per second. The value
+      for Hertz (Hz) is the International Standard Unit (ISU) as
+      described by the Bureau International des Poids et Mesures
+      (BIPM) in http://www.bipm.org/en/publications/si-brochure/
+    derived_from: scalar
+    units:
+      Hz:  1.0
+      kHz: 1.0e3
+      MHz: 1.0e6
+      GHz: 1.0e9
+  scalar-unit.bitrate: 
+    description: >-
+      Built-in TOSCA scalar unit type. Represents scalar values
+      measured in bits or bytes per second.
+    derived_from: scalar
+    units:
+      bps:    1.0
+      Kbps:   1.0e3
+      Kibps:  1.024e3
+      Mbps:   1.0e6
+      Mibps:  1.048576e6
+      Gbps:   1.0e9
+      Gibps:  1.073741824e9
+      Tbps:   1.0e12
+      Tibps': 1.099511627776e12
+      Bps:    8.0
+      KBps:   8.0e3
+      KiBps:  8.192e3
+      MBps:   8.0e6
+      MiBps:  8.388608e6
+      GBps:   8.0e9
+      GiBps:  8.589934592e9
+      TBps:   8.0e12
+      TiBps': 8.796093022208e12
+  
