@@ -112,6 +112,26 @@ models:
   capability. Instead, constrain the *generic* capability type with
   `valid_source_node_type` statements.
 
+Note that these guidelines do not prohibit the use of *inheritance*
+for types defined in *system view* profiles. In fact, inheritance
+could be useful to define base node types that define common
+functionality (e.g. interfaces) that is shared by all node types
+derived from that common base type. However, inheritancy should not be
+used to add technology-specific or vendor-specific implementations to
+abstract node types.
+
+### Mapping Relationship Types
+
+> It is likely that the same guidelines about abstraction apply to
+  defining relationship types as well. However, the TOSCA spec is
+  somewhat vague about whether requirement mappings rules (and
+  capability mapping rules for that matter) require that the
+  relationships resulting from the mapping have types that are
+  compatible with the relationship of the mapped requirement. If that
+  is the case, then these relationship types (and capability types)
+  must be shared between System View, Administrator View, and Device
+  View profiles and may need to be organized in a *common* profile.
+
 ## Component/Port Pattern
 
 TOSCA uses a **Component/Port** pattern where a component’s touch
