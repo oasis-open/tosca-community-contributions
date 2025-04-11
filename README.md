@@ -1,8 +1,4 @@
-<div>
-<h1>README</h1>
-
-<div>
-<h2><a id="readme-general">OASIS TC Open Repository: tosca-community-contributions</a></h2>
+# TOSCA Community Contributions
 
 <p>This GitHub public repository ( <b><a
 href="https://github.com/oasis-open/tosca-community-contributions">https://github.com/oasis-open/tosca-community-contributions</a></b>
@@ -46,10 +42,7 @@ href="https://www.oasis-open.org/resources/open-repositories/cla/individual-cla"
 Contributor License Agreement</a> that governs intellectual
 property.</p>
 
-</div>
-
-<div>
-<h2><a id="purposeStatement">Statement of Purpose</a></h2>
+## Statement of Purpose
 
 <p>This repository manages TOSCA service templates and
 definitions that are contributed by the TOSCA community and that can serve as a starting point to help community members with their TOSCA projects. Contributions may include (but are not limited to) the following:
@@ -67,14 +60,13 @@ definitions that are contributed by the TOSCA community and that can serve as a 
 Note that this repository is not intended to track implementations of the TOSCA language itself. For a list of such implementations, please refer to the <a href="https://github.com/oasis-open/tosca-community-contributions/wiki/Known-TOSCA-Implementations">Known TOSCA Implementations</a> wiki page. 
 </p>
 
-<div>
-<h2><a id="maintainers">Maintainers</a></h2>
+## Maintainers
 
 <p>TC Open Repository <a href="https://www.oasis-open.org/resources/open-repositories/maintainers-guide">Maintainers</a> are responsible for oversight of this project's community development activities, including evaluation of GitHub <a href="https://github.com/oasis-open/tosca-community-contributions/blob/master/CONTRIBUTING.md#fork-and-pull-collaboration-model">pull requests</a> and <a href="https://www.oasis-open.org/policies-guidelines/open-repositories#repositoryManagement">preserving</a> open source principles of openness and fairness. Maintainers are recognized and trusted experts who serve to implement community goals and consensus design preferences.</p>
 
 <p>Initially, the associated TC members have designated one or more persons to serve as Maintainer(s); subsequently, participating community members may select additional or substitute Maintainers, per <a href="https://www.oasis-open.org/resources/open-repositories/maintainers-guide#additionalMaintainers">consensus agreements</a>.</p>
 
-<p><b><a id="currentMaintainers">Current Maintainers of this TC Open Repository</a></b></p>
+### Current Maintainers of this TC Open Repository
 
 <ul>
 <li><a href="mailto:lauwers@ubicity.com">Chris Lauwers</a>; GitHub ID: <a href="https://github.com/lauwers/">https://github.com/lauwers/</a>; WWW: <a href="http://www.ubicity.com/">Ubicity Corp.</a></li>
@@ -82,9 +74,8 @@ Note that this repository is not intended to track implementations of the TOSCA 
 <li><a href="mailto:calin.curescu@ericsson.com">Calin Curescu</a>; GitHub ID: <a href="https://github.com/calincurescu/">https://github.com/calincurescu/</a>; WWW: <a href="http://www.ericsson.com/">Ericsson</a></li>
 </ul>
 
-</div>
 
-<div><h2><a id="aboutOpenRepos">About OASIS TC Open Repositories</a></h2>
+## About OASIS TC Open Repositories
 
 <p><ul>
 <li><a href="https://www.oasis-open.org/resources/open-repositories/">TC Open Repositories: Overview and Resources</a></li>
@@ -94,11 +85,6 @@ Note that this repository is not intended to track implementations of the TOSCA 
 <li><a href="https://www.oasis-open.org/resources/open-repositories/maintainers-guide">Maintainers' Guidelines and Agreement</a></li>
 </ul></p>
 
-</div>
-
-<div><h2><a id="feedback">Feedback</a></h2>
+## Feedback
 
 <p>Questions or comments about this TC Open Repository's activities should be composed as GitHub issues or comments. If use of an issue/comment is not possible or appropriate, questions may be directed by email to the Maintainer(s) <a href="#currentMaintainers">listed above</a>.  Please send general questions about TC Open Repository participation to OASIS Staff at <a href="mailto:repository-admin@oasis-open.org">repository-admin@oasis-open.org</a> and any specific CLA-related questions to <a href="mailto:repository-cla@oasis-open.org">repository-cla@oasis-open.org</a>.</p>
-
-</div></div>
-
