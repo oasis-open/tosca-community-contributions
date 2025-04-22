@@ -1,0 +1,528 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.ubicity:1.0
+
+description: >-
+  Ubicity Profile Type Definitions
+
+imports:
+  - profile: com.ubicity.core:1.0
+  - profile: com.ubicity.scalar:1.0
+    namespace: sclr
+    
+data_types:
+  Credential:
+    properties:
+      user_name:
+        type: string
+        required: true
+      key_file:
+        type: string
+        required: false
+        description: >-
+          Either key_file or password_file must be provided.
+      password_file:
+        type: string
+        required: false
+        description: >-
+          Either key_file or password_file must be provided.
+
+relationship_types:
+  HostedOn:
+    description: >-
+      The HostedOn type represents a containment relationship between
+      a component and its runtime.
+    derived_from: ContainedBy
+    valid_capability_types: [Runtime]
+  LayeredOn:
+    derived_from: ContainedBy
+    description: >-
+      The LayeredOn type represents a encapsulation relationship between
+      network protocols at different layers.
+    valid_capability_types: [Layer]
+  ConnectsTo:
+    derived_from: DependsOn
+    description: >-
+      This type represents a network connection relationship between
+      two nodes.
+    valid_capability_types: [Endpoint]
+  ManagedBy:
+    description: >-
+      Relationship to a manager
+    derived_from: DependsOn
+    valid_capability_types: [Manager]
+  AuthorizedUsing:
+    description: >-
+      Relationship to a credential that authorizes the source node of
+      the relationship.
+    derived_from: DependsOn
+    valid_capability_types: [Credential]
+  ProtectedBy:
+    derived_from: DependsOn
+    description: >-
+      Relationship to a capability that controls incoming and outgoing
+      traffic.
+    valid_capability_types: [SecurityGuard]
+  Monitors:
+    description: >-
+      Monitoring relationship to an observable node.
+    derived_from: DependsOn
+    valid_capability_types: [Observable]
+  BindsTo:
+    description: >
+      This type represents a network association relationship between Port
+      and Compute node types.
+    derived_from: DependsOn
+    valid_capability_types: [Bindable]
+  LinksTo:
+    description: >
+      This relationship type represents an association relationship between
+      Port and Network node types.
+    derived_from: DependsOn
+    valid_capability_types: [Linkable]
+  AttachesTo:
+    description: >
+      This relationship type represents an association relationship to
+      storage.
+    derived_from: DependsOn
+    valid_capability_types: [Attachable]
+    properties:
+      destination:
+        type: string
+
+capability_types:
+  Observable:
+    description: >-
+      Advertizes the ability to be monitored.
+    derived_from: Feature
+  Manager:
+    description: >-
+      The ability to act as a manager for the node that targets this
+      capability.
+    derived_from: Feature
+  Endpoint:
+    derived_from: Feature
+    description: >
+      Feature accessed across a network connection.
+    properties:
+      protocol:
+        type: string
+        description: >
+          The name of the protocol (i.e., the protocol prefix) that
+          the endpoint accepts (any OSI Layer 4-7 protocols) Examples:
+          http, https, ftp, tcp, udp, etc.
+        default: tcp
+      port:
+        type: integer
+        description: >-
+          The optional port of the endpoint.
+        required: false
+      port_name:
+        type: string
+        description: >-
+          The optional name (or ID) of the network port this endpoint
+          should be bound to.
+        required: false
+      secure:
+        type: boolean
+        description: >-
+          Requests for the endpoint to be secure and use credentials
+          supplied on the ConnectsTo relationship.
+        required: false
+        default: false
+      url_path:
+        type: string
+        description: >-
+          The optional URL path of the endpoint’s address if
+          applicable for the protocol.
+        required: false
+    attributes:
+      ip_address:
+        type: string
+        description: >-
+          This is the IP address as propagated up by the associated
+          node’s host (Compute) container.
+  Credential:
+    description: >-
+      Advertizes the ability to act as a credential.
+    derived_from: Feature
+  SecurityGuard:
+    description: >-
+      Advertizes the ability to control what gets in and out. This
+      capability is exposed by security groups.
+    derived_from: Feature
+  Runtime:
+    description: >-
+      Advertizes the ability to act as a runtime execution environment
+      for a software package.
+    derived_from: Container
+    properties:
+      cpu_architecture:
+        description: >-
+          CPU architecture for which this software package was created.
+        type: string
+        required: false
+        validation:
+          $valid_values: [$value, [x86_64, i386, arm]]
+      num_cpus: 
+        description: >-
+          Number of (actual or virtual) CPU cores available to the runtime
+          node.
+        type: integer
+        required: false
+        validation:
+          $greater_or_equal: [$value, 1]
+      cpu_frequency:
+        description: >-
+          Specifies the operating frequency of one (1) CPU as provided
+          by the property 'num_cpus'.
+        type: sclr:scalar-unit.frequency
+        required: false
+        validation:
+          $greater_or_equal: [$value, 0.1 GHz]
+      mem_size: 
+        description: >-
+          Size of memory available to applications hosted on this
+          runtime.
+        type: sclr:scalar-unit.size
+        required: false
+        validation:
+          $greater_or_equal: [$value, 0 MB]
+      disk_size:
+        description: >-
+          Size of the local disk available to applications running on
+          the Compute node (default unit is MB).
+        type: sclr:scalar-unit.size
+        required: false
+        validation:
+          $greater_or_equal: [$value, 0 MB]
+  OperatingSystem:
+    description: >-
+      Advertizes the ability to act as a runtime execution environment
+      for installable software packages.
+    derived_from: Runtime
+    properties:
+      os:
+        type: string
+        description: >
+          The Operating System type on which to install this software
+          package.  Examples of valid values include: linux, aix, mac,
+          windows, etc.
+        required: false
+      distribution:
+        type: string
+        description: >
+          The Operating System distribution.  Examples of valid values
+          for an operating system “type” of “Linux” would include:
+          debian, fedora, rhel and ubuntu.
+        required: false
+      version:
+        type: version
+        description: >
+          The Operating System version.
+        required: false
+  Layer:
+    description: >-
+      Ability to encapsulate higher layer networking protocol.
+    derived_from: Container
+  Bindable:
+    description: >-
+      Ability for a host accept a binding from a network port.
+    derived_from: Feature
+  Linkable:
+    description: >-
+      Ability for a network to accept connections from hosts.
+    derived_from: Feature
+  Attachable:
+    description: >-
+      Ability for storage to be attached.
+    derived_from: Feature
+    
+node_types:
+  Root:
+    description: >-
+      Base node type from which all other node types are derived. This
+      is intended to hold an interface definition that is shared by
+      all node types.
+  VirtualPlatform:
+    derived_from: Root
+    description: >-
+      Cloud services are deployed within regions located around the
+      world. Each region comprises a group of data centers
+      (availability zones) that are in relatively close proximity to
+      each other. Availability zones in a Region are interconnected
+      with high-bandwidth, low-latency networking, over fully
+      redundant, dedicated metro fiber providing high-throughput,
+      low-latency networking.
+    properties:
+      provider:
+        type: string
+      name:
+        type: string
+      location:
+        type: string
+        required: false
+    capabilities:
+      host:
+        type: Container
+    requirements:
+      - manager:
+          capability: Manager
+          relationship: ManagedBy
+          count_range: [1, 1]
+      - credential:
+          capability: Credential
+          relationship: AuthorizedUsing
+          count_range: [1, 1]
+  KeyPair:
+    derived_from: Root
+    properties:
+      key_name:
+        type: string
+        description: >-
+          Key Name for this KeyPair.
+        required: false
+      vault:
+        type: string
+        description: >-
+          Vault in which to store the key
+        default: '~/vault'
+    attributes:
+      key_file:
+        type: string
+        description: >-
+          File that stores the private key for this KeyPair.
+      public_key_file:
+        description: >-
+          File that stores the public key for this KeyPair.
+        type: string
+    capabilities:
+      credential:
+        type: Credential
+  Compute:
+    derived_from: Root
+    description: >-
+      Ubicity Compute instance.
+    properties:
+      name: 
+        type: string
+        required: true
+      sudo_user:
+        description: >-
+          Credential for the default (sudo) user account created for
+          this compute instance.
+        type: Credential
+        required: true
+    attributes:
+      private_address:
+        type: string
+        description: >-
+          The primary private IP address assigned by the cloud
+          provider that applications may use to access the Compute
+          node.
+      public_address:
+        type: string
+        description: >-
+          The primary public IP address assigned by the cloud provider
+          that applications may use to access the Compute node.
+    capabilities:
+      host:
+        type: OperatingSystem
+      binding:
+        type: Bindable
+      observable:
+        type: Observable
+    requirements:
+      - key:
+          description: >-
+            Expresses the relationship between Compute and the key
+            pair
+          capability: Credential
+          relationship: AuthorizedUsing
+          node: KeyPair
+          count_range: [0, 1]
+      - link:
+          description: >
+            Expresses the relationship between Compute and
+            the network.
+          capability: Linkable
+          relationship: LinksTo
+          count_range: [0, UNBOUNDED]
+      - storage:
+          capability: Attachable
+          relationship: AttachesTo
+          count_range: [0, UNBOUNDED]
+      - security:
+          capability: SecurityGuard
+          relationship: ProtectedBy
+          count_range: [0, 1]
+  VirtualCompute:
+    derived_from: Compute
+    description: >-
+      Ubicity Base Cloud Compute instance.
+    requirements:
+      - region:
+          capability: Container
+          relationship: ContainedBy
+          node: VirtualPlatform
+          count_range: [1, 1]
+  PhysicalCompute:
+    derived_from: Compute
+    description: >-
+      Physical Compute instance.
+    requirements:
+      - link:
+          node: Port
+          count_range: [0, 4]
+  Storage:
+    description: >-
+      Node type for storage
+    derived_from: Root
+    properties:
+      volume_name:
+        type: string
+        required: false
+    capabilities:
+      attachment:
+        type: Attachable
+  ComputeMonitor:
+    derived_from: Root
+    attributes:
+      monitor_id:
+        type: string
+    requirements:
+      - monitor:
+          capability: Observable
+          relationship: Monitors
+          node: Compute
+          count_range: [1,1]
+  Port:
+    derived_from: Root
+    properties:
+      name: 
+        type: string
+        required: true
+      ip_address:
+        type: string
+        required: false
+      mac_address:
+        type: string
+        required: false
+    attributes:
+      interface_name:
+        type: string
+    capabilities:
+      layer:
+        type: Layer
+      link:
+        type: Linkable
+    requirements:
+      - link: 
+          description: >
+            Links the port to a subnet. 
+          capability: Linkable
+          relationship: LinksTo
+          count_range: [1, 1]
+          node: Subnet
+      - binding:
+          description: >
+            Binds the port to a running compute or container instance.
+          capability: Bindable
+          relationship: BindsTo
+          count_range: [0, 1]
+  Subnet:
+    derived_from: Root
+    properties:
+      name: 
+        type: string
+        required: true
+      cidr_block: 
+        type: string
+        required: true
+      gateway:
+        type: string
+        required: false
+    capabilities:
+      link:
+        type: Linkable 
+  Software:
+    derived_from: Root
+    requirements:
+      - host:
+          capability: OperatingSystem
+          relationship: HostedOn
+          node: Compute
+          count_range: [0, 1]
+  InstallablePackage:
+    derived_from: Software
+    properties:
+      name:
+        type: string
+      repository:
+        type: string
+        required: False
+      repository_key:
+        type: string
+        required: False
+      suite:
+        type: string
+        required: False
+      components:
+        type: string
+        required: False
+      package_names:
+        type: list
+        entry_schema: string
+  PipPackage:
+    derived_from: Software
+    properties:
+      package_names:
+        type: list
+        entry_schema: string
+      virtual_env:
+        type: string
+        required: true
+  DockerContainer:
+    description: >-
+      Node type for creating and starting a Docker Container
+    derived_from: Software
+    properties:
+      container_name:
+        type: string
+      image:
+        type: string
+      env:
+        type: map
+        entry_schema: string
+        required: False
+      privileged:
+        type: boolean
+        default: False
+      cap_add:
+        type: list
+        entry_schema: string
+        required: False
+      cap_drop:
+        type: list
+        entry_schema: string
+        required: False
+    attributes:
+      container_id:
+        type: string
+    capabilities:
+      bindable:
+        type: Bindable
+    requirements:
+      - host:
+          count_range: [1, 1]
+      - manager:
+          capability: Manager
+          relationship: ManagedBy
+          count_range: [1, 1]
+      - volume:
+          capability: Attachable
+          relationship: AttachesTo
+          count_range: [0, UNBOUNDED]
+      - link:
+          capability: Linkable
+          count_range: [0, 1]
