@@ -221,48 +221,6 @@ relationships to the *source* nodes of those relationships.
   of type `Partner` as specified using the `valid_capability_types`
   keyword in the type definition.
 
-Each of these relationship types derive from a top-level `Root`
-relationship type that advertizes the Ubicity `Configure` interface
-that is used by all relationship types. Other relationship types are
-derived from one of the three *base* relationship types as shown in
-the following type hiearchy:
-
-```mermaid
-classDiagram
-    Root <|-- ContainedBy 
-    Root <|-- DependsOn 
-    Root <|-- AssociatesWith
-    ContainedBy <|-- HostedOn 
-    DependsOn <|-- ConnectsTo
-    DependsOn <|-- ManagedBy 
-    DependsOn <|-- Monitors 
-    DependsOn <|-- BindsTo 
-    DependsOn <|-- LinksTo 
-    DependsOn <|-- AttachesTo 
-    DependsOn <|-- JoinedTo
-```
-
-### Capability Types
-
-Ubicity defines three *base* capability types that are matched with
-the three different kinds of base relationshp types. Other capability
-types are derived from one of these three base types.  The following
-figure shows the capability type hierarchy:
-
-```mermaid
-classDiagram
-    Feature <|-- Observable
-    Feature <|-- Manager
-    Feature <|-- Endpoint
-    Feature <|-- Bindable
-    Feature <|-- Linkable
-    Feature <|-- Attachable
-    Feature <|-- Master
-    Container <|-- Runtime
-    Runtime <|-- OperatingSystem
-    class Partner
-```
-
 ### Best Practices
 Best practices questions:
 

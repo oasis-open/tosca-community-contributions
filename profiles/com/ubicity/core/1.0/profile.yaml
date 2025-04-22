@@ -9,7 +9,7 @@ description: >-
 relationship_types:
   Root: 
     description: >-
-      Root relationship type from which all other relationship types
+      Base relationship type from which all other relationship types
       derived. This is intended to hold an interface definition that
       is shared by all relationship types.
     metadata:
