@@ -45,7 +45,7 @@ classDiagram
 ## Capability Types
 
 Ubicity defines three *base* capability types that are matched with
-the three different kinds of base relationshp types. Other capability
+the three different kinds of base relationship types. Other capability
 types are derived from one of these three base types. The following
 figure shows how the different base relationship types target
 different capability types and how different capability types accept
