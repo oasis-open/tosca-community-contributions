@@ -50,7 +50,6 @@ classDiagram
     Feature <|-- Bindable
     Feature <|-- Linkable
     Feature <|-- Attachable
-    Feature <|-- Master
     class Partner
 ```
 
