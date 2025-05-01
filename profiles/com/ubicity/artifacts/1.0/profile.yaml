@@ -1,0 +1,87 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.ubicity.artifacts:1.0
+
+description: >-
+  Artifact type definitions with associated artifact processing rules.
+
+data_types:
+  Credential:
+    properties:
+      user_name:
+        type: string
+        required: true
+      key_file:
+        type: string
+        required: false
+        description: >-
+          Either key_file or password_file must be provided.
+      password_file:
+        type: string
+        required: false
+        description: >-
+          Either key_file or password_file must be provided.
+artifact_types:
+  Bash:
+    description: >-
+      Bash script. If the "host" property is not set, the script is
+      run locally. If "host" is set the script is executed on that
+      host using an ssh connection.
+    mime_type: application/x-sh
+    file_ext: [sh]
+    properties:
+      host:
+        type: string
+        required: false
+      user:
+        type: Credential
+        required: false
+  Ansible:
+    description: >-
+      Ansible playbook. If the "host" property is not set, the
+      playbook is run locally. If "host" is set the playbook is
+      executed on that host using an ssh connection.
+    properties:
+      host:
+        type: string
+        required: false
+      user: 
+        type: Credential
+        required: false
+  Python:
+    description: >-
+      Artifact for the interpreted Python language
+    mime_type: application/x-python
+    file_ext: [py]
+  Terraform:
+    description: >-
+      Terraform configuration file
+    properties:
+      action:
+        description: >-
+          Terraform action to be performed.
+        type: string
+        validation:
+          $valid_values: [$value, [create, modify, delete]]
+      tfstate:
+        description: >-
+          Unique name to identify Terraform state
+        type: string
+  Deployment:
+    description: >-
+      File that needs to be deployed to a specific location.
+    properties:
+      host:
+        type: string
+        required: false
+      directory:
+        type: string
+        required: false
+      user:
+        type: Credential
+        required: false
+  Tar:
+    description: >-
+      Tar ball that needs to be deployed to a specific location and
+      untarred.
+    derived_from: Deployment
