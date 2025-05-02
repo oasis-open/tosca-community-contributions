@@ -28,54 +28,48 @@ def main():
         sys.exit(101)
 
     # Confirm that the file exists
+    file_path = sys.argv[1]
     if not os.path.isfile(file_path):
         print(f"Wrapper Error: {file_path} is not a valid file.")
         sys.exit(102)
 
-    file_path = sys.argv[1]
-
+    # Ubicity requires TOSCA.meta file.
     file_dir = os.path.dirname(file_path)
-    file_name = "TOSCA.meta"
-    full_file_path = os.path.join(file_dir, file_name)
+    file_name = os.path.basename(file_path)
+    tosca_meta_file_path = os.path.join(file_dir, "TOSCA.meta")
+    with open(tosca_meta_file_path, 'w') as file:
+        file.write("CSAR-Version: 2.0\n")
+        file.write("Created-By: Ubicity Corp.\n")
+        file.write(f"Entry-Definitions: {file_name}\n")
 
-    with open(full_file_path, 'W') as file:
-        file.write("CSAR-Version: 2.0")
-        file.write("Created-By: Ubicity Corp.")
-        file.write(f"Entry-Definitions: {full_file_path}")
-
-    ################################################
-    # Modify the command below to run the TOSCA processor to be tested
-    processor_command = ["ubicity", "catalog",  "validate", file_dir]
-    ################################################
-
-    #Initialize variables
+    # Initialize variables
     pSuccess = False
     pError = False
     pErrorReason = ""
 
-    #Run the processor
+    # Run the processor
+    processor_command = ["ubicity", "catalog",  "validate", file_dir]
     result = subprocess.run(  
-    processor_command,
+        processor_command,
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
     text=True
     )
 
-    ################################################
-    # Modify the the conditions in the clauses below to match the behavior of the TOSCA processor output
-    # Ensure that each case has a unique matching condition
-
+    # Clean up
+    os.remove(tosca_meta_file_path)
+    
     # Condition if the TOSCA file was processed successfully
     if ((result.returncode == 0)):
         pSuccess = True
         printJsonResponse(pSuccess, pError, pErrorReason, processor_command, result)
         sys.exit(0)
-    # Condition if the file was not valid TOSCA
+    # Condition if the file was not valid TOSCA. Error codes above 100
+    # indicate invalid TOSCA.
     elif ((result.returncode >= 100)):
         pError = True
         pErrorReason = "InvalidTOSCA"
         printJsonResponse(pSuccess, pError, pErrorReason, processor_command, result)
-
         sys.exit(1)
     else:
         print(f"Wrapper got error from processor: An unknown error occurred with exit code {result.returncode}, error {result.stderr}, and stdout {result.stdout}")
@@ -85,7 +79,5 @@ def main():
         sys.exit(99)
     ################################################
 
-    os.remove(full_file_path)
-    
 if __name__ == "__main__":
     main()
