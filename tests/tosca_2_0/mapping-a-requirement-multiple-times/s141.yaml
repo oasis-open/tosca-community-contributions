@@ -1,0 +1,14 @@
+# tag::s141[]
+tosca_definitions_version: tosca_2_0
+imports:
+- types.yaml
+service_template:
+  node_templates:
+    compute:
+      type: Compute
+    client:
+      type: ClientSoftware
+      directives: [ substitute ]
+      requirements:
+      - host: compute
+# end::s141[]

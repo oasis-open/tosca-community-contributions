@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+service_template:
+  inputs:
+    my-ips:
+      type: list
+      entry_schema: string
+# tag::s105[]
+  outputs:
+    example1:
+      # Result: prefix_1111_suffix
+      value: { $join: [ [ "prefix", '1111', "suffix" ], "_" ] }
+    example2:
+      # Result: 9.12.1.10,9.12.1.20
+      value: { $join: [ { $get_input: my-ips }, "," ] } 
+# end::s105[]

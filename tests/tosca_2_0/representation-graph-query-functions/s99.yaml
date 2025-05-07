@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+relationship_types:
+  ConnectsTo:
+    description: Connects to a target
+#TODO: Why doesn't the configure interface used below need a type definition?
+service_template:
+# tag::s99[]
+  relationship_templates:
+    my-connection:
+      type: ConnectsTo
+      interfaces:
+        configure:
+          inputs: 
+            targets_value: { $get_property: [ SELF, TARGET, value ] }
+# end::s99[]

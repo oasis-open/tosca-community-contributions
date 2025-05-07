@@ -1,0 +1,92 @@
+tosca_definitions_version: tosca_2_0
+relationship_types:
+  BindsTo: {}
+capability_types:
+  NetworkBindable:
+    description: >
+      This capability indicates that a node can be bound to a network.
+  MgmtNet:
+    description: >
+      This capability indicates that a node can be used as a management network.
+node_types:
+  vRouter:
+    properties:
+      mgmt-net-name:
+        type: string
+      mgmt-cp-v4-fixed-ip:
+        type: string
+      mgmt-cp-gateway-ip:
+        type: string
+      mgmt-cp-external-ip:
+        type: string
+    requirements:
+      - lan-port:
+          capability: NetworkBindable
+          relationship: BindsTo
+      - mgmt-net:
+          capability: MgmtNet
+          relationship: BindsTo
+  HostWithNet:
+    properties:
+      name:
+        type: string
+    capabilities:
+      VirtualBind:
+        type: NetworkBindable
+  MgmtNet:
+    properties:
+      name:
+        type: string
+      gateway:
+        type: string
+    capabilities:
+      mgmt:
+        type: MgmtNet
+# tag::s97[]
+data_types:
+  NetworkInfo:
+    properties:
+      name:
+        type: string
+        required: false
+      gateway:
+        type: string
+        required: false
+
+  RouterInfo:
+      properties:
+        ip:
+          type: string
+        external:
+          type: string
+
+service_template:
+  inputs:
+    management-network:
+      type: NetworkInfo
+      default: { name: my-net, gateway: '192.168.1.254' }
+    router:
+      type: RouterInfo
+      default: { ip: '192.168.1.1', external: '' }
+
+  node_templates:
+    my-mgmt-net:
+      type: MgmtNet
+      properties:
+        name: { $get_input: [ management-network, name ] }
+        gateway: { $get_input: [ management-network, gateway ] }
+
+    bono-main:
+      type: vRouter
+      directives: [ substitute ]
+      properties:
+        mgmt-net-name: { $get_input: [ management-network, name ] }
+        mgmt-cp-v4-fixed-ip: { $get_input: [ router, ip ] }
+        mgmt-cp-gateway-ip: { $get_input: [ management-network, gateway ] }
+        mgmt-cp-external-ip: { $get_input: [ router, external ] }
+      requirements:
+        - lan-port:
+            node: HostWithNet
+            capability: VirtualBind
+        - mgmt-net: my-mgmt-net
+# end::s97[]

@@ -1,0 +1,6 @@
+tosca_definitions_version: tosca_2_0
+# tag::s24[]
+# Importing a profile
+imports:
+- profile: org.oasis-open.tosca.simple:2.0
+# end::s24[]

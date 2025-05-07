@@ -1,0 +1,9 @@
+tosca_definitions_version: tosca_2_0
+# tag::s28[]
+# Short notation and long notation supported
+imports:
+- relative_path/my_defns/my_typesdefs_1.yaml
+- url: my_defns/my_typesdefs_2.yaml    
+  repository: my-company-repo
+  namespace: mycompany
+# end::s28[]

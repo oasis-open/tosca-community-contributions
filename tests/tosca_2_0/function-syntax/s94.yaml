@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Compute:
+    properties:
+      prop1:
+        type: string
+      $$myid1:
+        type: string
+      myid2:
+        type: string
+      $$myid3:
+        type: string
+service_template:
+  node_templates:
+    my-server:
+      type: Compute
+# tag::s94[]
+      properties:
+        prop1:
+        $$myid1: myval1
+        myid2: $$myval2
+        $$myid3: $$myval3
+# end::s94[]

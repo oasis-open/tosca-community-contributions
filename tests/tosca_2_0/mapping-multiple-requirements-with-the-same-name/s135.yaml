@@ -1,0 +1,17 @@
+# tag::s135[]
+tosca_definitions_version: tosca_2_0
+imports:
+  - types.yaml
+service_template:
+  node_templates:
+    server1:
+      type: Server
+    server2:
+      type: Server
+    client:
+      type: Client
+      directives: [ substitute ]
+      requirements:
+      - service: server1
+      - service: server2
+# end::s135[]

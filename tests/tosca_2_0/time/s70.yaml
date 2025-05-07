@@ -1,0 +1,58 @@
+tosca_definitions_version: tosca_2_0
+# tag::s70[]
+dsl_definitions:
+  iso-prefixes: &ISO80000
+    "": 1
+    k:  1000
+    Ki: 1024
+    M:  1000000
+    Mi: 1048576
+    G:  1000000000
+    Gi: 1073741824
+    T:  1000000000000
+    Ti: 1099511627776
+
+data_types:
+  Bitrate:
+    description: Replacement for "scalar-unit.bitrate"
+    derived_from: scalar
+    data_type: float
+    units:
+      bps: 1 # bits per second
+      Bps: 8 # bytes per second
+    prefixes: *ISO80000
+    validation: { $greater_or_equal: [ $value, 0.0 ] }
+
+  Frequency:
+    description: Replacement for "scalar-unit.frequency"
+    derived_from: scalar
+    data_type: float
+    units:
+      Hz: 1
+    prefixes: *ISO80000
+    validation: { $greater_or_equal: [ $value, 0.0 ] }
+
+  Size:
+    description: Replacement for "scalar-unit.size"
+    derived_from: scalar
+    data_type: integer
+    units:
+      B: 1 # bytes
+    prefixes: *ISO80000
+    validation: { $greater_or_equal: [ $value, 0 ] }
+
+  Time:
+    description: Replacement for "scalar-unit.time"
+    derived_from: scalar
+    data_type: float
+    units:
+      ns: 0.000000001
+      us: 0.000001
+      μs: 0.000001
+      ms: 0.001
+      s:  1
+      m:  60
+      h:  3600
+      d:  86400
+    validation: { $greater_or_equal: [ $value, 0.0 ] }
+# end::s70[]

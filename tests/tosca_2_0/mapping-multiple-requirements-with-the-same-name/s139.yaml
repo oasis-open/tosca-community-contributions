@@ -1,0 +1,47 @@
+# tag::s139[]
+tosca_definitions_version: tosca_2_0
+
+imports:
+- types.yaml
+
+capability_types:
+  Host:
+    description: >-
+      Ability to host software.
+
+relationship_types:
+  HostedOn:
+    description: >-
+      Relationship to a host.
+
+node_types:
+  ClientSoftware:
+    requirements:
+    - host:
+        capability: Host
+        relationship: HostedOn
+    - service:
+        capability: ServiceCapability
+        relationship: Uses
+        count_range: [ 2, 2 ]
+
+  Compute:
+    capabilities:
+      host:
+        type: Host
+
+service_template:
+  substitution_mappings:
+    node_type: Client
+    requirements:
+    - service: [ software, service ]
+
+  node_templates:
+    software:
+      type: ClientSoftware
+      requirements:
+      - host: compute
+
+    compute:
+      type: Compute
+# end::s139[]

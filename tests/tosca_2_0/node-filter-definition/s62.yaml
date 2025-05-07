@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  scalar-unit.size:
+    derived_from: scalar
+    data_type: integer
+    units:
+      B: 1
+      MB: 1000000
+node_types:
+  Compute:
+    description: A compute node
+    properties:
+      num-cpus:
+        type: integer
+      mem-size:
+        type: scalar-unit.size
+    capabilities:
+      host:
+        type: host_capability
+# tag::s62[]
+service_template:
+  node_templates:
+    my-node:
+      type: Compute
+      # other details omitted for brevity
+      requirements:
+      - host:
+          node_filter:
+            $and:
+              - $in_range:
+                - $get_property: [ SELF, CAPABILITY, num-cpus ]
+                - [ 1, 4 ]
+              - $greater_or_equal:
+                - $get_property: [ SELF, CAPABILITY, mem-size ]
+                - 512 MB 
+# end::s62[]

@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_2_0
+# tag::s90[]
+node_types:
+  Scalable:
+    properties:
+      minimum-instances:
+        type: integer
+        validation: { $greater_or_equal: [ $value,  0 ] } 
+      maximum-instances:
+        type: integer
+        validation: 
+          $greater_or_equal:
+          - $value
+          - $get_property: [ SELF, minimum-instances ]
+      default-instances:
+        type: integer
+        validation:
+          $and:
+          - $greater_or_equal: 
+            - $value
+            - $get_property: [ SELF, minimum-instances ]
+          - $less_or_equal: 
+            - $value
+            - $get_property: [ SELF, maximum-instances ]
+        required: false
+# end::s90[]

@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+policy_types:
+  Placement:
+    description: >
+      This policy type is used to specify the placement of a node.
+    properties:
+      location:
+        type: string
+        required: false
+service_template:
+# tag::s45[]
+    policies:
+    - my-placement:
+        type: Placement
+# end::s45[]

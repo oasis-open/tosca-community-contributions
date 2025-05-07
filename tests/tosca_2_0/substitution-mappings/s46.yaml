@@ -1,0 +1,67 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  Foo:
+    properties:
+      level:
+        type: string
+  Bar:
+    properties:
+      port:
+        type: integer
+        required: false
+relationship_types:
+  DependsOn:
+    valid_capability_types: [ Foo ]
+node_types:
+  MyService:
+    properties:
+      num-cpus:
+        type: integer
+    capabilities:
+      bar:
+        type: Bar
+    requirements:
+      - foo:
+          capability: Foo
+          relationship: DependsOn
+  Worker:
+    properties:
+      cpus:
+        type: integer
+      rate:
+        type: integer
+    capabilities:
+      worker-bar:
+        type: Bar
+    requirements:
+      - worker-foo:
+          capability: Foo
+          relationship: DependsOn
+          
+# tag::s46[]
+service_template:
+  inputs:
+    cpus:
+      type: integer
+      validation: { $less_than: [ $value, 5 ] }
+
+  substitution_mappings:
+    node_type: MyService
+    properties:  
+      num-cpus: cpus
+    capabilities:
+      bar: [ my-worker, worker-bar ]
+    requirements:
+      - foo: [ my-worker, worker-foo ]
+
+  node_templates:
+    my-worker:
+      type: Worker
+      properties: 
+        rate: 100
+        cpus: { $get_input: [ cpus] }
+      requirements:
+        - worker-foo: {}
+
+# end::s46[]
+

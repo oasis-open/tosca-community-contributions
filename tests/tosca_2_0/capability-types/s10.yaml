@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_2_0
+# tag::s10[]
+capability_types:
+  MyGenericFeature:
+    properties:
+      property-1:
+        type: string
+      # more details ...
+
+  MyFirstCustomFeature:
+    derived_from: MyGenericFeature
+    properties:
+      an-integer:
+        type: integer
+      # more details ...
+
+  TransactSQL:
+    derived_from: MyGenericFeature
+    properties:
+      sql-statement:
+        type: string
+      # more details ...
+# end::s10[]

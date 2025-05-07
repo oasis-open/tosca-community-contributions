@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_2_0
+# tag::s110[]
+data_types:
+  MyType1:
+    properties:
+      foo:
+        type: string
+  MyType2:
+    properties:
+      bar:
+        type: integer
+  MyTypeRez:
+    properties:
+      foo:
+        type: string
+      bar:
+        type: integer
+functions:
+  my_func_with_different_argument_types:
+    signatures:
+    - arguments:
+      - type: MyType1
+        description: "this is the first argument ..."
+      - type: string
+        description: "this is the second argument ..."
+      - type: string
+        description: "this is the third argument ..."
+      - type: MyType2
+        description: "this is the argument that can be repeated ..."
+      variadic: true
+      result: 
+        type: MyTypeRez
+      implementation: scripts/my.py
+# end::s110[]

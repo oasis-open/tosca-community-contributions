@@ -1,0 +1,48 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  PortDef:
+    properties:
+      port:
+        type: integer
+        validation: 
+          $and:
+            - $greater_or_equal: [ $value, 1 ]
+            - $less_or_equal: [ $value, 65535 ] 
+capability_types:
+  Endpoint:
+    properties:
+      protocol:
+        type: string
+        required: true
+        default: tcp
+      port:
+        type: PortDef
+        required: false
+      secure:
+        type: boolean
+        required: false
+        default: false
+        # TODO This example was greatly expanded from the original tosca spec and should be checked
+# tag::s85[]
+# In a capability refinement.
+  Endpoint.Admin:
+    derived_from: Endpoint
+    # Change Endpoint secure indicator to true from its default of false
+    properties:
+      secure: true
+# Or in a node definition.
+node_types:
+  WebServer:
+    description: A web server
+    capabilities:
+      connection-point:
+        type: Endpoint
+service_template:
+  node_templates:
+    my_server:
+      type: WebServer
+      capabilities:
+        connection-point:
+          properties:
+            secure: true
+# end::s85[]

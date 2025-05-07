@@ -1,0 +1,14 @@
+# tag::s21[]
+tosca_definitions_version: tosca_2_0
+profile: org.platform
+
+imports:
+- profile: org.base:v1
+  namespace: p1
+
+node_types:
+  Platform:
+    capabilities:
+      host:
+        type: p1:Host
+# end::s21[]

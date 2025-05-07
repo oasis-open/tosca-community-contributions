@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  scalar-unit.size:
+    derived_from: scalar
+    data_type: integer
+    units:
+      B: 1
+      MB: 1000000
+capability_types:
+  host_capability:
+    description: Hosting capability
+
+
+node_types:
+  WebApplication:
+    description: A web app
+    requirements:
+      - host: host
+
+  Compute:
+    description: A compute node
+    properties:
+      num-cpu:
+        type: integer
+      mem-size:
+        type: scalar-unit.size
+    capabilities:
+      host:
+        type: host_capability
+
+# tag::s61[]
+service_template:
+  node_templates:
+    my-application:
+      type: WebApplication
+      requirements:
+      - host:
+          node: Compute
+          allocation:
+            num-cpu: 2
+            mem-size: 128 MB
+# end::s61[]

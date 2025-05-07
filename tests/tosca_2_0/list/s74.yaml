@@ -1,0 +1,13 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  WebApplication:
+    description: A web app
+# tag::s74[]
+    properties:
+      listen-ports:
+        type: list
+        entry_schema:
+          description: listen port entry (simple integer type)
+          type: integer
+          validation: { $less_or_equal: [ $value, 128 ] }
+# end::s74[]

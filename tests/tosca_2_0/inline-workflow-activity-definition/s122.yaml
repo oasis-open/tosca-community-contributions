@@ -1,0 +1,33 @@
+tosca_definitions_version: tosca_2_0
+interface_types:
+  Standard:
+    operations:
+      create: {}
+      start: {}
+node_types:
+  VM:
+    interfaces:
+      standard:
+        type: Standard
+service_template:
+  node_templates:
+    vSRXVirtualMachine:
+      type: VM
+  workflows:
+    deploy:
+      steps:
+        create-step:
+          target: vSRXVirtualMachine
+          activities:
+            - call_operation: standard.create
+    my-workflow:
+      steps:
+        deploy-step:
+          target: vSRXVirtualMachine
+          activities:
+# tag::s122[]
+            - delegate: deploy
+            - set_state: started
+            - call_operation: standard.start
+            - inline: my-workflow
+# end::s122[]

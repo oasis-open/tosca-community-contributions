@@ -1,0 +1,9 @@
+tosca_definitions_version: tosca_2_0
+# tag::s16[]
+repositories:
+  my-project:
+    description: My project's code repository in GitHub
+    url: https://github.com/my-project/
+
+  external-repo: https://foo.bar
+# end::s16[]

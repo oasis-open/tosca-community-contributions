@@ -1,0 +1,75 @@
+tosca_definitions_version: tosca_2_0
+# tag::s69[]
+dsl_definitions:
+  # Defined a reusable set of prefixes taken from ISO80000
+  iso-prefixes: &ISO80000 # Prefixes for smaller multipliers omitted
+    μ: 0.0001
+    m: 0.001
+    c: 0.01
+    d: 0.1
+    "": 1.0 # allows use of the base unit without any prefix
+    da: 10 # units may be multiple characters
+    h: 100 # integer multipliers auto-converted to floats
+    k: 1000
+    M: 1000000
+    # Prefixes for larger multipliers omitted
+
+data_types:
+  PositiveInteger:
+    derived_from: integer
+    validation: { $greater_or_equal: [$value, 1] }
+
+  Bitrate:
+    version: "2.0"
+    description: Data rate allowing multiples of 1024 as well as 1000 but not including prefixes above 10^12
+    derived_from: scalar
+    data_type: PositiveInteger
+    units:
+      bits/s: 1 # This is the mandatory entry with multiplier one
+      bps: 1 # A second entry with multiplier one so a canonical_unit is required
+      kbits/s: 1000 # No prefix defined so unit includes the prefix 'k' and the base unit 'bits/s'
+      Kibits/s: 1024
+      Mbits/s: 1000000
+      Mibits/s: 1048576
+      Gbits/s: 1000000000
+      Gibits/s: 1073741824
+      Tbits/s: 1000000000000
+      Tibits/s: 1099511627776
+    canonical_unit: bits/s
+
+  Length:
+    derived_from: scalar
+    # data_type defaults to float
+    units:
+      m: 1.0 # Just one entry which defines the base to which defined prefixes are applied
+    # Only one unit so no need for canonical_unit
+    prefixes: *ISO80000 # First use of the YAML anchor and alias
+
+  Mass:
+    derived_from: scalar
+    units: { g: 1 } # Short notation. Integer automatically converted to float
+    prefixes: *ISO80000 # Note map of prefixes is used by both Length and Mass by means of YAML anchor and alias
+
+node_types:
+  Box:
+    properties:
+      weight:
+        type: Mass
+      height:
+        type: Length
+      width:
+        type: Length
+        validation: { $less_than: [$value, 15 cm] } # Validation is in centimeters
+      throughput:
+        type: Bitrate
+
+service_template:
+  node_templates:
+    node:
+      type: Box
+      properties:
+        weight: 10 kg # Automatic conversion to float
+        height: 0.1 m
+        width: 125.3 mm # Definition is in millimeters, conversion of units within a scalar is performed by the parser
+        throughput: 10 Kibits/s
+# end::s69[]

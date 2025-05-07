@@ -1,0 +1,63 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  DatabaseEndpoint:
+    properties:
+      port:
+        type: integer
+        default: 1433
+interface_types:
+  WpInterface:
+    operations:
+      create:
+        description: Create a WordPress instance
+      configure:
+        description: Configure a WordPress instance
+        inputs:
+          wp-db-port:
+            type: integer
+            description: The port of the database
+relationship_types:
+  ConnectsTo: {}
+node_types:
+  Database:
+    capabilities:
+      database-endpoint:
+        type: DatabaseEndpoint
+  WordPress:
+    interfaces:
+      WpStandard:
+        type: WpInterface
+    requirements:
+      - database-endpoint:
+          capability: DatabaseEndpoint
+          relationship: ConnectsTo
+service_template:
+# tag::s100[]
+  node_templates:
+    mysql-database:
+      type: Database
+      capabilities:
+        database-endpoint:
+          properties:
+            port: 3306
+    wordpress:
+        type: WordPress
+        requirements:
+          - database-endpoint: mysql-database
+        interfaces:
+          WpStandard:
+            operations:
+              create:
+                implementation: wordpress_create.sh
+              configure: 
+                implementation: wordpress_configure.sh            
+                inputs:
+                  wp-db-port:
+                    $get_property:
+                    - SELF
+                    - RELATIONSHIP
+                    - database-endpoint
+                    - 0
+                    - CAPABILITY
+                    - port
+# end::s100[]

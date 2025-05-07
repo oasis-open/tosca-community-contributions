@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_2_0
+imports:
+  - types.yaml
+# tag::s131[]
+service_template:
+  node_templates:
+    right:
+      type: Right
+      count: 6
+      capabilities:
+        feature:
+          properties:
+            target-count: 1
+    left:
+      type: Left
+      count: 6
+      requirements:
+      - uses:
+          node: Right
+          count: 2
+          allocation:
+            target-count: 1
+# end::s131[]

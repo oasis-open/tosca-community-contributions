@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  NetworkInfo:
+    properties:
+      network_name:
+        type: string
+      network_id:
+        type: string
+      addresses:
+        type: list
+        entry_schema:
+          type: string
+node_types:
+  Compute:
+    attributes:
+      private_address:
+        type: string
+      public_address:
+        type: string
+      networks:
+        type: map
+        entry_schema:
+          type: NetworkInfo
+    
+service_template:
+  node_templates:
+    node5:
+      type: Compute
+# tag::s42[]
+  outputs:
+    server-address:
+      description: The first private IP address for the provisioned server.
+      value: { $get_attribute: [ node5, networks, private, addresses, 0 ] }
+# end::s42[]

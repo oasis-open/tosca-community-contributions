@@ -1,0 +1,21 @@
+# tag::s34[]
+tosca_definitions_version: tosca_2_0
+description: TOSCA file A
+
+imports:
+- url: TOSCAFileB.yaml
+  namespace: fileB
+
+node_types:
+  MyNode:
+    properties:
+      first-property:
+        type: string
+
+service_template:
+  node_templates:
+    my-node:
+      type: MyNode
+      properties:
+        first-property: One Hundred
+# end::s34[]

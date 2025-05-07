@@ -1,0 +1,27 @@
+# tag::s140[]
+tosca_definitions_version: tosca_2_0
+
+capability_types:
+  Host:
+    description: >-
+      Ability to host software.
+
+relationship_types:
+  HostedOn:
+    description: >-
+      Relationship to a host.
+
+node_types:
+  Client:
+    requirements:
+    - host:
+        capability: Host
+        relationship: HostedOn
+        node: Compute
+        count_range: [ 1, 1 ]
+
+  Compute:
+    capabilities:
+      host:
+        type: Host
+# end::s140[]

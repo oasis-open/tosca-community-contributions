@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_2_0
+interface_types:
+  StandardInterfaceType:
+    description: Interface for configuring a service
+    operations:
+      start:
+        description: Operation to execute to start the service
+node_types:
+  Database:
+    description: A database
+    interfaces:
+      standard:
+        type: StandardInterfaceType
+service_template:
+  node_templates:
+    my_database_template:
+      type: Database
+# tag::s119[]
+      interfaces:
+        standard:
+          operations:
+            start: scripts/start_server.sh
+# end::s119[]

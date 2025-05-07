@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  host_capability:
+    properties:
+      num-cpus:
+        type: integer
+
+node_types:
+  Compute:
+    capabilities:
+      host:
+        type: host_capability
+service_template:
+# tag::s96[]
+  inputs:
+    cpus:
+      type: integer
+      default: 1
+
+  node_templates:
+    my-server:
+      type: Compute
+      capabilities:
+        host:
+          properties:
+            num-cpus: { $get_input: cpus }
+# end::s96[]

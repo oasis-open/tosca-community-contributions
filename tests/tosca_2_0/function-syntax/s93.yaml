@@ -1,0 +1,33 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Compute:
+    properties:
+      nested:
+        type: string
+functions:
+  outer_func:
+    description: Outer function
+    signatures:
+      - arguments:
+        - type: string
+        - type: string
+        result:
+          type: string
+        implementation: scripts/outer.sh
+  inner_func:
+    description: Inner function
+    signatures:
+      - arguments:
+        - type: string
+        - type: string
+        result:
+          type: string
+        implementation: scripts/inner.sh
+service_template:
+  node_templates:
+    my-server:
+      type: Compute
+# tag::s93[]
+      properties:
+        nested: { $outer_func: [ { $inner_func: [ iarg1, iarg2 ] }, oarg2 ] }
+# end::s93[]

@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+# tag::s63[]
+node_types:
+  Node:
+    properties:
+      name:
+        type: string
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        name: "0.1"
+# end::s63[]

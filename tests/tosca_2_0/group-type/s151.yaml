@@ -1,0 +1,11 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Software:
+    description: A software component
+
+# tag::s151[]
+group_types:
+  Placement:
+    description: My company's group type for placing nodes of type Software
+    members: [ Software ]
+# end::s151[]

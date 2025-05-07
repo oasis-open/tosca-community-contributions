@@ -1,0 +1,20 @@
+# tag::s145[]
+tosca_definitions_version: tosca_2_0
+
+imports:
+- types.yaml  
+
+node_types:
+  Client:
+    requirements:
+    - service:
+        capability: Service
+        relationship: ServedBy
+        node: Server
+        count_range: [ 1, 4 ]
+
+  Server:
+    capabilities:
+      service:
+        type: Service
+# end::s145[]

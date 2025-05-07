@@ -1,0 +1,16 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Server:
+    attributes:
+      private-address:
+        type: string
+service_template:
+  node_templates:
+    my-server:
+      type: Server
+# tag::s88[]
+  outputs:
+    server-ip:
+      description: The private IP address of the provisioned server.
+      value: { $get_attribute: [ my-server, private-address ] }
+# end::s88[]

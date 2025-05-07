@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_2_0
+# tag::s111[]
+data_types:
+  MyType1:
+    properties:
+      foo:
+        type: string
+  MyType2:
+    properties:
+      bar:
+        type: integer
+  MyTypeRez:
+    properties:
+      foo:
+        type: string
+      bar:
+        type: integer
+functions:
+  my_func_with_different_argument_types:
+    signatures:
+    - arguments: [ MyType1, string, string, MyType2 ]
+      variadic: true
+      result: MyTypeRez
+      implementation: scripts/my.py
+# end::s111[]

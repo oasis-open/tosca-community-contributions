@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+interface_types:
+  ConfigureInterfaceType:
+    description: Interface for configuring a service
+    operations:
+      pre-configure-source:
+        description: Operation to execute before configuring the source
+node_types:
+  Database:
+    description: A database
+    interfaces:
+      configure:
+        type: ConfigureInterfaceType
+service_template:
+  node_templates:
+    my_database_template:
+      type: Database
+# tag::s118[]
+      interfaces:
+        configure:
+          operations:
+            pre-configure-source:
+              implementation: 
+                primary: scripts/pre_configure_source.sh
+                dependencies: 
+                - scripts/setup.sh
+                - binaries/library.rpm
+                - scripts/register.py
+# end::s118[]

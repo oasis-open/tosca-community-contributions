@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  MyCapabilityTypeName:
+    properties:
+      limit:
+        type: integer
+node_types:
+  MyNodeType:
+    capabilities:
+# tag::s52[]
+      some-capability: 
+        type: MyCapabilityTypeName
+        properties:
+          limit:
+            default: 100
+# end::s52[]
+service_template:
+  node_templates:
+    my-node:
+      type: MyNodeType
