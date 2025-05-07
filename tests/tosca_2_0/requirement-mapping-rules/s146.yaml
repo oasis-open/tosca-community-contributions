@@ -1,0 +1,37 @@
+# tag::s146[]
+tosca_definitions_version: tosca_2_0
+
+imports: 
+  - types.yaml
+
+node_types:
+  ClientSoftware:
+    requirements:
+    - host:
+        capability: Host
+        relationship: HostedOn
+    - service:
+        capability: ServiceCapability
+        relationship: Uses
+        count_range: [ 1, 1 ]
+
+  Compute:
+    capabilities:
+      host:
+        type: Host
+
+service_template:
+  substitution_mappings:
+    node_type: Client
+    requirements:
+      - service: [ software, service ]
+
+  node_templates:
+    software:
+      type: ClientSoftware
+      requirements:
+      - host: compute
+
+    compute:
+      type: Compute
+# end::s146[]

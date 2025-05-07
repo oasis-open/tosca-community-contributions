@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Compute:
+    properties:
+      basic-version-in-quotes:
+        type: version
+      basic-version-without-quotes:
+        type: version
+      version-with-qualifier:
+        type: version
+      version-with-qualifier-and-build:
+        type: version
+service_template:
+  node_templates:
+    my-node:
+      type: Compute
+      properties:
+# tag::s71[]
+# basic version strings
+        basic-version-in-quotes: "6.1"
+        basic-version-without-quotes: 2.0.1
+# version string with optional qualifier
+        version-with-qualifier: 3.1.0.beta
+# version string with optional qualifier and build version
+        version-with-qualifier-and-build: 1.0.0.alpha-10
+# end::s71[]

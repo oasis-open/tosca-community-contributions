@@ -1,0 +1,16 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  MyCompanyNodes:
+    description: Nodes in my domain
+capability_types:
+# tag::s51[]
+  MyFeature:
+    description: A custom feature of my company's application
+    properties:
+      my-feature-setting:
+        type: string
+      my-feature-value:
+        type: integer
+    valid_source_node_types:
+    - MyCompanyNodes
+# end::s51[]

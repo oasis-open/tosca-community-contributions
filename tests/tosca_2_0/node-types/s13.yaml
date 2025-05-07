@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  TransactSQL:
+    description: >
+      This capability indicates an entity that supports SQL
+# tag::s13[]
+node_types:
+  Database:
+    description: A generic node type for all databases
+
+  WebApplication:
+    description: A generic node type
+
+  MyWebApplication:
+    derived_from: WebApplication
+    properties:
+      my-port:
+        type: integer
+
+  MyDatabase:
+    derived_from: Database
+    capabilities:
+      SQL:
+        type: TransactSQL
+# end::s13[]

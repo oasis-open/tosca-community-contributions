@@ -1,0 +1,7 @@
+tosca_definitions_version: tosca_2_0
+# tag::s2[]
+metadata: 
+  creation-date: '2024-04-14'
+  date-updated: '2024-05-01'
+  status: developmental  
+# end::s2[]

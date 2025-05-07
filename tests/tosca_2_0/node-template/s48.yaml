@@ -1,0 +1,72 @@
+tosca_definitions_version: tosca_2_0
+relationship_types:
+  HostedOn: {}
+interface_types:
+  control:
+    operations:
+      configure:
+        inputs:
+          script:
+            type: string
+            description: The script to run
+capability_types:
+  compute:
+    properties:
+      class:
+        type: string
+        required: false
+  db-server:
+    properties:
+      type:
+        type: string
+        required: false
+node_types:
+  DBMS.MySQL:
+    properties:
+      root-password:
+        type: string
+        description: The password for the root user
+      port:
+        type: integer
+        description: The port number for the MySQL server
+    interfaces:
+      standard:
+        type: control
+        operations:
+          configure:
+            inputs:
+              script:
+                type: string
+                default: scripts/configure_mysql.sh
+    requirements:
+      - host:
+          capability: db-server
+          relationship: HostedOn
+  db-server:
+    properties:
+      num_cpus:
+        type: integer
+        description: Number of CPUs
+    capabilities:
+      host:
+        type: db-server
+service_template:
+  inputs:
+    my-mysql-rootpw:
+      type: string
+    my-mysql-port:
+      type: integer
+# tag::s48[]
+  node_templates:
+    mysql:
+      type: DBMS.MySQL
+      properties:
+        root-password: { $get_input: my-mysql-rootpw }
+        port: { $get_input: my-mysql-port }
+      requirements:
+      - host: db-server
+      interfaces:
+        standard:
+          operations:
+            configure: scripts/my_own_configure.sh
+# end::s48[]

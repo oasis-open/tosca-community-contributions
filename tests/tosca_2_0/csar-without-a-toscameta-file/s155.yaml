@@ -1,0 +1,8 @@
+# tag::s155[]
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  template_name: my_template
+  template_author: OASIS TOSCA TC
+  template_version: '1.0'
+# end::s155[]

@@ -1,0 +1,25 @@
+# tag::s144[]
+tosca_definitions_version: tosca_2_0
+
+imports:
+- types.yaml
+
+service_template:
+  substitution_mappings:
+    node_type: Client
+    requirements:
+    - host: compute
+
+  node_templates:
+    software1:
+      type: ClientSoftware
+      requirements:
+        - host: compute
+    software2:
+      type: ClientSoftware
+      requirements:
+        - host: compute
+    compute:
+      type: Compute
+      directives: [select]
+# end::s144[]

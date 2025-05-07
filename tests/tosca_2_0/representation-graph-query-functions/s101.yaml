@@ -1,0 +1,88 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  Host: {}
+  DatabaseEndpoint:
+    properties:
+      port:
+        type: integer
+        default: 1433
+relationship_types:
+  ConnectsTo: {}
+  HostedOn: {}
+interface_types:
+  WpInterface:
+    operations:
+      create:
+        description: Create a WordPress instance
+      configure:
+        description: Configure a WordPress instance
+        inputs:
+          wp-db-port:
+            type: integer
+            description: The port of the database
+            default: 1433
+#TODO Note puccini parses the service template even if the following input is not defined
+          host-dbms-admin-credential:
+            type: string
+            description: The admin credential of the database
+            default: admin:admin
+node_types:
+  Compute:
+    properties:
+      admin-credential:
+        type: string
+    capabilities:
+      host:
+        type: Host
+  Database:
+    capabilities:
+      endpoint:
+        type: DatabaseEndpoint
+    requirements:
+      - host:
+          capability: Host
+          relationship: HostedOn
+          node: Compute
+          count_range: [1, 1]
+  WordPress:
+    interfaces:
+      WpStandard:
+        type: WpInterface
+    requirements:
+      - database-endpoint:
+          capability: DatabaseEndpoint
+          relationship: ConnectsTo
+          node: Database
+          count_range: [1, 1]
+          
+service_template:
+# tag::s101[]
+  node_templates:  
+    mysql-database:
+      type: Database
+      capabilities:
+        endpoint:
+          properties:
+            port: 3306
+    wordpress:
+      type: WordPress
+      requirements:
+        - database-endpoint: mysql-database
+      interfaces:
+        WpStandard:
+          operations:
+            create: wordpress_install.sh
+            configure: 
+              implementation: wordpress_configure.sh            
+              inputs:
+                host-dbms-admin-credential:
+                  $get_property:
+                  - SELF
+                  - RELATIONSHIP
+                  - database-endpoint
+                  - TARGET
+                  - RELATIONSHIP
+                  - host
+                  - TARGET
+                  - admin-credential
+# end::s101[]

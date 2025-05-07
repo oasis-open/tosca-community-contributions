@@ -1,0 +1,16 @@
+tosca_definitions_version: tosca_2_0
+# tag::s67[]
+node_types:
+  Node:
+    properties:
+      nothing:
+        type: nil
+        required: true
+
+service_template:
+  node_templates:
+    my-node:
+      type: Node
+      properties:
+        nothing: null
+# end::s67[]

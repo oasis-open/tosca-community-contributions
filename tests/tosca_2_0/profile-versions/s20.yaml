@@ -1,0 +1,12 @@
+# tag::s20[]
+tosca_definitions_version: tosca_2_0
+profile: org.base:v1
+
+capability_types:
+  Host:
+    description: Hosting capability
+
+relationship_types:
+  HostedOn:
+    valid_capability_types: [ Host ]
+# end::s20[]

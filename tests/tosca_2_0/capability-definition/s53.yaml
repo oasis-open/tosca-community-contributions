@@ -1,0 +1,10 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  MyCapabilityTypeName:
+    description: A capability
+node_types:
+  MyNodeType:
+    capabilities:
+# tag::s53[]
+      some-capability: MyCapabilityTypeName
+# end::s53[]

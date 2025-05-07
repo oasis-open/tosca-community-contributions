@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  Endpoint:
+    attributes:
+      ip-address:
+        type: string
+node_types:
+  Server:
+    capabilities:
+      data-endpoint:
+        type: Endpoint
+service_template:
+  node_templates:
+    my-server:
+      type: Server
+# tag::s106[]
+  outputs:
+    webserver_port:
+      description: the port provided at the end of my server's endpoint's IP address
+      value: { $token: [ $get_attribute: [ my-server, CAPABILITY, data-endpoint, ip-address ], ":", 1 ] }
+# end::s106[]

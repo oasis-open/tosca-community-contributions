@@ -1,0 +1,52 @@
+# tag::s150[]
+tosca_definitions_version: tosca_2_0
+
+imports:
+- types.yaml
+
+node_types:
+  Client:
+    requirements:
+    - service:
+        capability: Service
+        relationship: ServedBy
+        node: Server
+        count_range: [ 3, UNBOUNDED ]
+
+  ClientSoftware:
+    requirements:
+    - host:
+        capability: Host
+        relationship: HostedOn
+    - service:
+        capability: Service
+        relationship: ServedBy
+        count_range: [ 0, UNBOUNDED ]
+
+  Compute:
+    capabilities:
+      host:
+        type: Host
+
+service_template:
+  substitution_mappings:
+    node_type: Client
+    requirements:
+    - service: [ software1, service ]
+    - service: [ software2, service ]
+    - [ service, UNBOUNDED ]: [ software1, service ]
+
+  node_templates:
+    software1:
+      type: ClientSoftware
+      requirements:
+      - host: compute
+
+    software2:
+      type: ClientSoftware
+      requirements:
+      - host: compute
+
+    compute:
+      type: Compute
+# end::s150[]

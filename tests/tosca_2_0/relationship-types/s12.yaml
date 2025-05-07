@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_2_0
+# tag::s12[]
+relationship_types:
+  HostedOn:
+    properties:
+      property-1:
+        type: string
+      # more details ...
+
+  MyCustomClientServer:
+    derived_from: HostedOn
+    properties:
+      another-property:
+        type: string
+      # more details ...
+
+  MyCustomConnectionType:
+    properties:
+      connection-type:
+        type: string
+      # more details ...
+# end::s12[]

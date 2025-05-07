@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  scalar-unit.size:
+    derived_from: scalar
+    data_type: integer
+    units:
+      B: 1
+      MB: 1000000
+node_types:
+  Compute:
+    properties:
+      num-cpus:
+        type: integer
+      mem-size:
+        type: scalar
+# tag::s103[]
+service_template:
+  node_templates:
+    my-node:
+      type: Compute
+      directives: [ select ]
+      node_filter:
+        $and:
+        - $greater_or_equal:
+          - $available_allocation: [ SELF, CAPABILITY, host, num-cpus ]
+          - 3
+        - $greater_or_equal:
+          - $available_allocation: [ SELF, CAPABILITY, host, mem-size ]
+          - 256 MB
+# end::s103[]

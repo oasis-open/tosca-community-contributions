@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_2_0
+# tag::s17[]
+functions:
+  sqrt:
+    signatures:
+    - arguments:
+      - type: integer
+        validation: { $greater_or_equal: [ $value, 0 ] }
+      result:
+        type: float
+      implementation: scripts/sqrt.py
+    - arguments:
+      - type: float
+        validation: { $greater_or_equal: [ $value, 0.0 ] }
+      result:
+        type: float
+      implementation: scripts/sqrt.py
+    description: >
+      This is a square root function that defines two signatures:
+      the argument is either integer or float and the function
+      returns the square root as a float.
+# end::s17[]

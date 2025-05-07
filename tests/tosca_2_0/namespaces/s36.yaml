@@ -1,0 +1,15 @@
+# tag::s36[]
+tosca_definitions_version: tosca_2_0
+description: main.yaml
+
+imports:
+- url: mytypes.yaml
+  namespace: my
+
+service_template:
+  node_templates:
+    my-node:
+      type: my:MyType
+    pod:
+      type: my:k8s:Pod
+# end::s36[]

@@ -1,0 +1,12 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  server:
+    properties:
+      requested_cpus:
+        type: integer
+    attributes:
+# tag::s86[]
+      actual_cpus:
+        type: integer
+        description: Actual number of CPUs allocated to the node instance.
+# end::s86[]

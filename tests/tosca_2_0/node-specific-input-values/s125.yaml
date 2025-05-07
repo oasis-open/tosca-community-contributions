@@ -1,0 +1,44 @@
+# tag::s125[]
+tosca_definitions_version: tosca_2_0
+description: Template for deploying SD-WAN with a variable number of sites.
+data_types:
+  Location:
+    description: A location
+    derived_from: string
+capability_types:
+  Linkable: {}
+relationship_types:
+  LinksTo: {}
+node_types:
+  VPN:
+    description: A VPN service
+    capabilities:
+      linkable:
+        type: Linkable
+  VPNSite:
+    description: A VPN site
+    properties:
+      location:
+        type: Location
+    requirements:
+      - vpn:
+          capability: Linkable
+          relationship: LinksTo
+service_template:
+  inputs:
+    number-of-sites:
+      type: integer
+    location:
+      type: list
+      entry_schema: Location
+  node_templates:
+    sdwan:
+      type: VPN
+    site:
+      type: VPNSite
+      count: { $get_input: number-of-sites }
+      properties:
+        location: { $get_input: [ location, $node_index ] }
+      requirements:
+      - vpn: sdwan
+# end::s125[]

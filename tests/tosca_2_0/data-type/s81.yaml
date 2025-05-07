@@ -1,0 +1,12 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+# tag::s81[]
+  PhoneNumber:
+    properties:
+      country-code:
+        type: integer
+      area-code:
+        type: integer
+      number:
+        type: integer
+# end::s81[]

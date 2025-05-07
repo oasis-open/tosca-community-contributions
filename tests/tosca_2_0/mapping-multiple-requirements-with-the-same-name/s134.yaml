@@ -1,0 +1,23 @@
+# tag::s134[]
+tosca_definitions_version: tosca_2_0
+capability_types:
+  Service:
+    description: >-
+      Ability to provide service.
+relationship_types:
+  ServedBy:
+    description: >-
+      Connection to a service.
+node_types:
+  Client:
+    requirements:
+    - service:
+        capability: Service
+        relationship: ServedBy
+        node: Server
+        count_range: [ 2, 2 ]
+  Server:
+    capabilities:
+      service:
+        type: Service
+# end::s134[]

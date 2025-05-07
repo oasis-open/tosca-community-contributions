@@ -1,0 +1,12 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Compute:
+# tag::s83[]
+    properties:
+      num-cpus:
+        type: integer
+        description: Number of CPUs requested for a software node instance.
+        default: 1
+        required: true
+        validation: { $valid_values: [ $value, [ 1, 2, 4, 8 ] ] }
+# end::s83[]

@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_2_0
+interface_types:
+  WordPressConfigure:
+    inputs:
+      wp-db-name:
+        type: string
+node_types:
+  Database:
+    properties:
+      name:
+        type: string
+  WordPress:
+    description: A WordPress application
+    interfaces:
+      configure:
+        type: WordPressConfigure
+service_template:
+# tag::s98[]
+  node_templates:
+    mysql-database:
+      type: Database
+      properties:
+        name: sql_database1
+
+    wordpress:
+      type: WordPress
+      description: A WordPress application
+      interfaces:
+        configure: 
+          inputs:
+            wp-db-name: { $get_property: [ mysql-database, name ] }
+# end::s98[]

@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  MyStructure:
+    properties:
+      property1:
+        type: string
+      property2:
+        type: list
+        entry_schema:
+          type: string
+node_types:
+  MyNodeType:
+    properties:
+      MyMap:
+        type: MyStructure
+service_template:
+  node_templates:
+    MyNode:
+      type: MyNodeType
+      properties:
+        # tag::s1[]
+        MyMap:
+          property1: value
+          property2: [ value1, value2 ]
+# end::s1[]

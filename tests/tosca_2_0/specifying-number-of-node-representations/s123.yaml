@@ -1,0 +1,64 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  Linkable: {}
+relationship_types:
+  LinksTo: {}
+node_types:
+  VPN:
+    description: A VPN service
+    capabilities:
+      linkable:
+        type: Linkable
+  VPNSite:
+    description: A VPN site
+    properties:
+      location:
+        type: Location
+    requirements:
+      - vpn:
+          capability: Linkable
+          relationship: LinksTo
+data_types:
+  Location:
+    description: A location
+    derived_from: string
+
+# tag::s123[]
+description: Template for deploying SD-WAN with three sites.
+service_template:
+  inputs:
+    location1:
+      type: Location
+      default: Austin
+    location2:
+      type: Location
+      default: Boston
+    location3:
+      type: Location
+      default: Chicago
+
+  node_templates:
+    sdwan:
+      type: VPN
+
+    site1:
+      type: VPNSite
+      properties:
+        location: { $get_input: location1 }
+      requirements:
+      - vpn: sdwan
+
+    site2:
+      type: VPNSite
+      properties:
+        location: { $get_input: location2 }
+      requirements:
+      - vpn: sdwan
+
+    site3:
+      type: VPNSite
+      properties:
+        location: { $get_input: location3 }
+      requirements:
+      - vpn: sdwan
+# end::s123[]

@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_2_0
+# tag::s113[]
+functions:
+  union:
+    signatures:
+    - arguments:
+      - type: list
+        entry_schema: integer
+      variadic: true
+      result:
+        type: list
+        entry_schema: integer
+      implementation: scripts/libpi.py
+    - arguments:
+      - type: list
+        entry_schema: float
+      variadic: true
+      result:
+        type: list
+        entry_schema: float
+      implementation: scripts/libpi.py
+# end::s113[]

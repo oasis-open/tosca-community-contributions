@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Maths:
+    properties:
+      integer_union:
+        type: list
+#        entry_schema: integer
+      float_union:
+        type: list
+#        entry_schema: float
+      rnd:
+        type: integer
+functions:
+  get_random_nr:
+    signatures:
+      - arguments:
+          - type: integer
+            description: Seed for random number generator
+        result:
+          type: integer
+          description: Random number generated
+        implementation: random_generator.sh
+    description: Generate a random number
+service_template:
+  inputs:
+    seed:
+      type: integer
+  node_templates:
+    my-maths:
+      type: Maths
+# tag::s115[]
+      properties:
+        integer_union: { $union: [ [1, 7], [3, 4, 9], [15, 16] ] }
+        float_union: { $union: [ [3.5, 8.8], [1.3] ] }
+        rnd: { $get_random_nr: [ { $get_input: seed } ] }
+# end::s115[]
