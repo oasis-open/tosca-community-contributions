@@ -1,0 +1,14 @@
+#TODO: check naming conventions is applied to all yaml files
+tosca_definitions_version: tosca_2_0
+artifact_types:
+  File:
+    description: >
+      A file artifact type that can be used to define file artifacts.
+group_types:
+  MyGroup:
+    description: >
+      A group type that can be used to define a group of nodes.
+policy_types:
+  Scaling:
+    description: >
+      A policy type that can be used to define a scaling policy.
