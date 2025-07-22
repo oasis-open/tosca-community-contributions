@@ -1,19 +1,20 @@
 # TOSCA Profile Design Patterns
 
-Ubicity uses a number of design patterns to aid the development of
-TOSCA profiles. These patterns are described in this section.
+Ubicity uses a several design patterns to help guide the development
+of TOSCA profiles. These patterns are described in this document.
 
-## Modeling at Different Levels of Abstraction
+## Abstraction
 To manage the complexities associated with large scale systems and
-services, the Ubicity modeling approach relies heavily on
-*abstraction*. Abstraction allows for the creation of models
-that ignore implementation-specific details. 
+services, the Ubicity modeling approach relies heavily on the use of
+*abstraction*. Abstraction allows for the creation of models that
+ignore implementation-specific details.
 
-Ubicity leverages the [*policy
+### The Policy Continuum
+To help guide the use of abstraction in service modeling, Ubicity
+leverages the [*policy
 continuum*](https://www.sciencedirect.com/science/article/abs/pii/S0140366408002302)
 introduced by [John
-Strassner](https://www.linkedin.com/in/john-strassner-41ba98a) to help
-guide the creation of models at different levels of abstraction. While
+Strassner](https://www.linkedin.com/in/john-strassner-41ba98a). While
 the policy continuum was originally introduced to assist with the
 definition of *policies* at various levels of abstraction, Ubicity
 also uses it to assist with the creation of *models* to which these
@@ -43,9 +44,10 @@ used in the administrator view.
 
 **Instance View**: captures the state of each instance.
 
-For purposes of *TOSCA orchestration*, only system view, administrator
-view, and device view models are important as shown in the following
-figure:
+### The Model Continuum
+For the purpose of creating service models that drive *TOSCA
+orchestration*, only system view, administrator view, and device view
+levels are important as shown in the following figure:
 
 ![TOSCA Levels of Abstraction](images/tosca_abstraction.png?raw=true)
 
@@ -56,21 +58,25 @@ models that introduce the technologies chosen to implement the system
 architecture. Finally, device view models specify specific vendor
 implementations for the chosed technologies.
 
+### Translating Between Levels of Abstraction
 During the orchestration process, models at a higher level of
 abstraction must be extended with information at the next lower level
 of abstraction. TOSCA provides two mechanisms to accomplish this:
 
-**Derivation**: Using the derivation approach, base node types define
-abstract definitions. Derived types provide concrete implementations
-for those abstract definitions. This approach is shown in the
-following figure:
+#### Derivation
+
+Using the derivation approach, base node types define abstract
+definitions. Derived types provide concrete implementations for those
+abstract definitions. This approach is shown in the following figure:
 
 ![Derivation](images/derivation.png?raw=true)
 
-**Substitution**: Using the substitution approach, base node types
-*define an abstract interface, a facade* if you will. Substituting
-*templates provide concrete implementations for the abstract
-*interface. This approach is shown in the following figure:
+#### Substitution
+
+Using the substitution approach, base node types define an abstract
+interface, a *facade* if you will. Substituting templates provide
+concrete implementations for the abstract facade. This approach is
+shown in the following figure:
 
 ![Substitution](images/substitution.png?raw=true)
 
@@ -119,6 +125,13 @@ functionality (e.g. interfaces) that is shared by all node types
 derived from that common base type. However, inheritancy should not be
 used to add technology-specific or vendor-specific implementations to
 abstract node types.
+
+### Organizing Ubicity TOSCA Profiles
+
+The Ubicity TOSCA Profiles have been designed with these recommended
+best practices in mind. Their organization is shown in the following
+figure:
+
 
 ### Mapping Relationship Types
 
