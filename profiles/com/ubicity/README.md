@@ -100,7 +100,7 @@ models:
   to the administrator view level of abstraction, as shown in the
   following figure:
 
-  ![Translate system view to administrator view](images/system_to_administrator.png?raw=true)
+
 - Use *derivation* to map from the administrator view level of
   abstraction to the device view level of abstraction, as shown in the
   following figure:
@@ -132,6 +132,22 @@ The Ubicity TOSCA Profiles have been designed with these recommended
 best practices in mind. Their organization is shown in the following
 figure:
 
+![Ubicity profile organization](images/ubicity-profiles.png?raw=true)
+
+- The Ubicity Cloud Profile (*to be provided*) defines abstract node
+  types that are used to define system architectures. These types are
+  technology and vendor-independent and are intended to be substituted
+  by templates that use types defined in the vendor-specific profiles.
+- The main [Ubicity Profile](1.0/) defines technology-specific node
+  types. Many of these types are intended to be used as base types for
+  the types defined in the vendor-specific profiles.
+- The AWS, Openstack, and Proxmox profiles (*to be provided*) define
+  vendor-specific node types. Where possible, these types derive from
+  the vendor-independent types defined in the Ubicity Profile.
+- The [Ubicity Core Profile](core/1.0/) defines types that are shared
+  between profiles at different levels of abstraction. It primarily
+  defines base capability types, base relationship types, common data
+  types, and common artifact types.
 
 ### Mapping Relationship Types
 
