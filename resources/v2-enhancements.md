@@ -1,35 +1,21 @@
-1049 El Monte Ave.
-
-Suite C-40
-
-Mountain View, CA 94040
-
-USA
-
-A Comparison with TOSCA v1.3
-
-Ubicity Corp.
-
-August 5, 2025
-
-# Overview
+# TOSCA v2.0 Enhancements
 
 TOSCA v2.0 marks a significant evolution of the TOSCA standard,
 expanding beyond its computing-centric roots to become a *universal
 orchestration language* applicable across virtually any domain, from
 traditional IT infrastructure to IoT deployments, edge computing, and
-industry-specific automation requirements. TOSCA V2.0 greatly increases
-the fields of applicability of the standard and marks a fundamental
-shift in cloud orchestration accessibility. By eliminating the
-restrictive "Simple Profile" terminology that previously limited the
-standard to computing environments, TOSCA V2.0 empowers organizations
-across industries to create and contribute user-defined profiles using
-terminology specific to their domain and use cases.
+industry-specific automation requirements. TOSCA V2.0 greatly
+increases the fields of applicability of the standard and marks a
+fundamental shift in cloud orchestration accessibility. By eliminating
+the restrictive "Simple Profile" terminology that previously limited
+the standard to computing environments, TOSCA V2.0 empowers
+organizations across industries to create and contribute user-defined
+profiles using terminology specific to their domain and use cases.
 
-This document highlights the major advances introduced in the TOSCA v2.0
-standard.
+This document highlights the major advances introduced in the TOSCA
+v2.0 standard.
 
-# Remove Simple Profile Types
+## Remove Simple Profile Types
 
 TOSCA v2.0 removes the Simple Profile type definitions that were part of
 TOSCA Simple Profile in YAML v1.3. These type definitions are now
@@ -41,13 +27,9 @@ domains. Specifically, TOSCA is now seeing adoption in the following
 domains:
 
 - Cloud-native software deployments
-
 - Telecommunications
-
 - Industrial automation
-
 - IoT
-
 - Functions-as-a-Service
 
 As a side effect of the removal of type definitions from the standard,
@@ -56,7 +38,7 @@ Profile types. For example, TOSCA v2.0 removes the HOST keyword that
 assumes the presence of the tosca.relationships.HostedOn relationship
 type.
 
-# Support for Community-Defined Profiles
+## Support for Community-Defined Profiles
 
 Instead of defining standard types as part of TOSCA, TOSCA v2.0 provides
 support for domain-specific profiles that can be defined by TOSCA users.
@@ -73,12 +55,10 @@ To support named profiles, TOSCA v2.0 includes the following additional
 improvements:
 
 - It removes automatic import of Simple Profile
-
 - It clarifies and enhances syntax for import statements
-
 - It formalizes support for namespaces in TOSCA
 
-# Support for In-Life Operation of Running Services
+## Support for In-Life Operation of Running Services
 
 Whereas TOSCA v1.3 is exclusively an Orchestration standard, TOSCA v2.0
 is designed to handle all phases of a service lifecycle. This includes
@@ -87,7 +67,7 @@ service decommissioning. Support for end-to-end service lifecycle
 management is provided by the following enhancements introduced in the
 TOSCA v2.0 specification:
 
-## Functional Architecture
+### Functional Architecture
 
 TOSCA v2.0 introduces a functional architecture that formalizes the role
 of *Service Representations* (renamed from Instance Models) in the
@@ -95,25 +75,17 @@ Service Lifecycle. This architecture defines the following concepts and
 the lifecycle phase in which they are used:
 
 - *Node Types* define reusable components (Design Time)
-
 - *Node Templates* are created based on Node Types (Design Time)
-
 - *Node Representations* are created from Node Templates (Deployment
   Time)
-
 - *Node Implementations* (in the external world) are created from Node
   Representations (Deployment Time)
-
 - *Node Representations and Node Implementations* are kept in sync by
   the Orchestrator (Runtime)
+  - In response to changes in the (external) Node Instance state
+  - In response to user actions
 
-<!-- -->
-
-- In response to changes in the (external) Node Instance state
-
-- In response to user actions
-
-## TOSCA Operational Model
+### TOSCA Operational Model
 
 The TOSCA functional architecture is accompanied by an Operational Model
 that defines how service designers can expect TOSCA Orchestrators to
@@ -121,45 +93,36 @@ process their Service Templates. This operational model is intended to
 address:
 
 - How are service representations created from service templates?
-
 - How and when are property and attribute values assigned?
-
 - How and when are requirements fulfilled?
-
 - How and when is substitution done?
-
 - How and when are workflows run and interface operations called?
-
 - How are operation outputs reflected into the service representation?
-
 - How are artifacts processed?
 
-## Modifying Running Services
+### Modifying Running Services
 
 Using TOSCA v2.0, operators can update or modify running services by
-providing updated values for the inputs defined in the service template
-from which the service was created. These updated values are propagated
-to properties and attributes of nodes and relationships in the service
-representation using \$get_input functions defined in the template.
+providing updated values for the inputs defined in the service
+template from which the service was created. These updated values are
+propagated to properties and attributes of nodes and relationships in
+the service representation using \$get_input functions defined in the
+template.
 
 TOSCA v2.0 defines the associated *modify* semantics that need to be
-implemented by the Orchestrator in response to the resulting changes in
-property or attribute values, specifically:
+implemented by the Orchestrator in response to the resulting changes
+in property or attribute values, specifically:
 
 - Which property value changes require deletion and recreation of nodes
   and relationships?
-
 - Which property value changes allow for simple modify operations?
-
 - Which relationships persist after changes to nodes, and which
   relationships need to be reestablished after modification?
-
 - When do source nodes of relationships need to be recreated after the
   target node is modified.
-
 - When do substituted nodes require a different substituting service?
 
-# Formalized Expression Syntax
+## Formalized Expression Syntax
 
 TOSCA v2.0 significantly enhances the expressiveness of the TOSCA
 language through the following features:
@@ -170,14 +133,11 @@ TOSCA v2.0 improves support for functions as follows:
 
 1.  TOSCA v2.0 formalizes function syntax to clearly distinguish
     function expressions from other named entities in the language.
-
 2.  TOSCA v2.0 introduces function definition grammar that defines
     function signatures and typed return values. This allows for
     design-time validation of function expressions.
-
 3.  TOSCA v2.0 extends the set of built-in functions that must be
     supported by the Orchestrator
-
 4.  TOSCA v2.0 introduces support for user-defined custom functions that
     can be bundled with profiles or defined in TOSCA files.
 
@@ -189,45 +149,42 @@ attribute or property. This grammar is modeled after Xpath and JSONPath
 and extends grammar used in the get_property and get_attribute functions
 in the TOSCA v1.3 standard.
 
-# Various Grammar Improvements
+## Various Grammar Improvements
 
 In addition to major feature enhancements, TOSCA v2.0 also includes
 various improvements to the TOSCA grammar as compared to TOSCA v1.3.
 These improvements are intended to simplify use of the language, clarify
 functionality and resolve ambiguities. They include the following:
 
-## Built-In Data Type Definitions
+### Built-In Data Type Definitions
 
 - TOSCA v2.0 removes all dependencies on YAML type definitions. Instead,
   TOSCA data types are defined independently of types defined in YAML or
   in the programming language used by the Orchestrator.
-
 - TOSCA v2.0 Introduce a bytes type for binary data
 
-## Harmonized Syntax for Constraints, Conditions, and Filters
+### Harmonized Syntax for Constraints, Conditions, and Filters
 
 TOSCA v2.0 harmonizes constraint syntax, filter syntax, and condition
 syntax by using Boolean functions throughout.
 
-## Syntax for Entity Refinements
+### Syntax for Entity Refinements
 
 - TOSCA Simple Profile in YAML v1.3 includes examples of *Entity
   Refinement* where derived types can refine and augment entities
   defined in their base types
-
 - TOSCA v2.0 formally defines entity refinement syntax to remove any
   ambiguity related to this functionality.
 
-## Multiplicity
+### Multiplicity
 
 - TOSCA v2.0 documents how to create multiple node representations from
   the same node template and multiple relationships from the same
   requirement assignment.
-
 - It formalizes the impact of node multiplicity on cardinality of
   relationships.
 
-## Extended Substitution Mapping Grammar
+### Extended Substitution Mapping Grammar
 
 TOSCA v2.0 addresses shortcomings of the v1.3 substitution mapping
 grammar. It formalizes how to map multiple requirements of the
@@ -237,6 +194,5 @@ substituted node to requirements of nodes in the substituting service.
 
 - The TOSCA v2.0 specification includes a definition of the CSAR file
   format. It also simplifies and extends the CSAR file format.
-
 - This removes the need to reference the TOSCA v1.0 in XML
   specification.
