@@ -43,7 +43,7 @@ identified:
   resources. Cloudify also allows users to manage different
   orchestration and automation domains as part of one common CI/CD
   pipeline.
-- [EDMM](https://github.com/UST-EDMM/modeling-repository/tree/master/nodetypes):
+- [EDMM](https://github.com/UST-EDMM/modeling-repository/):
   Provides a declarative model describing the components to be
   deployed, their configurations, required artifacts, and relations
   among them. The resulting EDMM model is independent of any specific
