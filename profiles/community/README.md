@@ -34,7 +34,28 @@ Create an inventory of available TOSCA type definitions based on which
 community profiles can be defined. So far, the following have been
 identified:
 
-- Vintner
+- [OpenTOSCA](https://github.com/OpenTOSCA/tosca-definitions-common):
+  Common TOSCA definitions for VMs, cloud providers, and runtimes that
+  are intended to be consumed by the OpenTOSCA Container.
+- [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml):
+  Cloudify allows organizations to automate their existing
+  infrastructure alongside cloud native and distributed edge
+  resources. Cloudify also allows users to manage different
+  orchestration and automation domains as part of one common CI/CD
+  pipeline.
+- [EDMM](https://github.com/UST-EDMM/modeling-repository/tree/master/nodetypes):
+  Provides a declarative model describing the components to be
+  deployed, their configurations, required artifacts, and relations
+  among them. The resulting EDMM model is independent of any specific
+  deployment technology and can be exported from an EDMM-enabled
+  modeling tool or created directly using a text editor according to
+  the respective YAML specification. This model can be fed into the
+  EDMM Transformation and Deployment Framework.
+- [Vintner](https://vintner.opentosca.org/normative/): OpenTOSCA
+  Vintner is a TOSCA preprocessing and management layer which is able
+  to deploy applications based on TOSCA orchestrator
+  plugins. Preprocessing includes the modeling of different deployment
+  variants inside a single deployment model.
 - [Radon particles](https://github.com/radon-h2020/radon-particles):
   Defines TOSCA types for application runtimes, computing resources,
   and FaaS platforms in the form of abstract as well as deployable
@@ -42,10 +63,11 @@ identified:
   abstraction layer that provides several TOSCA definitions to deploy
   a particular FaaS application component to different cloud
   providers.
-- EDMM types used by Winery
-- Yorc/Ystia
-- Ubicity
-- xOpera
+- [Yorc/Ystia](https://github.com/ystia/yorc/tree/develop/data/tosca):
+  Yorc is an hybrid cloud/HPC TOSCA orchestrator.
+- [Ubicity](https://github.com/lauwers/tosca-community-contributions/tree/master/profiles/com/ubicity):
+  General purpose TOSCA type definitions that aim to implement common
+  design patterns to handle abstraction.
 - other?
 
 > Most of these type definitions need to be converted to TOSCA v2.0
@@ -57,6 +79,8 @@ identified:
   components are deployed.
 - Distinguish between abstract types and types that assume specific
   implementations.
+- Distinguish between types that model the same component but use
+  different implementation technologies (e.g., Ansible vs. Terraform)
 
 ### Document
 
