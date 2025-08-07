@@ -1,0 +1,218 @@
+tosca_definitions_version: tosca_2_0
+
+node_types:
+  Auth0:
+    derived_from: SaaS
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      region:
+        type: string
+      client_id:
+        type: string
+      client_secret:
+        type: string
+      domain:
+        type: string
+      identifier:
+        type: string
+      scopes:
+        type: string
+  AWS_Aurora:
+    derived_from: DBaaS
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      region:
+        type: string
+      instance_type:
+        type: string
+  AWS_Beanstalk:
+    derived_from: PaaS
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      region:
+        type: string
+      archetype:
+        type: string
+      min_instances:
+        type: string
+      max_instances:
+        type: string
+  Compute:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      os_family:
+        type: string
+        default: linux
+      machine_image:
+        type: string
+        default: ubuntu
+      instance_type:
+        type: string
+        default: large
+      key_name:
+        type: string
+        default: empty
+      public_key:
+        type: string
+        default: empty
+  Database:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      schema_name:
+        type: string
+      user:
+        type: string
+      password:
+        type: string
+  DBaaS:
+    derived_from: Platform
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      region:
+        type: string
+      instance_type:
+        type: string
+  DBMS:
+    derived_from: Software_Component
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      port:
+        type: integer
+      root_password:
+        type: string
+  Go:
+    derived_from: Web_Server
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      entrypoint:
+        type: string
+      workdir:
+        type: string
+  MOM:
+    derived_from: Software_Component
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      port:
+        type: integer
+  MongoDB:
+    derived_from: DBMS
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      root_user:
+        type: string
+  MongoDB-Schema:
+    derived_from: Database
+    metadata:
+      abstract: no
+      final: no
+  MySQL_Database:
+    derived_from: Database
+    metadata:
+      abstract: no
+      final: no
+  MySQL_DBMS:
+    derived_from: DBMS
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      port:
+        type: integer
+      root_password:
+        type: string
+      version:
+        type: string
+        default: "8"
+  NodeJS:
+    derived_from: Web_Server
+    metadata:
+      abstract: no
+      final: no
+  PaaS:
+    derived_from: Platform
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      region:
+        type: string
+      archetype:
+        type: string
+      min_instances:
+        type: string
+      max_instances:
+        type: string
+  PetClinic:
+    derived_from: Web_Application
+    metadata:
+      abstract: no
+      final: no
+  Platform:
+    properties:
+      region:
+        type: string
+  RabbitMQ:
+    derived_from: MOM
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      management_port:
+        type: integer
+  SaaS:
+    derived_from: Platform
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      region:
+        type: string
+      client_id:
+        type: string
+      client_secret:
+        type: string
+  Software_Component:
+    metadata: {}
+  SpringBoot:
+    derived_from: Web_Server
+    metadata:
+      abstract: no
+      final: no
+  Tomcat:
+    derived_from: Web_Server
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      port:
+        type: integer
+  Web_Application:
+    metadata: {}
+  Web_Server:
+    derived_from: Software_Component
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      port:
+        type: integer

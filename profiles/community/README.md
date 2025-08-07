@@ -34,46 +34,224 @@ Create an inventory of available TOSCA type definitions based on which
 community profiles can be defined. So far, the following have been
 identified:
 
-- [OpenTOSCA](https://github.com/OpenTOSCA/tosca-definitions-common):
-  Common TOSCA definitions for VMs, cloud providers, and runtimes that
-  are intended to be consumed by the OpenTOSCA Container.
-- [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml):
-  Cloudify allows organizations to automate their existing
-  infrastructure alongside cloud native and distributed edge
-  resources. Cloudify also allows users to manage different
-  orchestration and automation domains as part of one common CI/CD
-  pipeline.
-- [EDMM](https://github.com/UST-EDMM/modeling-repository/):
-  Provides a declarative model describing the components to be
-  deployed, their configurations, required artifacts, and relations
-  among them. The resulting EDMM model is independent of any specific
-  deployment technology and can be exported from an EDMM-enabled
-  modeling tool or created directly using a text editor according to
-  the respective YAML specification. This model can be fed into the
-  EDMM Transformation and Deployment Framework.
-- [Vintner](https://vintner.opentosca.org/normative/): OpenTOSCA
-  Vintner is a TOSCA preprocessing and management layer which is able
-  to deploy applications based on TOSCA orchestrator
-  plugins. Preprocessing includes the modeling of different deployment
-  variants inside a single deployment model.
-- [Radon particles](https://github.com/radon-h2020/radon-particles):
-  Defines TOSCA types for application runtimes, computing resources,
-  and FaaS platforms in the form of abstract as well as deployable
-  modeling entities. The repository also comprises RADON's FaaS
-  abstraction layer that provides several TOSCA definitions to deploy
-  a particular FaaS application component to different cloud
-  providers.
-- [Yorc/Ystia](https://github.com/ystia/yorc/tree/develop/data/tosca):
-  Yorc is an hybrid cloud/HPC TOSCA orchestrator.
-- [Ubicity](https://github.com/lauwers/tosca-community-contributions/tree/master/profiles/com/ubicity):
-  General purpose TOSCA type definitions that aim to implement common
-  design patterns to handle abstraction.
+- [TOSCA Simple Profile in YAML v1.3](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/org/oasis-open/simple/1.3)
+- [TOSCA Simple Profile Non-Normative](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/org/oasis-open/non-normative/1.3)
+- [EDMM](https://github.com/UST-EDMM/modeling-repository/)
+- [OpenTOSCA](https://github.com/OpenTOSCA/tosca-definitions-common)
+- [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml)
+- [Vintner](https://vintner.opentosca.org/normative/)
+- [Radon particles](https://github.com/radon-h2020/radon-particles)
+- [Yorc/Ystia](https://github.com/ystia/yorc/tree/develop/data/tosca)
+- [Ubicity](https://github.com/lauwers/tosca-community-contributions/tree/master/profiles/com/ubicity)
 - other?
 
 > Most of these type definitions need to be converted to TOSCA v2.0
 
+### Document
+
+- For each of the contributed profiles, document the node type
+  hierarchies.
+
+#### TOSCA Simple Profile
+
+TOSCA Simple Profile in YAML includes both normative and non-normative
+type definitions. Since the non-normative type definitions derive from
+the normative types, they are combined in the following class diagram:
+```mermaid
+classDiagram
+    class tosca.nodes.Root
+    tosca.nodes.Root <|-- tosca.nodes.Abstract.Compute
+    tosca.nodes.Abstract.Compute <|-- tosca.nodes.Compute
+    tosca.nodes.Root <|-- tosca.nodes.SoftwareComponent
+    tosca.nodes.SoftwareComponent <|-- tosca.nodes.WebServer
+    tosca.nodes.Root <|-- tosca.nodes.WebApplication
+    tosca.nodes.SoftwareComponent <|-- tosca.nodes.DBMS
+    tosca.nodes.Root <|-- tosca.nodes.Database
+    tosca.nodes.Root <|-- tosca.nodes.Abstract.Storage
+    tosca.nodes.Abstract.Storage <|-- tosca.nodes.Storage.ObjectStorage
+    tosca.nodes.Abstract.Storage <|-- tosca.nodes.Storage.BlockStorage
+    tosca.nodes.SoftwareComponent <|-- tosca.nodes.Container.Runtime
+    tosca.nodes.Root <|-- tosca.nodes.Container.Application
+    tosca.nodes.Root <|-- tosca.nodes.LoadBalancer
+    tosca.nodes.Root <|-- tosca.nodes.network.Network
+    tosca.nodes.Root <|-- tosca.nodes.network.Port
+    tosca.nodes.Database <|-- tosca.nodes.Database.MySQL
+    tosca.nodes.DBMS <|-- tosca.nodes.DBMS.MySQL
+    tosca.nodes.WebServer <|-- tosca.nodes.WebServer.Apache
+    tosca.nodes.WebApplication <|-- tosca.nodes.WebApplication.WordPress
+    tosca.nodes.WebServer <|-- tosca.nodes.WebServer.Nodejs
+    tosca.nodes.Container.Runtime <|-- tosca.nodes.Container.Runtime.Docker
+    tosca.nodes.Container.Application <|-- tosca.nodes.Container.Application.Docker
+```
+#### EDMM
+EDMM Provides a declarative model describing the components to be
+deployed, their configurations, required artifacts, and relations
+among them. The resulting EDMM model is independent of any specific
+deployment technology and can be exported from an EDMM-enabled
+modeling tool or created directly using a text editor according to the
+respective YAML specification. This model can be fed into the EDMM
+Transformation and Deployment Framework.
+
+TOSCA v2.0 versions of the node types defined by EDMM can be found in
+[edmm.yaml](edmm.yaml). They are organized in the following node type
+hiearchy:
+```mermaid
+classDiagram
+    class Compute
+    class Database
+    class Platform
+    class Software_Component
+    class Web_Application
+    SaaS <|-- Auth0
+    DBaaS <|-- AWS_Aurora
+    PaaS <|-- AWS_Beanstalk
+    Platform <|-- DBaaS
+    Software_Component <|-- DBMS
+    Web_Server <|-- Go
+    Software_Component <|-- MOM
+    DBMS <|-- MongoDB
+    Database <|-- MongoDB-Schema
+    Database <|-- MySQL_Database
+    DBMS <|-- MySQL_DBMS
+    Web_Server <|-- NodeJS
+    Platform <|-- PaaS
+    Web_Application <|-- PetClinic
+    MOM <|-- RabbitMQ
+    Platform <|-- SaaS
+    Web_Server <|-- SpringBoot
+    Web_Server <|-- Tomcat
+    Software_Component <|-- Web_Server
+```
+#### OpenTOSCA
+
+Common TOSCA definitions for VMs, cloud providers, and runtimes that
+are intended to be consumed by the OpenTOSCA Container.  TOSCA v2.0
+versions of the node types defined by OpenTOSCA can be found in
+[open-tosca.yaml](open-tosca.yaml). They are organized in the
+following node type hiearchy:
+
+```mermaid
+classDiagram
+    class ApacheWebServer_w1
+    class AWS_w1
+    class Boto3_latest-w1
+    class BPMN-Workflow_w1
+    class Camunda_7.14.0-w1
+    class Channel
+    class DockerEngine_w1
+    class EC2-w1
+    class Gunicorn_20.1.0-w1
+    class GunicornApp_w1
+    class KVM_QEMU_Hypervisor_w1
+    class MariaDB_10-w1
+    class MariaDBMS_10-w1
+    class Mosquitto_2.0-w1
+    class MySQL-DBMS_8.0-w1
+    class NGINX_latest-w1
+    class OpenStack_15-Train-w1
+    class OpenStack_22-Victoria-w1
+    class Python_3-w1
+    class PythonApp_3-w1
+    class RabbitMQ_3.10-w1
+    class Redis_6-w1
+    class SpringWebApp_w1
+    class UbuntuContainer_20.04-w1
+    class VSphere_5.5-w1
+    WebApplication <|-- ApacheApp_w1
+    ContainerApplication <|-- DockerContainer_w1
+    SoftwareComponent <|-- Java_11-w1
+    SoftwareComponent <|-- Java_8-w1
+    Compute <|-- KVM_QEMU_VM_w1
+    Database <|-- MariaDB_10-w2
+    DBMS <|-- MariaDBMS_10-w2
+    MySQL-DBMS_w1 <|-- MySQL-DBMS_5.7-w1
+    DBMS <|-- MySQL-DBMS_w1
+    Database <|-- MySQL-DB_w1
+    WebApplication <|-- NGINX-Application_w1
+    Compute <|-- OperatingSystem_w1
+    Tomcat_w1 <|-- Tomcat_7-w1
+    Tomcat_w1 <|-- Tomcat_8-w1
+    Tomcat_w1 <|-- Tomcat_9-w1
+    WebApplication <|-- TomcatApplication_WAR-w1
+    WebServer <|-- Tomcat_w1
+    Channel <|-- Topic
+    OperatingSystem_w1 <|-- Ubuntu-VM_16.04-w1
+    OperatingSystem_w1 <|-- Ubuntu-VM_18.04-w1
+    OperatingSystem_w1 <|-- Ubuntu-VM_20.04-w1
+```
+#### Cloudify
+
+Cloudify allows organizations to automate their existing
+infrastructure alongside cloud native and distributed edge
+resources. Cloudify also allows users to manage different
+orchestration and automation domains as part of one common CI/CD
+pipeline.
+
+#### Vintner
+
+OpenTOSCA Vintner is a TOSCA preprocessing and management layer which
+is able to deploy applications based on TOSCA orchestrator
+plugins. Preprocessing includes the modeling of different deployment
+variants inside a single deployment model.
+
+#### Radon particles
+
+Defines TOSCA types for application runtimes, computing resources, and
+FaaS platforms in the form of abstract as well as deployable modeling
+entities. The repository also comprises RADON's FaaS abstraction layer
+that provides several TOSCA definitions to deploy a particular FaaS
+application component to different cloud providers.
+
+#### Yorc/Ystia
+Yorc is an hybrid cloud/HPC TOSCA orchestrator.
+
+#### Ubicity
+
+Ubicity profiles general purpose TOSCA type definitions that aim to
+implement common design patterns to handle
+[abstraction](https://github.com/oasis-open/tosca-community-contributions/blob/master/profiles/com/ubicity/README.md). The
+Ubicity profile types are organized in the following node type
+hiearchy:
+```mermaid
+classDiagram
+    class Root
+    Root <|-- VirtualInfrastructureTarget
+    Root <|-- KeyPair
+    Root <|-- Compute
+    Compute <|-- VirtualCompute
+    Compute <|-- PhysicalCompute
+    Root <|-- Storage
+    Root <|-- ComputeMonitor
+    Root <|-- LinuxAccount
+    Root <|-- Port
+    Root <|-- Subnet
+    Root <|-- Software
+    Software <|-- InstallablePackage
+    Root <|-- Postgres.User
+    Root <|-- Postgres.Database
+    InstallablePackage <|-- Postgres.DBMS
+    InstallablePackage <|-- Nginx.WebServer
+    Root <|-- Nginx.WebSite
+    Software <|-- PipPackage
+    InstallablePackage <|-- Docker
+    Software <|-- Containerd
+    Subnet <|-- MacVLAN
+    Port <|-- MacVLANPort
+    Storage <|-- DockerVolume
+    Software <|-- DockerContainer
+    InstallablePackage <|-- Terraform
+    InstallablePackage <|-- Kubectl
+    Software <|-- Helm
+    Software <|-- HelmRepo
+    HelmRepo <|-- LocalHelmRepo
+    Software <|-- Minikube
+    Software <|-- K3s
+    InstallablePackage <|-- Kubernetes
+    Root <|-- Cluster
+```
 ### Categorize
 
+For the types defined in each of the contributed profiles:
 - Distinguish between types that define service components
   vs. types that define the platforms on which these service
   components are deployed.
@@ -81,10 +259,6 @@ identified:
   implementations.
 - Distinguish between types that model the same component but use
   different implementation technologies (e.g., Ansible vs. Terraform)
-
-### Document
-
-- For each of these categories, document the node type hierarchies.
 
 ### Harmonize
 

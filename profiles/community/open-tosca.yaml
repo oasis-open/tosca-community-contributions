@@ -1,0 +1,475 @@
+tosca_definitions_version: tosca_2_0
+
+node_types:
+  ApacheApp_w1:
+    metadata:
+      abstract: no
+      final: no
+    derived_from: WebApplication
+    properties:
+      URL:
+        description: Specifies the complett application URL
+        type: string
+  ApacheWebServer_w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      Port:
+        description: The port of the webserver
+        type: string
+        default: "80"
+      Rootpath:
+        description: The path to the root webpage
+        type: string
+        default: var/www/html
+      Version:
+        description: The version of the installed Apache Web Server
+        type: string
+  AWS_w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      AWS_ACCESS_KEY_ID:
+        type: string
+      AWS_SECRET_ACCESS_KEY:
+        type: string
+      AWS_REGION:
+        type: string
+  Boto3_latest-w1:
+    metadata:
+      abstract: no
+      final: no
+  BPMN-Workflow_w1:
+    metadata:
+      abstract: no
+      final: no
+  Camunda_7.14.0-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      Port:
+        type: string
+        default: "443"
+  Channel:
+    metadata:
+      abstract: yes
+      final: no
+  DockerContainer_w1:
+    metadata:
+      abstract: yes
+      final: yes
+    derived_from: ContainerApplication
+    properties:
+      Port:
+        type: string
+      ContainerPort:
+        type: string
+      ContainerID:
+        type: string
+      ContainerIP:
+        type: string
+      ImageID:
+        type: string
+      ContainerMountPath:
+        type: string
+      HostMountFiles:
+        type: string
+      PrivilegedMode:
+        type: string
+  DockerEngine_w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      DockerEngineURL:
+        type: string
+      DockerEngineCertificate:
+        type: string
+  EC2-w1:
+    metadata:
+      abstract: no
+      final: no
+  Gunicorn_20.1.0-w1:
+    metadata:
+      abstract: no
+      final: no
+  GunicornApp_w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      GunicornAppPort:
+        type: integer
+        default: "80"
+      AppModule:
+        type: string
+  Java_11-w1:
+    metadata:
+      abstract: no
+      final: no
+    derived_from: SoftwareComponent
+  Java_8-w1:
+    metadata:
+      abstract: no
+      final: no
+    derived_from: SoftwareComponent
+  KVM_QEMU_Hypervisor_w1:
+    properties:
+      HypervisorEndpoint:
+        type: string
+      HypervisorUser:
+        type: string
+      HypervisorPassword:
+        type: string
+      HypervisorBridgeInterface:
+        type: string
+  KVM_QEMU_VM_w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      VMIP:
+        type: string
+      VMInstanceID:
+        type: string
+      VMMAC:
+        type: string
+      VMUserName:
+        type: string
+      VMUserPassword:
+        type: string
+      VMDiskSize:
+        type: string
+      VMVCPUS:
+        type: string
+      VMRAM:
+        type: string
+      VMOSType:
+        type: string
+      VMOSVariant:
+        type: string
+    derived_from: Compute
+  MariaDB_10-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      DBName:
+        type: string
+      DBUser:
+        type: string
+      DBPassword:
+        type: string
+  MariaDB_10-w2:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      DBName:
+        type: string
+      DBUser:
+        type: string
+      DBPassword:
+        type: string
+    derived_from: Database
+  MariaDBMS_10-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+            DBMSUser:
+              type: string
+            DBMSPassword:
+              type: string
+            DBMSPort:
+              type: string
+  MariaDBMS_10-w2:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      DBMSUser:
+        type: string
+      DBMSPassword:
+        type: string
+      DBMSPort:
+        type: string
+    derived_from: DBMS
+  Mosquitto_2.0-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      State:
+        type: string
+        default: Running
+      VMIP:
+        type: string
+      Port:
+        type: string
+        default: "1883"
+  MySQL-DBMS_5.7-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      DBMSUser:
+        type: string
+      DBMSPassword:
+        type: string
+      DBMSPort:
+        type: string
+    derived_from: MySQL-DBMS_w1
+  MySQL-DBMS_8.0-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      default: root
+      DBMSUser:
+        type: string
+      default: root
+      DBMSPassword:
+        type: string
+      default: "3306"
+      DBMSPort:
+        type: string
+      derived_from: MySQL-DBMS_w1
+  MySQL-DBMS_w1:
+    metadata:
+      abstract: yes
+      final: no
+    properties:
+      DBMSUser:
+        type: string
+      DBMSPassword:
+        type: string
+      DBMSPort:
+        type: string
+    derived_from: DBMS
+  MySQL-DB_w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      DBName:
+        type: string
+      DBUser:
+        type: string
+      DBPassword:
+        type: string
+    derived_from: Database
+  NGINX-Application_w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      AppName:
+        type: string
+    derived_from: WebApplication
+  NGINX_latest-w1:
+    metadata:
+      abstract: no
+      final: no
+      derived_from: WebServer
+  OpenStack_15-Train-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      HypervisorEndpoint:
+        type: string
+      HypervisorUserName:
+        type: string
+      HypervisorUserPassword:
+        type: string
+      HypervisorTenantID:
+        type: string
+  OpenStack_22-Victoria-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      HypervisorEndpoint:
+        type: string
+      HypervisorApplicationID:
+        type: string
+      HypervisorApplicationSecret:
+        type: string
+  OperatingSystem_w1:
+    metadata:
+      abstract: yes
+      final: no
+    properties:
+      instanceRef:
+        type: string
+      VMIP:
+        type: string
+    derived_from: Compute
+  Python_3-w1:
+    metadata:
+      abstract: no
+      final: no
+  PythonApp_3-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      Port:
+        type: string
+      Name:
+        type: string
+  RabbitMQ_3.10-w1:
+    metadata:
+      abstract: no
+      final: no
+  Redis_6-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      RedisPort:
+        type: string
+  SpringWebApp_w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      AppName:
+        type: string
+      Port:
+        type: string
+      derived_from: WebApplication
+  Tomcat_7-w1:
+    metadata:
+      abstract: no
+      final: no
+    derived_from: Tomcat_w1
+  Tomcat_8-w1:
+    metadata:
+      abstract: no
+      final: no
+    derived_from: Tomcat_w1
+  Tomcat_9-w1:
+    metadata:
+      abstract: no
+      final: no
+    derived_from: Tomcat_w1
+  TomcatApplication_WAR-w1:
+    metadata:
+      abstract: no
+      final: no
+    derived_from: WebApplication
+  Tomcat_w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      Port:
+        type: string
+        default: "8080"
+    derived_from: WebServer
+  Topic:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      TopicName:
+        type: string
+    derived_from: Channel
+  UbuntuContainer_20.04-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      ImageID:
+        derived_from: DockerContainer_w1
+        default: ubuntu:20.04
+  Ubuntu-VM_16.04-w1:
+    metadata:
+      abstract: yes
+      final: yes
+    properties:
+      VMIP:
+        type: string
+      VMInstanceID:
+        type: string
+      VMType:
+        type: string
+      VMUserName:
+        type: string
+      VMUserPassword:
+        type: string
+      VMPrivateKey:
+        type: string
+      VMPublicKey:
+        type: string
+      VMKeyPairName:
+        type: string
+    derived_from: OperatingSystem_w1
+  Ubuntu-VM_18.04-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      VMIP:
+        type: string
+      VMInstanceID:
+        type: string
+      VMType:
+        type: string
+      VMUserName:
+        type: string
+      VMUserPassword:
+        type: string
+      VMPrivateKey:
+        type: string
+      VMPublicKey:
+        type: string
+      VMKeyPairName:
+        type: string
+    derived_from: OperatingSystem_w1
+  Ubuntu-VM_20.04-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      VMIP:
+        type: string
+      VMInstanceID:
+        type: string
+      VMType:
+        type: string
+      VMUserName:
+        type: string
+      VMUserPassword:
+        type: string
+      VMPrivateKey:
+        type: string
+      VMPublicKey:
+        type: string
+      VMKeyPairName:
+        type: string
+      VMSecurityGroup:
+        type: string
+      VMOpenPorts:
+        type: string
+      VMNetworks:
+        type: string
+    derived_from: OperatingSystem_w1
+  VSphere_5.5-w1:
+    metadata:
+      abstract: no
+      final: no
+    properties:
+      HypervisorEndpoint:
+        type: string
+      HypervisorTenantID:
+        type: string
+      HypervisorUserName:
+        type: string
+      HypervisorUserPassword:
+        type: string
