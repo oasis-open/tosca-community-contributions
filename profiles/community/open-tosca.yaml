@@ -1,4 +1,4 @@
-tosca_definitions_version: tosca_2_0
+tosca_definitions_version: tosca_simple_yaml_1_3
 
 node_types:
   ApacheApp_w1:
@@ -103,7 +103,7 @@ node_types:
     properties:
       GunicornAppPort:
         type: integer
-        default: "80"
+        default: 80
       AppModule:
         type: string
   Java_11-w1:
@@ -228,16 +228,16 @@ node_types:
       abstract: no
       final: no
     properties:
-      default: root
       DBMSUser:
         type: string
-      default: root
+        default: root
       DBMSPassword:
         type: string
-      default: "3306"
+        default: root
       DBMSPort:
         type: string
-      derived_from: MySQL-DBMS_w1
+        default: "3306"
+    derived_from: MySQL-DBMS_w1
   MySQL-DBMS_w1:
     metadata:
       abstract: yes
@@ -342,7 +342,7 @@ node_types:
         type: string
       Port:
         type: string
-      derived_from: WebApplication
+    derived_from: WebApplication
   Tomcat_7-w1:
     metadata:
       abstract: no
@@ -386,8 +386,9 @@ node_types:
       final: no
     properties:
       ImageID:
-        derived_from: DockerContainer_w1
+        type: string
         default: ubuntu:20.04
+    derived_from: DockerContainer_w1
   Ubuntu-VM_16.04-w1:
     metadata:
       abstract: yes

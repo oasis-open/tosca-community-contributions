@@ -146,7 +146,6 @@ classDiagram
     class MariaDB_10-w1
     class MariaDBMS_10-w1
     class Mosquitto_2.0-w1
-    class MySQL-DBMS_8.0-w1
     class NGINX_latest-w1
     class OpenStack_15-Train-w1
     class OpenStack_22-Victoria-w1
@@ -154,8 +153,6 @@ classDiagram
     class PythonApp_3-w1
     class RabbitMQ_3.10-w1
     class Redis_6-w1
-    class SpringWebApp_w1
-    class UbuntuContainer_20.04-w1
     class VSphere_5.5-w1
     WebApplication <|-- ApacheApp_w1
     ContainerApplication <|-- DockerContainer_w1
@@ -165,16 +162,19 @@ classDiagram
     Database <|-- MariaDB_10-w2
     DBMS <|-- MariaDBMS_10-w2
     MySQL-DBMS_w1 <|-- MySQL-DBMS_5.7-w1
+    MySQL-DBMS_w1 <|-- MySQL-DBMS_8.0-w1
     DBMS <|-- MySQL-DBMS_w1
     Database <|-- MySQL-DB_w1
     WebApplication <|-- NGINX-Application_w1
     Compute <|-- OperatingSystem_w1
+    WebApplication <|-- SpringWebApp_w1
     Tomcat_w1 <|-- Tomcat_7-w1
     Tomcat_w1 <|-- Tomcat_8-w1
     Tomcat_w1 <|-- Tomcat_9-w1
     WebApplication <|-- TomcatApplication_WAR-w1
     WebServer <|-- Tomcat_w1
     Channel <|-- Topic
+    DockerContainer_w1 <|-- UbuntuContainer_20.04-w1
     OperatingSystem_w1 <|-- Ubuntu-VM_16.04-w1
     OperatingSystem_w1 <|-- Ubuntu-VM_18.04-w1
     OperatingSystem_w1 <|-- Ubuntu-VM_20.04-w1
