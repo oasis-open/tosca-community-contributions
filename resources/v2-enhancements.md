@@ -85,6 +85,8 @@ the lifecycle phase in which they are used:
   - In response to changes in the (external) Node Instance state
   - In response to user actions
 
+In TOSCA relationships are first class entities in the same way as nodes. Therefore everything stated in this section regarding nodes also applies to relationships.
+
 ### TOSCA Operational Model
 
 The TOSCA functional architecture is accompanied by an Operational Model
@@ -196,3 +198,9 @@ substituted node to requirements of nodes in the substituting service.
   format. It also simplifies and extends the CSAR file format.
 - This removes the need to reference the TOSCA v1.0 in XML
   specification.
+
+## Flexible, User-Defined Scalar Types
+
+- In TOSCA v1.3, only a small set of pre-defined, computing-oriented, scalar unit types was available, each with limited unit prefixes.  
+
+- In TOSCA v2.0, scalar unit types are user defined and extensible: authors can define their own scalar types and optionally use the full range of ISO-recognized unit prefixes. This further enables TOSCA’s applicability well beyond IT infrastructure.
