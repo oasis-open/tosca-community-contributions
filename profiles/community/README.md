@@ -7,15 +7,15 @@ Community.
   profiles.
 
 ## Objectives
+
 The goal for these community profiles is to combine *best of breed*
 type definitions created by various TOSCA projects over the
-years. Most of these projects have used the TOSCA Simple Profile type
-definitions as a starting point and have extended these definitions to
-satisfy project-specific objectives. Since many of these profiles
-started with the v1.3 Simple Profile as guidance, it is likely that
-there are sufficient similarities between them that should allow them
-to be harmonized. However, there are likely also significant
-differences, specifically:
+years. Most of these projects have used the TOSCA Simple Profile in
+YAML v1.3 type definitions as a starting point and have extended these
+definitions to satisfy project-specific objectives. As a result, it is
+likely that there are sufficient similarities between them that should
+allow them to be harmonized. However, there are likely also
+significant differences, specifically:
 
 - differences in the target platforms on which components modeled by
   node types are intended to be deployed (e.g. IaaS clouds, PaaS
@@ -38,50 +38,56 @@ identified:
 - [TOSCA Simple Profile Non-Normative](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/org/oasis-open/non-normative/1.3)
 - [EDMM](https://github.com/UST-EDMM/modeling-repository/)
 - [OpenTOSCA](https://github.com/OpenTOSCA/tosca-definitions-common)
-- [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml)
 - [Vintner](https://vintner.opentosca.org/normative/)
+- [DeMAF](https://github.com/UST-DeMAF/demaf-type-definitions)
+- [XLAB Steampunk AWS EC2](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/si/steampunk/aws/ec2)
 - [Radon particles](https://github.com/radon-h2020/radon-particles)
 - [Yorc/Ystia](https://github.com/ystia/yorc/tree/develop/data/tosca)
 - [Ubicity](https://github.com/lauwers/tosca-community-contributions/tree/master/profiles/com/ubicity)
+- [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml)
 - other?
 
-> Most of these type definitions need to be converted to TOSCA v2.0
+> Most of these type definitions will need to be converted to TOSCA v2.0
 
 ### Document
 
 - For each of the contributed profiles, document the node type
   hierarchies.
 
-#### TOSCA Simple Profile
+#### TOSCA Simple Profile in YAML v1.3
 
 TOSCA Simple Profile in YAML includes both normative and non-normative
 type definitions. Since the non-normative type definitions derive from
 the normative types, they are combined in the following class diagram:
+
+> In order the improve readability of the diagram, the leading
+  `tosca.nodes.` prefixes are omitted from the node type names.
+
 ```mermaid
 classDiagram
-    class tosca.nodes.Root
-    tosca.nodes.Root <|-- tosca.nodes.Abstract.Compute
-    tosca.nodes.Abstract.Compute <|-- tosca.nodes.Compute
-    tosca.nodes.Root <|-- tosca.nodes.SoftwareComponent
-    tosca.nodes.SoftwareComponent <|-- tosca.nodes.WebServer
-    tosca.nodes.Root <|-- tosca.nodes.WebApplication
-    tosca.nodes.SoftwareComponent <|-- tosca.nodes.DBMS
-    tosca.nodes.Root <|-- tosca.nodes.Database
-    tosca.nodes.Root <|-- tosca.nodes.Abstract.Storage
-    tosca.nodes.Abstract.Storage <|-- tosca.nodes.Storage.ObjectStorage
-    tosca.nodes.Abstract.Storage <|-- tosca.nodes.Storage.BlockStorage
-    tosca.nodes.SoftwareComponent <|-- tosca.nodes.Container.Runtime
-    tosca.nodes.Root <|-- tosca.nodes.Container.Application
-    tosca.nodes.Root <|-- tosca.nodes.LoadBalancer
-    tosca.nodes.Root <|-- tosca.nodes.network.Network
-    tosca.nodes.Root <|-- tosca.nodes.network.Port
-    tosca.nodes.Database <|-- tosca.nodes.Database.MySQL
-    tosca.nodes.DBMS <|-- tosca.nodes.DBMS.MySQL
-    tosca.nodes.WebServer <|-- tosca.nodes.WebServer.Apache
-    tosca.nodes.WebApplication <|-- tosca.nodes.WebApplication.WordPress
-    tosca.nodes.WebServer <|-- tosca.nodes.WebServer.Nodejs
-    tosca.nodes.Container.Runtime <|-- tosca.nodes.Container.Runtime.Docker
-    tosca.nodes.Container.Application <|-- tosca.nodes.Container.Application.Docker
+    class Root
+    Root <|-- Abstract.Compute
+    Abstract.Compute <|-- Compute
+    Root <|-- SoftwareComponent
+    SoftwareComponent <|-- WebServer
+    Root <|-- WebApplication
+    SoftwareComponent <|-- DBMS
+    Root <|-- Database
+    Root <|-- Abstract.Storage
+    Abstract.Storage <|-- Storage.ObjectStorage
+    Abstract.Storage <|-- Storage.BlockStorage
+    SoftwareComponent <|-- Container.Runtime
+    Root <|-- Container.Application
+    Root <|-- LoadBalancer
+    Root <|-- network.Network
+    Root <|-- network.Port
+    Database <|-- Database.MySQL
+    DBMS <|-- DBMS.MySQL
+    WebServer <|-- WebServer.Apache
+    WebApplication <|-- WebApplication.WordPress
+    WebServer <|-- WebServer.Nodejs
+    Container.Runtime <|-- Container.Runtime.Docker
+    Container.Application <|-- Container.Application.Docker
 ```
 #### EDMM
 EDMM Provides a declarative model describing the components to be
@@ -124,10 +130,10 @@ classDiagram
 ```
 #### OpenTOSCA
 
-Common TOSCA definitions for VMs, cloud providers, and runtimes that
-are intended to be consumed by the OpenTOSCA Container.  TOSCA v2.0
-versions of the node types defined by OpenTOSCA can be found in
-[open-tosca.yaml](open-tosca.yaml). They are organized in the
+OpenTOSCA defines common TOSCA types for VMs, cloud providers, and
+runtimes that are intended to be consumed by the OpenTOSCA Container.
+TOSCA v2.0 versions of the node types defined by OpenTOSCA can be
+found in [open-tosca.yaml](open-tosca.yaml). They are organized in the
 following node type hiearchy:
 
 ```mermaid
@@ -179,20 +185,95 @@ classDiagram
     OperatingSystem_w1 <|-- Ubuntu-VM_18.04-w1
     OperatingSystem_w1 <|-- Ubuntu-VM_20.04-w1
 ```
-#### Cloudify
-
-Cloudify allows organizations to automate their existing
-infrastructure alongside cloud native and distributed edge
-resources. Cloudify also allows users to manage different
-orchestration and automation domains as part of one common CI/CD
-pipeline.
-
 #### Vintner
 
-OpenTOSCA Vintner is a TOSCA preprocessing and management layer which
+OpenTOSCA Vintner is a TOSCA preprocessing and management layer that
 is able to deploy applications based on TOSCA orchestrator
 plugins. Preprocessing includes the modeling of different deployment
 variants inside a single deployment model.
+
+Vintner defines two TOSCA profiles: the TOSCA Vintner Core Profile and
+the TOSCA Vintner Extended Profile. Since the Extended Profile types
+leverage the Core Profile types, they are combined into the following
+diagram:
+
+```mermaid
+classDiagram
+    node <|-- cloud.provider
+    node <|-- cloud.service
+    node <|-- software.component
+    software.component <|-- service.component
+    software.component <|-- software.runtime
+    software.runtime <|-- container.runtime
+    node <|-- machine
+    machine <|-- local.machine
+    machine <|-- remote.machine
+    remote.machine <|-- virtual.machine
+    remote.machine <|-- physical.machine
+    node <|-- database
+    database <|-- relational.database
+    software.component <|-- dbms
+    dbms <|-- relational.dbms
+    software.component <|-- cache
+    node <|-- storage
+    storage <|-- block.storage
+    storage <|-- object.storage
+    storage <|-- file.storage
+    node <|-- ingress
+    software.runtime <|-- nodejs.runtime
+    service.component <|-- nodejs.service.component
+    service.component <|-- reactjs.service.component
+    software.runtime <|-- python.runtime
+    service.component <|-- python.service.component
+    service.component <|-- go.service.component
+    software.runtime <|-- java.runtime
+    service.component <|-- java.service.component
+    software.runtime <|-- dotnet.runtime
+    service.component <|-- csharp.service.component
+    service.component <|-- binary.service.component
+    cloud.provider <|-- gcp.provider
+    cloud.service <|-- gcp.service
+    gcp.service <|-- gcp.cloudrun
+    gcp.service <|-- gcp.cloudsql
+    gcp.service <|-- gcp.appengine
+    gcp.service <|-- gcp.appenginereporting
+    gcp.service <|-- gcp.cloudbuild
+    gcp.service <|-- gcp.kubernetesengine
+    gcp.service <|-- gcp.cloudstorage
+    gcp.service <|-- gcp.memorystore
+    container.runtime <|-- docker.engine
+    cloud.service <|-- kubernetes.cluster
+    cloud.provider <|-- openstack.provider
+    relational.dbms <|-- mysql.dbms
+    relational.database <|-- mysql.database
+    service.component <|-- minio.server
+    cache <|-- redis.server
+```
+
+#### DeMAF
+
+Deployment-Model Abstraction Framework (DeMAF) is a tool that enables
+transforming technology-specific deployment models using Terraform,
+Kubernetes, etc. into technology-agnostic deployment models using the
+Essential Deployment Metamodel (EDMM). DeMAF defines the following
+node types:
+
+> In order the improve readability of the diagram, the leading
+  `demaf.nodetypes.` prefixes are omitted from the node type names.
+
+```mermaid
+classDiagram
+    class BaseType
+    BaseType <|-- CloudProvider
+    BaseType <|-- ContainerPlatform
+    SoftwareApplication <|-- DatabaseSystem
+    ContainerPlatform <|-- DockerEngine
+    ContainerPlatform <|-- KubernetesCluster
+    BaseType <|-- localhost-type
+    SoftwareApplication <|-- MessageBroker
+    BaseType <|-- SoftwareApplication
+    BaseType <|-- Storage
+```
 
 #### Radon particles
 
@@ -207,11 +288,12 @@ Yorc is an hybrid cloud/HPC TOSCA orchestrator.
 
 #### Ubicity
 
-Ubicity profiles general purpose TOSCA type definitions that aim to
+Ubicity profiles define general purpose TOSCA types that aim to
 implement common design patterns to handle
 [abstraction](https://github.com/oasis-open/tosca-community-contributions/blob/master/profiles/com/ubicity/README.md). The
 Ubicity profile types are organized in the following node type
 hiearchy:
+
 ```mermaid
 classDiagram
     class Root
@@ -249,6 +331,14 @@ classDiagram
     InstallablePackage <|-- Kubernetes
     Root <|-- Cluster
 ```
+#### Cloudify
+
+Cloudify allows organizations to automate their existing
+infrastructure alongside cloud native and distributed edge
+resources. Cloudify also allows users to manage different
+orchestration and automation domains as part of one common CI/CD
+pipeline.
+
 ### Categorize
 
 For the types defined in each of the contributed profiles:
