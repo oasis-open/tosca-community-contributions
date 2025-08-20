@@ -1,0 +1,17 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Create a subnet
+      steampunk.aws.ec2_subnet:
+        name: "{{ subnet_name }}"
+        vpc: "{{ vpc_id }}"
+        cidr: "{{ cidr }}"
+        auto_assign_ip: "{{ auto_assign_ip }}"
+      register: subnet
+
+    - name: Set attributes
+      set_stats:
+        data:
+          id: "{{ subnet.object.id }}"

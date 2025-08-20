@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Delete the subnet
+      steampunk.aws.ec2_subnet:
+        id: "{{ id }}"
+        state: absent

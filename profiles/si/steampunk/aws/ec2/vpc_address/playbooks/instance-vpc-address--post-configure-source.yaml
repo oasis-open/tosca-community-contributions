@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+
+    - name: Associate the VPC address with an instance
+      steampunk.aws.ec2_vpc_address:
+        ip: "{{ public_ip }}"
+        instance: "{{ instance_id }}"
+
+    - name: Assign public address
+      set_stats:
+        data:
+          public_ip: "{{ public_ip }}"

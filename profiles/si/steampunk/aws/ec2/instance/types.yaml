@@ -1,0 +1,72 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+
+  steampunk.aws.ec2.Instance:
+    derived_from: tosca.nodes.Compute
+    properties:
+      name:
+        type: string
+        description: Name of the instance.
+      type:
+        type: string
+        description: Type of the EC2 instance (e.g., t2.micro).
+      ami:
+        type: string
+        description: ID of the Amazon Machine Image used to launch the instance.
+    attributes:
+      id:
+        type: string
+        description: ID of the AWS EC2 instance.
+      network_interface:
+        type: string
+        description: ID of the network interface associated with the instance.
+      security_groups:
+        type: list
+        description: List of IDs of the security groups attached to th instance.
+        default: []
+      public_ip:
+        type: string
+        description: Optional public IP of the instance.
+        default: null
+    requirements:
+      - subnet:
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+      - security_group:
+          relationship: steampunk.aws.ec2.relationships.InstanceInSecurityGroup
+          capability: tosca.capabilities.Root
+      - key_pair:
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+      - internet_gateway:
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+      - vpc_address:
+          relationship: steampunk.aws.ec2.relationships.InstanceVpcAddress
+          capability: tosca.capabilities.Root
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        operations:
+          configure:
+            inputs:
+              name:     { default: { get_property:  [ SELF, name ] } }
+              type:     { default: { get_property:  [ SELF, type ] } }
+              ami:      { default: { get_property:  [ SELF, ami ] } }
+              key_pair: { default: { get_property:  [ SELF, key_pair, name ] } }
+              subnet:   { default: { get_attribute: [ SELF, subnet, id ] } }
+              on_instance_initiated_shutdown: { default: terminate }
+              security_groups:
+                default: { get_attribute: [ SELF, security_groups ] }
+              public_ip:
+                default:
+                  get_attribute: [ SELF, public_ip ]
+            outputs:
+              id: [ SELF, id ]
+              network_interface: [ SELF, network_interface ]
+            implementation: playbooks/configure.yaml
+          delete:
+            inputs:
+              id: { default: { get_attribute: [ SELF, id ] } }
+            implementation: playbooks/delete.yaml

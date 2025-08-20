@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Append the element to the list
+      set_stats:
+        data:
+          new_list: "{{ list + [ element ] }}"

@@ -1,0 +1,16 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Create the keypair
+      steampunk.aws.ec2_key_pair:
+        name: "{{ name }}"
+        public_key: "{{ lookup('file', public_key_file) }}"
+        force: true
+      register: key_pair
+
+    - name: Set attributes
+      set_stats:
+        data:
+          fingerprint: "{{ key_pair.object.fingerprint }}"

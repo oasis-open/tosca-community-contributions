@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Delete the VPC
+      steampunk.aws.ec2_vpc:
+        id: "{{ id }}"
+        state: absent

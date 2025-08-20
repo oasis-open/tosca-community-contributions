@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Create the VPC
+      steampunk.aws.ec2_vpc:
+        name: "{{ name }}"
+        cidr: "{{ cidr }}"
+      register: vpc
+
+    - name: Set attributes
+      set_stats:
+        data:
+          id: "{{ vpc.object.id }}"

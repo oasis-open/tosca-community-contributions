@@ -1,0 +1,114 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+
+  steampunk.aws.ec2.RouteTable:
+    derived_from: tosca.nodes.Root
+    attributes:
+      id:
+        type: string
+        description: ID of the resource representing this route table.
+      subnets:
+        type: list
+        description: >
+          A list of subnet IDs, accummulated from subnet requirement instances.
+        default: []
+      routes:
+        type: list
+        description: >
+          A list of routes, accummulated from internet_gateway and other
+          requirement instances.
+        default: []
+    requirements:
+      - vpc:
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+      - subnet:
+          relationship: steampunk.aws.ec2.relationships.RouteOnSubnet
+          capability: tosca.capabilities.Root
+      - internet_gateway:
+          relationship: steampunk.aws.ec2.relationships.RouteToInternetGateway
+          capability: tosca.capabilities.Root
+      - nat_gateway:
+          relationship: steampunk.aws.ec2.relationships.RouteToNatGateway
+          capability: tosca.capabilities.Root
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        inputs:
+          vpc_id:
+            type: string
+            default: { get_attribute: [ SELF, vpc, id ] }
+        operations:
+          configure:
+            inputs:
+              subnets: { default: { get_attribute: [ SELF, subnets ] } }
+              routes:  { default: { get_attribute: [ SELF, routes ] } }
+              route_table_name:
+                default: { get_attribute: [ SELF, tosca_id ] }
+            outputs:
+              route_table_id: [ SELF, id ]
+            implementation: playbooks/configure.yaml
+          delete:
+            inputs:
+              route_table_id: { default: { get_attribute: [ SELF, id ] } }
+            implementation: playbooks/delete.yaml
+
+
+relationship_types:
+
+  steampunk.aws.ec2.relationships.RouteOnSubnet:
+    derived_from: tosca.relationships.DependsOn
+    description: >
+      Provides a relationship of a Route Table with a Subnet.
+    interfaces:
+      Configure:
+        operations:
+          pre_configure_source:
+            inputs:
+              subnet_id: { default: { get_attribute: [ TARGET, id ] } }
+              subnets:   { default: { get_attribute: [ SOURCE, subnets ] } }
+            outputs:
+              new_subnets: [ SOURCE, subnets ]
+            implementation: playbooks/route-on-subnet--preconfigure-source.yaml
+
+  steampunk.aws.ec2.relationships.Route:
+    derived_from: tosca.relationships.DependsOn
+    description: >
+      Provides a relationship of a route that has a destination CIDR.
+    properties:
+      destination:
+        type: string
+        description: Destination CIDR block, e.g., 0.0.0.0/0.
+
+  steampunk.aws.ec2.relationships.RouteToInternetGateway:
+    derived_from: steampunk.aws.ec2.relationships.Route
+    description: >
+      Provides a relationship of a Route Table with an Internet Gateway.
+    interfaces:
+      Configure:
+        operations:
+          pre_configure_source:
+            inputs:
+              igw_id:     { default: { get_attribute: [ TARGET, id ] } }
+              route_list: { default: { get_attribute: [ SOURCE, routes ] } }
+              dest:       { default: { get_property:  [ SELF, destination ] } }
+            outputs:
+              new_route_list: [ SOURCE, routes ]
+            implementation: playbooks/route-to-gateway--preconfigure-source.yaml
+
+  steampunk.aws.ec2.relationships.RouteToNatGateway:
+    derived_from: steampunk.aws.ec2.relationships.Route
+    description: >
+      Provides a relationship of a Route Table with an NAT Gateway.
+    interfaces:
+      Configure:
+        operations:
+          pre_configure_source:
+            inputs:
+              nat_gw_id:  { default: { get_attribute: [ TARGET, id ] } }
+              route_list: { default: { get_attribute: [ SOURCE, routes ] } }
+              dest:       { default: { get_property:  [ SELF, destination ] } }
+            outputs:
+              new_route_list: [ SOURCE, routes ]
+            implementation: playbooks/route-to-nat-gateway--preconfigure-source.yaml

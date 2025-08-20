@@ -1,0 +1,40 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+
+  steampunk.aws.ec2.InternetGateway:
+    derived_from: tosca.nodes.Root
+    properties:
+      name:
+        type: string
+        description: The name of the internet gateway.
+        default: ""
+    attributes:
+      id:
+        type: string
+        description: ID of the internet gateway resource.
+    requirements:
+      - vpc:
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+      - public_ip:
+          # This is an implicit requirement. It is necessary for proper teardown.
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        operations:
+          create:
+            inputs:
+              igw_name: { default: { get_property:  [ SELF, name ] } }
+              vpc_id:   { default: { get_attribute: [ SELF, vpc, id ] } }
+            outputs:
+              id: [ SELF, id ]
+            implementation:
+              playbooks/create.yaml
+          delete:
+            inputs:
+              id: { default: { get_attribute: [ SELF, id ] } }
+            implementation:
+              playbooks/delete.yaml

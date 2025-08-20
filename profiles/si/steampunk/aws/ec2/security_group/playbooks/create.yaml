@@ -1,0 +1,17 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Create a security group
+      steampunk.aws.ec2_security_group:
+        name: "{{ name }}"
+        description: "{{ description }}"
+        vpc: "{{ vpc_id }}"
+        ingress: "{{ ingress }}"
+      register: security_group
+
+    - name: Set attributes
+      set_stats:
+        data:
+          id: "{{ security_group.object.id }}"

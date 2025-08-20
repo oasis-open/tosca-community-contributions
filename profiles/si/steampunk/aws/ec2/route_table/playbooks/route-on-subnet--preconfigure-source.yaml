@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Append this relationship's source id
+      set_stats:
+        data:
+          new_subnets: "{{ subnets + [ subnet_id ] }}"

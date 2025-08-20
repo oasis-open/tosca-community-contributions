@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Delete the keypair
+      steampunk.aws.ec2_key_pair:
+        name: "{{ name }}"
+        state: absent

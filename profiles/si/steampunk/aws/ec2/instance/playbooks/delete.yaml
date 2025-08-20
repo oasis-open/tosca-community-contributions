@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Destroy the EC2 instance
+      steampunk.aws.ec2_instance:
+        id: "{{ id }}"
+        state: absent

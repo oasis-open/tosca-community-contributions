@@ -1,0 +1,45 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+
+  steampunk.aws.ec2.NatGateway:
+    derived_from: tosca.nodes.Root
+    properties:
+      wait:
+        type: boolean
+        description: Wait for create operation to complete before returning.
+        default: false
+    attributes:
+      id:
+        type: string
+        description: ID of the NAT gateway.
+      allocation_id:
+        type: string
+        description: ID of the elastic IP allocation
+    requirements:
+      - subnet:
+          # Note: this has to be a public subnet
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+      - internet_gateway:
+          # This is an implicit dependency. We get an error otherwise.
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        operations:
+          create:
+            inputs:
+              subnet_id: { default: { get_attribute: [ SELF, subnet, id ] } }
+              wait:      { default: { get_property:  [ SELF, wait ] } }
+            outputs:
+              id: [ SELF, id ]
+              allocation_id: [ SELF, allocation_id ]
+            implementation: playbooks/create.yaml
+          delete:
+            inputs:
+              id: { default: { get_attribute: [ SELF, id ] } }
+              allocation_id:
+                default: { get_attribute: [ SELF, allocation_id ] }
+            implementation: playbooks/delete.yaml
