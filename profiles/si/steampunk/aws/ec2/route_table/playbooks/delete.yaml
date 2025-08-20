@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Destroy the route to the internet
+      ec2_vpc_route_table:
+        vpc_id: "{{ vpc_id }}"
+        route_table_id: "{{ route_table_id }}"
+        lookup: id
+        state: absent

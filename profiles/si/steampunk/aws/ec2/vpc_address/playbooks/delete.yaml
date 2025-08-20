@@ -1,0 +1,14 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Disassociate the VPC address
+      steampunk.aws.ec2_vpc_address:
+        ip: "{{ ip }}"
+        state: allocated
+
+    - name: Delete the VPC address
+      steampunk.aws.ec2_vpc_address:
+        ip: "{{ ip }}"
+        state: absent

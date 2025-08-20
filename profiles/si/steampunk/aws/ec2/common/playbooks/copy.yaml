@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Copy the value in the input to the output
+      set_stats:
+        data:
+          copy: "{{ value }}"

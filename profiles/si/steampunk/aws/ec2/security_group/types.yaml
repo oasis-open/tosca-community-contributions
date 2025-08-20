@@ -1,0 +1,60 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+
+  steampunk.aws.ec2.SecurityGroup:
+    derived_from: tosca.nodes.Root
+    properties:
+      name:
+        type: string
+        description: Name of the security group.
+        default: ""
+      description:
+        type: string
+        description: The security group’s description.
+      ingress:
+        type: map
+        description: Ingress (inbound) security rules.
+        required: false
+    attributes:
+      id:
+        type: string
+        description: The ID of the security group.
+    requirements:
+      - vpc:
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        operations:
+          create:
+            inputs:
+              name:        { default: { get_property: [ SELF, name    ] } }
+              ingress:     { default: { get_property: [ SELF, ingress ] } }
+              description: { default: { get_property: [ SELF, description ] } }
+              vpc_id:      { default: { get_attribute: [ SELF, vpc, id ] } }
+            implementation:
+              playbooks/create.yaml
+          delete:
+            inputs:
+              id: { default: { get_attribute: [ SELF, id ] } }
+            implementation:
+              playbooks/delete.yaml
+
+relationship_types:
+
+  steampunk.aws.ec2.relationships.InstanceInSecurityGroup:
+    derived_from: tosca.relationships.DependsOn
+    description: >
+      Provides a relationship that connects an instance with a security group.
+    interfaces:
+      Configure:
+        operations:
+          pre_configure_source:
+            inputs:
+              list: { default: { get_attribute: [ SOURCE, security_groups ] } }
+              element: { default: { get_attribute: [ TARGET, id ] } }
+            outputs:
+              new_list: [ SOURCE, security_groups ]
+            implementation: ../common/playbooks/append-to-list.yaml

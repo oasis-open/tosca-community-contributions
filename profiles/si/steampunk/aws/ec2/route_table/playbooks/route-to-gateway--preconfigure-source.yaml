@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Create this particular route
+      set_fact:
+        route:
+          dest: "{{ dest }}"
+          gateway_id: "{{ igw_id }}"
+
+    - name: Add this route to the list of routes
+      set_stats:
+        data:
+          new_route_list: "{{ route_list + [ route ] }}"

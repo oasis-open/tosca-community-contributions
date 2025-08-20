@@ -1,0 +1,16 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Create an elastic IP
+      steampunk.aws.ec2_vpc_address:
+        state: allocated
+        tags:
+          creation_type: tosca
+      register: vpc_address
+
+    - name: Set attributes
+      set_stats:
+        data:
+          ip: "{{ vpc_address.object.ip }}"

@@ -1,0 +1,40 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+
+  steampunk.aws.ec2.VPCAddress:
+    derived_from: tosca.nodes.Root
+    attributes:
+      ip:
+        type: string
+        description: The Elastic IP address.
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        operations:
+          create:
+            implementation:
+              playbooks/create.yaml
+          delete:
+            inputs:
+              ip: { default: { get_attribute: [ SELF, ip ] } }
+            implementation:
+              playbooks/delete.yaml
+
+
+relationship_types:
+
+  steampunk.aws.ec2.relationships.InstanceVpcAddress:
+    derived_from: tosca.relationships.DependsOn
+    description: >
+      Provides a relationship from an instance to a VPC address.
+    interfaces:
+      Configure:
+        operations:
+          post_configure_source:
+            inputs:
+              instance_id: { default: { get_attribute: [ SOURCE, id ] } }
+              public_ip:   { default: { get_attribute: [ TARGET, ip ] } }
+            outputs:
+              public_ip: [ SOURCE, public_ip ]
+            implementation: playbooks/instance-vpc-address--post-configure-source.yaml

@@ -1,0 +1,49 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+
+  steampunk.aws.ec2.Subnet:
+    derived_from: tosca.nodes.Root
+    properties:
+      name:
+        type: string
+        description: Name of the subnet.
+        default: ""
+      cidr:
+        type: string
+        description:
+          IPv4 network range to assign to the subnet, in CIDR notation.
+      auto_assign_ip:
+        type: boolean
+        description:
+          Whether a public IPv4 address should be assigned to ENIs attached to
+          instances launched from this subnet.
+        default: false
+    attributes:
+      id:
+        type: string
+        description: ID of the subnet resource.
+    requirements:
+      - vpc:
+          relationship: tosca.relationships.DependsOn
+          capability: tosca.capabilities.Root
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        operations:
+          create:
+            inputs:
+              vpc_id:      { default: { get_attribute: [ SELF, vpc, id ] } }
+              subnet_name: { default: { get_property:  [ SELF, name ] } }
+              cidr:        { default: { get_property:  [ SELF, cidr ] } }
+              auto_assign_ip:
+                default: { get_property: [ SELF, auto_assign_ip ] }
+            outputs:
+              id: [ SELF, id ]
+            implementation:
+              primary: playbooks/create.yaml
+          delete:
+            inputs:
+              id: { default: { get_attribute: [ SELF, id ] } }
+            implementation:
+              playbooks/delete.yaml

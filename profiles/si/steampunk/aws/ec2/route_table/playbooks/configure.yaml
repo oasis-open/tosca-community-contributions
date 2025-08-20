@@ -1,0 +1,18 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Create a route table
+      ec2_vpc_route_table:
+        vpc_id: "{{ vpc_id }}"
+        subnets: "{{ subnets }}"
+        routes: "{{ routes }}"
+        tags:
+          Name: "{{ route_table_name }}"
+      register: route_table
+
+    - name: Register outputs
+      set_stats:
+        data:
+          route_table_id: "{{ route_table.route_table.id }}"

@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Delete the security group
+      steampunk.aws.ec2_security_group:
+        id: "{{ id }}"
+        state: absent

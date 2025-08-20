@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+
+node_types:
+
+  steampunk.aws.ec2.VPC:
+    derived_from: tosca.nodes.Root
+    properties:
+      name:
+        type: string
+        description: Name of the VPC.
+      cidr:
+        type: string
+        description: IPv4 network range to assign to the VPC, in CIDR notation.
+    attributes:
+      id:
+        type: string
+        description: ID of the VPC resource.
+    interfaces:
+      Standard:
+        type: tosca.interfaces.node.lifecycle.Standard
+        operations:
+          create:
+            inputs:
+              name: { default: { get_property: [ SELF, name ] } }
+              cidr: { default: { get_property: [ SELF, cidr ] } }
+            implementation:
+              playbooks/create.yaml
+          delete:
+            inputs:
+              id: { default: { get_attribute: [ SELF, id ] } }
+            implementation:
+              playbooks/delete.yaml

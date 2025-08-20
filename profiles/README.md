@@ -1,66 +1,56 @@
-# TOSCA Community Profiles
+Amazon AWS TOSCA Library for xOpera
+===================================
 
-This directory contains a collection of TOSCA Profiles maintained by
-the TOSCA Community.
+This project contains a TOSCA library that can be used in xOpera for modeling
+and managing AWS entities, such as VPCs, subnets, instances, etc.
 
-## What are TOSCA Profiles
+## Prerequisites
 
-A TOSCA Profile is a collection of TOSCA type definitions, supporting
-artifacts, and (optionally) substituting service templates. Those
-entities are grouped together into a *profile* because they relate to
-a specific application domain or because they represent a specific
-technology.
+To use the library, we first need a TOSCA orchestrator, such as [opera][opera].
+The environment where `opera` is running from also needs the following:
 
-Profiles are a *TOSCA v2.0* feature. Using TOSCA v2.0, profile
-designers define profiles by using the *profile* keyword to assign a
-profile name to a collection of TOSCA definitions. Profile names are
-expected to be unique and *well-known* to allow service designers to
-import profiles by their *well-known profile name*.
+* An up-to-date version of Ansible.
+* The `boto3` pip library.
+* The `steampunk.aws` [Ansible collection][steampunk.aws collection] from
+  Ansible Galaxy.
+* An account at EC2 with the AWS credentials, such as the AWS Access Key and the
+  corresponding AWS Secret Key.
 
-## Profile Design Best Practices
+## Quickstart
 
-### Profile Names
+The easiest way to start using the library is by using a Python virtual
+environment.
 
-While the TOSCA standard does not specify a naming scheme for profile
-names, we recommend as a best practice the use of the same *reverse
-domain-name notation* that is typically used for Java modules. For
-example, the following defines a TOSCA Version 2.0 profile that
-defines the same types as those defined in TOSCA Simple Profile in
-YAML Version 1.3:
+    $ mkdir ~/ec2-deployment && cd ~/ec2-deployment
+    $ python3 -m venv .venv && . .venv/bin/activate
+    (.venv) $ pip install -r ~/xopera-library-aws/requirements.txt
 
-```yaml
-tosca_definitions_version: tosca_2_0
-profile: org.oasis-open.simple:2.0
-```
+    (.venv) $ ansible-galaxy collection install -f steampunk.aws
 
-### Type Names
+## Using the examples
 
-TOSCA Simple Profile in YAML v1.x uses long, dotted types names that
-typically include an organization identifier as well as a key to
-specify the *type* of type being defines. The following example is
-taken from the TOSCA v1.3 specification:
+The examples import the libraries from a subdirectory `library` that doesn't
+exist in the repository. We can create the directory and a suitable symbolic
+link to the directory actually containing the library:
 
-```yaml
-group_types:
-  mycompany.mytypes.groups.placement:
-    description: My company’s group type for placing nodes of type Compute
-    members: [ tosca.nodes.Compute ]
-```
+    (.venv) $ cd examples/001-VPC-Single-Instance
+    (.venv) $ mkdir library
+    (.venv) $ ln -s ../../../src/steampunk library
 
-While this pattern was likely proposed to avoid type name conflicts,
-such conflicts can be avoided more elegantly using namespaces and
-associated namespace prefixes introduced in TOSCA v2.0, and the use of
-long, dotted type names should be avoided.
+Next, we should open the `inputs.yaml` file for editing and adjust the values as
+needed.
 
-### TOSCA File Names
+Then, before first running the examples, we need to export the environment
+variables with our client's AWS credentials:
 
-Another pattern that should be avoided is the organization of
-different types of type definitions in different TOSCA files
-(e.g. node type definitions go into a node_types.yaml file,
-relationship types in relationship_types.yaml, etc.). Not only are
-there few advantages to such a separation, it can actually create
-circular import problems when the node_types.yaml file must import the
-relationship_types.yaml file to define requirement definitions, but
-the relationship_types.yaml file may need to import the
-node_types.yaml file for node types used in `valid_target_node_types`.
+    (.venv) $ export AWS_REGION=us-east-1                   # choose the one you prefer
+    (.venv) $ export AWS_ACCESS_KEY=your-access-key         # change me
+    (.venv) $ export AWS_SECRET_KEY=your-secret-access-key  # change me
 
+The examples are now ready to run:
+
+    (.venv) $ opera deploy --inputs inputs.yaml service.yaml
+
+
+[opera]: https://github.com/xlab-si/xopera-opera
+[steampunk.aws collection]: https://docs.steampunk.si/aws

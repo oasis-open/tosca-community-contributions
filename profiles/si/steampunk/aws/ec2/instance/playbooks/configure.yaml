@@ -1,0 +1,23 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    # Note: because security_groups is immutable, we need to do everything in
+    #       the create operation.
+    - name: Create and launch an EC2 instance
+      steampunk.aws.ec2_instance:
+        name: "{{ name }}"
+        type: "{{ type }}"
+        ami: "{{ ami }}"
+        key_pair: "{{ key_pair }}"
+        subnet: "{{ subnet }}"
+        security_groups: "{{ security_groups }}"
+        on_instance_initiated_shutdown: "{{ on_instance_initiated_shutdown }}"
+      register: instance
+
+    - name: Set attributes
+      set_stats:
+        data:
+          id: "{{ instance.object.id }}"
+          network_interface: "{{ instance.object.network_interface }}"

@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Create an EC2 elastic IP address
+      ec2_eip:
+        release_on_disassociation: yes
+      register: eip
+
+    - name: Create the NAT gateway
+      ec2_vpc_nat_gateway:
+        allocation_id: "{{ eip.allocation_id }}"
+        subnet_id: "{{ subnet_id }}"
+        wait: "{{ wait }}"
+      register: nat_gw
+
+    - name: Set attributes
+      set_stats:
+        data:
+          id: "{{ nat_gw.nat_gateway_id }}"
+          allocation_id: "{{ eip.allocation_id }}"

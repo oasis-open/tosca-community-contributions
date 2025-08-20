@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Create the internet gateway
+      steampunk.aws.ec2_internet_gateway:
+        name: "{{ igw_name }}"
+        vpc: "{{ vpc_id }}"
+      register: igw
+
+    - name: Set attributes
+      set_stats:
+        data:
+          id: "{{ igw.object.id }}"

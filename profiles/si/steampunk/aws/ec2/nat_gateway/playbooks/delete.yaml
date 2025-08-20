@@ -1,0 +1,28 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Delete the NAT gateway
+      ec2_vpc_nat_gateway:
+        nat_gateway_id: "{{ id }}"
+        wait: true
+        state: absent
+
+    - name: Obtain EIP information
+      ec2_eip_info:
+        filters:
+          allocation-id: "{{ allocation_id }}"
+      register: eip
+
+    - name: Disassociate the VPC address
+      steampunk.aws.ec2_vpc_address:
+        ip: "{{ item.public_ip }}"
+        state: allocated
+      with_items: "{{ eip.addresses }}"
+
+    - name: Delete the VPC address
+      steampunk.aws.ec2_vpc_address:
+        ip: "{{ item.public_ip }}"
+        state: absent
+      with_items: "{{ eip.addresses }}"

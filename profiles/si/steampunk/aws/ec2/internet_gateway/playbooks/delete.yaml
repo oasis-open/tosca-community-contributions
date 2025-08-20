@@ -1,0 +1,9 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Delete the internet gateway
+      steampunk.aws.ec2_internet_gateway:
+        id: "{{ id }}"
+        state: absent
