@@ -674,6 +674,101 @@ For the types defined in each of the contributed profiles:
 - Distinguish between types that model the same component but use
   different implementation technologies (e.g., Ansible vs. Terraform)
 
+### Platform Types
+
+- IaaS (Infrastructure as a Service): You rent virtual machines and
+  storage; you manage everything else.
+
+- PaaS (Platform as a Service): You rent a ready-made platform to
+  develop and deploy apps; provider manages the infrastructure.
+
+  Examples of PaaS:
+
+  - Heroku
+
+  - Google App Engine
+
+  - Microsoft Azure App Service
+
+  - AWS Elastic Beanstalk
+
+  - Red Hat OpenShift
+
+- SaaS (Software as a Service): You rent and use a finished
+  application (like Gmail or Salesforce).
+
+Kubernetes is not itself a Platform as a Service (PaaS). It’s more
+accurate to call it a container orchestration system or an
+infrastructure platform that many PaaS offerings are built on top of.
+
+What Kubernetes does:
+
+- Manages containers (e.g., Docker) across clusters of machines.
+
+- Handles scheduling, scaling, load balancing, networking, and
+  self-healing of applications.
+
+- Provides APIs and abstractions for infrastructure, but doesn’t give
+  you developer-focused tools out of the box (like build pipelines,
+  application runtimes, or managed databases).
+
+Why it’s not PaaS:
+
+- PaaS is developer-focused → You push your code, and the platform
+  takes care of builds, dependencies, deployment, scaling, etc. (e.g.,
+  Heroku).
+
+- Kubernetes is infrastructure-focused → You deploy containers that
+  you have already built; Kubernetes schedules and manages them.
+
+- In fact, people often describe Kubernetes as sitting somewhere
+  between IaaS and PaaS:
+
+  - It’s more than IaaS (because it abstracts servers into a unified
+    cluster).
+
+  - It’s less than PaaS (because it doesn’t abstract away deployment
+    complexity for developers by default).
+
+
+PaaS existed long before Kubernetes was created (2014). For example:
+
+- Heroku (2007) → classic PaaS, lets you git push code and deploy. No
+  Kubernetes.
+
+- Google App Engine (2008) → serverless-style PaaS, predates
+  Kubernetes.
+
+- Cloud Foundry (2011) → a PaaS with its own container/runtime system,
+  not Kubernetes-based.
+
+These platforms provided developer workflows, build pipelines, and
+runtime environments without Kubernetes.
+
+Many newer PaaS offerings do use Kubernetes under the hood, because
+Kubernetes has become a de facto standard for container
+orchestration. Examples:
+
+- OpenShift (Red Hat)
+
+- Google Cloud Run / Knative
+
+- VMware Tanzu Application Service (K8s edition)
+
+In these cases, Kubernetes provides a solid infrastructure layer,
+while the PaaS adds developer-focused abstractions.
+
+Some modern PaaS options still don’t depend on Kubernetes, especially
+serverless PaaS:
+
+- AWS Elastic Beanstalk (abstracts EC2, no Kubernetes required).
+
+- AWS Lambda / Azure Functions (FaaS, sometimes called a “serverless
+  PaaS”).
+
+- Netlify, Vercel (serverless platforms for web apps, not
+  Kubernetes-based).
+
 ## Harmonize
 
 - Extract common class hierarchies
