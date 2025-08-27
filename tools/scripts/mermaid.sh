@@ -36,23 +36,39 @@ if [ ! -f ${TOSCA_FILE} ]; then
 fi
 
 # Output the class diagram
-echo classDiagram
-yq '
+TOSCA=$(yq eval $TOSCA_FILE -o json)
+
+jq -r '
+  if (.node_types | length) > 0 then
+    # This TOSCA file defines node types
     .node_types 
     | to_entries
-    | [
-    	# First, output top-level classes
-	(
-	  map(select(.value.derived_from == null)) 
-	  | .[]
-	  | "    class \(.key)"
-	),
-	# Next, output derived classes"
-	(
-	  map(select(.value.derived_from))
-	  | .[]
-	  | "    \(.value.derived_from) <|-- \(.key)"
+    |[
+       # Print class diagram heading
+       "classDiagram",
+       # Then, output top-level classes
+       (
+	 map(select(.value.derived_from == null)) 
+	 | .[]
+	 | if ( .key | length)  > 0 then
+	     "    class \(.key)"
+	   else
+	     empty
+	   end
+       ),
+       # Next, output derived classes"
+       (
+	 map(select(.value.derived_from))
+	 | .[]
+	 | if ( .key | length)  > 0 then
+	     "    \(.value.derived_from) <|-- \(.key)"
+	   else
+	     empty
+	   end
 	)
       ]
     | .[]
-' $TOSCA_FILE
+  else
+    empty
+  end
+' <<<$TOSCA
