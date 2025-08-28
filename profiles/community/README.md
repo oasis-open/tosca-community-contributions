@@ -58,6 +58,7 @@ projects. So far, the following have been identified:
 - [Yorc](https://github.com/ystia/yorc/tree/develop/data/tosca)
 - [Ystia](https://github.com/ystia/forge/tree/develop/org/ystia)
 - [Alien4Cloud](https://github.com/alien4cloud/csar-public-library/tree/develop/org/alien4cloud)
+- [Micado](https://github.com/micado-scale/tosca)
 - [Radon particles](https://github.com/radon-h2020/radon-particles)
 - [Ubicity](https://github.com/lauwers/tosca-community-contributions/tree/master/profiles/com/ubicity)
 - [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml)
@@ -287,6 +288,66 @@ classDiagram
     SoftwareApplication <|-- MessageBroker
     BaseType <|-- SoftwareApplication
     BaseType <|-- Storage
+```
+
+### Micado
+
+MiCADO is an application-level, cloud-agnostic orchestration and
+auto-scaling framework designed to manage microservices-based
+applications across multiple clouds and edge/fog environments. It
+defines the following node types:
+
+```mermaid
+classDiagram
+    tosca.nodes.Root <|-- tosca.nodes.MiCADO.Edge
+    tosca.nodes.Compute <|-- tosca.nodes.MiCADO.Compute
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.CloudSigma.Compute
+    tosca.nodes.MiCADO.CloudSigma.Compute <|-- tosca.nodes.MiCADO.Edge.CloudSigma
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.EC2.Compute
+    tosca.nodes.MiCADO.EC2.Compute <|-- tosca.nodes.MiCADO.Edge.EC2
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.GCE.Compute
+    tosca.nodes.MiCADO.GCE.Compute <|-- tosca.nodes.MiCADO.Edge.GCE
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.Azure.Compute
+    tosca.nodes.MiCADO.Azure.Compute <|-- tosca.nodes.MiCADO.Edge.Azure
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.CloudBroker.Compute
+    tosca.nodes.MiCADO.CloudBroker.Compute <|-- tosca.nodes.MiCADO.Edge.CloudBroker
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.Nova.Compute
+    tosca.nodes.MiCADO.Nova.Compute <|-- tosca.nodes.MiCADO.Edge.Nova
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.OCI.Compute
+    tosca.nodes.MiCADO.OCI.Compute <|-- tosca.nodes.MiCADO.Edge.OCI
+
+    tosca.nodes.MiCADO.CloudSigma.Compute <|-- tosca.nodes.MiCADO.CloudSigma.Compute.Occo
+    tosca.nodes.MiCADO.CloudSigma.Compute.Occo <|-- tosca.nodes.MiCADO.CloudSigma.Compute.Occo.small
+    tosca.nodes.MiCADO.CloudSigma.Compute.Occo <|-- tosca.nodes.MiCADO.CloudSigma.Compute.Occo.big
+    tosca.nodes.MiCADO.CloudSigma.Compute.Occo.small <|-- tosca.nodes.MiCADO.CloudSigma.Compute.Occo.small.NFS
+    tosca.nodes.MiCADO.EC2.Compute <|-- tosca.nodes.MiCADO.EC2.Compute.Occo
+
+    tosca.nodes.MiCADO.EC2.Compute <|-- tosca.nodes.MiCADO.EC2.Compute.Terra
+
+    tosca.nodes.Container.Application <|-- tosca.nodes.MiCADO.Container.Application
+    tosca.nodes.MiCADO.Container.Application <|-- tosca.nodes.MiCADO.Container.Application.Pod
+    tosca.nodes.MiCADO.Container.Application <|-- tosca.nodes.MiCADO.Container.Application.Docker
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.Init
+    tosca.nodes.Root <|-- tosca.nodes.MiCADO.Container.Config
+    tosca.nodes.BlockStorage <|-- tosca.nodes.MiCADO.Container.Volume
+
+    tosca.nodes.Root <|-- tosca.nodes.MiCADO.Kubernetes
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.Deployment
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.DaemonSet
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.Job
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.StatefulSet
+    tosca.nodes.MiCADO.Container.Application.Pod <|-- tosca.nodes.MiCADO.Container.Pod.Kubernetes
+    tosca.nodes.MiCADO.Container.Application.Pod <|-- tosca.nodes.MiCADO.Container.Application.Pod.Deployment
+    tosca.nodes.MiCADO.Container.Config <|-- tosca.nodes.MiCADO.Container.Config.Kubernetes
+    tosca.nodes.MiCADO.Container.Config <|-- tosca.nodes.MiCADO.Container.Config.ConfigMap
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.EmptyDir
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.HostPath
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.Local
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.NFS
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.GlusterFS
+
+    tosca.nodes.network.Network <|-- tosca.nodes.MiCADO.network.Network.Docker
+
 ```
 
 ### XLAB Steampunk AWS EC2
