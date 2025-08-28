@@ -58,6 +58,7 @@ projects. So far, the following have been identified:
 - [Yorc](https://github.com/ystia/yorc/tree/develop/data/tosca)
 - [Ystia](https://github.com/ystia/forge/tree/develop/org/ystia)
 - [Alien4Cloud](https://github.com/alien4cloud/csar-public-library/tree/develop/org/alien4cloud)
+- [Micado](https://github.com/micado-scale/tosca)
 - [Radon particles](https://github.com/radon-h2020/radon-particles)
 - [Ubicity](https://github.com/lauwers/tosca-community-contributions/tree/master/profiles/com/ubicity)
 - [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml)
@@ -287,6 +288,66 @@ classDiagram
     SoftwareApplication <|-- MessageBroker
     BaseType <|-- SoftwareApplication
     BaseType <|-- Storage
+```
+
+### Micado
+
+MiCADO is an application-level, cloud-agnostic orchestration and
+auto-scaling framework designed to manage microservices-based
+applications across multiple clouds and edge/fog environments. It
+defines the following node types:
+
+```mermaid
+classDiagram
+    tosca.nodes.Root <|-- tosca.nodes.MiCADO.Edge
+    tosca.nodes.Compute <|-- tosca.nodes.MiCADO.Compute
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.CloudSigma.Compute
+    tosca.nodes.MiCADO.CloudSigma.Compute <|-- tosca.nodes.MiCADO.Edge.CloudSigma
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.EC2.Compute
+    tosca.nodes.MiCADO.EC2.Compute <|-- tosca.nodes.MiCADO.Edge.EC2
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.GCE.Compute
+    tosca.nodes.MiCADO.GCE.Compute <|-- tosca.nodes.MiCADO.Edge.GCE
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.Azure.Compute
+    tosca.nodes.MiCADO.Azure.Compute <|-- tosca.nodes.MiCADO.Edge.Azure
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.CloudBroker.Compute
+    tosca.nodes.MiCADO.CloudBroker.Compute <|-- tosca.nodes.MiCADO.Edge.CloudBroker
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.Nova.Compute
+    tosca.nodes.MiCADO.Nova.Compute <|-- tosca.nodes.MiCADO.Edge.Nova
+    tosca.nodes.MiCADO.Compute <|-- tosca.nodes.MiCADO.OCI.Compute
+    tosca.nodes.MiCADO.OCI.Compute <|-- tosca.nodes.MiCADO.Edge.OCI
+
+    tosca.nodes.MiCADO.CloudSigma.Compute <|-- tosca.nodes.MiCADO.CloudSigma.Compute.Occo
+    tosca.nodes.MiCADO.CloudSigma.Compute.Occo <|-- tosca.nodes.MiCADO.CloudSigma.Compute.Occo.small
+    tosca.nodes.MiCADO.CloudSigma.Compute.Occo <|-- tosca.nodes.MiCADO.CloudSigma.Compute.Occo.big
+    tosca.nodes.MiCADO.CloudSigma.Compute.Occo.small <|-- tosca.nodes.MiCADO.CloudSigma.Compute.Occo.small.NFS
+    tosca.nodes.MiCADO.EC2.Compute <|-- tosca.nodes.MiCADO.EC2.Compute.Occo
+
+    tosca.nodes.MiCADO.EC2.Compute <|-- tosca.nodes.MiCADO.EC2.Compute.Terra
+
+    tosca.nodes.Container.Application <|-- tosca.nodes.MiCADO.Container.Application
+    tosca.nodes.MiCADO.Container.Application <|-- tosca.nodes.MiCADO.Container.Application.Pod
+    tosca.nodes.MiCADO.Container.Application <|-- tosca.nodes.MiCADO.Container.Application.Docker
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.Init
+    tosca.nodes.Root <|-- tosca.nodes.MiCADO.Container.Config
+    tosca.nodes.BlockStorage <|-- tosca.nodes.MiCADO.Container.Volume
+
+    tosca.nodes.Root <|-- tosca.nodes.MiCADO.Kubernetes
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.Deployment
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.DaemonSet
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.Job
+    tosca.nodes.MiCADO.Container.Application.Docker <|-- tosca.nodes.MiCADO.Container.Application.Docker.StatefulSet
+    tosca.nodes.MiCADO.Container.Application.Pod <|-- tosca.nodes.MiCADO.Container.Pod.Kubernetes
+    tosca.nodes.MiCADO.Container.Application.Pod <|-- tosca.nodes.MiCADO.Container.Application.Pod.Deployment
+    tosca.nodes.MiCADO.Container.Config <|-- tosca.nodes.MiCADO.Container.Config.Kubernetes
+    tosca.nodes.MiCADO.Container.Config <|-- tosca.nodes.MiCADO.Container.Config.ConfigMap
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.EmptyDir
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.HostPath
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.Local
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.NFS
+    tosca.nodes.MiCADO.Container.Volume <|-- tosca.nodes.MiCADO.Container.Volume.GlusterFS
+
+    tosca.nodes.network.Network <|-- tosca.nodes.MiCADO.network.Network.Docker
+
 ```
 
 ### XLAB Steampunk AWS EC2
@@ -673,6 +734,76 @@ For the types defined in each of the contributed profiles:
   implementations.
 - Distinguish between types that model the same component but use
   different implementation technologies (e.g., Ansible vs. Terraform)
+
+### Platform Types
+
+Platform node types represent resources on which systems and services
+can be deployed. The following figure shows different platforms under
+consideration:
+
+![Platforms](images/platforms.png)
+
+> Do we need to call out Serverless/Functions-as-a-Service separately?
+
+- Bare Metal: A device without operating system software or firmware
+  installed. 
+- Compute: A device with operating system software or firmware
+  installed.
+- IaaS (Infrastructure as a Service): A platform that allows on-demand
+  creation of networks, virtual machines and storage
+- Kubernetes: A container orchestration system that handles
+  scheduling, scaling, load balancing, networking, and self-healing of
+  applications. Kubernetes sits somewhere between IaaS and PaaS
+  - It’s more than IaaS (because it abstracts servers into a unified
+    cluster).
+  - It’s less than PaaS (because it doesn’t abstract away deployment
+    complexity for developers by default).
+- PaaS (Platform as a Service): A platform for developing and
+  deploying apps. pIt allows developers to push code the platform
+  handles builds, dependencies, deployment, scaling, etc.).  Examples
+  of PaaS include
+  - Heroku
+  - Google App Engine
+  - Microsoft Azure App Service
+  - AWS Elastic Beanstalk
+  - Red Hat OpenShift
+- SaaS (Software as a Service): A platform for renting and using a
+  finished application. Examples of SaaS include:
+  - Gmail
+  - Salesforce
+
+#### Layering of Platforms
+
+Some PaaS existed long before Kubernetes was created.  These platforms
+provided developer workflows, build pipelines, and runtime
+environments without Kubernetes. For example:
+
+- Heroku (2007) → classic PaaS, lets you git push code and deploy. No
+  Kubernetes.
+- Google App Engine (2008) → serverless-style PaaS, predates
+  Kubernetes.
+- Cloud Foundry (2011) → a PaaS with its own container/runtime system,
+  not Kubernetes-based.
+
+Many newer PaaS offerings do use Kubernetes under the hood, because
+Kubernetes has become a de facto standard for container
+orchestration. Examples:
+
+- OpenShift (Red Hat)
+- Google Cloud Run / Knative
+- VMware Tanzu Application Service (K8s edition)
+
+In these cases, Kubernetes provides a solid infrastructure layer,
+while the PaaS adds developer-focused abstractions.
+
+Some modern PaaS options still don’t depend on Kubernetes, especially
+serverless PaaS:
+
+- AWS Elastic Beanstalk (abstracts EC2, no Kubernetes required).
+- AWS Lambda / Azure Functions (FaaS, sometimes called a “serverless
+  PaaS”).
+- Netlify, Vercel (serverless platforms for web apps, not
+  Kubernetes-based).
 
 ## Harmonize
 
