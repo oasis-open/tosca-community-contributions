@@ -727,19 +727,45 @@ classDiagram
 ## Categorize
 
 For the types defined in each of the contributed profiles:
-- Distinguish between types that define service components
+
+- Distinguish between types that define services and their components
   vs. types that define the platforms on which these service
-  components are deployed.
+  components are deployed and the providers that own these platforms.
 - Distinguish between abstract types and types that assume specific
   implementations.
 - Distinguish between types that model the same component but use
   different implementation technologies (e.g., Ansible vs. Terraform)
 
-### Platform Types
+### Platforms and Providers
 
-Platform node types represent resources on which systems and services
-can be deployed. The following figure shows different platforms under
-consideration:
+The first set of node type definitions to be harmonized relates to
+*platforms* and *providers*:
+
+- *Platforms* represent *resources* on which systems and services can
+  be deployed.
+- *Providers* represent the *owners* of these resources. Providers
+  make their resources available *as-a-service* and manage the
+  credentials that are used by users to access platform resources.
+
+EDMM includes a `Platform` node type which is then specialized for
+different types of platforms, including IaaS and PaaS. The platform
+concept is also present in Vintner and in DeMAF. Ubicity represents
+platforms using a `VirtualInfrastructureTarget` node type that is then
+specialized to represent AWS and OpenStack regions as well as Proxmox
+servers. Ystia uses a `LocationConfig` concept to represent
+information about cloud platforms. In addition to creating derived
+types for different types of clouds, it also includes a `HostsPool`
+type to represent a collection of physical hosts.
+
+Vintner adds a `Provider` node type to represent the owner of these
+platforms. Some platforms may be owned by the same provider and allow
+sharing of credentials and other information. Separating providers
+from platforms allows for this sharing.
+
+#### Platforms
+
+The following figure shows different
+platforms under consideration:
 
 ![Platforms](images/platforms.png)
 
@@ -751,9 +777,10 @@ consideration:
   installed.
 - IaaS (Infrastructure as a Service): A platform that allows on-demand
   creation of networks, virtual machines and storage
-- Kubernetes: A container orchestration system that handles
-  scheduling, scaling, load balancing, networking, and self-healing of
-  applications. Kubernetes sits somewhere between IaaS and PaaS
+- Container Platform: A container orchestration system such as
+  Kubernetes that handles scheduling, scaling, load balancing,
+  networking, and self-healing of applications. A Container platform
+  sits somewhere between IaaS and PaaS
   - It’s more than IaaS (because it abstracts servers into a unified
     cluster).
   - It’s less than PaaS (because it doesn’t abstract away deployment
