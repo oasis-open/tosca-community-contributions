@@ -117,10 +117,9 @@ following concepts emerge:
 - *Credentials*: are managed by providers and represent *access* to
    platforms given by providers to their users.
 
-## Platforms
+### Platforms
 
-The following figure shows different
-platforms under consideration:
+The following figure shows different platforms under consideration:
 
 ![Platforms](images/platforms.png)
 
@@ -155,8 +154,30 @@ platforms under consideration:
   - Gmail
   - Salesforce
 
-## Layering of Platforms
+### Providers
 
+### Credentials
+
+## Interactions between Entities
+
+### Dependencies between Entities
+The following figure shows how the various platform-related entities
+might interact:
+
+```mermaid
+classDiagram
+    Platform --> Provider:ProvidedBy
+    Platform --> Credential:AuthorizedUsing
+    Credential *-- Provider:IssuedBy
+```
+
+### Layering of Platforms
+
+> This section is intended to discuss layering relationships between
+  platforms. For example, a Kubernetes cluster might be hosted on an
+  IaaS platform. A PaaS platform may use Kubernetes underneath.
+
+#### Layering of PaaS on Kubernetes
 Some PaaS existed long before Kubernetes was created.  These platforms
 provided developer workflows, build pipelines, and runtime
 environments without Kubernetes. For example:
