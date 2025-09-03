@@ -727,83 +727,14 @@ classDiagram
 ## Categorize
 
 For the types defined in each of the contributed profiles:
-- Distinguish between types that define service components
+
+- Distinguish between types that define services and their components
   vs. types that define the platforms on which these service
-  components are deployed.
+  components are deployed and the providers that own these platforms.
 - Distinguish between abstract types and types that assume specific
   implementations.
 - Distinguish between types that model the same component but use
   different implementation technologies (e.g., Ansible vs. Terraform)
-
-### Platform Types
-
-Platform node types represent resources on which systems and services
-can be deployed. The following figure shows different platforms under
-consideration:
-
-![Platforms](images/platforms.png)
-
-> Do we need to call out Serverless/Functions-as-a-Service separately?
-
-- Bare Metal: A device without operating system software or firmware
-  installed. 
-- Compute: A device with operating system software or firmware
-  installed.
-- IaaS (Infrastructure as a Service): A platform that allows on-demand
-  creation of networks, virtual machines and storage
-- Kubernetes: A container orchestration system that handles
-  scheduling, scaling, load balancing, networking, and self-healing of
-  applications. Kubernetes sits somewhere between IaaS and PaaS
-  - It’s more than IaaS (because it abstracts servers into a unified
-    cluster).
-  - It’s less than PaaS (because it doesn’t abstract away deployment
-    complexity for developers by default).
-- PaaS (Platform as a Service): A platform for developing and
-  deploying apps. pIt allows developers to push code the platform
-  handles builds, dependencies, deployment, scaling, etc.).  Examples
-  of PaaS include
-  - Heroku
-  - Google App Engine
-  - Microsoft Azure App Service
-  - AWS Elastic Beanstalk
-  - Red Hat OpenShift
-- SaaS (Software as a Service): A platform for renting and using a
-  finished application. Examples of SaaS include:
-  - Gmail
-  - Salesforce
-
-#### Layering of Platforms
-
-Some PaaS existed long before Kubernetes was created.  These platforms
-provided developer workflows, build pipelines, and runtime
-environments without Kubernetes. For example:
-
-- Heroku (2007) → classic PaaS, lets you git push code and deploy. No
-  Kubernetes.
-- Google App Engine (2008) → serverless-style PaaS, predates
-  Kubernetes.
-- Cloud Foundry (2011) → a PaaS with its own container/runtime system,
-  not Kubernetes-based.
-
-Many newer PaaS offerings do use Kubernetes under the hood, because
-Kubernetes has become a de facto standard for container
-orchestration. Examples:
-
-- OpenShift (Red Hat)
-- Google Cloud Run / Knative
-- VMware Tanzu Application Service (K8s edition)
-
-In these cases, Kubernetes provides a solid infrastructure layer,
-while the PaaS adds developer-focused abstractions.
-
-Some modern PaaS options still don’t depend on Kubernetes, especially
-serverless PaaS:
-
-- AWS Elastic Beanstalk (abstracts EC2, no Kubernetes required).
-- AWS Lambda / Azure Functions (FaaS, sometimes called a “serverless
-  PaaS”).
-- Netlify, Vercel (serverless platforms for web apps, not
-  Kubernetes-based).
 
 ## Harmonize
 
