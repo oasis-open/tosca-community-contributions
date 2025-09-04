@@ -141,8 +141,8 @@ The following figure shows different platforms under consideration:
   - It’s less than PaaS (because it doesn’t abstract away deployment
     complexity for developers by default).
 - PaaS (Platform as a Service): A platform for developing and
-  deploying apps. pIt allows developers to push code the platform
-  handles builds, dependencies, deployment, scaling, etc.).  Examples
+  deploying apps. It allows developers to push code and the platform
+  handles builds, dependencies, deployment, scaling, etc..  Examples
   of PaaS include
   - Heroku
   - Google App Engine
@@ -153,6 +153,17 @@ The following figure shows different platforms under consideration:
   finished application. Examples of SaaS include:
   - Gmail
   - Salesforce
+
+```mermaid
+classDiagram
+    class Platform
+    Platform <|-- BareMetalPlatform
+    Platform <|-- ComputePlatform
+    Platform <|-- IaasPlatform
+    Platform <|-- ContainerPlatform
+    Platform <|-- PaasPlatform
+    Platform <|-- SaasPlatform
+```
 
 ### Providers
 
