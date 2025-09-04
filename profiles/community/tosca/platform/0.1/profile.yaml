@@ -1,0 +1,44 @@
+tosca_definitions_version: tosca_2_0
+
+profile: community.tosca.platform:0.1
+
+description: >-
+  TOSCA Community Platform Profile type definitions.
+
+node_types:
+  Platform:
+    description: |
+      Base platform node type
+  BareMetalPlatform:
+    description: |
+      Bare metal platform node type. Represents a device without
+      operating system software or firmware installed.
+    derived_from: Platform
+  ComputePlatform:
+    description: |
+      Compute platform node type. Represents a device with operating
+      system software or firmware installed.
+    derived_from: Platform
+  IaasPlatform:
+    description: |
+      Infrastructure as a Service platform node type. Represents a
+      platform that allows on-demand creation of networks, virtual
+      machines and storage.
+    derived_from: Platform
+  ContainerPlatform:
+    description: |
+      Container platform node type. Represents a container
+      orchestration system that handles scheduling, scaling, load
+      balancing, networking, and self-healing of applications.
+    derived_from: Platform
+  PaasPlatform:
+    description: |
+      PaaS platform node type. Represents a platform for developing
+      and deploying apps. Developers push code and the platform
+      handles builds, dependencies, deployment, scaling, etc.
+    derived_from: Platform
+  SaasPlatform:
+    description: |
+      SaaS platform node type. Represents platform for renting and
+      using a finished application.
+    derived_from: Platform
