@@ -14,6 +14,11 @@ fi
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
+	-t|--type)
+	    TYPE_OF_TYPE="$2"
+	    shift # past argument
+	    shift # past value
+	    ;;
 	*)
 	    if [ ! -z ${TOSCA_FILE} ]; then
 		echo "Only one TOSCA file argument allowed"
@@ -26,7 +31,16 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ -z ${TOSCA_FILE} ]; then
-    echo "Usage: mermaid.sh tosca_file"
+    echo "Usage: mermaid.sh [--type <type_of_type>] tosca_file"
+    echo "   where type_of_type is one of:"          
+    echo "       node (default)"          
+    echo "       relationship"          
+    echo "       capability"          
+    echo "       artifact"
+    echo "       interface"          
+    echo "       policy"          
+    echo "       group"          
+    echo "       node"          
     exit 3
 fi
 
@@ -35,13 +49,19 @@ if [ ! -f ${TOSCA_FILE} ]; then
     exit 4
 fi
 
+if [ -z ${TYPE_OF_TYPE} ]; then
+    TYPES=node_types
+else
+    TYPES="$TYPE_OF_TYPE"_types
+fi
+
 # Output the class diagram
 TOSCA=$(yq eval $TOSCA_FILE -o json)
 
-jq -r '
-  if (.node_types | length) > 0 then
-    # This TOSCA file defines node types
-    .node_types 
+jq --arg t "$TYPES" -r '
+  if (.[$t] | length) > 0 then
+    # This TOSCA file defines the requested types
+    .[$t] 
     | to_entries
     |[
        # Print class diagram heading
