@@ -59,6 +59,8 @@ projects. So far, the following have been identified:
 - [Micado](https://github.com/micado-scale/tosca)
 - [Radon particles](https://github.com/radon-h2020/radon-particles)
 - [Ubicity](https://github.com/lauwers/tosca-community-contributions/tree/master/profiles/com/ubicity)
+- [Puccini](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/cloud/puccini)
+- [Turandot](https://github.com/tliron/turandot)
 - [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml)
 - other?
 
@@ -680,6 +682,103 @@ classDiagram
     Resource <|-- ClusterRoleBinding
     NamespacedResource <|-- ConfigMap
     Root <|-- HelmApp
+```
+### Puccini
+
+Puccini takes a different approach than most other TOSCA projects: it
+models entities using *capability types* rather than node types and
+then composes node types as collections of capabilities. To reflect
+this approach, the following diagrams show Puccini capability type
+hieararchies rather than node type hiearchies. This type hierarchy
+foces on type definitions in support of Kubernetes-based services.
+
+```mermaid
+classDiagram
+    class Metadata
+    class Resource
+    Resource <|-- CustomResourceDefinition
+    Resource <|-- Service
+    Service <|-- ClusterIP
+    ClusterIP <|-- NodePort
+    NodePort <|-- LoadBalancer
+    Service <|-- ExternalName
+    Resource <|-- Controller
+    Controller <|-- Deployment
+    Resource <|-- NetworkAttachmentDefinition
+    NetworkAttachmentDefinition <|-- BridgeNetworkAttachmentDefinition
+```
+
+### Turandot
+
+Turandot is focused exclusively on Kubernetes orchestration. It takes
+the same approach as Puccini by using capabilities to model entities
+rather than nodes. The following shows the Turandot capability type
+hierarchy:
+```mermaid
+classDiagram
+    class APIService
+    class Binding
+    class CSIDriver
+    class CSINode
+    class CSIStorageCapacity
+    class CertificateSigningRequest
+    class ClusterRole
+    class ClusterRoleBinding
+    class ComponentStatus
+    class ConfigMap
+    class ControllerRevision
+    class CronJob
+    class CustomResourceDefinition
+    class DaemonSet
+    class Deployment
+    class EndpointSlice
+    class Endpoints
+    class Event
+    class EventsEvent
+    class Eviction
+    class FlowSchema
+    class HorizontalPodAutoscaler
+    class Ingress
+    class IngressClass
+    class Job
+    class KNode
+    class Lease
+    class LimitRange
+    class LocalSubjectAccessReview
+    class Metadata
+    class MutatingWebhookConfiguration
+    class Namespace
+    class NetworkPolicy
+    class PersistentVolume
+    class Pod
+    class PodDisruptionBudget
+    class PodSecurityPolicy
+    class PriorityClass
+    class PriorityLevelConfiguration
+    class ReplicaSet
+    class ReplicationController
+    class ResourceQuota
+    class Role
+    class RoleBinding
+    class RuntimeClass
+    class Scale
+    class Secret
+    class SelfSubjectAccessReview
+    class SelfSubjectRulesReview
+    class Service
+    class ServiceAccount
+    class StatefulSet
+    class StorageClass
+    class StorageVersion
+    class SubjectAccessReview
+    class TokenRequest
+    class TokenReview
+    class ValidatingWebhookConfiguration
+    class VolumeAttachment
+    Service <|-- ClusterIP
+    Service <|-- ExternalName
+    Service <|-- LoadBalancer
+    Service <|-- NodePort
 ```
 ### Cloudify
 
