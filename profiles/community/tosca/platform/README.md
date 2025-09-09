@@ -154,6 +154,9 @@ The following figure shows different platforms under consideration:
   - Gmail
   - Salesforce
 
+Based on the inventory of node type definitions above, the following
+node type hierarchy is proposed:
+
 ```mermaid
 classDiagram
     class Platform
@@ -163,6 +166,19 @@ classDiagram
     Platform <|-- ContainerPlatform
     Platform <|-- PaasPlatform
     Platform <|-- SaasPlatform
+    IaasPlatform <|-- GoogleCloudPlatform
+    IaasPlatform <|-- AwsEc2
+    IaasPlatform <|-- OpenStack
+    IaasPlatform <|-- Azure
+    ContainerPlatform <|-- KubernetesCluster
+    ContainerPlatform <|-- DockerEngine
+    PaasPlatform <|-- GoogleAppEngine
+    PaasPlatform <|-- AwsBeanstalk
+    PaasPlatform <|-- OpenShift
+    PaasPlatform <|-- Heroku
+    SaasPlatform <|-- Auth0
+    SaasPlatform <|-- DBaasPlatform
+    DBaasPlatform <|-- AwsAurora
 ```
 
 ### Providers
@@ -171,7 +187,6 @@ classDiagram
 
 ## Interactions between Entities
 
-### Dependencies between Entities
 The following figure shows how the various platform-related entities
 might interact:
 
@@ -182,13 +197,12 @@ classDiagram
     Credential *-- Provider:IssuedBy
 ```
 
-### Layering of Platforms
+## Layering of Platforms
 
 > This section is intended to discuss layering relationships between
   platforms. For example, a Kubernetes cluster might be hosted on an
   IaaS platform. A PaaS platform may use Kubernetes underneath.
 
-#### Layering of PaaS on Kubernetes
 Some PaaS existed long before Kubernetes was created.  These platforms
 provided developer workflows, build pipelines, and runtime
 environments without Kubernetes. For example:
