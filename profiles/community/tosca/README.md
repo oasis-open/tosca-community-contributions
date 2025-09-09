@@ -15,10 +15,10 @@ likely that there are sufficient similarities between these profiles
 that should allow them to be harmonized. However, there are likely
 also significant differences, specifically:
 
-- differences in the target platforms on which components modeled by
+- Differences in the target platforms on which components modeled by
   node types are intended to be deployed (e.g. IaaS clouds, PaaS
   platforms, Kubernetes clusters, dedicated compute devices, etc.)
-- differences in the deployment technologies used to interact with the
+- Differences in the deployment technologies used to interact with the
   physical resources (e.g., Ansible, Terraform, Bash, etc.)
 
 The community profiles should include sufficient variability to
@@ -28,8 +28,9 @@ accommodate these differences.
 
 Common community profiles will be created using the following process:
 
-1. *Document*: For each of the profiles under consideration, document
-   the TOSCA node type hiearchies.
+1. *Inventory*: Create an inventory of TOSCA projects, and for each of
+   the projects under consideration, document the TOSCA node type
+   hiearchies.
 2. *Categorize*: Define common categories into which to separate the
    various node type definitions.
 3. *Harmonize*: Extract common node type hierarchies for each of the
@@ -40,7 +41,7 @@ Common community profiles will be created using the following process:
 6. *Implement*: Define mechanisms for overlaying various
    deployment technologies for the community profiles.
 
-## Document
+## Inventory
 
 Common community profiles will be based on TOSCA type definitions that
 have been created in the context of various TOSCA implementation
@@ -62,11 +63,8 @@ projects. So far, the following have been identified:
 - [Puccini](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/cloud/puccini)
 - [Turandot](https://github.com/tliron/turandot)
 - [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml)
-- other?
 
-> Most of these type definitions will need to be converted to TOSCA v2.0
-
-This section shows node type hierarchies for each of these profiles
+This section shows node type hierarchies for each of these projects.
 
 ### TOSCA Simple Profile in YAML v1.3
 
@@ -828,8 +826,8 @@ For the types defined in each of the contributed profiles:
 - Distinguish between types that define services and their components
   vs. types that define the platforms on which these service
   components are deployed and the providers that own these platforms.
-- Distinguish between abstract types and types that assume specific
-  implementations.
+- Distinguish between abstract types and types that assume
+  technology-specific or vendor-specific implementations.
 - Distinguish between types that model the same component but use
   different implementation technologies (e.g., Ansible vs. Terraform)
 
