@@ -119,7 +119,7 @@ We recommend using *substitution* to map from the system view level of
 abstraction to the administrator view level of abstraction, as shown
 in the following figure:
 
-![Translate system view to administrator view](images/system_to_administrator.png?raw=true)
+![Translate system view to administrator view](images/system-to-administrator.png?raw=true)
 
 Since substitution mapping may require sharing of capability types and
 relationship types between different profiles, introduce a *common*
@@ -137,12 +137,11 @@ used to add technology-specific or vendor-specific implementations to
 system view node types.
 
 #### Translating Administrator View to Device View
-
 We recommend using *derivation* to map from the administrator view
 level of abstraction to the device view level of abstraction, as shown
 in the following figure:
 
-![Translate administrator view to device view](images/administrator_to_device.png?raw=true)
+![Translate administrator view to device view](images/administrator-to-device.png?raw=true)
 
 When using derivation, we recommend maintaining a shallow capability
 type hierarchy. Specifically, avoid creating subtypes to constrain
@@ -156,7 +155,7 @@ Derivation could be used again to translate from the device view level
 of abstraction to the instance view level of abstraction, as shown in
 the following figure.
 
-![Translate device view to instance view](images/device_to_instance.png?raw=true)
+![Translate device view to instance view](images/device-to-instance.png?raw=true)
 
 This figure suggests that different derived classes could add
 different types of artifacts that can be used as interface operation
