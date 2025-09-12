@@ -23,40 +23,61 @@ policies can be applied.
 The policy continuum recommends five different levels of abstraction
 as shown in the following picture:
 
-![Policy Continuum](images/abstraction.png?raw=true)
+![Policy Continuum](images/policy-continuum.png?raw=true)
 
-**Business View**: describes services in terms of business goals. It
-models services as products that are available to customers.
-
-**System View**: describes the architectural components of the service
-in a technology-agnostic fashion. It the system architecture used to
-meet the business objectives specified in the business view.
-
-**Administrator View**: specifies technologies used for each of the
-architectural components in the system. It introduces
-technology-specific implementations for the architecture specified in
-the system view.
-
-**Device View**: lists specific devices or software components-as well
-as their associated configurations-for all of the components of the
-service. It introduces vendor-specific equipment for the technologies
-used in the administrator view.
-
-**Instance View**: captures the state of each instance.
+- **Business View**: describes services in terms of business goals. It
+  models services as products that are available to customers.
+- **System View**: describes the architectural components of the
+  service in a technology-agnostic fashion. It the system architecture
+  used to meet the business objectives specified in the business view.
+- **Administrator View**: specifies technologies used for each of the
+  architectural components in the system. It introduces
+  technology-specific implementations for the architecture specified
+  in the system view.
+- **Device View**: lists specific devices or software components-as
+  well as their associated configurations-for all of the components of
+  the service. It introduces vendor-specific equipment for the
+  technologies used in the administrator view.
+- **Instance View**: captures the state of each instance and specifies
+  details about the interfaces for managing these instances.
 
 ### The Model Continuum
-For the purpose of creating service models that drive *TOSCA
-orchestration*, only system view, administrator view, and device view
-levels are important as shown in the following figure:
 
-![TOSCA Levels of Abstraction](images/tosca_abstraction.png?raw=true)
+Ubicity applies the levels of abstraction proposed by the Policy
+Continuum to the *TOSCA models* used for purposes of
+*Orchestration*. Since the *Business View* level of abstraction does
+not play a role in *TOSCA Orchestration*, only the following four
+levels of abstractions are important in the resulting *Model
+Continuum* as shown in the following figure:
 
-Using a **top-down** modeling approach, system designers create
-abstract system view models to define the architecture of their
-systems. These models are then extended using administrator view
-models that introduce the technologies chosen to implement the system
-architecture. Finally, device view models specify specific vendor
-implementations for the chosed technologies.
+![Model Continuum](images/model-continuum.png?raw=true)
+
+This enables a **top-down** modeling approach, where:
+
+1. System designers create abstract system view models to define the
+   architecture of their systems.
+2. These abstract system models are then refined using administrator
+   view models that introduce the specific technologies chosen to
+   implement the system architecture.
+3. For the technologies selected in the administrator view models,
+   device view models specify specific vendor products or software
+   packages.
+4. Finally, the instance view models add implementation artifacts that
+   can be used by an Orchestrator to manage the products specifies in
+   the device view models.
+
+#### Example
+
+> This section needs to be fleshed out.
+
+1. The system view includes a node for a *relational database*
+2. The administrator view specifies that *DBMS software* needs to be
+   installed and that a *database instance* needs to be created on
+   that DBMS and that a dedicated *database user* account needs to be
+   created.
+3. The device view specifies that *PostgreSQL* needs to be used.
+4. The instance view specifies that *Ansible* playbooks will be used
+   to setup and configure the PostgreSQL database.
 
 ### Translating Between Levels of Abstraction
 During the orchestration process, models at a higher level of
@@ -82,51 +103,73 @@ shown in the following figure:
 
 ### Abstraction Best Practices
 
-Ubicity recommends the following best practices for creating abstract
-models:
+TOSCA Profile designers should create separate TOSCA profiles for each
+level of abstraction and should be very clear about the level of
+abstraction for which each profile is designed. Said a different way,
+profile designers should avoid mixing and matching types defined at
+different levels of abstraction within the same profile. Instead, they
+should define separate profiles for system view models, for
+administrator view models, for device view models, and for instance
+view models, and use the techniques recommended in this document to
+translate between different levels of abstractin.
 
-> Note that these recommendations are still in flux. They may change
-> based on additional experience. In addition, the profiles defined in
-> this repository do not yet fully comply with these guidelines.
+#### Translating System View to Administrator View
 
-- Avoid mixing and matching types defined at different levels of
-  abstraction within the same profile. Instead, define separate TOSCA
-  profiles for level of abstractions. Specifically, define a profile
-  for system view models, a profile for administrator view models, and
-  a profile for device view models.
-- Avoid mixing and matching types defined at different levels of
-  abstraction within the same TOSCA service template.
-- Use *substitution* to map from the system view level of abstraction
-  to the administrator view level of abstraction, as shown in the
-  following figure:
+We recommend using *substitution* to map from the system view level of
+abstraction to the administrator view level of abstraction, as shown
+in the following figure:
 
+![Translate system view to administrator view](images/system-to-administrator.png?raw=true)
 
-- Use *derivation* to map from the administrator view level of
-  abstraction to the device view level of abstraction, as shown in the
-  following figure:
+Since substitution mapping may require sharing of capability types and
+relationship types between different profiles, introduce a *common*
+profile that defines these relationship types and capability
+types. Only this common profile should define top-level relationship
+types or capability types. Profile-specific types should derive from
+one of the base types defined in the common profile.
 
-  ![Translate administrator view to device view](images/administrator_to_device.png?raw=true)
-- Since substitution mapping may require sharing of capability types
-  and relationship types between different profiles, introduce a
-  *common* profile that defines these relationship types and
-  capability types. Only this common profile should define top-level
-  relationship types or capability types. Profile-specific types
-  should derive from one of the base types defined in the common
-  profile.
-- Maintain a shallow capability type hierarchy. Specifically, avoid
-  creating subtypes to constrain which source nodes can use a certain
-  capability. Instead, constrain the *generic* capability type with
-  `valid_source_node_type` statements.
-
-Note that these guidelines do not prohibit the use of *inheritance*
+Note that this recommendation do not prohibit the use of *inheritance*
 for types defined in *system view* profiles. In fact, inheritance
 could be useful to define base node types that define common
 functionality (e.g. interfaces) that is shared by all node types
-derived from that common base type. However, inheritancy should not be
+derived from that common base type. However, inheritance should not be
 used to add technology-specific or vendor-specific implementations to
-abstract node types.
+system view node types.
 
-### Organizing Ubicity TOSCA Profiles
+#### Translating Administrator View to Device View
+We recommend using *derivation* to map from the administrator view
+level of abstraction to the device view level of abstraction, as shown
+in the following figure:
+
+![Translate administrator view to device view](images/administrator-to-device.png?raw=true)
+
+When using derivation, we recommend maintaining a shallow capability
+type hierarchy. Specifically, avoid creating subtypes to constrain
+which source nodes can use a certain capability. Instead, constrain
+the *generic* capability type with `valid_source_node_type`
+statements.
+
+#### Translating Device View to Instance View
+
+Derivation could be used again to translate from the device view level
+of abstraction to the instance view level of abstraction, as shown in
+the following figure.
+
+![Translate device view to instance view](images/device-to-instance.png?raw=true)
+
+This figure suggests that different derived classes could add
+different types of artifacts that can be used as interface operation
+implementations. One derived node type could use Ansible playbooks, a
+second derived node type could use Terraform configurations, and a
+third could use simple Bash scripts.
+
+However, this approach could result in a proliferation of profiles. A
+better approach would be to *dynamically* attach implementations to
+the types defined in device view profiles without having to introduce
+new derived types. Unfortunately, the TOSCA language currently does
+not have any constructs to support such dynamic behavior.
+
+### Organization of Ubicity TOSCA Profiles
 
 The Ubicity TOSCA Profiles have been designed with these recommended
 best practices in mind. Their organization is shown in the following
