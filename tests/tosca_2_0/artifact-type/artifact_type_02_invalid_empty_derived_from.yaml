@@ -1,0 +1,10 @@
+# Error: The artifact_type 'SampleArtifact' has an empty derived_from field, which is not allowed by TOSCA 2.0.
+
+tosca_definitions_version: tosca_2_0
+
+artifact_types:
+  SampleArtifact:
+    derived_from: ""
+    description: Sample artifact type with empty derived_from field
+    mime_type: application/example
+    file_ext: [ ex ]

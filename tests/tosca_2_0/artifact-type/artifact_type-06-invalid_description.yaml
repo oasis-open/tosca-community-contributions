@@ -1,0 +1,10 @@
+tosca_definitions_version: tosca_2_0
+
+artifact_types:
+  tosca_sample:
+    derived_from: tosca.artifacts.Root
+    description:
+      - This is an invalid description
+      - Because it's a list not a string
+    mime_type: application/java-archive
+    file_ext: [ jar ]

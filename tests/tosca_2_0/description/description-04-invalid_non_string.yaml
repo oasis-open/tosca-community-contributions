@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  oasis.testAssertion.id: description-04-invalid
+  oasis.testAssertion.description: Parser MUST fail if description is not a string (e.g. number).
+  oasis.testAssertion.target: a tosca template where the description value is a number
+  oasis.testAssertion.predicate: >
+    When parsing the template
+    assert raises the error 'InvalidType'
+  oasis.testAssertion.tags.errors: InvalidType
+  oasis.testAssertion.tags.errors_lines: 13
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+description: 12345  # Invalid: should be a string, not a number

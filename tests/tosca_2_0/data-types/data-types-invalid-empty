@@ -1,0 +1,9 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+capability_types:
+  MyCapabilityType:
+    description: Capability type with empty derived_from field
+    properties:
+      prop1:
+        type: string
+        description: A sample property

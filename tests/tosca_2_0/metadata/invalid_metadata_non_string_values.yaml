@@ -1,0 +1,7 @@
+tosca_definitions_version: tosca_2_0
+
+description: "Invalid TOSCA file with metadata containing non-string values"
+
+metadata:
+  template_name: 12345  # Invalid value type, should be a string
+
