@@ -1,0 +1,5 @@
+tosca_definitions_version: tosca-2-0  # Invalid: should be 'tosca_2_0'
+
+description: "Invalid TOSCA file with incorrect tosca_definitions_version value"
+
+

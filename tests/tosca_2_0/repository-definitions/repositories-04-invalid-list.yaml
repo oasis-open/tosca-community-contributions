@@ -17,9 +17,7 @@ metadata:
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 repositories:
-  my_git_repository:
-    metadata:
-      created: "01-01-2025"
+  - my_git_repository: #invalid should be map not list
     description: A repository
     url: https://github.com/my-project/
     credential:

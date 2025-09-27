@@ -1,0 +1,8 @@
+tosca_definitions_version: tosca_2_0
+
+description: "Invalid TOSCA file with incorrect dsl_definitions field"
+
+dsl_definitions: 12345  # Invalid: should be a map, not a number
+
+metadata:
+  template_name: "invalid_dsl_definitions"

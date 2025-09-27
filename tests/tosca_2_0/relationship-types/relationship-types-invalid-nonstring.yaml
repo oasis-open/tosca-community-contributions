@@ -1,0 +1,10 @@
+tosca_definitions_version: tosca_2_0
+
+relationship_types:
+  1.0: # Invalid: name should be string not float
+    properties:
+      property-1:
+        type: string
+      # more details ...
+
+

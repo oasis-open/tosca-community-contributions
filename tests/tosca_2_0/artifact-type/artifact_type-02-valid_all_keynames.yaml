@@ -20,6 +20,8 @@ artifact_types:
     mime_type: application/java-archive
     file_ext: [ jar ]
     version: '1.0'
+    metadata:
+      date_created: '2024-01-01'
     properties:
       sample_property:
         type: string

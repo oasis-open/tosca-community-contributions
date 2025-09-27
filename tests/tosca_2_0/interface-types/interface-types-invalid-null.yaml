@@ -1,0 +1,9 @@
+tosca_definitions_version: tosca_2_0
+interface_types:
+  "":  # <<<<< INVALID: name cannot be null
+    operations:
+      signal-begin-receive:
+        description: Operation to signal start of some message processing.
+      signal-end-receive:
+        description: Operation to signal end of some message processed.
+ 
