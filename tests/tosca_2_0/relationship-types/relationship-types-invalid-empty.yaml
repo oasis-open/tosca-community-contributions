@@ -1,0 +1,12 @@
+tosca_definitions_version: tosca_2_0
+
+relationship_types:
+node_types:
+
+  MyCustomClientServer:
+    description: A custom client-server relationship type
+    properties:
+      another-property:
+        type: string
+      # more details ...
+

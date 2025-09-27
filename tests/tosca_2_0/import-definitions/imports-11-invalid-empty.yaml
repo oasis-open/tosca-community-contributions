@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+  oasis.testAssertion.id: imports-02-relative
+  oasis.testAssertion.description: Parsing a document with an import from a relative file MUST be successful.
+  oasis.testAssertion.target: a tosca template that defines a valid single line import to a relative file.
+  oasis.testAssertion.prerequisite: >
+    TODO Add reference to the node template parsing test.
+  oasis.testAssertion.predicate:  >
+    When parsing the template
+    assert there is no errors
+  oasis.testAssertion.prescription_level: mandatory
+  oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.tags.conformancetarget: Parser-Validator
+
+node_types:
+  MyNodeType:
+    properties:
+      my_property:
+        type: string
+        default: "default value"
+        description: Example property for MyType
+
+imports:
+# invalid empty
+service_template:
+  node_templates:
+    my_node:
+      type: MyNodeType

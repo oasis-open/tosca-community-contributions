@@ -1,0 +1,10 @@
+tosca_definitions_version: tosca_2_0
+
+interface_types:
+  - Signal:  # <<<<< INVALID: should be a map, not a list
+      operations:
+        signal-begin-receive:
+          description: Operation to signal start of some message processing.
+        signal-end-receive:
+          description: Operation to signal end of some message processed.
+
