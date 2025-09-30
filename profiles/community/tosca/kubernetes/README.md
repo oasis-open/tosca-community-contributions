@@ -4,9 +4,64 @@ This profile defines TOSCA types to support integration with
 Kubernetes. It tries to build on and extend existing [TOSCA type
 definitions for Kubernetes](inventory.md).
 
-We start by reviewing different kinds of *resources* defined in
-Kubernetes and then suggest an approach for how these resources can be
-supported by TOSCA node and capability types.
+## Why TOSCA for Kubernetes
+
+1. *Model Microservices Mesh*: because TOSCA models services as a
+   graph, it can represent how various microservices interact with one
+   another to deliver complete system functionality. Such information
+   is not readily available from inspecting Kubernetes manifests.
+2. *Model dependencies*: Some Kubernetes resources may need to be
+   created before others. For example, some resources require an
+   *admin* service account before a namespace can be created. This
+   type of *precedence* relationship cannot be expressed in Kubernetes
+   manifests and may require separating manifests.
+
+## Example Microservices
+
+Our plan is to create a TOSCA Kubernetes Profile by evaluating *real
+world* microservices examples and then create TOSCA service templates
+for these examples. TOSCA Kubernetes types will then be created for
+the nodes and relationships in those service templates.
+
+### [Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo)
+
+This example was suggested by Miles. It defines a web-based e-commerce
+app where users can browse items, add them to the cart, and purchase
+them. It consists of 11 microservices that communicate using gRPC, as
+shown in the following figure:
+
+![Online Boutique](
+https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/docs/img/architecture-diagram.png?raw=true)
+
+There is a single [Kubernetes
+Manifest](https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/release/kubernetes-manifests.yaml)
+that deploys the entire microservice.
+
+#### Questions
+
+1. Can we figure out from the manifest file which services interact
+   with which other services? Can these interactions be derived from
+   labels?
+2. Conversely, if we define relationships in a TOSCA service template
+   that represent the interactions between different microservices,
+   how can we take advantage of these relationships? Can they be used
+   to
+3. TOSCA establishes relationships from requirements of source nodes
+   to capabilities of target nodes. Do any of the resources in the
+   Kubernetes manifest correspond to requirements or capabilities?
+4. On a related note, Kubernetes separates the *Service* that accesses
+   pods from the *Deployment* that instantiates those pods. Both of
+   them are Kubernetes resources. How to these *translate* to TOSCA
+   entities:
+   - Are Services and Deployments both represented as nodes?
+   - Are Services and Deployments both represented as capabilities
+     (where some other entity is modeled as a node that contains those
+     capabilities)?
+   - Is a Deployment modeled as a node whereas a Service is modeled as
+     a capability through which that deployment is accessed?
+   
+### [DeathStarBench](https://github.com/delimitrou/DeathStarBench)
+These examples were suggested by Angelo
 
 ## Kubernetes Resources
 
