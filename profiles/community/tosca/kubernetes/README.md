@@ -19,30 +19,118 @@ cases:
    powerful tool for designing applications by visualizing
    interactions between microservices, a critial feature for
    designing complex applications.
-
-1. *Design-Time Validation*: Using TOSCA for modeling Kubernetes
+2. *Design-Time Validation*: Using TOSCA for modeling Kubernetes
    services provides the ability to validate topological relationships
    between microservices at design time, ensuring correct designs
    before service deployment.
-2. *Microservice Configuration*: Topology information can be used to
+3. *Runtime Validation*: TOSCA can also be used for Day 2
+   validation. TOSCA templates effectively define a collection of
+   schemas and policies that apply not only at deployment but also
+   during ongoing operations. Orchestrators can validate at runtime
+   whether a service complies with its TOSCA template and take
+   corrective action if not.
+4. *Microservice Configuration*: Topology information can be used to
    automatically generate microservice configurations such as resource
    labels and selectors, connectivity information (e.g., using
    environment variables), etc.
-3. *Deploy Service Meshes*: Automatically *inject* service meshes
+5. *Deploy Service Meshes*: Automatically *inject* service meshes
    (such as Istio, Linkerd, Consul, and others) into Kubernetes
    services and use topology information to configure these meshes.
-4. *Enforce Network Policies*: By default, Kubernetes microservices
+6. *Enforce Network Policies*: By default, Kubernetes microservices
    use a single Layer 2 network that enables any-to-any communication
    between microservices and does not enforce any security
    rules. Topology information in TOSCA service templates can be used
    to only enable connectivity between those microservices that are
    expected to communicate (e.g., by deploying and configuring Cillium
    network security and packet filtering).
-5. *Manage Deployment Dependencies*: Some Kubernetes resources may
+7. *Manage Deployment Dependencies*: Some Kubernetes resources may
    need to be created before others. For example, some resources
    require an *admin* service account before a namespace can be
    created. This type of *precedence* relationship cannot be expressed
    in Kubernetes manifests and may require separating manifests.
+8. *Model Relationships between Infrastructure and Workloads*: TOSCA
+   offers the potential to streamline Kubernetes deployments by using
+   TOSCA as a unified language for infrastructure and workload
+   management, which could simplify the deployment process and ensure
+   proper interaction between infrastructure and workloads.
+9. *Improved Service Assurance*: TOSCA provides the ability to create
+   additional control loops for service assurance, particularly when
+   dealing with unreliable software and hardware.
+
+## Objectives
+
+TOSCA support for Kubernetes is guided by the following two (seemingly
+competing) objectives:
+
+1. Given that TOSCA's main benefit is its ability to define service
+   topologies that model the interactions between microservices, it
+   must support **top-down** service designs that abstract away
+   non-essential details to maintain a clear focus on microservice
+   interactions.
+2. On the other hand, TOSCA must also maintaining the ability to
+   express low-level Kubernetes concepts and support **bottom-up**
+   designs that align with Kubernetes resources, as losing this
+   functionality could create obstacles for existing Kubernetes users.
+
+TOSCA profiles for Kubernetes must balance high-level abstractions
+with low-level building blocks since users might need both approaches
+depending on their workflows and company requirements.
+
+## Design Approaches
+
+The following two approaches are explored to balance high-level
+microservice abstractions with low-level Kubernetes resource
+descriptions:
+
+### Substitution Mapping
+
+One approach leverages the [policy
+continuum](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/com/ubicity#abstraction)
+design pattern that defines different TOSCA profiles for different
+levels of abstraction:
+
+- A *System View* profile defines abstract types that focus on
+  modeling the microservices that make up a service and the
+  interactions between these microservices. Nodes of these types are
+  used to create abstract TOSCA service templates that focus on
+  service topology only and are independent of specific
+  implementation details such as service meshes or monitoring
+  systems.
+- A separate *Administrator View* profile defines node types that
+  model [Kubernetes
+  resources](#kubernetes-resources)
+  fairly closely. This profile could get augmented with operation
+  implementations that deploy the corresponding Kubernetes resources
+  on Kubernetes clusters.
+- *Substitution mapping* is used to translate between these two views:
+  each node in the abstract service is *decomposed* (substituted)
+  using a service template that consists of nodes with types defined
+  in the Administrator View profile.
+
+This approach provides service designers with the ability to create
+top-down service designs and drill down into lower-level
+details. However, tooling support would be necessary to effectively
+manage substitution mapping and other complex development processes.
+
+### Microservice Node Types with Kubernetes Resource Capability Types
+
+A second approach balances the objectives outlined above by using
+*node types* to represent the microservices in a Kubernetes service
+and using *capability types* to represent the Kubernetes resources
+that implement those microservices:
+
+- The TOSCA profile for Kubernetes defines capability types that model
+  [Kubernetes
+  resources](#kubernetes-resources)
+  fairly closely.
+- The same profile also defines a base microservice node type.
+- Node types that derive from the base microservice node type define
+  capabilities that model the Kubernetes resources that are used to
+  deploy nodes of this derived type.
+
+Using this approach, all definitions required to deploy TOSCA services
+on Kubernetes are in one place, simplifying design and reducing
+tooling challenges.
 
 ## Example Microservices
 
