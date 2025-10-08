@@ -6,15 +6,43 @@ definitions for Kubernetes](inventory.md).
 
 ## Why TOSCA for Kubernetes
 
-1. *Model Microservices Mesh*: because TOSCA models services as a
-   graph, it can represent how various microservices interact with one
-   another to deliver complete system functionality. Such information
-   is not readily available from inspecting Kubernetes manifests.
-2. *Model dependencies*: Some Kubernetes resources may need to be
-   created before others. For example, some resources require an
-   *admin* service account before a namespace can be created. This
-   type of *precedence* relationship cannot be expressed in Kubernetes
-   manifests and may require separating manifests.
+because TOSCA models services as a graph, it contains **service
+topology** information that represents how various microservices
+interact with one another to deliver complete system
+functionality. Such service relationships and dependencies are not
+immediately apparent from Kubernetes manifests.
+
+Service topology information enables a variety of automation use
+cases:
+
+1. *Service Visualization*: TOSCA provides solution architects with a
+   powerful tool for designing applications by visualizing
+   interactions between microservices, a critial feature for
+   designing complex applications.
+
+1. *Design-Time Validation*: Using TOSCA for modeling Kubernetes
+   services provides the ability to validate topological relationships
+   between microservices at design time, ensuring correct designs
+   before service deployment.
+2. *Microservice Configuration*: Topology information can be used to
+   automatically generate microservice configurations such as resource
+   labels and selectors, connectivity information (e.g., using
+   environment variables), etc.
+3. *Deploy Service Meshes*: Automatically *inject* service meshes
+   (such as Istio, Linkerd, Consul, and others) into Kubernetes
+   services and use topology information to configure these meshes.
+4. *Enforce Network Policies*: By default, Kubernetes microservices
+   use a single Layer 2 network that enables any-to-any communication
+   between microservices and does not enforce any security
+   rules. Topology information in TOSCA service templates can be used
+   to only enable connectivity between those microservices that are
+   expected to communicate (e.g., by deploying and configuring Cillium
+   network security and packet filtering).
+5. *Manage Deployment Dependencies*: Some Kubernetes resources may
+   need to be created before others. For example, some resources
+   require an *admin* service account before a namespace can be
+   created. This type of *precedence* relationship cannot be expressed
+   in Kubernetes manifests and may require separating manifests.
 
 ## Example Microservices
 
@@ -37,28 +65,52 @@ There is a single [Kubernetes
 Manifest](https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/release/kubernetes-manifests.yaml)
 that deploys the entire microservice.
 
+This section defines a TOSCA service template that models the online
+boutique and that can be used to deploy the service.
+
 #### Questions
 
-1. Can we figure out from the manifest file which services interact
-   with which other services? Can these interactions be derived from
-   labels?
-2. Conversely, if we define relationships in a TOSCA service template
-   that represent the interactions between different microservices,
-   how can we take advantage of these relationships? Can they be used
-   to
-3. TOSCA establishes relationships from requirements of source nodes
+1. When modeling a service topology consisting of microservices, what
+   are the *basic abstractions* that need to be represented using
+   TOSCA node templates? Is this basic abstraction a microservice or
+   some entities that aligns more closely with Kubernetes resources?
+2. If the basic abstraction is a microservice, how is this
+   *transformed* into the appropriate Kubernetes resources?
+3. Service meshes can be added to any microservices-based
+   application. How do we represent in the TOSCA service template
+   whether the Kubernetes service needs a service mesh or not?
+   Different node types? Different node properties?
+4. Different types of service meshes can be added (e.g., Istio,
+   Linkerd, etc.). How do we represent which service mesh is used?
+   Different node types? Different node properties?
+5. Configuring network security and network policies requires a CNI
+   like Cillium. How do we represent which CNI is used?
+6. In the example manifest file, we can figure out which services
+   interact with which other services based on the values of
+   environment variables. Environment value configurations are
+   specific to the application and not understood by Kubernetes,
+   requiring custom mechanisms for TOSCA templates to represent
+   them. Can we come up with a *standard* approach for representing
+   this?
+7. What other approaches are typically used for configuring
+   communication between microservices?
+8. Do we need to define a standard architecture for applications to
+   avoid variability in configuring connectivity information?
+9. TOSCA establishes relationships from requirements of source nodes
    to capabilities of target nodes. Do any of the resources in the
    Kubernetes manifest correspond to requirements or capabilities?
-4. On a related note, Kubernetes separates the *Service* that accesses
-   pods from the *Deployment* that instantiates those pods. Both of
-   them are Kubernetes resources. How to these *translate* to TOSCA
-   entities:
-   - Are Services and Deployments both represented as nodes?
-   - Are Services and Deployments both represented as capabilities
-     (where some other entity is modeled as a node that contains those
-     capabilities)?
-   - Is a Deployment modeled as a node whereas a Service is modeled as
-     a capability through which that deployment is accessed?
+10. On a related note, Kubernetes separates the *Service* that
+    accesses pods from the *Deployment* that instantiates those
+    pods. Both of them are Kubernetes resources. How to these
+    *translate* to TOSCA entities:
+    - Are Services and Deployments both represented as nodes?
+    - Are Services and Deployments both represented as capabilities
+      (where some other entity is modeled as a node that contains those
+      capabilities)?
+    - Is a Deployment modeled as a node whereas a Service is modeled as
+      a capability through which that deployment is accessed?
+11. Do we need to support dynamic behavior in service relationships.
+12. How does Nephio capture service relationships.
    
 ### [DeathStarBench](https://github.com/delimitrou/DeathStarBench)
 These examples were suggested by Angelo
