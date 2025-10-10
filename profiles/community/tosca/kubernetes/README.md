@@ -112,6 +112,12 @@ top-down service designs and drill down into lower-level
 details. However, tooling support would be necessary to effectively
 manage substitution mapping and other complex development processes.
 
+By hiding the internals of each microservice and instead introducing
+these internals through substitution, this approach allows each
+microservice can be transformed not just into Kubernetes resources,
+but also into any other containerized or legacy application, including
+Nomad, Docker Compose, serverless, etc.
+
 ### Microservice Node Types with Kubernetes Resource Capability Types
 
 A second approach balances the objectives outlined above by using
