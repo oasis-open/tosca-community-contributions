@@ -15,7 +15,7 @@ TESTS_DIR="$SCRIPT_DIR/../../tests/tosca_2_0"
 # Function to determine expected result by filename
 get_verdict() {
   local base="$1"
-  if [[ "$base" == *invalid* ]]; then
+  if [[ "$base" == *-inv || "$base" == *invalid* ]]; then
     echo "fail"
   else
     echo "pass"
