@@ -1,15 +1,19 @@
 # Framework
 
 ## Directory structure
-TOSCA test files are held in a directory structure which reflects the paragraph names in the [TOSCA specficiation](https://github.com/oasis-tcs/tosca-specs). The actual directory names are taken from the anchor tags for each paragraph.
+TOSCA test files are held in a directory structure which reflects the paragraph names in the [TOSCA specification](https://github.com/oasis-tcs/tosca-specs). The actual directory names are taken from the anchor tags for each paragraph.
 
 TOSCA files should be placed in the directory which corresponds to the section in which the tested syntax is defined. Some directories may be empty as the corresponding paragraph does not define any syntax. Test files for syntax which spans two or more paragraphs are allowed but there should be a text file in the corresponding directory pointing to the combined file.
 
 ## Directory Content
 
-### The TOCSA file
+### The TOSCA file
 Normally the test file will be TOSCA YAML file. It may also be a TOSCA CSAR file or any file which comprises a TOSCA CSAR file.
+The current naming convention for these files is as follows although older ones exist:
+<directory name>-<content description using hyphen seprators><optional invalid indicator>.yaml
 There should be test files which are designed to be passed and those which are designed to fail.
+Those which are designed to fail should have a filename which ends -inv.yaml although the earlier standard of  including the word 'invalid' in the filename is still allowed.
+
 
 ### The pytest file
 The expected result is held in a separate file in the same directory which will have a similar name with suffix of _test. e.g. if the tosca file is called valid.yaml the associated file will be named valid_test.py.
@@ -44,3 +48,6 @@ Wrapper also returns a json response containing details of the command which inv
     "return_code": 0
   }
 }
+```
+
+There is a program called py4yaml.sh in [tools/scripts](https://github.com/oasis-open/tosca-community-contributions/tools/scripts) which can be used to generate pytest files from TOSCA files.
