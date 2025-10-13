@@ -76,6 +76,35 @@ TOSCA profiles for Kubernetes must balance high-level abstractions
 with low-level building blocks since users might need both approaches
 depending on their workflows and company requirements.
 
+## Example Microservices
+
+Our plan is to evaluate various design approaches using *real world*
+microservices examples. Will create functional TOSCA service templates
+for these examples as well as profiles that define the types for the
+nodes and relationships in those service templates.
+
+The following examples have been proposed:
+
+### [Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo)
+
+This example was suggested by Miles. It defines a web-based e-commerce
+app where users can browse items, add them to the cart, and purchase
+them. It consists of 11 microservices that communicate using gRPC, as
+shown in the following figure:
+
+![Online Boutique](
+https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/docs/img/architecture-diagram.png?raw=true)
+
+There is a single [Kubernetes
+Manifest](https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/release/kubernetes-manifests.yaml)
+that deploys the entire microservice.
+
+This section defines a TOSCA service template that models the online
+boutique and that can be used to deploy the service.
+
+### [DeathStarBench](https://github.com/delimitrou/DeathStarBench)
+These examples were suggested by Angelo.
+
 ## Design Approaches
 
 The following two approaches are explored to balance high-level
@@ -138,76 +167,63 @@ Using this approach, all definitions required to deploy TOSCA services
 on Kubernetes are in one place, simplifying design and reducing
 tooling challenges.
 
-## Example Microservices
+## Substitution Mapping Approach
 
-Our plan is to create a TOSCA Kubernetes Profile by evaluating *real
-world* microservices examples and then create TOSCA service templates
-for these examples. TOSCA Kubernetes types will then be created for
-the nodes and relationships in those service templates.
+### Online Boutique
 
-### [Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo)
+The substitution mapping approach introduces a *MicroServices* profile
+that defines a `MicroService` node type as a basic abstraction and
+focuses on how microservices interact to provide full system
+functionality. The following figure shows a TOSCA service template for
+the online boutique example that uses nodes of type `MicroService` to
+model the topology of the service:
 
-This example was suggested by Miles. It defines a web-based e-commerce
-app where users can browse items, add them to the cart, and purchase
-them. It consists of 11 microservices that communicate using gRPC, as
-shown in the following figure:
+![Online Boutique Service Template](images/online_boutique.png)
 
-![Online Boutique](
-https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/docs/img/architecture-diagram.png?raw=true)
+> This example assumes that the `MicroService` node type can be
+  *parameterized* through property values to represent the
+  configurations for each of the microservices in the Online Boutique
+  example. If this is not the case, then microservice-specific derived
+  node types may need to be created.
 
-There is a single [Kubernetes
-Manifest](https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/release/kubernetes-manifests.yaml)
-that deploys the entire microservice.
+Each of the abstract microservice nodes in the online boutique service
+is *realized* by substituting it using a template that uses nodes from
+a *Kubernetes* profile. These node types resemble Kubernetes resources
+more closely and can be readily implemented using corresponding
+Kubernetes manifests. The following figure shows how the `checkout`
+node in the online boutique is substituted using a *microservice*
+service template that defines a node of type `ClusterIP`, a node of
+type `Deployment`, and a node of type `ServiceAccount`:
 
-This section defines a TOSCA service template that models the online
-boutique and that can be used to deploy the service.
+![Substituting Microservice Service Template](images/microservice.png)
 
-#### Questions
+### Questions
 
-1. When modeling a service topology consisting of microservices, what
-   are the *basic abstractions* that need to be represented using
-   TOSCA node templates? Is this basic abstraction a microservice or
-   some entities that aligns more closely with Kubernetes resources?
-2. If the basic abstraction is a microservice, how is this
-   *transformed* into the appropriate Kubernetes resources?
-3. Service meshes can be added to any microservices-based
+1. Service meshes can be added to any microservices-based
    application. How do we represent in the TOSCA service template
    whether the Kubernetes service needs a service mesh or not?
-   Different node types? Different node properties?
-4. Different types of service meshes can be added (e.g., Istio,
+   Different node types in the MicroServices profile? Different
+   `MicroService` node properties?
+2. Different types of service meshes can be added (e.g., Istio,
    Linkerd, etc.). How do we represent which service mesh is used?
-   Different node types? Different node properties?
-5. Configuring network security and network policies requires a CNI
-   like Cillium. How do we represent which CNI is used?
-6. In the example manifest file, we can figure out which services
-   interact with which other services based on the values of
-   environment variables. Environment value configurations are
-   specific to the application and not understood by Kubernetes,
-   requiring custom mechanisms for TOSCA templates to represent
-   them. Can we come up with a *standard* approach for representing
-   this?
-7. What other approaches are typically used for configuring
+   Different node types in the MicroServices profile? Different
+   `MicroService` node properties?
+3. Configuring network security and network policies requires a CNI
+   like Cillium. How do we represent which CNI is used? Is this
+   modeled as part of Platform node type?
+4. Do we need to define a standard architecture for applications to
+   avoid variability in configuring connectivity information? For
+   example, in the example manifest file for the Online Boutique, we
+   can figure out which services interact with which other services
+   based on the values of environment variables. Environment value
+   configurations are specific to the application and not understood
+   by Kubernetes, requiring custom mechanisms for TOSCA templates to
+   represent them. Do we need to come up with a *standard* approach
+   for representing this?
+5. What other common approaches are typically used for configuring
    communication between microservices?
-8. Do we need to define a standard architecture for applications to
-   avoid variability in configuring connectivity information?
-9. TOSCA establishes relationships from requirements of source nodes
-   to capabilities of target nodes. Do any of the resources in the
-   Kubernetes manifest correspond to requirements or capabilities?
-10. On a related note, Kubernetes separates the *Service* that
-    accesses pods from the *Deployment* that instantiates those
-    pods. Both of them are Kubernetes resources. How to these
-    *translate* to TOSCA entities:
-    - Are Services and Deployments both represented as nodes?
-    - Are Services and Deployments both represented as capabilities
-      (where some other entity is modeled as a node that contains those
-      capabilities)?
-    - Is a Deployment modeled as a node whereas a Service is modeled as
-      a capability through which that deployment is accessed?
-11. Do we need to support dynamic behavior in service relationships.
-12. How does Nephio capture service relationships.
-   
-### [DeathStarBench](https://github.com/delimitrou/DeathStarBench)
-These examples were suggested by Angelo
+6. Do we need to support dynamic behavior in service relationships.
+7. How does Nephio capture service relationships.
 
 ## Kubernetes Resources
 
