@@ -197,6 +197,57 @@ type `Deployment`, and a node of type `ServiceAccount`:
 
 ![Substituting Microservice Service Template](images/microservice.png)
 
+### Managing Cluster-Wide Resources
+
+Some Kubernetes resources (e.g., Cluster Roles) are defined
+cluster-wide and can be shared and accessed by all Kubernetes services
+deployed on the cluster. This section discusses how to model cluster-wide
+resources using TOSCA. 
+Two potential methods are described:
+
+1. Create-if-not-exists
+2. Updates to cluster platform service
+
+#### Create-if-not-Exists Nodes
+
+Using the *create-if-not-exists* pattern, TOSCA services that need a
+cluster-wide resource include a node template for that resources that
+includes both the `select` as well as the `create` directive. TOSCA
+Orchestrators process such nodes as follows:
+
+1. The orchestrator first tries to *select* a node from inventory that
+   represents the requested cluster-wide resource. This selection may
+   optionally involve node filters to identify specific resources,
+   e.g., based on property values. If such a node is found, it is used
+   in the service.
+2. If no such node is found in inventory, the orchestrator *creates*
+   the node instead (using the interface operations specified in the
+   node template or node type).
+3. From there on, other services that request the same cluster-wide
+   resource (through their own *create-if-not-exists* node template)
+   will be assigned the newly created node.
+
+#### Updates to Cluster Platform Service
+
+Marcel suggested modeling the Kubernetes cluster itself as using a
+TOSCA service template. Cluster-wide resources would be handled as follows:
+
+- The Kubernetes service template would include one or more node
+  templates that represent (shared) cluster-wide resources.
+
+- These node templates use the `count` keyword to specify the number
+  of node representations that need to be instatiated based on the
+  template.
+
+- When a Kubernetes services needs a new cluster-wide resource, it
+  *updates* the Kubernetes platform services by incrementing the
+  `count` value for the corresponding nodes and specifying the
+  property values for the new resources (presumably by providing them
+  as input values to the Kubernetes Platform service).
+
+The user's modeling needs should influence the approach chosen, and
+the TOSCA Kubernetes Profile should ideally support both approaches.
+
 ### Questions
 
 1. Service meshes can be added to any microservices-based
