@@ -1,0 +1,255 @@
+tosca_definitions_version: tosca_2_0
+
+profile: community.tosca.kubernetes:0.1
+
+description: >-
+  TOSCA Community Kubernetes Profile
+
+capability_types:
+  Scope:
+    description: >-
+      Capability used by namespaces to scope resources
+  Claimable:
+    description: >-
+      Ability to be claimed
+  Feature:
+    description: placeholder for now.
+
+relationship_types:
+  References:
+    description: >-
+      Relationship type for referencing another node
+  Exposes:
+    description: >-
+      Relationship type for exposing functionality of another node
+  Claims:
+    description: >-
+      Relationship type for claiming another node
+  ScopedBy:
+    description: >-
+      Relationship type for specifying the namespace of a resource
+    valid_capability_types: [Scope]
+  RunsAs:
+    description: >-
+      Relationship type for specifying the service account of a
+      workload.
+  RoutesTo:
+    description: >-
+      Relationship type for specifying the service to which Ingress
+      traffic is routed.
+
+node_types:
+  Resource:
+    description: >-
+      Base class for Kubernetes resources
+  ClusterScopedResource:
+    derived_from: Resource
+    description: >-
+      Base class for resources that are globally scoped within the
+      Kubernetes cluster
+  Namespace:
+    description: >-
+      Namespace provides a scope for resource names.
+    derived_from: ClusterScopedResource
+    capabilities:
+      scope:
+        type: Scope
+  NamespacedResource:
+    description: >-
+      Base class for resources that are scoped to a specific
+      Kubernetes namespace
+    derived_from: Resource
+    requirements:
+      - namespace:
+          capability: Scope
+          relationship: ScopedBy
+          node: Namespace
+          count_range: [0, 1]
+  ServiceAccount:
+    derived_from: NamespacedResource
+    description: >-
+      ServiceAccount binds together:
+      - a name, understood by users, and perhaps by peripheral
+        systems, for an identity
+      - a principal that can be authenticated and authorized
+      - a set of secrets
+    capabilities:
+      account:
+        type: Feature
+  ClusterRole:
+    derived_from: ClusterScopedResource
+    description: >-
+      ClusterRole is a cluster-level logical grouping of PolicyRules
+      that can be referenced as a unit by a RoleBinding or
+      ClusterRoleBinding.
+    capabilities:
+      role:
+        type: Feature
+  ClusterRoleBinding:
+    description: >-
+      A ClusterRoleBinding references a ClusterRole but does not contain
+      it. It can reference a ClusterRole in the global namespace, and
+      adds information about who assumes the ClusterRole via subjects.
+    derived_from: Resource
+    requirements:
+      - cluster_role:
+          description: >-
+            Reference to a ClusterRole in the global namespace.
+          capability: Feature
+          node: ClusterRole
+          relationship: References
+          count_range: [1, 1]
+      - subject:
+          description: >-
+            Reference to the Service Accounts to which the role applies.
+          capability: Feature
+          node: ServiceAccount
+          relationship: References
+          count_range: [1, UNBOUNDED]
+  Role:
+    derived_from: NamespacedResource
+    description: >-
+      Role is a logical grouping of PolicyRules within a namespace
+      that can be referenced as a unit by a RoleBinding or
+      ClusterRoleBinding.
+    capabilities:
+      role:
+        type: Feature
+  RoleBinding:
+    description: >-
+      A RoleBinding references a Role but does not contain it. It can
+      reference a specific Role in a specific namespace, and adds
+      information about who assumes the Role via subjects.
+    derived_from: NamespacedResource
+    requirements:
+      - role:
+          description: >-
+            Reference to a Role in a specific namespace.
+          capability: Feature
+          node: Role
+          relationship: References
+          count_range: [1, 1]
+      - subject:
+          description: >-
+            Reference to the Service Accounts to which the role applies.
+          capability: Feature
+          node: ServiceAccount
+          relationship: References
+          count_range: [1, UNBOUNDED]
+  PersistentVolume:
+    derived_from: ClusterScopedResource
+    capabilities:
+      claim:
+        type: Claimable
+  Volume:
+    derived_from: NamespacedResource
+    capabilities:
+      attachment:
+        type: ubct:Attachable
+  PersistentVolumeClaim:
+    derived_from: Volume
+    requirements:
+      - claim:
+          capability: Claimable
+          node: PersistentVolume
+          relationship: Claims
+          count_range: [1, 1]
+  EmptyDir:
+    derived_from: Volume
+  HostPath:
+    derived_from: Volume
+  ConfigMap:
+    description: >-
+      ConfigMap holds configuration data for pods to consume.
+    derived_from: Volume
+  Secret:
+    derived_from: Volume
+  Projected:
+    derived_from: Volume
+  Image:
+    derived_from: Volume
+  DownwardAPI:
+    derived_from: Volume
+  Local:
+    derived_from: Volume
+  NFS:
+    derived_from: Volume
+  FibreChannel:
+    derived_from: Volume
+  Iscsi:
+    derived_from: Volume
+  Pod:
+    derived_from: NamespacedResource
+    capabilities:
+      feature:
+        type: Feature
+    requirements:
+      - runs-as:
+          count_range: [1, 1]
+          capability: Feature
+          node: ServiceAccount
+          relationship: RunsAs
+      - container:
+          capability: ubct:Container
+          node: Workload
+          relationship: ubct:ContainedBy
+          count_range: [0, 1]
+      - volume:
+          capability: ubct:Attachable
+          relationship: ubct:AttachesTo
+          node: Volume
+          count_range: [0, UNBOUNDED]
+  Workload:
+    derived_from: NamespacedResource
+    capabilities:
+      container:
+        type: ubct:Container
+  Deployment:
+    derived_from: Workload
+  ReplicaSet:
+    derived_from: Workload
+    requirements:
+      - container:
+          capability: ubct:Container
+          node: Deployment
+          relationship: ubct:ContainedBy
+          count_range: [0, 1]
+  StatefulSet:
+    derived_from: Workload
+  DaemonSet:
+    derived_from: Workload
+  CronJob:
+    derived_from: Workload
+  Job:
+    derived_from: Workload
+    requirements:
+      - container:
+          capability: ubct:Container
+          node: Deployment
+          relationship: ubct:ContainedBy
+          count_range: [0, 1]
+  Ingress:
+    derived_from: NamespacedResource
+    requirements:
+      - backend:
+          capability: Feature
+          node: Service
+          relationship: RoutesTo
+          count_range: [1, 1]
+  Service:
+    derived_from: NamespacedResource
+    capabilities:
+      router:
+        type: Feature
+    requirements:
+      - pod:
+          capability: Feature
+          node: Pod
+          relationship: Exposes
+          count_range: [1, 1]
+  ClusterIPService:
+    derived_from: Service
+  NodePortService:
+    derived_from: Service
+  LoadBalancerService:
+    derived_from: Service
