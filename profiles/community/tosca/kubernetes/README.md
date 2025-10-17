@@ -250,9 +250,6 @@ the TOSCA Kubernetes Profile should ideally support both approaches.
 
 ### Questions
 
-
-### Questions
-
 1. Service meshes can be added to any microservices-based
    application. How do we represent in the TOSCA service template
    whether the Kubernetes service needs a service mesh or not?
@@ -425,6 +422,8 @@ The following class diagram shows a subset of these:
 classDiagram
     NamespacedResource <|-- Pod
     NamespacedResource <|-- Service
+    NamespacedResource <|-- Ingress
+    Ingress --> Service:RoutesTo
     Service --> Pod:Exposes
     Service <|-- ClusterIPService
     Service <|-- NodePortService

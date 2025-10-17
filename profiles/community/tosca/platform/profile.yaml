@@ -5,7 +5,20 @@ profile: community.tosca.platform:0.1
 description: >-
   TOSCA Community Platform Profile type definitions.
 
+capability_types:
+  Provider:
+    description: The ability to provide service
+
+relationship_types:
+  ProvidedBy:
+    description: Relationship between a service and its provider. 
+      
 node_types:
+  Provider:
+    description: Service Provider
+    capabilities:
+      provider:
+        type: Provider
   Platform:
     description: |
       Base platform node type
@@ -42,3 +55,34 @@ node_types:
       SaaS platform node type. Represents platform for renting and
       using a finished application.
     derived_from: Platform
+  GoogleCloudPlatform:
+    derived_from: IaasPlatform
+  AwsEc2:
+    derived_from: IaasPlatform
+  OpenStack:
+    derived_from: IaasPlatform
+  Azure:
+    derived_from: IaasPlatform
+  Proxmox:
+    derived_from: IaasPlatform
+  KubernetesCluster:
+    derived_from: ContainerPlatform
+  DockerEngine:
+    derived_from: ContainerPlatform
+  GoogleAppEngine:
+    derived_from: PaasPlatform
+  AwsBeanstalk:
+    derived_from: PaasPlatform
+  OpenShift:
+    derived_from: PaasPlatform
+  Heroku:
+    derived_from: PaasPlatform
+  Auth0:
+    derived_from: SaasPlatform
+  DBaasPlatform:
+    derived_from: SaasPlatform
+
+  AwsAurora:
+    derived_from: DBaasPlatform
+
+
