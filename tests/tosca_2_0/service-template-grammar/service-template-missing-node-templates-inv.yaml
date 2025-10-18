@@ -1,0 +1,31 @@
+# Error: The service template is missing the required node_templates section.
+
+tosca_definitions_version: tosca_2_0
+
+description: Service template missing node_templates section
+
+relationship_types:
+  ConnectsTo:
+    description: A relationship type that represents a connection between two nodes.
+    properties:
+      connect-speed:
+        type: integer
+        description: The speed of the connection in bits per second.
+        default: 1000000
+
+service_template:
+  metadata:
+    template_name: MissingNodeTemplatesService
+    template_version: 1.0.0
+  inputs:
+    foo-name:
+      type: string
+      description: Simple string parameter without a validation clause.
+      default: bar
+  # node_templates section is intentionally omitted to trigger validation error
+  relationship_templates:
+    my-connects-to:
+      type: ConnectsTo
+      properties:
+        connect-speed: 2000000
+

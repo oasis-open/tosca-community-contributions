@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_2_0
+interface_types:
+  Scale:
+    operations:
+      scale-out: {}
+      scale-in: {}
+node_types:
+  Compute:
+    properties:
+      num_cpus:
+        type: integer
+    interfaces:
+      scale:
+        type: Scale
+service_template:
+  node_templates:
+    node1:
+      type: Compute
+      properties:
+        num_cpus: 4
+
+  workflows:
+    # invalid workflows must be map not a list
+    - scaling-workflow:
+        steps:
+          scale_out:          
+            target: node1
+            activities: 
+              - call_operation: scale.scale-out
+
+

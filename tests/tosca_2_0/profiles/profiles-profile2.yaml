@@ -1,0 +1,14 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.example.tosca_profiles.example2:1.0
+
+imports:
+- profile: com.example.tosca_profiles.example1:1.0
+  namespace: p1
+
+node_types:
+  p1.ExampleNodeType:
+    properties:
+      additional_property:
+        type: integer
+        description: An additional property extending ExampleNodeType from com.example.tosca_profiles.example1:1.0

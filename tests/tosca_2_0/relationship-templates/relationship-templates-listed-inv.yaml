@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  WebApplication:
+    properties:
+      port:
+        type: integer
+        default: 80
+
+relationship_types:
+  ConnectsTo:
+    properties:
+      connect-speed:
+        type: integer
+        default: 1000000
+service_template:
+  node_templates:
+    my-webapp:
+      type: WebApplication
+  relationship_templates:
+    # Invalid entries should be a map, not a list
+    - my-connects-to:
+      type: ConnectsTo
+
+    - my-other-connection:
+        type: ConnectsTo

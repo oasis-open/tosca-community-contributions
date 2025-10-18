@@ -1,4 +1,5 @@
 tosca_definitions_version: tosca_2_0
+
 node_types:
   Compute:
     properties:
@@ -17,8 +18,7 @@ service_template:
   node_templates:
     my-computer:
       type: Compute
-# tag::s45[]
   policies:
-  - my-placement:
-      type: Placement
-# end::s45[]
+  #policies should not be empty
+
+

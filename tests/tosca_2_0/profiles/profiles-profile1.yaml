@@ -1,0 +1,13 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.example.tosca_profiles.example1:1.0
+
+description: An example TOSCA profile for demonstration purposes.
+
+node_types:
+  ExampleNodeType:
+    properties:
+      example_property:
+        type: string
+        description: A sample property for ExampleNodeType.
+

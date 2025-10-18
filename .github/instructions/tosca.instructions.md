@@ -17,7 +17,6 @@ Use camel case for TOSCA entity type names. All words in the name should be capi
 
 # Do not use the construct 'type: tosca.*' as this is not valid TOSCA 2.0
 Do not use the construct 'derived from tosca.*' Do not include any comment about not using this construct.
+Do not use values starting with 'tosca.*' for any TOSCA entity type name as this is not valid TOSCA 2.0
 
-Do not use any value with the format 'tosca.*' as this is not valid TOSCA 2.0
-
-
+Do not use template_type section  as this is not valid in TOSCA 2.0 instead use service_template.

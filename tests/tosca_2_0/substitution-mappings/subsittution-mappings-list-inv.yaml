@@ -38,12 +38,14 @@ node_types:
           capability: Foo
           relationship: DependsOn
           
-# tag::s46[]
+
 service_template:
   inputs:
     cpus:
       type: integer
       validation: { $less_than: [ $value, 5 ] }
+
+
 
   node_templates:
     my-worker:
@@ -55,13 +57,12 @@ service_template:
         - worker-foo: {}
 
   substitution_mappings:
-    node_type: MyService
-    properties:  
-      num-cpus: cpus
-    capabilities:
-      bar: [ my-worker, worker-bar ]
-    requirements:
-      - foo: [ my-worker, worker-foo ]
-
-# end::s46[]
+    # Invalid entry should be a map, not a list
+    - node_type: MyService
+      properties:  
+        num-cpus: cpus
+      capabilities:
+        bar: [ my-worker, worker-bar ]
+      requirements:
+        - foo: [ my-worker, worker-foo ]
 

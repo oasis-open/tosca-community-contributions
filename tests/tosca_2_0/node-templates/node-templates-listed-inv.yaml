@@ -1,0 +1,22 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  WebApplication:
+    properties:
+      port:
+        type: integer
+        default: 80
+  Database:
+    properties:
+      port:
+        type: integer
+        default: 3306
+service_template:
+
+  node_templates:
+    #Invalid entries should be a map, not a list
+    - my-webapp:
+      type: WebApplication
+
+    - my-database:
+        type: Database
+
