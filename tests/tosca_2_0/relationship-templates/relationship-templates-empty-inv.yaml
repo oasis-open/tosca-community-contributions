@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  my-webapp:
+    type: WebApplication
+relationship_types:
+  ConnectsTo:
+    description: A relationship type that represents a connection between two nodes.
+    properties:
+      connect-speed:
+        type: integer
+        description: The speed of the connection in bits per second.
+        default: 1000000
+service_template:
+  node_templates:
+    my-webapp:
+      type: WebApplication
+  # Invalid Empty relationship-templates section
+  relationship_templates:

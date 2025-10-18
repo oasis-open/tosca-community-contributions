@@ -1,0 +1,33 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  WebApplication:
+    properties:
+      port:
+        type: integer
+        default: 80
+  Database:
+    properties:
+      port:
+        type: integer
+        default: 3306
+relationship_types:
+  ConnectsTo:
+    description: A relationship type that represents a connection between two nodes.
+    properties:
+      connect-speed:
+        type: integer
+        description: The speed of the connection in bits per second.
+        default: 1000000
+service_template:
+  node_templates:
+    # Invalid Empty node-templates section
+  relationship_templates:
+    my-connects-to:
+      type: ConnectsTo
+      properties:
+        connect-speed: 1000000
+      interfaces:
+        configure:
+          inputs:
+            speed: { $get_attribute: [ SELF, connect-speed ] }
+

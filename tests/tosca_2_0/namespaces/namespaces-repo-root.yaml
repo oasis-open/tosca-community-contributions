@@ -1,0 +1,16 @@
+tosca_definitions_version: tosca_2_0
+
+imports:
+- s31.yaml
+
+repositories:
+  my_git_repository:
+    metadata:
+      created: "01-01-2025"
+    description: A repository
+    url: https://github.com/my-project/
+    credential:
+      user: username
+      token: password
+
+

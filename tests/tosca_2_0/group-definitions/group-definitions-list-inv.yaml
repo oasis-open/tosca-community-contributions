@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Compute:
+    properties:
+      num_cpus:
+        type: integer
+        required: false
+group_types:
+  MyScaling:
+    members: [ Compute ]
+service_template:
+
+  node_templates:
+    server1:
+      type: Compute
+      # more details ...
+
+    server2:
+      type: Compute
+      # more details ...
+
+    server3:
+      type: Compute
+      # more details ...
+
+  groups:
+    # groups must be a map, not a list
+    - servers:
+        type: MyScaling
+        members: [ server2, server3 ]
+

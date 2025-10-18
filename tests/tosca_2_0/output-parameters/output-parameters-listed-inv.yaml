@@ -1,0 +1,19 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  WebApplication:
+    properties:
+      port:
+        type: integer
+        default: 80
+service_template:
+  node_templates:
+    my-webapp:
+      type: WebApplication
+
+  outputs:
+    # Invalid entries should be a map, not a list
+    - server-address:
+      description: The address of the server
+
+    - vip-address:
+        description: Virtual IP address

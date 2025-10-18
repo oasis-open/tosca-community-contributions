@@ -1,0 +1,7 @@
+tosca_definitions_version: tosca_2_0
+
+imports:
+- relative_path/my_defns/my_typesdefs_1.yaml
+- repository: my-company-repo
+
+

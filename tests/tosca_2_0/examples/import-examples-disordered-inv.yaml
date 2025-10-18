@@ -1,0 +1,8 @@
+tosca_definitions_version: tosca_2_0
+# invalid: url should be before repository
+imports:
+- repository: my-company-repo
+  url: my_defns/my_typesdefs_2.yaml
+
+
+
