@@ -1,0 +1,64 @@
+tosca_definitions_version: tosca_2_0
+
+imports:
+  - profile: community.tosca.microservices:0.1
+    namespace: ms
+
+description: >-
+  Online Boutique service template
+
+service_template:
+  node_templates:
+    frontend:
+      type: ms:MicroService
+      directives: [substitute]
+      requirements:
+        - endpoint: ad
+        - endpoint: recommend
+        - endpoint: catalog
+        - endpoint: cart
+        - endpoint: shipping
+        - endpoint: currency
+        - endpoint: checkout
+    checkout:
+      type: ms:MicroService
+      directives: [substitute]
+      requirements:
+        - endpoint: catalog
+        - endpoint: cart
+        - endpoint: shipping
+        - endpoint: currency
+        - endpoint: payment
+        - endpoint: email
+    ad:
+      type: ms:MicroService
+      directives: [substitute]
+    recommend:
+      type: ms:MicroService
+      directives: [substitute]
+      requirements:
+        - endpoint: catalog
+    cart:
+      type: ms:MicroService
+      directives: [substitute]
+      requirements:
+        - endpoint: redis
+    catalog:
+      type: ms:MicroService
+      directives: [substitute]
+    shipping:
+      type: ms:MicroService
+      directives: [substitute]
+    currency:
+      type: ms:MicroService
+      directives: [substitute]
+    payment:
+      type: ms:MicroService
+      directives: [substitute]
+    email:
+      type: ms:MicroService
+      directives: [substitute]
+    redis:
+      type: ms:MicroService
+      directives: [substitute]
+

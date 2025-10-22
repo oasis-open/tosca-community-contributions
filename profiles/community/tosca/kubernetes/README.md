@@ -186,6 +186,10 @@ model the topology of the service:
   example. If this is not the case, then microservice-specific derived
   node types may need to be created.
 
+The corresponding [TOSCA service
+template](../examples/online_boutique/main.yaml) imports the
+[microservices profile](../microservices/profile.yaml).
+
 Each of the abstract microservice nodes in the online boutique service
 is *realized* by substituting it using a template that uses nodes from
 a *Kubernetes* profile. These node types resemble Kubernetes resources
@@ -196,6 +200,10 @@ service template that defines a node of type `ClusterIP`, a node of
 type `Deployment`, and a node of type `ServiceAccount`:
 
 ![Substituting Microservice Service Template](images/microservice.png)
+
+The corresponding [substituting TOSCA service
+template](../substitutions/microservice/main.yaml) imports the
+[kubernetes profile](../kubernetes/profile.yaml).
 
 ### Managing Cluster-Wide Resources
 
