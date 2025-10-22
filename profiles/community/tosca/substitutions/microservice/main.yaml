@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+
+imports:
+  - profile: community.tosca.microservices:0.1
+    namespace: ms
+  - profile: community.tosca.kubernetes:0.1
+    namespace: k8s
+
+description: >-
+  Substituting service template for MicroService nodes
+
+service_template:
+  substitution_mappings:
+    node_type: ms:MicroService
+
+  node_templates:
+    service-account:
+      type: k8s:ServiceAccount
+    deployment:
+      type: k8s:Deployment
+    pod:
+      type: k8s:Pod
+      requirements:
+        - runs-as: service-account
+        - container: deployment
+    service:
+      type: k8s:Service
+      requirements:
+        - pod: pod
+        

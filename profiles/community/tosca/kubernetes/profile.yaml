@@ -6,6 +6,15 @@ description: >-
   TOSCA Community Kubernetes Profile
 
 capability_types:
+  Container:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      ContainedBy relationship.  Advertizes the ability to contain one
+      or more other nodes.
+    valid_relationship_types: [ContainedBy]
+  Attachable:
+    description: >-
+      Ability for storage to be attached.
   Scope:
     description: >-
       Capability used by namespaces to scope resources
@@ -16,6 +25,16 @@ capability_types:
     description: placeholder for now.
 
 relationship_types:
+  ContainedBy:
+    description: >-
+      The ContainedBy type represents a containment relationship between
+      two nodes.
+    valid_capability_types: [Container]
+  AttachesTo:
+    description: >
+      This relationship type represents an association relationship to
+      storage.
+    valid_capability_types: [Attachable]
   References:
     description: >-
       Relationship type for referencing another node
@@ -145,7 +164,7 @@ node_types:
     derived_from: NamespacedResource
     capabilities:
       attachment:
-        type: ubct:Attachable
+        type: Attachable
   PersistentVolumeClaim:
     derived_from: Volume
     requirements:
@@ -190,29 +209,29 @@ node_types:
           node: ServiceAccount
           relationship: RunsAs
       - container:
-          capability: ubct:Container
+          capability: Container
           node: Workload
-          relationship: ubct:ContainedBy
+          relationship: ContainedBy
           count_range: [0, 1]
       - volume:
-          capability: ubct:Attachable
-          relationship: ubct:AttachesTo
+          capability: Attachable
+          relationship: AttachesTo
           node: Volume
           count_range: [0, UNBOUNDED]
   Workload:
     derived_from: NamespacedResource
     capabilities:
       container:
-        type: ubct:Container
+        type: Container
   Deployment:
     derived_from: Workload
   ReplicaSet:
     derived_from: Workload
     requirements:
       - container:
-          capability: ubct:Container
+          capability: Container
           node: Deployment
-          relationship: ubct:ContainedBy
+          relationship: ContainedBy
           count_range: [0, 1]
   StatefulSet:
     derived_from: Workload
@@ -224,9 +243,9 @@ node_types:
     derived_from: Workload
     requirements:
       - container:
-          capability: ubct:Container
+          capability: Container
           node: Deployment
-          relationship: ubct:ContainedBy
+          relationship: ContainedBy
           count_range: [0, 1]
   Ingress:
     derived_from: NamespacedResource
