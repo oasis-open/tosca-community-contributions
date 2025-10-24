@@ -8,7 +8,9 @@ definitions for platforms](inventory.md).
 ## Platforms
 
 The following figure shows different types of platforms under
-consideration: ![Platforms](images/platforms.png)
+consideration:
+
+![Platforms](images/platforms.png)
 
 This figure represents the following:
 - Bare Metal: A device without operating system software or firmware
@@ -60,6 +62,7 @@ classDiagram
     IaasPlatform <|-- OpenStack
     IaasPlatform <|-- Azure
     IaasPlatform <|-- Proxmox
+    IaasPlatform <|-- Kubevirt
     ContainerPlatform <|-- KubernetesCluster
     ContainerPlatform <|-- DockerEngine
     PaasPlatform <|-- GoogleAppEngine
@@ -70,6 +73,28 @@ classDiagram
     SaasPlatform <|-- DBaasPlatform
     DBaasPlatform <|-- AwsAurora
 ```
+
+### Layering of Platforms
+
+While platform node types are primarily used to create (abstract)
+representations of available platform resources, these types can also
+be used to *orchestrate* new platform resources. In those cases, newly
+orchestrated platform nodes must be *layered* on top of
+already-existing platform nodes. This layering is expressed using a
+`HostedOn` relationship, and and the corresponding platform node types
+must express valid target nodes in their `host` requirement.
+
+The following figures shows three examples of platform layering:
+
+1. It shows a virtual `ComputePlatform` node (a VM) instantiated directly on AWS.
+2. It shows a second VM instantantiated on a Proxmox node, which is in
+   turn deployed on a physical `ComputePlatform` node (a physical
+   server).
+3. And finally, it shows a third VM instantiated on Kubevirt, which is
+   in turn installed on a Kubernetes cluster.
+
+![Layering of Platforms](images/layering.png)
+
 ## Providers and Credentials
 
 This profile also defines node types for modeling the *providers* that
@@ -94,41 +119,4 @@ classDiagram
     Platform --> Credential:AuthorizedUsing
     Credential *-- Provider:IssuedBy
 ```
-
-## Layering of Platforms
-
-> This section is intended to discuss layering relationships between
-  platforms. For example, a Kubernetes cluster might be hosted on an
-  IaaS platform. A PaaS platform may use Kubernetes underneath.
-
-Some PaaS existed long before Kubernetes was created.  These platforms
-provided developer workflows, build pipelines, and runtime
-environments without Kubernetes. For example:
-
-- Heroku (2007) → classic PaaS, lets you git push code and deploy. No
-  Kubernetes.
-- Google App Engine (2008) → serverless-style PaaS, predates
-  Kubernetes.
-- Cloud Foundry (2011) → a PaaS with its own container/runtime system,
-  not Kubernetes-based.
-
-Many newer PaaS offerings do use Kubernetes under the hood, because
-Kubernetes has become a de facto standard for container
-orchestration. Examples:
-
-- OpenShift (Red Hat)
-- Google Cloud Run / Knative
-- VMware Tanzu Application Service (K8s edition)
-
-In these cases, Kubernetes provides a solid infrastructure layer,
-while the PaaS adds developer-focused abstractions.
-
-Some modern PaaS options still don’t depend on Kubernetes, especially
-serverless PaaS:
-
-- AWS Elastic Beanstalk (abstracts EC2, no Kubernetes required).
-- AWS Lambda / Azure Functions (FaaS, sometimes called a “serverless
-  PaaS”).
-- Netlify, Vercel (serverless platforms for web apps, not
-  Kubernetes-based).
 

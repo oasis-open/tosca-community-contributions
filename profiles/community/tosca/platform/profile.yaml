@@ -65,6 +65,8 @@ node_types:
     derived_from: IaasPlatform
   Proxmox:
     derived_from: IaasPlatform
+  Kubevirt:
+    derived_from: IaasPlatform
   KubernetesCluster:
     derived_from: ContainerPlatform
   DockerEngine:
@@ -81,7 +83,6 @@ node_types:
     derived_from: SaasPlatform
   DBaasPlatform:
     derived_from: SaasPlatform
-
   AwsAurora:
     derived_from: DBaasPlatform
 
