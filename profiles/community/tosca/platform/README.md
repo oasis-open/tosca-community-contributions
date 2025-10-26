@@ -91,7 +91,7 @@ The following figures shows three examples of platform layering:
    turn deployed on a physical `ComputePlatform` node (a physical
    server).
 3. And finally, it shows a third VM instantiated on Kubevirt, which is
-   in turn installed on a Kubernetes cluster.
+   in turn installed as an add-on on a Kubernetes cluster.
 
 ![Layering of Platforms](images/layering.png)
 
