@@ -208,45 +208,23 @@ node_types:
           capability: Feature
           node: ServiceAccount
           relationship: RunsAs
-      - container:
-          capability: Container
-          node: Workload
-          relationship: ContainedBy
-          count_range: [0, 1]
       - volume:
           capability: Attachable
           relationship: AttachesTo
           node: Volume
           count_range: [0, UNBOUNDED]
-  Workload:
-    derived_from: NamespacedResource
-    capabilities:
-      container:
-        type: Container
-  Deployment:
-    derived_from: Workload
   ReplicaSet:
-    derived_from: Workload
-    requirements:
-      - container:
-          capability: Container
-          node: Deployment
-          relationship: ContainedBy
-          count_range: [0, 1]
+    derived_from: Pod
+  Deployment:
+    derived_from: ReplicaSet
   StatefulSet:
-    derived_from: Workload
+    derived_from: Pod
   DaemonSet:
-    derived_from: Workload
-  CronJob:
-    derived_from: Workload
+    derived_from: Pod
   Job:
-    derived_from: Workload
-    requirements:
-      - container:
-          capability: Container
-          node: Deployment
-          relationship: ContainedBy
-          count_range: [0, 1]
+    derived_from: Pod
+  CronJob:
+    derived_from: Job
   Ingress:
     derived_from: NamespacedResource
     requirements:

@@ -375,15 +375,17 @@ classDiagram
 
 ### Workload Abstractions
 Kubernetes uses the following abstractions for managing workloads:
-- Pod – The smallest deployable unit. A Pod wraps one or more tightly
-  coupled containers (usually one). Containers in a Pod share:
-  - The same network namespace (IP, port space).
-  - Optionally shared storage volumes.
-- ReplicaSet – Ensures a specified number of Pod replicas are running
-  at all times. Recreates Pods if they fail.
-- Deployment – A higher-level abstraction over ReplicaSets. Used to
-  declare desired state for stateless apps (number of replicas,
-  rolling updates, rollbacks).
+
+- Pod: A Pod is the smallest and most basic deployable unit in
+  Kubernetes.  A Pod is a wrapper around one or more containers that
+  are tightly coupled and share the same network namespace and storage
+  volumes.
+- ReplicaSet: Extends pods with scaling and self-healing. It ensures
+  that a specified number of Pod replicas are running at all
+  times. ReplicaSets recreate Pods if they fail.
+- Deployment: Extends ReplicaSets with full lifecycle management,
+  including updates and upgrades. It is used to declare desired state
+  for stateless apps (number of replicas, rolling updates, rollbacks).
 - StatefulSet – Like a Deployment, but for stateful apps that need:
   - Stable identities (network names).
   - Stable storage volumes.
@@ -394,23 +396,39 @@ Kubernetes uses the following abstractions for managing workloads:
   finite tasks.
 - CronJob – Runs Jobs on a schedule (like cron).
 
-Workload abstractions are shown in the following class diagram:
+Representations of workload abstractions in TOSCA need to address the
+following challengs:
+
+- While not recommended, it is possible to instantiate Pods separately
+  from ReplicaSets and to instantiate ReplicaSets separately from
+  Deployments. This suggests that Pods, ReplicaSets, and Deployments
+  should each be modeled using a corresponding TOSCA node type that
+  includes the necessary interface operations to support
+  Orchestration.
+- However, when instantiating a Deployment, Kubernetes automatically
+  creates the ReplicaSet for that deployment and the Pods for that
+  ReplicaSet. This means that when using TOSCA to *orchestrate* a
+  Deployment, the interface operations for the ReplicaSet in the
+  Deployment and for the Pods in the ReplicaSet must not be used.
+- All Kubernetes workloads are *exposed* to the outside world using
+  Service resources (to be discussed next). Independent of the type of
+  workload, Service resources always reference the Pods for the
+  workload. This means that even when orchestrating a Deployment, the
+  TOSCA model for the Deployment must include the Pod node so it can
+  be referenced by a Service.
+
+We propose to leverage TOSCA node type inheritance as shown in the
+following figure:
+
 ```mermaid
 classDiagram
     NamespacedResource <|-- Pod
-    NamespacedResource <|-- Workload
-    Workload <|-- Deployment
-    Workload <|-- ReplicaSet
-    Workload <|-- StatefulSet
-    Workload <|-- DaemonSet
-    Workload <|-- CronJob
-    Workload <|-- Job
-    Deployment "1" *-- "1" ReplicaSet:Contains
-    CronJob "1" *-- "0..*" Job:Contains
-    ReplicaSet *-- Pod:Contains
-    StatefulSet *-- Pod:Contains
-    DaemonSet *-- Pod:Contains
-    Job *-- Pod:Contains
+    Pod <|-- Deployment
+    Deployment <|-- ReplicaSet
+    Pod <|-- StatefulSet
+    Pod <|-- DaemonSet
+    Pod <|-- Job
+    Job <|-- CronJob
 ```
 
 ### Service Abstractions

@@ -18,13 +18,10 @@ service_template:
       type: k8s:ServiceAccount
     deployment:
       type: k8s:Deployment
-    pod:
-      type: k8s:Pod
       requirements:
         - runs-as: service-account
-        - container: deployment
     service:
       type: k8s:Service
       requirements:
-        - pod: pod
+        - pod: deployment
         
