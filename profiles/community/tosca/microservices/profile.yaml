@@ -13,7 +13,16 @@ capability_types:
   Endpoint:
     description: >-
       Endpoint for interaction between microservices
-
+    properties:
+      port:
+        type: integer
+      name:
+        type: string
+        required: False
+      protocol:
+        type: string
+        required: False
+        
 relationship_types:
   InteractsWith:
     description: >-

@@ -21,6 +21,18 @@ capability_types:
       Ability to be claimed
   Feature:
     description: placeholder for now.
+  Endpoint:
+    description: >-
+      Endpoint for interaction with a Service
+    properties:
+      port:
+        type: integer
+      name:
+        type: string
+        required: False
+      protocol:
+        type: string
+        required: False
 
 relationship_types:
   AttachesTo:
@@ -49,6 +61,9 @@ relationship_types:
     description: >-
       Relationship type for specifying the service to which Ingress
       traffic is routed.
+  InteractsWith:
+    description: >-
+      Models interaction with a Service
 
 node_types:
   Resource:
@@ -212,6 +227,11 @@ node_types:
           relationship: AttachesTo
           node: Volume
           count_range: [0, UNBOUNDED]
+      - endpoint:
+          capability: Endpoint
+          relationship: InteractsWith
+          node: Service
+          count_range: [0, UNBOUNDED]
   ReplicaSet:
     derived_from: Pod
   Deployment:
@@ -224,17 +244,11 @@ node_types:
     derived_from: Pod
   CronJob:
     derived_from: Job
-  Ingress:
-    derived_from: NamespacedResource
-    requirements:
-      - backend:
-          capability: Feature
-          node: Service
-          relationship: RoutesTo
-          count_range: [1, 1]
   Service:
     derived_from: NamespacedResource
     capabilities:
+      endpoint:
+        type: Endpoint
       router:
         type: Feature
     requirements:
@@ -249,3 +263,11 @@ node_types:
     derived_from: Service
   LoadBalancerService:
     derived_from: Service
+  Ingress:
+    derived_from: NamespacedResource
+    requirements:
+      - backend:
+          capability: Feature
+          node: Service
+          relationship: RoutesTo
+          count_range: [1, 1]
