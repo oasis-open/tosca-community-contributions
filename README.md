@@ -29,7 +29,7 @@ following:
    application domains.
 - *Examples*: example service templates (and associated artifacts)
    that can be used to deploy simple services.
-- *[Tests](https://github.com/oasis-open/tosca-community-contributions/tests/README.md)*: service templates that can be used by parser designers or
+- *[Tests](tests/README.md)*: service templates that can be used by parser designers or
    orchestrator designers to check compliance with the TOSCA
    specification.
 - *Tools*: parsers, validators, translators, orchestrators, or other

@@ -5,9 +5,10 @@ A TOSCA processor may be validated by ensuring that it responds correctly to a f
 The pytest files cannot know in advance how to invoke a particular TOSCA processor nor how to interpret its response. Therefore a wrapper program is used to provide a standard interface towards pytest. A separate wrapper is needed for each TOSCA processor.
 
 Three levels of testing are defined for TOSCA processors:
-**Level 1** Ensures that the processor can parse valid TOSCA and reject invalid files.
-**Level 2** Tests the ability of the processor to maintains and report on an internal representation model.
-**Level 3** Tests the ability of the processor to create, modify and delete real world implementations of nodes and relationships.
+
+- **Level 1** Ensures that the processor can parse valid TOSCA and reject invalid files.
+- **Level 2** Tests the ability of the processor to maintain and report on an internal representation model.
+- **Level 3** Tests the ability of the processor to create, modify and delete real world implementations of nodes and relationships.
 
 Current effort is directed at creating a complete set of tests for Level 1.
 

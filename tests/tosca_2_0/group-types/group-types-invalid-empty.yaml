@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_2_0
 imports:
-- url: foobar.yaml 
+- url: foobar1.yaml 
   namespace: foobar
 
 group_types: #Invalid should be map not null
