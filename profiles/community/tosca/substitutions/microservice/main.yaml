@@ -12,6 +12,11 @@ description: >-
 service_template:
   substitution_mappings:
     node_type: ms:MicroService
+    requirements:
+      - host:
+          - [service-account, host] 
+          - [deployment, host] 
+          - [service, host] 
 
   node_templates:
     service-account:

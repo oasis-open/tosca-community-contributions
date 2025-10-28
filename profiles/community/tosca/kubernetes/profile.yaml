@@ -5,13 +5,11 @@ profile: community.tosca.kubernetes:0.1
 description: >-
   TOSCA Community Kubernetes Profile
 
+imports:
+  - profile: community.tosca.platform:0.1
+    namespace: ptfm
+    
 capability_types:
-  Container:
-    description: >-
-      Base capability type for capabilities that can be targeted by a
-      ContainedBy relationship.  Advertizes the ability to contain one
-      or more other nodes.
-    valid_relationship_types: [ContainedBy]
   Attachable:
     description: >-
       Ability for storage to be attached.
@@ -25,11 +23,6 @@ capability_types:
     description: placeholder for now.
 
 relationship_types:
-  ContainedBy:
-    description: >-
-      The ContainedBy type represents a containment relationship between
-      two nodes.
-    valid_capability_types: [Container]
   AttachesTo:
     description: >
       This relationship type represents an association relationship to
@@ -61,6 +54,12 @@ node_types:
   Resource:
     description: >-
       Base class for Kubernetes resources
+    requirements:
+      - host:
+          capability: ptfm:Container
+          relationship: ptfm:ContainedBy
+          node: ptfm:KubernetesCluster
+          count_range: [1, 1]
   ClusterScopedResource:
     derived_from: Resource
     description: >-

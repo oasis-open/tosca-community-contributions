@@ -5,6 +5,10 @@ profile: community.tosca.microservices:0.1
 description: >-
   TOSCA Community MicroServices Profile type definitions
 
+imports:
+  - profile: community.tosca.platform:0.1
+    namespace: ptfm
+    
 capability_types:
   Endpoint:
     description: >-
@@ -21,6 +25,11 @@ node_types:
       endpoint:
         type: Endpoint
     requirements:
+      - host:
+          capability: ptfm:Container
+          relationship: ptfm:ContainedBy
+          node: ptfm:Platform
+          count_range: [1, 1]
       - endpoint:
           capability: Endpoint
           relationship: InteractsWith
