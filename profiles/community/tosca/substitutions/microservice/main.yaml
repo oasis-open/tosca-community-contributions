@@ -16,12 +16,14 @@ service_template:
       [CAPABILITY, endpoint, port]: port
       [CAPABILITY, endpoint, name]: port-name
       [CAPABILITY, endpoint, protocol]: protocol
+    capabilities:
+      endpoint: [service, endpoint]
     requirements:
       - host:
           - [service-account, host] 
           - [deployment, host] 
           - [service, host] 
-
+      - [endpoint, UNBOUNDED]: [deployment, endpoint]
   inputs:
     port:
       type: integer
@@ -31,7 +33,6 @@ service_template:
     protocol:
       type: string
       required: False
-
   node_templates:
     service-account:
       type: k8s:ServiceAccount
