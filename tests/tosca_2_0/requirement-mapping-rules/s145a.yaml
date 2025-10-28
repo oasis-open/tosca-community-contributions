@@ -2,7 +2,7 @@
 tosca_definitions_version: tosca_2_0
 
 imports:
-- types9.yaml  
+- requirement-mapping-rules-types.yaml  
 
 node_types:
   Client:

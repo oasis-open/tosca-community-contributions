@@ -1,11 +1,11 @@
-# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/requirement-mapping-and-selectable-nodes/types_test.py
+# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/namespaces/mytypes_test.py
 import subprocess
 import unittest
 import os
 from pathlib import Path
 
 here = os.path.dirname(os.path.abspath(__file__))
-tosca_file_path = here + '/types8.yaml'
+tosca_file_path = here + '/namespaces-mytypes.yaml'
 wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
 class TestWrapperProgram(unittest.TestCase):

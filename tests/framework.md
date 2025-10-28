@@ -12,7 +12,7 @@ Normally the test file will be TOSCA YAML file. It may also be a TOSCA CSAR file
 The naming convention for these files is as follows:
 Some test files are taken directly from the snippets used in the specification, those keep the same filename which are of the form:
 s<number>.yaml
-Some of the snippets had to be changed as pytest prefers that filenames are unique across all sub-directories as they have the format, for example multiple uses of types.yaml in the specification snippets have been changed to types<unique_number>.yaml
+Some of the snippets had to be changed as pytest prefers that filenames are unique across all sub-directories as they have the format, for example multiple uses of types.yaml in the specification snippets have been changed to <parent-directory-name>-types.yaml
 Where snippets from the specification had to be changed by the addition of a suffix, i.e.
 s<orginal number>a.yaml
 There should be test files which are designed to be passed and those which are designed to fail.

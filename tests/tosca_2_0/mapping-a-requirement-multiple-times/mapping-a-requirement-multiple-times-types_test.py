@@ -1,11 +1,11 @@
-# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/mapping-multiple-requirements-with-the-same-name/types_test.py
+# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/mapping-a-requirement-multiple-times/types_test.py
 import subprocess
 import unittest
 import os
 from pathlib import Path
 
-here = os.path.dirname(os.path.abspath(__file__))
-tosca_file_path = here + '/types3.yaml'
+here = os.path.dirname(os.path.realpath(__file__))
+tosca_file_path = here + '/mapping-a-requirement-multiple-times-types.yaml'
 wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
 class TestWrapperProgram(unittest.TestCase):
