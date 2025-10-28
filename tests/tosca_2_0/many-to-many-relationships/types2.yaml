@@ -1,0 +1,62 @@
+tosca_definitions_version: tosca_2_0
+ 
+capability_types:
+  Feature:
+    properties:
+      target-count:
+        type: integer
+        required: false
+  ServiceCapability:
+    description: A service capability
+  Compute:
+    description: Ability to compute.
+  Host:
+    description: >-
+      Ability to host software.
+  Service:
+    description: Ability to provide a service.
+
+relationship_types:
+  HostedOn:
+    description: >-
+      Relationship to a host.
+  ServedBy: 
+    description: Relationship to a service.
+  Uses: {}
+node_types:
+  Server:
+    description: A server
+    capabilities:
+      service:
+        type: ServiceCapability
+  Client:
+    description: A client
+    requirements:
+      - service: ServiceCapability
+      - host:
+          capability: Host
+          relationship: HostedOn
+  YellowBox:
+    description: A yellow box on a mermaid diagram
+  Left:
+    derived_from: YellowBox
+    requirements:
+      - uses:
+          capability: Feature
+          relationship: Uses
+  Right:
+    derived_from: YellowBox
+    capabilities:
+      feature:
+        type: Feature
+  Compute:
+    description: A compute node
+    capabilities:
+      host:
+        type: Host
+  ClientSoftware:
+    description: An software application
+    requirements:
+      - host:
+          capability: Host
+          relationship: HostedOn
