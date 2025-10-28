@@ -2,7 +2,6 @@ import subprocess
 import unittest
 import os
 from pathlib import Path
-import pytest
 
 # Set the path to the tosca file
 here = os.path.dirname(os.path.abspath(__file__))

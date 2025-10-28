@@ -9,10 +9,16 @@ TOSCA files should be placed in the directory which corresponds to the section i
 
 ### The TOSCA file
 Normally the test file will be TOSCA YAML file. It may also be a TOSCA CSAR file or any file which comprises a TOSCA CSAR file.
-The current naming convention for these files is as follows although older ones exist:
-<directory name>-<content description using hyphen seprators><optional invalid indicator>.yaml
+The naming convention for these files is as follows:
+Some test files are taken directly from the snippets used in the specification, those keep the same filename which are of the form:
+s<number>.yaml
+Some of the snippets had to be changed as pytest prefers that filenames are unique across all sub-directories as they have the format, for example multiple uses of types.yaml in the specification snippets have been changed to types<unique_number>.yaml
+Where snippets from the specification had to be changed by the addition of a suffix, i.e.
+s<orginal number>a.yaml
 There should be test files which are designed to be passed and those which are designed to fail.
 Those which are designed to fail should have a filename which ends -inv.yaml although the earlier standard of  including the word 'invalid' in the filename is still allowed.
+New test cases not taken from the specification should use the following naming convention, although older ones exist:
+<directory name>-<content description using hyphen seprators><optional invalid indicator>.yaml
 
 
 ### The pytest file
