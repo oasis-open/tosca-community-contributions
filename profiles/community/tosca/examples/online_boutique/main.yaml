@@ -12,6 +12,11 @@ service_template:
     frontend:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 80
+            name: http
       requirements:
         - endpoint: ad
         - endpoint: recommend
@@ -23,6 +28,11 @@ service_template:
     checkout:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 5050
+            name: grpc
       requirements:
         - endpoint: catalog
         - endpoint: cart
@@ -33,32 +43,77 @@ service_template:
     ad:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 9555
+            name: grpc
     recommend:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 8080
+            name: grpc
       requirements:
         - endpoint: catalog
     cart:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 7070
+            name: grpc
       requirements:
         - endpoint: redis
     catalog:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 3550
+            name: grpc
     shipping:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 50051
+            name: grpc
     currency:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 7000
+            name: grpc
     payment:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 50051
+            name: grpc
     email:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 5000
+            name: grpc
     redis:
       type: ms:MicroService
       directives: [substitute]
+      capabilities:
+        endpoint:
+          properties:
+            port: 6379
+            name: tcp-redis
 

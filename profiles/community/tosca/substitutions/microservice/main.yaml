@@ -12,19 +12,42 @@ description: >-
 service_template:
   substitution_mappings:
     node_type: ms:MicroService
-
+    properties:
+      [CAPABILITY, endpoint, port]: port
+      [CAPABILITY, endpoint, name]: port-name
+      [CAPABILITY, endpoint, protocol]: protocol
+    capabilities:
+      endpoint: [service, endpoint]
+    requirements:
+      - host:
+          - [service-account, host] 
+          - [deployment, host] 
+          - [service, host] 
+      - [endpoint, UNBOUNDED]: [deployment, endpoint]
+  inputs:
+    port:
+      type: integer
+    port-name:
+      type: string
+      required: False
+    protocol:
+      type: string
+      required: False
   node_templates:
     service-account:
       type: k8s:ServiceAccount
     deployment:
       type: k8s:Deployment
-    pod:
-      type: k8s:Pod
       requirements:
         - runs-as: service-account
-        - container: deployment
     service:
       type: k8s:Service
+      capabilities:
+        endpoint:
+          properties:
+            port: {$get_input: port}
+            name: {$get_input: port-name}
+            protocol: {$get_input: protocol}
       requirements:
-        - pod: pod
+        - pod: deployment
         

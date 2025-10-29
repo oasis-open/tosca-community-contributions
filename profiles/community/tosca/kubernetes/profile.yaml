@@ -5,13 +5,11 @@ profile: community.tosca.kubernetes:0.1
 description: >-
   TOSCA Community Kubernetes Profile
 
+imports:
+  - profile: community.tosca.platform:0.1
+    namespace: ptfm
+    
 capability_types:
-  Container:
-    description: >-
-      Base capability type for capabilities that can be targeted by a
-      ContainedBy relationship.  Advertizes the ability to contain one
-      or more other nodes.
-    valid_relationship_types: [ContainedBy]
   Attachable:
     description: >-
       Ability for storage to be attached.
@@ -23,13 +21,20 @@ capability_types:
       Ability to be claimed
   Feature:
     description: placeholder for now.
+  Endpoint:
+    description: >-
+      Endpoint for interaction with a Service
+    properties:
+      port:
+        type: integer
+      name:
+        type: string
+        required: False
+      protocol:
+        type: string
+        required: False
 
 relationship_types:
-  ContainedBy:
-    description: >-
-      The ContainedBy type represents a containment relationship between
-      two nodes.
-    valid_capability_types: [Container]
   AttachesTo:
     description: >
       This relationship type represents an association relationship to
@@ -56,11 +61,20 @@ relationship_types:
     description: >-
       Relationship type for specifying the service to which Ingress
       traffic is routed.
+  InteractsWith:
+    description: >-
+      Models interaction with a Service
 
 node_types:
   Resource:
     description: >-
       Base class for Kubernetes resources
+    requirements:
+      - host:
+          capability: ptfm:Container
+          relationship: ptfm:ContainedBy
+          node: ptfm:KubernetesCluster
+          count_range: [1, 1]
   ClusterScopedResource:
     derived_from: Resource
     description: >-
@@ -208,56 +222,33 @@ node_types:
           capability: Feature
           node: ServiceAccount
           relationship: RunsAs
-      - container:
-          capability: Container
-          node: Workload
-          relationship: ContainedBy
-          count_range: [0, 1]
       - volume:
           capability: Attachable
           relationship: AttachesTo
           node: Volume
           count_range: [0, UNBOUNDED]
-  Workload:
-    derived_from: NamespacedResource
-    capabilities:
-      container:
-        type: Container
-  Deployment:
-    derived_from: Workload
-  ReplicaSet:
-    derived_from: Workload
-    requirements:
-      - container:
-          capability: Container
-          node: Deployment
-          relationship: ContainedBy
-          count_range: [0, 1]
-  StatefulSet:
-    derived_from: Workload
-  DaemonSet:
-    derived_from: Workload
-  CronJob:
-    derived_from: Workload
-  Job:
-    derived_from: Workload
-    requirements:
-      - container:
-          capability: Container
-          node: Deployment
-          relationship: ContainedBy
-          count_range: [0, 1]
-  Ingress:
-    derived_from: NamespacedResource
-    requirements:
-      - backend:
-          capability: Feature
+      - endpoint:
+          capability: Endpoint
+          relationship: InteractsWith
           node: Service
-          relationship: RoutesTo
-          count_range: [1, 1]
+          count_range: [0, UNBOUNDED]
+  ReplicaSet:
+    derived_from: Pod
+  Deployment:
+    derived_from: ReplicaSet
+  StatefulSet:
+    derived_from: Pod
+  DaemonSet:
+    derived_from: Pod
+  Job:
+    derived_from: Pod
+  CronJob:
+    derived_from: Job
   Service:
     derived_from: NamespacedResource
     capabilities:
+      endpoint:
+        type: Endpoint
       router:
         type: Feature
     requirements:
@@ -272,3 +263,11 @@ node_types:
     derived_from: Service
   LoadBalancerService:
     derived_from: Service
+  Ingress:
+    derived_from: NamespacedResource
+    requirements:
+      - backend:
+          capability: Feature
+          node: Service
+          relationship: RoutesTo
+          count_range: [1, 1]
