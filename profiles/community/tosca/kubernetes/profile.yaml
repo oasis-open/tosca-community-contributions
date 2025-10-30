@@ -6,6 +6,8 @@ description: >-
   TOSCA Community Kubernetes Profile
 
 imports:
+  - profile: community.tosca.common:0.1
+    namespace: common
   - profile: community.tosca.platform:0.1
     namespace: ptfm
     
@@ -21,18 +23,6 @@ capability_types:
       Ability to be claimed
   Feature:
     description: placeholder for now.
-  Endpoint:
-    description: >-
-      Endpoint for interaction with a Service
-    properties:
-      port:
-        type: integer
-      name:
-        type: string
-        required: False
-      protocol:
-        type: string
-        required: False
 
 relationship_types:
   AttachesTo:
@@ -61,9 +51,6 @@ relationship_types:
     description: >-
       Relationship type for specifying the service to which Ingress
       traffic is routed.
-  InteractsWith:
-    description: >-
-      Models interaction with a Service
 
 node_types:
   Resource:
@@ -228,8 +215,8 @@ node_types:
           node: Volume
           count_range: [0, UNBOUNDED]
       - endpoint:
-          capability: Endpoint
-          relationship: InteractsWith
+          capability: common:Endpoint
+          relationship: common:InteractsWith
           node: Service
           count_range: [0, UNBOUNDED]
   ReplicaSet:
@@ -248,7 +235,7 @@ node_types:
     derived_from: NamespacedResource
     capabilities:
       endpoint:
-        type: Endpoint
+        type: common:Endpoint
       router:
         type: Feature
     requirements:

@@ -6,33 +6,16 @@ description: >-
   TOSCA Community MicroServices Profile type definitions
 
 imports:
+  - profile: community.tosca.common:0.1
+    namespace: common
   - profile: community.tosca.platform:0.1
     namespace: ptfm
     
-capability_types:
-  Endpoint:
-    description: >-
-      Endpoint for interaction between microservices
-    properties:
-      port:
-        type: integer
-      name:
-        type: string
-        required: False
-      protocol:
-        type: string
-        required: False
-        
-relationship_types:
-  InteractsWith:
-    description: >-
-      Models interaction between microservices
-
 node_types:
   MicroService:
     capabilities:
       endpoint:
-        type: Endpoint
+        type: common:Endpoint
     requirements:
       - host:
           capability: ptfm:Container
@@ -40,5 +23,5 @@ node_types:
           node: ptfm:Platform
           count_range: [1, 1]
       - endpoint:
-          capability: Endpoint
-          relationship: InteractsWith
+          capability: common:Endpoint
+          relationship: common:InteractsWith
