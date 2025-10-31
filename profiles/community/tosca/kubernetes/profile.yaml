@@ -10,7 +10,14 @@ imports:
     namespace: common
   - profile: community.tosca.platform:0.1
     namespace: ptfm
-    
+
+data_types:
+  EnvironmentVariable:
+    properties:
+      name:
+        type: string
+      value:
+        type: integer
 capability_types:
   Attachable:
     description: >-
@@ -23,7 +30,6 @@ capability_types:
       Ability to be claimed
   Feature:
     description: placeholder for now.
-
 relationship_types:
   AttachesTo:
     description: >
@@ -200,6 +206,11 @@ node_types:
     derived_from: Volume
   Pod:
     derived_from: NamespacedResource
+    properties:
+      env:
+        type: list
+        entry_schema: EnvironmentVariable
+        required: False
     capabilities:
       feature:
         type: Feature

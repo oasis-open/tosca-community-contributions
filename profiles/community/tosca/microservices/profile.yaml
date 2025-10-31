@@ -9,18 +9,33 @@ imports:
   - profile: community.tosca.common:0.1
     namespace: common
   - profile: community.tosca.platform:0.1
-    namespace: ptfm
+    namespace: pfm
     
+functions:
+  to_uppercase:
+    description: >-
+      Convert a string to upper case
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The string to convert to upper case.
+        result: string
+        implementation: functions.string:to_uppercase
+
 node_types:
   MicroService:
+    properties:
+      name:
+        type: string
     capabilities:
       endpoint:
         type: common:Endpoint
     requirements:
       - host:
-          capability: ptfm:Container
-          relationship: ptfm:ContainedBy
-          node: ptfm:Platform
+          capability: pfm:Container
+          relationship: pfm:ContainedBy
+          node: pfm:Platform
           count_range: [1, 1]
       - endpoint:
           capability: common:Endpoint

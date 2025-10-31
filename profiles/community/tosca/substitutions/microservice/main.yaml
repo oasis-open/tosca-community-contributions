@@ -9,10 +9,32 @@ imports:
 description: >-
   Substituting service template for MicroService nodes
 
+node_types:
+  Service:
+    derived_from: k8s:Service
+    properties:
+      label:
+        type: string
+      address:
+        type: k8s:EnvironmentVariable
+        value:
+          name:
+            $concat:
+              - $ms:to_uppercase: [{$get_property: [SELF, label]}]
+              - _SERVICE_ADDR
+          value: {$get_property: [SELF, CAPABILITY, endpoint, port]}
+  Deployment:
+    derived_from: k8s:Deployment
+    requirements:
+      - endpoint:
+          node: Service
+          count_range: [0, UNBOUNDED]
+          
 service_template:
   substitution_mappings:
     node_type: ms:MicroService
     properties:
+      name: name
       [CAPABILITY, endpoint, port]: port
       [CAPABILITY, endpoint, name]: port-name
       [CAPABILITY, endpoint, protocol]: protocol
@@ -25,6 +47,8 @@ service_template:
           - [service, host] 
       - [endpoint, UNBOUNDED]: [deployment, endpoint]
   inputs:
+    name:
+      type: string
     port:
       type: integer
     port-name:
@@ -37,11 +61,19 @@ service_template:
     service-account:
       type: k8s:ServiceAccount
     deployment:
-      type: k8s:Deployment
+      type: Deployment
+      properties:
+        env:
+          $concat:
+            - - name: PORT
+                value: 9090
+            - $get_property: [SELF, RELATIONSHIP, endpoint, TARGET, address]
       requirements:
         - runs-as: service-account
     service:
-      type: k8s:Service
+      type: Service
+      properties:
+        label: {$get_input: name}
       capabilities:
         endpoint:
           properties:

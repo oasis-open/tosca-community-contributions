@@ -12,6 +12,8 @@ service_template:
     frontend:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: frontend
       capabilities:
         endpoint:
           properties:
@@ -28,6 +30,8 @@ service_template:
     checkout:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: checkout
       capabilities:
         endpoint:
           properties:
@@ -43,6 +47,8 @@ service_template:
     ad:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: ad
       capabilities:
         endpoint:
           properties:
@@ -51,6 +57,8 @@ service_template:
     recommend:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: recommendation
       capabilities:
         endpoint:
           properties:
@@ -61,6 +69,8 @@ service_template:
     cart:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: cart
       capabilities:
         endpoint:
           properties:
@@ -71,6 +81,8 @@ service_template:
     catalog:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: product_catalog
       capabilities:
         endpoint:
           properties:
@@ -79,6 +91,8 @@ service_template:
     shipping:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: shipping
       capabilities:
         endpoint:
           properties:
@@ -87,6 +101,8 @@ service_template:
     currency:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: currency
       capabilities:
         endpoint:
           properties:
@@ -95,6 +111,8 @@ service_template:
     payment:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: payment
       capabilities:
         endpoint:
           properties:
@@ -103,6 +121,8 @@ service_template:
     email:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: email
       capabilities:
         endpoint:
           properties:
@@ -111,6 +131,8 @@ service_template:
     redis:
       type: ms:MicroService
       directives: [substitute]
+      properties:
+        name: redis
       capabilities:
         endpoint:
           properties:
