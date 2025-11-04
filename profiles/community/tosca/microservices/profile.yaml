@@ -6,39 +6,47 @@ description: >-
   TOSCA Community MicroServices Profile type definitions
 
 imports:
+  - profile: community.tosca.core:0.1
+    namespace: core
   - profile: community.tosca.platform:0.1
-    namespace: ptfm
+    namespace: pfm
     
-capability_types:
-  Endpoint:
+functions:
+  to_string:
     description: >-
-      Endpoint for interaction between microservices
-    properties:
-      port:
-        type: integer
-      name:
-        type: string
-        required: False
-      protocol:
-        type: string
-        required: False
-        
-relationship_types:
-  InteractsWith:
+      Convert an integer to string 
+    signatures:
+      - arguments:
+          - type: integer
+            description: >-
+              The integer to convert to string
+        result: string
+        implementation: functions.string:to_string
+  to_uppercase:
     description: >-
-      Models interaction between microservices
+      Convert a string to upper case
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The string to convert to upper case.
+        result: string
+        implementation: functions.string:to_uppercase
 
 node_types:
   MicroService:
+    properties:
+      name:
+        type: string
     capabilities:
       endpoint:
-        type: Endpoint
+        type: core:Endpoint
     requirements:
       - host:
-          capability: ptfm:Container
-          relationship: ptfm:ContainedBy
-          node: ptfm:Platform
+          capability: pfm:Container
+          relationship: pfm:ContainedBy
+          node: pfm:Platform
           count_range: [1, 1]
       - endpoint:
-          capability: Endpoint
-          relationship: InteractsWith
+          capability: core:Endpoint
+          relationship: core:InteractsWith
