@@ -19,7 +19,7 @@ There should be test files which are designed to be passed and those which are d
 Those which are designed to fail should have a filename which ends -inv.yaml although the earlier standard of  including the word 'invalid' in the filename is still allowed.
 New test cases not taken from the specification should use the following naming convention, although older ones exist:
 <directory name>-<content description using hyphen seprators><optional invalid indicator>.yaml
-Some some test files are in CSAR format not simple yaml, these have the relevant extension e.g. .zip
+
 
 ### The pytest file
 The expected result is held in a separate file in the same directory which will have a similar name with suffix of _test. e.g. if the tosca file is called valid.yaml the associated file will be named valid_test.py.
@@ -28,7 +28,7 @@ The metadata file is, at present, a Python file which defines a test and expecte
 
 Each pytest file will be crafted to match the associated test file although expected that in most cases customization will be minimal. For an example pytest file see ./tests/tosca_2_0/tosca-definitions-version/version_test.py. It assumes the name of the file can be derived from its own name.
 
-The pytest file may be adapted to create a CSAR file on the fly before sending it to the TOSCA processor under test. (An example is required.)
+The pytest file may be adapted to create a CSAR file on the fly before sending it to the TOSCA processor under test. (An example can be seen in tosca_2_0/examples/s26a_test.py)
 
 The pytest file calls a program called wrapper with a reference to the tosca file. Wrapper provides a standard interface to the TOSCA Processor under test and is further described in [validation](validation.md).
 
