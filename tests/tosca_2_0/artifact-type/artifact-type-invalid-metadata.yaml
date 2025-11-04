@@ -1,8 +1,10 @@
 tosca_definitions_version: tosca_2_0
 
 artifact_types:
+  artifacts.root:
+    description: root artifact type
   tosca_sample:
-    derived_from: tosca.artifacts.Root
+    derived_from: artifacts.root
     mime_type: application/java-archive
     file_ext: [ jar ]
     metadata: "This should be a map not a string"

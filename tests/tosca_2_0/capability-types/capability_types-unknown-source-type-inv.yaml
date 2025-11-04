@@ -15,7 +15,11 @@ metadata:
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 capability_types:
+
+  capabilities.root:
+    description: root capability type, defined here so that derived_from can be tested below
+
   tosca.test.capabilities.MyCapability:
-    derived_from: tosca.capabilities.Root
+    derived_from: capabilities.root
     description: This is a sample capability for testing scenarios.
     valid_source_node_types: [ tosca.test.UnknownType ]

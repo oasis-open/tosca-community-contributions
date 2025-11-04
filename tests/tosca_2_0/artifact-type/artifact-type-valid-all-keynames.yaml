@@ -10,12 +10,14 @@ metadata:
     assert there is no errors
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
-  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 2.0.0
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 artifact_types:
+  artifacts.root:
+    description: root artifact type
   tosca_sample:
-    derived_from: tosca.artifacts.Root
+    derived_from: artifacts.root
     description: Java Archive artifact type
     mime_type: application/java-archive
     file_ext: [ jar ]

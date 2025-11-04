@@ -19,7 +19,7 @@ There should be test files which are designed to be passed and those which are d
 Those which are designed to fail should have a filename which ends -inv.yaml although the earlier standard of  including the word 'invalid' in the filename is still allowed.
 New test cases not taken from the specification should use the following naming convention, although older ones exist:
 <directory name>-<content description using hyphen seprators><optional invalid indicator>.yaml
-
+Some some test files are in CSAR format not simple yaml, these have the relevant extension e.g. .zip
 
 ### The pytest file
 The expected result is held in a separate file in the same directory which will have a similar name with suffix of _test. e.g. if the tosca file is called valid.yaml the associated file will be named valid_test.py.

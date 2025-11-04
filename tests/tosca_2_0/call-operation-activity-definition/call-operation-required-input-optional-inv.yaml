@@ -32,6 +32,8 @@ service_template:
           type: string
         name:
           type: string
+          required: False
+          # should fail as name is required by the operation but optional in the workflow
       steps:
         backup_client:
           target: client
@@ -39,4 +41,5 @@ service_template:
             - call_operation:
                 operation: backup.backup
                 inputs:
+                  location: {$get_input: location}
                   name: {$get_input: name}

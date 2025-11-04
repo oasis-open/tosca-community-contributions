@@ -9,12 +9,17 @@ metadata:
     assert there is no errors
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
-  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 2.0.0
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
+node_types:
+  Compute:
+    description: A compute node type for testing capability types.
+  SoftwareComponent:
+    description: A software component node type for testing capability types.
+
 
 capability_types:
-  tosca.test.capabilities.MyCapability:
-    derived_from: tosca.capabilities.Root
+  MyCapabilityType:
     version: 1.0.0
     description: This is a sample capability for testing scenarios.
     properties:
@@ -26,4 +31,4 @@ capability_types:
       my_attribute:
         type: string
         description: a dummy attribute for the capability.
-    valid_source_node_types: [ tosca.nodes.Compute, tosca.nodes.SoftwareComponent ]
+    valid_source_node_types: [ Compute, SoftwareComponent ]

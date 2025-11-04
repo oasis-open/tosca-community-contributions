@@ -8,7 +8,7 @@ metadata:
   oasis.testAssertion.predicate: >
     When parsing the template
     assert there is no errors
-    optional assert raises the warning 'WarnNotInheritFromRoot'
+  
   oasis.testAssertion.tags.warnings: WarnNotInheritFromRoot
   oasis.testAssertion.tags.warnings_lines: 22
   oasis.testAssertion.prescription_level: preferred
