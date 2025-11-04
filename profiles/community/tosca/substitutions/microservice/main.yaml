@@ -36,6 +36,7 @@ service_template:
     properties:
       name: name
       [CAPABILITY, endpoint, port]: port
+      [CAPABILITY, endpoint, target-port]: target-port
       [CAPABILITY, endpoint, name]: port-name
       [CAPABILITY, endpoint, protocol]: protocol
     capabilities:
@@ -51,6 +52,8 @@ service_template:
       type: string
     port:
       type: integer
+    target-port:
+      type: integer
     port-name:
       type: string
       required: False
@@ -65,9 +68,10 @@ service_template:
       properties:
         env:
           $concat:
-            - - name: PORT
-                value: 9090
             - $get_property: [SELF, RELATIONSHIP, endpoint, TARGET, address]
+            - - name: PORT
+                value: {$get_property: [SELF, container-port]}
+        container-port: {$get_input: target-port}
       requirements:
         - runs-as: service-account
     service:
@@ -78,6 +82,7 @@ service_template:
         endpoint:
           properties:
             port: {$get_input: port}
+            target-port: {$get_input: target-port}
             name: {$get_input: port-name}
             protocol: {$get_input: protocol}
       requirements:

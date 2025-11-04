@@ -211,6 +211,8 @@ node_types:
         type: list
         entry_schema: EnvironmentVariable
         required: False
+      container-port:
+        type: integer
     capabilities:
       feature:
         type: Feature

@@ -12,6 +12,8 @@ capability_types:
     properties:
       port:
         type: integer
+      target-port:
+        type: integer
       name:
         type: string
         required: False

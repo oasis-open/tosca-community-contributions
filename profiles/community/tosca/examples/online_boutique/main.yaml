@@ -18,6 +18,7 @@ service_template:
         endpoint:
           properties:
             port: 80
+            target-port: 8080
             name: http
       requirements:
         - endpoint: ad
@@ -36,6 +37,7 @@ service_template:
         endpoint:
           properties:
             port: 5050
+            target-port: 5050
             name: grpc
       requirements:
         - endpoint: catalog
@@ -53,6 +55,7 @@ service_template:
         endpoint:
           properties:
             port: 9555
+            target-port: 9555
             name: grpc
     recommend:
       type: ms:MicroService
@@ -63,6 +66,7 @@ service_template:
         endpoint:
           properties:
             port: 8080
+            target-port: 8080
             name: grpc
       requirements:
         - endpoint: catalog
@@ -75,6 +79,7 @@ service_template:
         endpoint:
           properties:
             port: 7070
+            target-port: 7070
             name: grpc
       requirements:
         - endpoint: redis
@@ -87,6 +92,7 @@ service_template:
         endpoint:
           properties:
             port: 3550
+            target-port: 3550
             name: grpc
     shipping:
       type: ms:MicroService
@@ -97,6 +103,7 @@ service_template:
         endpoint:
           properties:
             port: 50051
+            target-port: 50051
             name: grpc
     currency:
       type: ms:MicroService
@@ -107,6 +114,7 @@ service_template:
         endpoint:
           properties:
             port: 7000
+            target-port: 7000
             name: grpc
     payment:
       type: ms:MicroService
@@ -117,6 +125,7 @@ service_template:
         endpoint:
           properties:
             port: 50051
+            target-port: 50051
             name: grpc
     email:
       type: ms:MicroService
@@ -127,6 +136,7 @@ service_template:
         endpoint:
           properties:
             port: 5000
+            target-port: 8080
             name: grpc
     redis:
       type: ms:MicroService
@@ -137,5 +147,6 @@ service_template:
         endpoint:
           properties:
             port: 6379
+            target-port: 6379
             name: tcp-redis
 
