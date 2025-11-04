@@ -22,7 +22,7 @@ node_types:
             $concat:
               - $ms:to_uppercase: [{$get_property: [SELF, label]}]
               - _SERVICE_ADDR
-          value: {$get_property: [SELF, CAPABILITY, endpoint, port]}
+          value: {$ms:to_string: [{$get_property: [SELF, CAPABILITY, endpoint, port]}]}
   Deployment:
     derived_from: k8s:Deployment
     requirements:
@@ -68,9 +68,9 @@ service_template:
       properties:
         env:
           $concat:
-            - $get_property: [SELF, RELATIONSHIP, endpoint, TARGET, address]
             - - name: PORT
-                value: {$get_property: [SELF, container-port]}
+                value: {$ms:to_string: [{$get_property: [SELF, container-port]}]}
+            - $get_property: [SELF, RELATIONSHIP, endpoint, TARGET, address]
         container-port: {$get_input: target-port}
       requirements:
         - runs-as: service-account

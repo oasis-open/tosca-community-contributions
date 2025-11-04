@@ -12,6 +12,16 @@ imports:
     namespace: pfm
     
 functions:
+  to_string:
+    description: >-
+      Convert an integer to string 
+    signatures:
+      - arguments:
+          - type: integer
+            description: >-
+              The integer to convert to string
+        result: string
+        implementation: functions.string:to_string
   to_uppercase:
     description: >-
       Convert a string to upper case

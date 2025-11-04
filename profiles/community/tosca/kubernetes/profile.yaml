@@ -17,7 +17,7 @@ data_types:
       name:
         type: string
       value:
-        type: integer
+        type: string
 capability_types:
   Attachable:
     description: >-
