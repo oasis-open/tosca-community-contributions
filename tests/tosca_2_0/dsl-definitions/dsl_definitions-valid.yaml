@@ -20,10 +20,30 @@ dsl_definitions:
     num_cpus: 2
     mem_size: 4096 MB
 
+node_types:
+  Compute:
+    description: A compute node type
+    capabilities:
+      host:
+        type: capabilities.Compute
+
+capability_types:
+  capabilities.Compute:
+    properties:
+      disk_size:
+        type: scalar-unit.size
+        description: The size of the disk
+      num_cpus:
+        type: integer
+        description: The number of CPUs
+      mem_size:
+        type: scalar-unit.size
+        description: The size of memory
+
 service_template:
   node_templates:
     compute:
-      type: tosca.nodes.Compute
+      type: Compute
       capabilities:
         host:
           properties: *host_capabilities

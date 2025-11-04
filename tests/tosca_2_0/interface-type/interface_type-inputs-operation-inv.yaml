@@ -16,7 +16,6 @@ metadata:
 
 interface_types:
   tosca.example.interfaces.MyInterface:
-    derived_from: tosca.interfaces.Root
     description: A sample interface for tests
     inputs:
       description: An operation under inputs keyname

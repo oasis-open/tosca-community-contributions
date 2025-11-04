@@ -1,5 +1,5 @@
 tosca_definitions_version: tosca_2_0
-
+# Intented to be valid tosca but contains invalid yaml PJ 2024-06-11   
 metadata:
 
   template_name: Data Types Example
@@ -115,7 +115,7 @@ node_types:
       # See: examples/javascript/constraints.yaml
 
 data_types:
-
+  
   Complex:
     # (Poorly named: these are really "fields" of our complex type, rather than "properties")
     properties:
@@ -134,7 +134,7 @@ data_types:
         type: Nested
 
   Nested:
-    # (Just to demonstrate, we won't derive from Root for this type; there's nothing there to inherit anyway)
+    # (Just to demonstrate, we won't derive from root for this type; there's nothing there to inherit anyway)
     properties:
       nested_float:
         type: float

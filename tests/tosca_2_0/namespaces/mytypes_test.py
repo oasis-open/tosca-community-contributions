@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 here = os.path.dirname(os.path.abspath(__file__))
-tosca_file_path = here + '/mytypes.yaml'
+tosca_file_path = here + '/namespaces-mytypes.yaml'
 wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
 class TestWrapperProgram(unittest.TestCase):

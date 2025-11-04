@@ -12,7 +12,7 @@ Normally the test file will be TOSCA YAML file. It may also be a TOSCA CSAR file
 The naming convention for these files is as follows:
 Some test files are taken directly from the snippets used in the specification, those keep the same filename which are of the form:
 s<number>.yaml
-Some of the snippets had to be changed as pytest prefers that filenames are unique across all sub-directories as they have the format, for example multiple uses of types.yaml in the specification snippets have been changed to types<unique_number>.yaml
+Some of the snippets had to be changed as pytest prefers that filenames are unique across all sub-directories as they have the format, for example multiple uses of types.yaml in the specification snippets have been changed to <parent-directory-name>-types.yaml
 Where snippets from the specification had to be changed by the addition of a suffix, i.e.
 s<orginal number>a.yaml
 There should be test files which are designed to be passed and those which are designed to fail.
@@ -28,7 +28,7 @@ The metadata file is, at present, a Python file which defines a test and expecte
 
 Each pytest file will be crafted to match the associated test file although expected that in most cases customization will be minimal. For an example pytest file see ./tests/tosca_2_0/tosca-definitions-version/version_test.py. It assumes the name of the file can be derived from its own name.
 
-The pytest file may be adapted to create a CSAR file on the fly before sending it to the TOSCA processor under test. (An example is required.)
+The pytest file may be adapted to create a CSAR file on the fly before sending it to the TOSCA processor under test. (An example can be seen in tosca_2_0/examples/s26a_test.py)
 
 The pytest file calls a program called wrapper with a reference to the tosca file. Wrapper provides a standard interface to the TOSCA Processor under test and is further described in [validation](validation.md).
 

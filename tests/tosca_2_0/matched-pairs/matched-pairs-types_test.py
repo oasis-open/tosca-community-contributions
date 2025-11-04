@@ -1,11 +1,11 @@
-# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/call-operation-activity-definition/call-operation-required-operation-input-missing_test.py
+# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/matched-pairs/types_test.py
 import subprocess
 import unittest
 import os
 from pathlib import Path
 
-here = os.path.dirname(os.path.abspath(__file__))
-tosca_file_path = here + '/call-operation-required-operation-input-missing.yaml'
+here = os.path.dirname(os.path.realpath(__file__))
+tosca_file_path = here + '/matched-pairs-types.yaml'
 wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
 class TestWrapperProgram(unittest.TestCase):

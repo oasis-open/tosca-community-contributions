@@ -30,6 +30,8 @@ service_template:
       inputs:
         location:
           type: string
+        name:
+          type: string
       steps:
         backup_client:
           target: client
@@ -38,3 +40,6 @@ service_template:
                 operation: backup.backup
                 inputs:
                   location: {$get_input: location}
+                  name: {$get_input: name}
+                  guid: 187a-4f44-cab0-100f
+                  # should raise an error because 'guid' is not defined as an input for the 'backup' operation

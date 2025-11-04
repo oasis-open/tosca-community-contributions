@@ -10,13 +10,21 @@ node_types:
   # (You can also define interfaces in group and relationship types)
 
   Server:
-    derived_from: tosca:Compute
     interfaces:
+      interfaces.root:
+        description: The root interface introduced to test inheritance.
+      operations:
+        create:
+          description: Create the server
       Maintenance:
         type: Maintenance
-
-      # All normative node types (derived from Root) have the "Standard" lifecycle interface
+        operations:
+          maintenance_on:
+            description: Turn maintenance mode on
+          maintenance_off:
+            description: Turn maintenance mode off
       Standard:
+        type: Standard
         # (You can override the type here, but only if it's a derived type)
         # You can define operations both at the interface type and at the node type 
         operations:
@@ -26,9 +34,7 @@ node_types:
               retries:
                 type:
                   integer
-    attributes:
-      progress:
-        type: string
+
 
   BetterServer:
     derived_from: Server
@@ -73,7 +79,17 @@ interface_types:
           # Notification outputs map to *attributes*
           # The attribute must be declared at the type
           percentage: [ SELF, progress ]
-
+    Standard:
+      operations:
+        start:
+          description: Start the server
+        stop:
+          description: Stop the server
+        configure:
+          description: Configure the server
+          inputs:
+            config_file:
+              type: string
 service_template:
 
   node_templates:

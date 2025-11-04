@@ -1,7 +1,7 @@
 # tag::s141[]
 tosca_definitions_version: tosca_2_0
 imports:
-- types10.yaml
+- mapping-a-requirement-multiple-times-types.yaml
 service_template:
   node_templates:
     compute:

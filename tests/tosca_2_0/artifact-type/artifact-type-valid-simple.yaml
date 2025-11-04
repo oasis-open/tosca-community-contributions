@@ -17,7 +17,6 @@ metadata:
 
 artifact_types:
   tosca_sample:
-    derived_from: tosca.artifacts.Root
     description: Java Archive artifact type
     mime_type: application/java-archive
     file_ext: [ jar ]

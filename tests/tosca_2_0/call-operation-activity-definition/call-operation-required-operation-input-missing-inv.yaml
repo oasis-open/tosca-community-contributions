@@ -30,9 +30,6 @@ service_template:
       inputs:
         location:
           type: string
-        name:
-          type: string
-          required: False
       steps:
         backup_client:
           target: client
@@ -41,4 +38,4 @@ service_template:
                 operation: backup.backup
                 inputs:
                   location: {$get_input: location}
-                  name: {$get_input: name}
+                  # should fail as name is required by the operation but missing here

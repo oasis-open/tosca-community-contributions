@@ -39,6 +39,5 @@ service_template:
             - call_operation:
                 operation: backup.backup
                 inputs:
-                  location: {$get_input: location}
                   name: {$get_input: name}
-                  guid: 187a-4f44-cab0-100f
+                  # should fail as location is required by the operation but missing here

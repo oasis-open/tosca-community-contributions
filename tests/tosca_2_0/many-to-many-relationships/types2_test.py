@@ -4,8 +4,8 @@ import unittest
 import os
 from pathlib import Path
 
-here = os.path.dirname(os.path.abspath(__file__))
-tosca_file_path = here + '/types2.yaml'
+here = os.path.dirname(os.path.realpath(__file__))
+tosca_file_path = here + '/many-to-many-relationships-types.yaml'
 wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
 class TestWrapperProgram(unittest.TestCase):

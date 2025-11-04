@@ -13,8 +13,10 @@ metadata:
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 interface_types:
+  interfaces.root:
+    description: The root interface type introduced to test inheritance.
   tosca.example.interfaces.MyInterface:
-    derived_from: tosca.interfaces.Root
+    derived_from: interfaces.root
     version: '1.0'
     description: A sample interface for tests
     inputs:

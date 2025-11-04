@@ -2,6 +2,6 @@ tosca_definitions_version: tosca_2_0
 # tag::s30[]
 # External repository
 imports:
-- url: types/mytypes.yaml
+- url: types/examples-mytypes.yaml
   repository: my-repository
 # end::s30[]

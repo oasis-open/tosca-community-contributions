@@ -16,4 +16,4 @@ metadata:
 
 capability_types:
   tosca.test.capabilities.MyCapability:
-    derived_from: tosca.test.UnknownType
+    derived_from: UnknownType

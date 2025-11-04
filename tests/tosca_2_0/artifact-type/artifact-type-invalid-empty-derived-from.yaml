@@ -1,5 +1,4 @@
-# Error: The artifact_type 'SampleArtifact' has an empty derived_from field, which is not allowed by TOSCA 2.0.
-
+#derived_from field is empty which is ambiguous PJ 2024-06-11
 tosca_definitions_version: tosca_2_0
 
 artifact_types:

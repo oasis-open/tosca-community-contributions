@@ -33,14 +33,21 @@ def main():
         print(f"Wrapper Error: {file_path} is not a valid file.")
         sys.exit(102)
 
-    # Ubicity requires TOSCA.meta file.
+    # Get file extension
+    file_ext = os.path.splitext(file_path)[1].lower()
+    
+    # Initialize variables
+    tosca_meta_file_path = None
     file_dir = os.path.dirname(file_path)
-    file_name = os.path.basename(file_path)
-    tosca_meta_file_path = os.path.join(file_dir, "TOSCA.meta")
-    with open(tosca_meta_file_path, 'w') as file:
-        file.write("CSAR-Version: 2.0\n")
-        file.write("Created-By: Ubicity Corp.\n")
-        file.write(f"Entry-Definitions: {file_name}\n")
+
+    # Ubicity requires TOSCA.meta file for yaml files
+    if file_ext == '.yaml':
+        file_name = os.path.basename(file_path)
+        tosca_meta_file_path = os.path.join(file_dir, "TOSCA.meta")
+        with open(tosca_meta_file_path, 'w') as file:
+            file.write("CSAR-Version: 2.0\n")
+            file.write("Created-By: Ubicity Corp.\n")
+            file.write(f"Entry-Definitions: {file_name}\n")
 
     # Initialize variables
     pSuccess = False
@@ -56,8 +63,9 @@ def main():
     text=True
     )
 
-    # Clean up
-    os.remove(tosca_meta_file_path)
+    # Clean up TOSCA.meta if it was created
+    if tosca_meta_file_path:
+        os.remove(tosca_meta_file_path)
     
     # Condition if the TOSCA file was processed successfully
     if ((result.returncode == 0)):

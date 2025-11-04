@@ -3,7 +3,6 @@ tosca_definitions_version: tosca_2_0
 
 artifact_types:
   tosca_sample:
-    derived_from: tosca.artifacts.Root
     description: Java Archive artifact type
     mime_type: application/java-archive
     file_ext: [ jar ]

@@ -7,8 +7,7 @@ metadata:
   oasis.testAssertion.predicate: >
     When parsing the template
     assert there is no errors
-    optional assert raises the warning 'WarnNotInheritFromRoot'
-  oasis.testAssertion.tags.warnings: WarnNotInheritFromRoot
+  oasis.testAssertion.tags.warnings: 
   oasis.testAssertion.tags.warnings_lines: 20
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
