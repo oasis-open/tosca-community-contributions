@@ -6,8 +6,8 @@ description: >-
   TOSCA Community MicroServices Profile type definitions
 
 imports:
-  - profile: community.tosca.common:0.1
-    namespace: common
+  - profile: community.tosca.core:0.1
+    namespace: core
   - profile: community.tosca.platform:0.1
     namespace: pfm
     
@@ -40,7 +40,7 @@ node_types:
         type: string
     capabilities:
       endpoint:
-        type: common:Endpoint
+        type: core:Endpoint
     requirements:
       - host:
           capability: pfm:Container
@@ -48,5 +48,5 @@ node_types:
           node: pfm:Platform
           count_range: [1, 1]
       - endpoint:
-          capability: common:Endpoint
-          relationship: common:InteractsWith
+          capability: core:Endpoint
+          relationship: core:InteractsWith

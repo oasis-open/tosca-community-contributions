@@ -6,8 +6,8 @@ description: >-
   TOSCA Community Kubernetes Profile
 
 imports:
-  - profile: community.tosca.common:0.1
-    namespace: common
+  - profile: community.tosca.core:0.1
+    namespace: core
   - profile: community.tosca.platform:0.1
     namespace: ptfm
 
@@ -228,8 +228,8 @@ node_types:
           node: Volume
           count_range: [0, UNBOUNDED]
       - endpoint:
-          capability: common:Endpoint
-          relationship: common:InteractsWith
+          capability: core:Endpoint
+          relationship: core:InteractsWith
           node: Service
           count_range: [0, UNBOUNDED]
   ReplicaSet:
@@ -248,7 +248,7 @@ node_types:
     derived_from: NamespacedResource
     capabilities:
       endpoint:
-        type: common:Endpoint
+        type: core:Endpoint
       router:
         type: Feature
     requirements:
