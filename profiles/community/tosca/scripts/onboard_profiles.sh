@@ -24,6 +24,10 @@ echo Creating microservices:0.1 CSAR file
 cd ${PROFILES_DIR}/microservices
 zip -r ${CSARS_DIR}/microservices.0.1.csar . > /dev/null
 
+echo Creating common:0.1 CSAR file 
+cd ${PROFILES_DIR}/common
+zip -r ${CSARS_DIR}/common.0.1.csar . > /dev/null
+
 # Add profiles
 echo Onboarding core:0.1
 ubicity profile add ${CSARS_DIR}/core.0.1.csar > /dev/null
@@ -36,3 +40,7 @@ ubicity profile add ${CSARS_DIR}/kubernetes.0.1.csar > /dev/null
 
 echo Onboarding microservices:0.1
 ubicity profile add ${CSARS_DIR}/microservices.0.1.csar > /dev/null
+
+echo Onboarding common:0.1
+ubicity profile add ${CSARS_DIR}/common.0.1.csar > /dev/null
+

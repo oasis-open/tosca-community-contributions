@@ -21,7 +21,6 @@ data_types:
     description: >-
       This abstract Data Type is used as a container for implementation
       details of abstract nodes and relationships.
-       
 
 capability_types:
   ExecutionEnvironment:
@@ -44,7 +43,6 @@ capability_types:
       derived from the Data node type to make available data for an
       application.
     valid_relationship_types: [Processes]
-
 
 relationship_types:
   RunsOn:
@@ -80,7 +78,6 @@ relationship_types:
         type: ImplementationDetails
         required: false
     valid_capability_types: [DataSource]
-
 
 node_types:
   Platform:
