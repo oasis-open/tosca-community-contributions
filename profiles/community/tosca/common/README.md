@@ -59,3 +59,78 @@ Continuum) by defining the appropriate profiles as follows:
 - Another Profile may be needed to represent types that are common to
   both templates.
 - Additional profiles may be needed for specific technologies/devices.
+
+### Adding Implementation Details
+
+One area that needs more discussion is the following: since
+higher-levels of abstraction *hide* the details of the lower levels,
+we need to design a way to add those lower-level details during
+substitution mapping without burdening the abstract node types at the
+higher levels with implementation-specific details. The following two
+approaches have been suggested:
+
+#### Opaque Implementation Properties
+
+This approach adds an optional property to the abstract node type,
+which we may call `implementation-detail`. It may contain a structured
+set of lower-level details (encoded using JSON, YAML, or some other
+mechanism) that can be simply ignored at the highest abstraction
+level. When a (more) concrete node is derived from the abstract node
+type, it refines this property by making it required and giving it a
+structure.
+
+For example, given the following hhierarchy of derived node types:
+```mermaid
+classDiagram
+    Application <|-- MicroserviceApplication
+    MicroserviceApplication <|-- KubernetesApplication
+```
+
+the `implementation-detail` property may become mandatory and may be
+assigned a structure at the `KubernetesApplication` level (where
+details such as images, exposed ports, etc. become relevant). Further,
+the KubernetesApplication is the element in the chain that is
+substitutable (e.g. by the online boutique service template). The
+implementation-detail property, which becomes an input for the
+orchestrator, is mapped to the substituting template for deployment.
+
+The TOSCA profile in this directory defines an optional
+`implementation-details` property in node and relationship types, with
+the aim of conveying details needed for implementation. The idea is
+that the property (better, the corresponding data type,
+i.e. `ImplementationDetails`) is refined by adding domain specific
+parameters. As an example, consider this case:
+
+- A `ComputeImplDetails` data type derives from the
+  `ImplementationDetails` data type, adding domain specific properties
+  (e.g. RAM, CPU, Storage, GPUAvailability, etc.)
+- A `ComputePlatform` node type derives from the `Platform` node
+  type. The `implementation-details` property is refined as follows:
+  - Its type becomes `ComputeImplDetails` (instead of the base type
+    `ImplementationDetails`)
+  - Its `required` flag becomes `true`
+
+#### *Under-the-Hood* Input Values
+
+The Ubicity implementation uses the following approach:
+
+- The substituting template defines all the necessary inputs that are
+  required to deploy and configure the substituting service. These
+  inputs effectively specify all the necessary *implementation
+  details*.
+- Some of these inputs are provided by mapping property values of the
+  substituted node to inputs of the substituting template (as
+  specified by the substitution mapping)
+- However, there may be other required input values that are not
+  mapped. Typically, those input values are used for configuration
+  parameters that are *abstracted away* in the substituted node. When
+  deploying the abstract service that includes the substituted node,
+  the user must provide those additional input values as well as the
+  input values required by the abstract service template. The Ubicity
+  API expects input values to be provided as JSON. It expects the
+  additional input values required by the substituting template under
+  the `substitutions` keyword in the JSON structure.
+
+Unfortunately, this approach assumes that the user knows which
+substituting service template will be used at deployment time, which
+undermines the *hiding away details* benefit of abstraction.
