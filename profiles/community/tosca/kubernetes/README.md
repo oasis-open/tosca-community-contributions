@@ -78,30 +78,6 @@ depending on their workflows and company requirements.
 
 ## Example Microservices
 
-Our plan is to evaluate various design approaches using *real world*
-microservices examples. Will create functional TOSCA service templates
-for these examples as well as profiles that define the types for the
-nodes and relationships in those service templates.
-
-The following examples have been proposed:
-
-### [Online Boutique](https://github.com/GoogleCloudPlatform/microservices-demo)
-
-This example was suggested by Miles. It defines a web-based e-commerce
-app where users can browse items, add them to the cart, and purchase
-them. It consists of 11 microservices that communicate using gRPC, as
-shown in the following figure:
-
-![Online Boutique](
-https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/docs/img/architecture-diagram.png?raw=true)
-
-There is a single [Kubernetes
-Manifest](https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/release/kubernetes-manifests.yaml)
-that deploys the entire microservice.
-
-This section defines a TOSCA service template that models the online
-boutique and that can be used to deploy the service.
-
 ### [DeathStarBench](https://github.com/delimitrou/DeathStarBench)
 These examples were suggested by Angelo.
 
@@ -169,41 +145,21 @@ tooling challenges.
 
 ## Substitution Mapping Approach
 
-### Online Boutique
-
-The substitution mapping approach introduces a *MicroServices* profile
-that defines a `MicroService` node type as a basic abstraction and
-focuses on how microservices interact to provide full system
-functionality. The following figure shows a TOSCA service template for
-the online boutique example that uses nodes of type `MicroService` to
-model the topology of the service:
-
-![Online Boutique Service Template](images/online_boutique.png)
-
-> This example assumes that the `MicroService` node type can be
-  *parameterized* through property values to represent the
-  configurations for each of the microservices in the Online Boutique
-  example. If this is not the case, then microservice-specific derived
-  node types may need to be created.
-
-The corresponding [TOSCA service
-template](../examples/online_boutique/main.yaml) imports the
-[microservices profile](../microservices/profile.yaml).
-
-Each of the abstract microservice nodes in the online boutique service
-is *realized* by substituting it using a template that uses nodes from
-a *Kubernetes* profile. These node types resemble Kubernetes resources
-more closely and can be readily implemented using corresponding
-Kubernetes manifests. The following figure shows how the `checkout`
-node in the online boutique is substituted using a *microservice*
-service template that defines a node of type `ClusterIP`, a node of
-type `Deployment`, and a node of type `ServiceAccount`:
+These node types resemble Kubernetes
+resources more closely and can be readily implemented using
+corresponding Kubernetes manifests. The following figure shows how the
+`checkout` node in the online boutique is substituted using a
+*microservice* service template that defines a node of type
+`ClusterIP`, a node of type `Deployment`, and a node of type
+`ServiceAccount`:
 
 ![Substituting Microservice Service Template](images/microservice.png)
 
 The corresponding [substituting TOSCA service
 template](../substitutions/microservice/main.yaml) imports the
 [kubernetes profile](../kubernetes/profile.yaml).
+
+
 
 ### Managing Cluster-Wide Resources
 
