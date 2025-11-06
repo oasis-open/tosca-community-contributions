@@ -1,7 +1,5 @@
-Amazon Cloud Regions
-============
+# Kubernetes Clusters
 
-This service template is used to populate the Orchestrator database
-with Amazon cloud regions in which other services can be deployed.
-
-> This template should be redone using *discovery*
+The service template in this directory can be used to populate the
+Orchestrator database with representations of Kubernetes clusters on
+which microservices can be deployed.
