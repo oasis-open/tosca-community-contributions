@@ -41,6 +41,51 @@ Common community profiles will be created using the following process:
 6. *Implement*: Define mechanisms for overlaying various
    deployment technologies for the community profiles.
 
+## Design Patterns
+The approach used by this service template leverages the [policy
+continuum](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/com/ubicity#abstraction)
+design pattern that defines different TOSCA profiles for different
+levels of abstraction:
+
+- The [microservices
+  profile](../../../profiles/community/tosca/microservices/profile.yaml)
+  is a *System View* profile that defines abstract types such as the
+  `MicroService` type. These types focus on modeling the microservices
+  that make up a service as well as the interactions between these
+  microservices. Nodes of these types are used to create abstract
+  TOSCA service templates that focus on service topology only and are
+  independent of specific implementation details such as service
+  meshes or monitoring systems.
+
+- For deployment on Kubernetes, the service template in this directory
+  uses types defined in the [microservices
+  profile](../../../profiles/community/tosca/microservices/profile.yaml). This
+  profile is a *Administrator View* profile that defines node types
+  that model Kubernetes resources fairly closely. This profile is
+  intended to be augmented with interface operation implementations
+  that deploy the corresponding Kubernetes resources on Kubernetes
+  clusters.
+
+- TOSCA *Substitution mapping* is used to translate between these two
+  views: each node in the abstract service is *decomposed*
+  (substituted) using a service template that consists of nodes with
+  types defined in the Administrator View profile.
+
+This approach provides service designers with the ability to create
+top-down service designs and drill down into lower-level
+details. However, tooling support would be necessary to effectively
+manage substitution mapping and other complex development processes.
+
+By hiding the internals of each microservice and instead introducing
+these internals through substitution, this approach allows each
+microservice can be transformed not just into Kubernetes resources,
+but also into any other containerized or legacy application, including
+Nomad, Docker Compose, serverless, etc.
+
+
+
+
+
 ## Inventory
 
 Common community profiles will be based on TOSCA type definitions that

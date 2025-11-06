@@ -143,24 +143,6 @@ Using this approach, all definitions required to deploy TOSCA services
 on Kubernetes are in one place, simplifying design and reducing
 tooling challenges.
 
-## Substitution Mapping Approach
-
-These node types resemble Kubernetes
-resources more closely and can be readily implemented using
-corresponding Kubernetes manifests. The following figure shows how the
-`checkout` node in the online boutique is substituted using a
-*microservice* service template that defines a node of type
-`ClusterIP`, a node of type `Deployment`, and a node of type
-`ServiceAccount`:
-
-![Substituting Microservice Service Template](images/microservice.png)
-
-The corresponding [substituting TOSCA service
-template](../substitutions/microservice/main.yaml) imports the
-[kubernetes profile](../kubernetes/profile.yaml).
-
-
-
 ### Managing Cluster-Wide Resources
 
 Some Kubernetes resources (e.g., Cluster Roles) are defined
