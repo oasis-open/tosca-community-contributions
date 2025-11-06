@@ -1,0 +1,152 @@
+tosca_definitions_version: tosca_2_0
+
+imports:
+  - profile: community.tosca.microservices:0.1
+    namespace: ms
+
+description: >-
+  Online Boutique service template
+
+service_template:
+  node_templates:
+    frontend:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: frontend
+      capabilities:
+        endpoint:
+          properties:
+            port: 80
+            target-port: 8080
+            name: http
+      requirements:
+        - endpoint: ad
+        - endpoint: recommend
+        - endpoint: catalog
+        - endpoint: cart
+        - endpoint: shipping
+        - endpoint: currency
+        - endpoint: checkout
+    checkout:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: checkout
+      capabilities:
+        endpoint:
+          properties:
+            port: 5050
+            target-port: 5050
+            name: grpc
+      requirements:
+        - endpoint: catalog
+        - endpoint: cart
+        - endpoint: shipping
+        - endpoint: currency
+        - endpoint: payment
+        - endpoint: email
+    ad:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: ad
+      capabilities:
+        endpoint:
+          properties:
+            port: 9555
+            target-port: 9555
+            name: grpc
+    recommend:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: recommendation
+      capabilities:
+        endpoint:
+          properties:
+            port: 8080
+            target-port: 8080
+            name: grpc
+      requirements:
+        - endpoint: catalog
+    cart:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: cart
+      capabilities:
+        endpoint:
+          properties:
+            port: 7070
+            target-port: 7070
+            name: grpc
+      requirements:
+        - endpoint: redis
+    catalog:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: product_catalog
+      capabilities:
+        endpoint:
+          properties:
+            port: 3550
+            target-port: 3550
+            name: grpc
+    shipping:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: shipping
+      capabilities:
+        endpoint:
+          properties:
+            port: 50051
+            target-port: 50051
+            name: grpc
+    currency:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: currency
+      capabilities:
+        endpoint:
+          properties:
+            port: 7000
+            target-port: 7000
+            name: grpc
+    payment:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: payment
+      capabilities:
+        endpoint:
+          properties:
+            port: 50051
+            target-port: 50051
+            name: grpc
+    email:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: email
+      capabilities:
+        endpoint:
+          properties:
+            port: 5000
+            target-port: 8080
+            name: grpc
+    redis:
+      type: ms:MicroService
+      directives: [substitute]
+      properties:
+        name: redis
+      capabilities:
+        endpoint:
+          properties:
+            port: 6379
+            target-port: 6379
+            name: tcp-redis
+

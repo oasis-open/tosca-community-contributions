@@ -1,0 +1,90 @@
+tosca_definitions_version: tosca_2_0
+
+imports:
+  - profile: community.tosca.microservices:0.1
+    namespace: ms
+  - profile: community.tosca.kubernetes:0.1
+    namespace: k8s
+
+description: >-
+  Substituting service template for MicroService nodes
+
+node_types:
+  Service:
+    derived_from: k8s:Service
+    properties:
+      label:
+        type: string
+      address:
+        type: k8s:EnvironmentVariable
+        value:
+          name:
+            $concat:
+              - $ms:to_uppercase: [{$get_property: [SELF, label]}]
+              - _SERVICE_ADDR
+          value: {$ms:to_string: [{$get_property: [SELF, CAPABILITY, endpoint, port]}]}
+  Deployment:
+    derived_from: k8s:Deployment
+    requirements:
+      - endpoint:
+          node: Service
+          count_range: [0, UNBOUNDED]
+          
+service_template:
+  substitution_mappings:
+    node_type: ms:MicroService
+    properties:
+      name: name
+      [CAPABILITY, endpoint, port]: port
+      [CAPABILITY, endpoint, target-port]: target-port
+      [CAPABILITY, endpoint, name]: port-name
+      [CAPABILITY, endpoint, protocol]: protocol
+    capabilities:
+      endpoint: [service, endpoint]
+    requirements:
+      - host:
+          - [service-account, host] 
+          - [deployment, host] 
+          - [service, host] 
+      - [endpoint, UNBOUNDED]: [deployment, endpoint]
+  inputs:
+    name:
+      type: string
+    port:
+      type: integer
+    target-port:
+      type: integer
+    port-name:
+      type: string
+      required: False
+    protocol:
+      type: string
+      required: False
+  node_templates:
+    service-account:
+      type: k8s:ServiceAccount
+    deployment:
+      type: Deployment
+      properties:
+        env:
+          $concat:
+            - - name: PORT
+                value: {$ms:to_string: [{$get_property: [SELF, container-port]}]}
+            - $get_property: [SELF, RELATIONSHIP, endpoint, TARGET, address]
+        container-port: {$get_input: target-port}
+      requirements:
+        - runs-as: service-account
+    service:
+      type: Service
+      properties:
+        label: {$get_input: name}
+      capabilities:
+        endpoint:
+          properties:
+            port: {$get_input: port}
+            target-port: {$get_input: target-port}
+            name: {$get_input: port-name}
+            protocol: {$get_input: protocol}
+      requirements:
+        - pod: deployment
+        
