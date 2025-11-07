@@ -1,5 +1,11 @@
 # Substituting Services
 
+This directory contains a collection of substituting TOSCA service
+templates contributed to the TOSCA Community. These templates can be
+used as substituting templates for node of types defined in the
+[community profiles](../../profiles/README.md).
+
+
 One approach leverages the [policy
 continuum](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/com/ubicity#abstraction)
 design pattern that defines different TOSCA profiles for different

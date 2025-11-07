@@ -1,6 +1,6 @@
-# TOSCA Community Profiles
+# TOSCA Profiles
 
-This directory contains a collection of TOSCA Profiles maintained by
+This directory contains a collection of TOSCA Profiles contributed by
 the TOSCA Community.
 
 ## What are TOSCA Profiles
@@ -63,4 +63,3 @@ circular import problems when the node_types.yaml file must import the
 relationship_types.yaml file to define requirement definitions, but
 the relationship_types.yaml file may need to import the
 node_types.yaml file for node types used in `valid_target_node_types`.
-
