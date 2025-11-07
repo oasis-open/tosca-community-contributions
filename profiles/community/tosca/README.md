@@ -26,37 +26,36 @@ are likely also significant differences, specifically:
 The community profiles should include sufficient variability to
 accommodate these differences.
 
-## Design Patterns
+## Design Approaches
 
-The approach used by the TOSCA Community Profiles leverages the
-[policy
+The following two approaches are explored to balance high-level
+microservice abstractions with low-level Kubernetes resource
+descriptions:
+
+### Substitution Mapping
+
+One approach leverages the [policy
 continuum](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/com/ubicity#abstraction)
 design pattern that defines different TOSCA profiles for different
 levels of abstraction:
 
-- The [microservices
-  profile](../../../profiles/community/tosca/microservices/profile.yaml)
-  is a *System View* profile that defines abstract types such as the
-  `MicroService` type. These types focus on modeling the microservices
-  that make up a service as well as the interactions between these
-  microservices. Nodes of these types are used to create abstract
-  TOSCA service templates that focus on service topology only and are
-  independent of specific implementation details such as service
-  meshes or monitoring systems.
-
-- For deployment on Kubernetes, the service template in this directory
-  uses types defined in the [microservices
-  profile](../../../profiles/community/tosca/microservices/profile.yaml). This
-  profile is a *Administrator View* profile that defines node types
-  that model Kubernetes resources fairly closely. This profile is
-  intended to be augmented with interface operation implementations
-  that deploy the corresponding Kubernetes resources on Kubernetes
-  clusters.
-
-- TOSCA *Substitution mapping* is used to translate between these two
-  views: each node in the abstract service is *decomposed*
-  (substituted) using a service template that consists of nodes with
-  types defined in the Administrator View profile.
+- A *System View* profile defines abstract types that focus on
+  modeling the microservices that make up a service and the
+  interactions between these microservices. Nodes of these types are
+  used to create abstract TOSCA service templates that focus on
+  service topology only and are independent of specific
+  implementation details such as service meshes or monitoring
+  systems.
+- A separate *Administrator View* profile defines node types that
+  model [Kubernetes
+  resources](#kubernetes-resources)
+  fairly closely. This profile could get augmented with operation
+  implementations that deploy the corresponding Kubernetes resources
+  on Kubernetes clusters.
+- *Substitution mapping* is used to translate between these two views:
+  each node in the abstract service is *decomposed* (substituted)
+  using a service template that consists of nodes with types defined
+  in the Administrator View profile.
 
 This approach provides service designers with the ability to create
 top-down service designs and drill down into lower-level
@@ -68,3 +67,23 @@ these internals through substitution, this approach allows each
 microservice can be transformed not just into Kubernetes resources,
 but also into any other containerized or legacy application, including
 Nomad, Docker Compose, serverless, etc.
+
+### Microservice Node Types with Kubernetes Resource Capability Types
+
+A second approach balances the objectives outlined above by using
+*node types* to represent the microservices in a Kubernetes service
+and using *capability types* to represent the Kubernetes resources
+that implement those microservices:
+
+- The TOSCA profile for Kubernetes defines capability types that model
+  [Kubernetes
+  resources](#kubernetes-resources)
+  fairly closely.
+- The same profile also defines a base microservice node type.
+- Node types that derive from the base microservice node type define
+  capabilities that model the Kubernetes resources that are used to
+  deploy nodes of this derived type.
+
+Using this approach, all definitions required to deploy TOSCA services
+on Kubernetes are in one place, simplifying design and reducing
+tooling challenges.
