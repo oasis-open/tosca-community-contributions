@@ -4,85 +4,12 @@ This profile defines TOSCA types to support integration with
 Kubernetes. It tries to build on and extend existing [TOSCA type
 definitions for Kubernetes](inventory.md).
 
-## Why TOSCA for Kubernetes
+The TOSCA Community Kubernetes Profile defines node types for
+Kubernetes resources. Kubernetes resources are the building blocks
+used to define, deploy, and manage applications and their underlying
+infrastructure within a Kubernetes environment.
 
-because TOSCA models services as a graph, it contains **service
-topology** information that represents how various microservices
-interact with one another to deliver complete system
-functionality. Such service relationships and dependencies are not
-immediately apparent from Kubernetes manifests.
-
-Service topology information enables a variety of automation use
-cases:
-
-1. *Service Visualization*: TOSCA provides solution architects with a
-   powerful tool for designing applications by visualizing
-   interactions between microservices, a critial feature for
-   designing complex applications.
-2. *Design-Time Validation*: Using TOSCA for modeling Kubernetes
-   services provides the ability to validate topological relationships
-   between microservices at design time, ensuring correct designs
-   before service deployment.
-3. *Runtime Validation*: TOSCA can also be used for Day 2
-   validation. TOSCA templates effectively define a collection of
-   schemas and policies that apply not only at deployment but also
-   during ongoing operations. Orchestrators can validate at runtime
-   whether a service complies with its TOSCA template and take
-   corrective action if not.
-4. *Microservice Configuration*: Topology information can be used to
-   automatically generate microservice configurations such as resource
-   labels and selectors, connectivity information (e.g., using
-   environment variables), etc.
-5. *Deploy Service Meshes*: Automatically *inject* service meshes
-   (such as Istio, Linkerd, Consul, and others) into Kubernetes
-   services and use topology information to configure these meshes.
-6. *Enforce Network Policies*: By default, Kubernetes microservices
-   use a single Layer 2 network that enables any-to-any communication
-   between microservices and does not enforce any security
-   rules. Topology information in TOSCA service templates can be used
-   to only enable connectivity between those microservices that are
-   expected to communicate (e.g., by deploying and configuring Cillium
-   network security and packet filtering).
-7. *Manage Deployment Dependencies*: Some Kubernetes resources may
-   need to be created before others. For example, some resources
-   require an *admin* service account before a namespace can be
-   created. This type of *precedence* relationship cannot be expressed
-   in Kubernetes manifests and may require separating manifests.
-8. *Model Relationships between Infrastructure and Workloads*: TOSCA
-   offers the potential to streamline Kubernetes deployments by using
-   TOSCA as a unified language for infrastructure and workload
-   management, which could simplify the deployment process and ensure
-   proper interaction between infrastructure and workloads.
-9. *Improved Service Assurance*: TOSCA provides the ability to create
-   additional control loops for service assurance, particularly when
-   dealing with unreliable software and hardware.
-
-## Objectives
-
-TOSCA support for Kubernetes is guided by the following two (seemingly
-competing) objectives:
-
-1. Given that TOSCA's main benefit is its ability to define service
-   topologies that model the interactions between microservices, it
-   must support **top-down** service designs that abstract away
-   non-essential details to maintain a clear focus on microservice
-   interactions.
-2. On the other hand, TOSCA must also maintaining the ability to
-   express low-level Kubernetes concepts and support **bottom-up**
-   designs that align with Kubernetes resources, as losing this
-   functionality could create obstacles for existing Kubernetes users.
-
-TOSCA profiles for Kubernetes must balance high-level abstractions
-with low-level building blocks since users might need both approaches
-depending on their workflows and company requirements.
-
-## Kubernetes Resources
-
-Kubernetes resources are the building blocks used to define, deploy,
-and manage applications and their underlying infrastructure within a
-Kubernetes environment.
-
-### Namespaces
+## Namespaces
 Kubernetes distinguishes between the following two types of resources:
 
 1. *Namespaced Resources*: These exist within a namespace that models
@@ -100,7 +27,7 @@ classDiagram
     NamespacedResource "1" --> "0..*" Namespace:ScopedBy
 ```
 
-### Authentication and Authorization Resources
+## Authentication and Authorization Resources
 The main abstractions for managing authentication and authorization
 are as follows:
 
@@ -126,7 +53,7 @@ classDiagram
     Role --> ServiceAccount:RoleBinding
     ClusterRole --> ServiceAccount:ClusterRoleBinding
 ```
-### Storage and Configuration Abstractions
+## Storage and Configuration Abstractions
 
 The main storage abstraction in Kubernetes is the *volume*. Kubernetes
 volumes provide a way for containers in a pod to access and share data
@@ -165,7 +92,7 @@ classDiagram
     PersistentVolumeClaim --> PersistentVolume:Claims
 ```
 
-### Workload Abstractions
+## Workload Abstractions
 Kubernetes uses the following abstractions for managing workloads:
 
 - Pod: A Pod is the smallest and most basic deployable unit in
@@ -223,7 +150,7 @@ classDiagram
     Job <|-- CronJob
 ```
 
-### Service Abstractions
+## Service Abstractions
 Workloads are exposed to clients using services. Kubernetes uses the
 following service-related abstractions:
 
@@ -248,7 +175,7 @@ classDiagram
     Service <|-- LoadBalancerService
 ```
 
-### Managing Cluster-Wide Resources
+## Managing Cluster-Wide Resources
 
 Some Kubernetes resources (e.g., Cluster Roles) are defined
 cluster-wide and can be shared and accessed by all Kubernetes services
@@ -259,7 +186,7 @@ Two potential methods are described:
 1. Create-if-not-exists
 2. Updates to cluster platform service
 
-#### Create-if-not-Exists Nodes
+### Create-if-not-Exists Nodes
 
 Using the *create-if-not-exists* pattern, TOSCA services that need a
 cluster-wide resource include a node template for that resources that
@@ -278,7 +205,7 @@ Orchestrators process such nodes as follows:
    resource (through their own *create-if-not-exists* node template)
    will be assigned the newly created node.
 
-#### Updates to Cluster Platform Service
+### Updates to Cluster Platform Service
 
 Marcel suggested modeling the Kubernetes cluster itself as using a
 TOSCA service template. Cluster-wide resources would be handled as follows:
@@ -298,32 +225,4 @@ TOSCA service template. Cluster-wide resources would be handled as follows:
 
 The user's modeling needs should influence the approach chosen, and
 the TOSCA Kubernetes Profile should ideally support both approaches.
-
-### Questions
-
-1. Service meshes can be added to any microservices-based
-   application. How do we represent in the TOSCA service template
-   whether the Kubernetes service needs a service mesh or not?
-   Different node types in the MicroServices profile? Different
-   `MicroService` node properties?
-2. Different types of service meshes can be added (e.g., Istio,
-   Linkerd, etc.). How do we represent which service mesh is used?
-   Different node types in the MicroServices profile? Different
-   `MicroService` node properties?
-3. Configuring network security and network policies requires a CNI
-   like Cillium. How do we represent which CNI is used? Is this
-   modeled as part of Platform node type?
-4. Do we need to define a standard architecture for applications to
-   avoid variability in configuring connectivity information? For
-   example, in the example manifest file for the Online Boutique, we
-   can figure out which services interact with which other services
-   based on the values of environment variables. Environment value
-   configurations are specific to the application and not understood
-   by Kubernetes, requiring custom mechanisms for TOSCA templates to
-   represent them. Do we need to come up with a *standard* approach
-   for representing this?
-5. What other common approaches are typically used for configuring
-   communication between microservices?
-6. Do we need to support dynamic behavior in service relationships.
-7. How does Nephio capture service relationships.
 
