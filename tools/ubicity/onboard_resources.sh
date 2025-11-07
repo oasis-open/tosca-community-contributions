@@ -5,5 +5,5 @@ set -e
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 . $HERE/env.sh
 
-# Add services for available resources
-deploy ${RESOURCES_DIR}/kubernetes_clusters
+# Add services for available platform resources
+deploy ${EXAMPLES_DIR}/kubernetes_clusters
