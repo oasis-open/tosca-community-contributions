@@ -25,6 +25,23 @@ Each of these nodes is defined as abstract using the `substitute`
 directive and is intended to be implemented using *substitution
 mapping*.
 
+The figure above shows a scenario where *Application* and *Data* are
+hosted on the same *Platform*, for example container application that
+uses data hosted on a Postgres or a mongodb instance running into
+another container in the same Kubernetes cluster.
+
+The following figure shows variant of the previous case where
+*Application* and *Data* are hosted on different *Platforms*, for
+example an on-premise application running on bare-metal that uses
+persistent data on AWS S3 object storage.:
+
+![Applications, Data, Platforms, and Networks](images/platforms_with_networks.png)
+
+This service template adds a fourth node type:
+
+4. A *network* node of type `Network` that represents connectivity
+   between platforms.
+
 ## Relationship Types
 
 The nodes in the service template above relate to one-another using
@@ -39,6 +56,9 @@ the following relationships:
 - Application nodes define a relationship of type `AvailableOn` to a
   platform node. This is a containment relationship that defines which
   platform stores persistent copies of the data.
+- Platform nodes define a relationship of type `LinksTo` to a network
+  node. This is a dependency relationship that defines the network(s)
+  to which platforms connect.
 
 ## Substitutions
 

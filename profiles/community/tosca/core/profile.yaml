@@ -5,6 +5,18 @@ profile: community.tosca.core:0.1
 description: >-
   TOSCA Community Core Profile type definitions
 
+data_types:
+  json:
+    description: >-
+      The json type defines strings that contain data in the JSON format
+    derived_from: string
+    #constraints: TBD
+  yaml:
+    description: >-
+      The yaml type defines strings that contain data in the YAML format
+    derived_from: string
+    #constraints: TBD
+  
 capability_types:
   Endpoint:
     description: >-
