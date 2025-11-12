@@ -7,16 +7,6 @@ description: >-
   highest-level definitions of abstract types.
 
 data_types:
-  json:
-    description: >-
-      The json type defines strings that contain data in the JSON format
-    derived_from: string
-    #constraints: TBD
-  yaml:
-    description: >-
-      The yaml type defines strings that contain data in the YAML format
-    derived_from: string
-    #constraints: TBD
   ImplementationDetails:
     description: >-
       This abstract Data Type is used as a container for implementation
