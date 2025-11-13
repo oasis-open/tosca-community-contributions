@@ -1,7 +1,7 @@
 # TOSCA Profiles
 
 This directory contains a collection of TOSCA Profiles contributed by
-the TOSCA Community.
+users of the TOSCA language.
 
 ## What are TOSCA Profiles
 
