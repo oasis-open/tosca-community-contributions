@@ -218,6 +218,108 @@ The TOSCA Community profiles define base node types that represent
 these *generic* abstractions as well as the relationships between
 these abstractions. Derived types add more specific details as needed.
 
+### Abstract Service Deployment: Placement Drives Substitution
+
+Abstract service deployment uses the following process:
+
+1. Create technology-independent service designs.
+2. Create representations for available platforms.
+3. Make placement decisions based on abstract representations of
+   services and platforms.
+4. Create substituting services based on selected platforms.
+
+#### Create Technology-Independent Service Designs
+- High-level service designs should be *abstract and portable* and
+  should be independent of the target platform on which the service
+  will ultimately be deployed.
+- Abstract service designs should show the functional architecture of
+  the system: what are the system components and how do they interact?
+- Abstract service designs should be modeled using an *Administrator
+  View* profile that is technology-independent.
+- Each component in the functional architecture should specify the
+  requirements for capabilities in the target platform(s) on which the
+  service can be deployed.
+
+The following shows a hypothetical example of an abstract service that
+provides a context-aware personal assistant:
+
+![Technology Independent Service Design](images/service-design.png)
+
+#### Create Technology-Independent Representations for Available Platforms
+
+Orchestrators should maintain representations of the available
+platforms on which services can be deployed.
+
+- Platforms should be modeled using an *Administrator View* profile,
+  since we are not concerned with details about the internals of the
+  platforms.
+- Instead, representations for the available platforms should contain
+  just enough information to allow Orchestrators to make intelligent
+  orchestration decisions (e.g. placement decisions). This information
+  should include the following:
+  - Location: where is the platform physically located?
+  - Capabilities: what type of platform is it and what types of
+    workloads can the platform support?
+  - Capacity: how much load can be placed on the platform?
+  - Access: how to access the platform?
+
+The following shows a representation of the platforms available for a
+specific customer. 
+
+![Available Platforms](images/platforms.png)
+
+#### Make Placement Decisions
+
+When deploying an abstract service, the Orchestrator first makes
+placement decision by *fulfilling* the dangling requirements of the
+nodes in the abstract service representation using capabilities of the
+nodes in the abstract platform representations. Node filters can be
+used to narrow down the set of candidate target platforms. The
+following example shows a node filter that drives placement for the
+`analytics` node in the abstract service template.
+
+the following figure:
+
+![Placement Decisions](images/placement.png)
+
+#### Substitute Based on Allocated Target Platform
+
+Once placement decisions have been made, the Orchestrator finds
+substituting templates that are suitable for the allocated target
+platform. This is done by using information about that target platform
+into the substitution filters for the candidate substituting
+templates.
+
+> If substitution decisions made based on the type of the allocated
+  platform, do we need to define a TOSCA function that returns a node
+  type?
+
+##### Substitute for Kubernetes
+
+The following figure shows an example where the abstract service is
+deployed on a Kubernetes cluster.
+![Placement on Kubernetes](images/placement-gke.png)
+
+This information is then used to substitute the abstract nodes with
+substituting templates that implement those nodes by deploying
+Kubernetes resources. TOSCA type definitions from the TOSCA Kubernetes
+Profile are used for the templates in the substituting service:
+
+![Substitution for Kubernetes](images/substitution-k8s.png)
+
+##### Substitute for Amazon Web Services
+
+The following figure shows an alternative deployment on Amazon EC2:
+![Placement on Amazon](images/placement-aws.png)
+
+In this scenario, abstract nodes are substituted using templates that
+implement those nodes by deploying infrastructure on AWS and
+installing the necessary software components on that
+infrastructure. TOSCA type definitions from the TOSCA AWS Profile are
+used for the templates in the substituting service:
+
+![Substitution for Amazon](images/substitution-aws.png)
+
 ## Profile Organization
 
 The TOSCA Community Profiles have been designed with these recommended
