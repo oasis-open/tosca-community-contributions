@@ -8,14 +8,15 @@ use `community.tosca` as their top-level domain name.
 
 ## Objectives
 
-The goal for these community profiles is to combine *best of breed*
-type definitions created by various [TOSCA projects](inventory.md)
-over the years. Most of these projects have used the TOSCA Simple
-Profile in YAML v1.3 type definitions as a starting point and have
-extended these definitions to satisfy project-specific objectives. As
-a result, it is likely that there are sufficient similarities between
-these profiles that should allow them to be harmonized. However, there
-are likely also significant differences, specifically:
+The goal for the TOSCA Community profiles is to combine *best of
+breed* type definitions created by various [TOSCA
+projects](inventory.md) over the years. Most of these projects have
+used the TOSCA Simple Profile in YAML v1.3 type definitions as a
+starting point and have extended these definitions to satisfy
+project-specific objectives. As a result, it is likely that there are
+sufficient similarities between these profiles that should allow them
+to be harmonized. However, there are likely also significant
+differences, specifically:
 
 - Differences in the target platforms on which components modeled by
   node types are intended to be deployed (e.g. IaaS clouds, PaaS
@@ -23,14 +24,22 @@ are likely also significant differences, specifically:
 - Differences in the deployment technologies used to interact with the
   physical resources (e.g., Ansible, Terraform, Bash, etc.)
 
-The TOSCA community profiles are intended to include sufficient
-variability to accommodate these differences.
+The TOSCA community profiles are intended to harmonize these various
+profiles while at the same time including sufficient variability to
+accommodate these differences.
 
 ## Design Patterns
 
 The TOSCA Community has adopted a number of design patterns to help
-guide the development of TOSCA profiles. These patterns are described
-here.
+guide the development of TOSCA profiles, specifically:
+
+1. Support abstraction through the *Model Continuum*
+
+2. Best practices for translating between levels of abstraction.
+
+3. Common base node types for System View profiles
+
+4. Placement drives substitution
 
 ### Abstraction through the Model Continuum
 
@@ -71,7 +80,7 @@ as shown in the following picture:
   details about the interfaces for managing these instances.
 
 The model continuum enables a **top-down** modeling approach, where
-high-level designs are repeatedly refined into lower levels as
+high-level designs are incrementally refined into lower levels as
 follows:
 
 1. System designers create abstract *system view* models to define the
@@ -91,7 +100,7 @@ follows:
   other direction: low-level monitoring data are summarized and
   aggregated into high-level *system health* attributes.
 
-### Translating Between Levels of Abstraction
+### Best Practices for Translating Between Levels of Abstraction
 During the orchestration process, models at a higher level of
 abstraction must be extended with information at the next lower level
 of abstraction. TOSCA provides two mechanisms to accomplish this:
@@ -123,7 +132,7 @@ different levels of abstraction within the same profile. Instead, they
 should define separate profiles for system view models, for
 administrator view models, for device view models, and for instance
 view models, and use the techniques recommended in this document to
-translate between different levels of abstractin.
+translate between different levels of abstraction.
 
 ##### Translating System View to Administrator View
 
@@ -136,7 +145,7 @@ in the following figure:
 Note that this recommendation do not prohibit the use of *inheritance*
 for types defined in *system view* profiles. In fact, inheritance
 could be useful to define base node types that define common
-functionality (e.g. interfaces) that is shared by all node types
+functionality (e.g. interfaces) that is then shared by all node types
 derived from that common base type. However, inheritance should not be
 used to add technology-specific or vendor-specific implementations to
 system view node types.
@@ -147,12 +156,6 @@ level of abstraction to the device view level of abstraction, as shown
 in the following figure:
 
 ![Translate administrator view to device view](images/administrator-to-device.png)
-
-When using derivation, we recommend maintaining a shallow capability
-type hierarchy. Specifically, avoid creating subtypes to constrain
-which source nodes can use a certain capability. Instead, constrain
-the *generic* capability type with `valid_source_node_type`
-statements.
 
 #### Translating Device View to Instance View
 
@@ -179,17 +182,41 @@ not have any constructs to support such dynamic behavior.
 #### Mapping Relationship Types and Capability Types
 
 > It is likely that the same guidelines about abstraction apply to
-  defining relationship types as well. However, the TOSCA spec is
-  somewhat vague about whether requirement mappings rules (and
-  capability mapping rules for that matter) require that the
-  relationships resulting from the mapping have types that are
-  compatible with the relationship of the mapped requirement. If that
-  is the case, then these relationship types (and capability types)
-  must be shared between System View, Administrator View, and Device
-  View profiles and may need to be organized in a *common* profile.
-  This common profile should only define top-level relationship types
-  or capability types. Profile-specific types should derive from one
-  of the base types defined in the common profile.
+  relationship types as well. However, the TOSCA spec is somewhat
+  vague about whether requirement mappings rules (and capability
+  mapping rules for that matter) require that the relationships
+  resulting from the mapping have types that are compatible with the
+  relationship of the mapped requirement. If that is the case, then
+  these relationship types (and capability types) must be shared
+  between System View, Administrator View, and Device View profiles
+  and may need to be organized in a *shared* profile.  This shared
+  profile should only define top-level relationship types or
+  capability types. Profile-specific types should derive from one of
+  the base types defined in the common profile.
+
+### Common Base Node Types for System View Profiles
+
+At the highest level of abstraction, any service or application can be
+modeled using the generic service template shown in the following
+figure:
+
+![Applications, Data, Platforms, and Networks](images/platforms_with_networks.png)
+
+This service template defines four nodes:
+
+1. An *application* node of type `Application` that represents the
+   functionality provided by the service.
+2. A *data* node of type `Data` that represents the persistent data
+   processed by the service. This data node can model Data Sets, Data
+   Lakes, Databases or similar entities.
+3. A *platform* node of type `Platform` that represents the platform
+   on which the service is deployed.
+4. A *network* node of type `Network` that represents connectivity
+   between platforms.
+
+The TOSCA Community profiles define base node types that represent
+these *generic* abstractions as well as the relationships between
+these abstractions. Derived types add more specific details as needed.
 
 ## Profile Organization
 
