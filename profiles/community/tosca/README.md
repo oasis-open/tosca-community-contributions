@@ -16,32 +16,34 @@ starting point and have extended these definitions to satisfy
 project-specific objectives. As a result, it is likely that there are
 sufficient similarities between these profiles that should allow them
 to be harmonized. However, there are likely also significant
-differences, specifically:
+differences, for example:
 
-- Differences in the target platforms on which components modeled by
+- Differences in the *target platforms* on which components modeled by
   node types are intended to be deployed (e.g. IaaS clouds, PaaS
   platforms, Kubernetes clusters, dedicated compute devices, etc.)
 - Differences in the deployment technologies used to interact with the
   physical resources (e.g., Ansible, Terraform, Bash, etc.)
+- Differences in the level of abstraction used to mode services. 
 
 The TOSCA community profiles are intended to harmonize these various
 profiles while at the same time including sufficient variability to
-accommodate these differences.
+accommodate these differences. With this goal in mind, the TOSCA
+Community has adopted the following guidelines for the development of
+TOSCA profiles:
 
-## Design Patterns
+1. The *Model Continuum* in support of abstraction
 
-The TOSCA Community has adopted a number of design patterns to help
-guide the development of TOSCA profiles, specifically:
+2. Generic base node types for System View profiles
 
-1. Support abstraction through the *Model Continuum*
+3. Special-purpose System View profiles
 
-2. Best practices for translating between levels of abstraction.
+4. Best practices for translating between levels of abstraction
 
-3. Common base node types for System View profiles
+5. Profile organization
 
-4. Placement drives substitution
+6. Deploying abstract services
 
-### Abstraction through the Model Continuum
+## The Model Continuum in Support of Abstraction
 
 To manage the complexities associated with large scale systems and
 services, the TOSCA Community has adopted a modeling approach that
@@ -100,12 +102,38 @@ follows:
   other direction: low-level monitoring data are summarized and
   aggregated into high-level *system health* attributes.
 
-### Best Practices for Translating Between Levels of Abstraction
+## Generic Base Node Types for System View Profiles
+
+Using the Model Continuum, top-down service design starts by defining
+TOSCA service templates at the highest level of abstraction, which is
+the System View level.  At this level of abstraction, any service or
+application can be modeled using the generic service template shown in
+the following figure:
+
+![Generic System View Service Template](images/platforms_with_networks.png)
+
+This service template defines four kinds of nodes:
+
+1. An *application* node of type `Application` that represents the
+   functionality provided by the service.
+2. A *data* node of type `Data` that represents the persistent data
+   processed by the service. This data node can model Data Sets, Data
+   Lakes, Databases or similar entities.
+3. A *platform* node of type `Platform` that represents the platform
+   on which the service is deployed.
+4. A *network* node of type `Network` that represents connectivity
+   between platforms.
+
+The TOSCA Community profiles define base node types that represent
+these *generic* abstractions as well as the relationships between
+these abstractions. Derived types add more specific details as needed.
+
+## Best Practices for Translating Between Levels of Abstraction
 During the orchestration process, models at a higher level of
 abstraction must be extended with information at the next lower level
 of abstraction. TOSCA provides two mechanisms to accomplish this:
 
-#### Derivation
+### Derivation
 
 Using the derivation approach, base node types define abstract
 definitions. Derived types provide concrete implementations for those
@@ -113,7 +141,7 @@ abstract definitions. This approach is shown in the following figure:
 
 ![Derivation](images/derivation.png)
 
-#### Substitution
+### Substitution
 
 Using the substitution approach, base node types define an abstract
 interface, a *facade* if you will. Substituting templates provide
@@ -122,7 +150,7 @@ shown in the following figure:
 
 ![Substitution](images/substitution.png)
 
-#### Abstraction Best Practices
+### Abstraction Best Practices
 
 TOSCA Profile designers should create separate TOSCA profiles for each
 level of abstraction and should be very clear about the level of
@@ -134,7 +162,7 @@ administrator view models, for device view models, and for instance
 view models, and use the techniques recommended in this document to
 translate between different levels of abstraction.
 
-##### Translating System View to Administrator View
+#### Translating System View to Administrator View
 
 We recommend using *substitution* to map from the system view level of
 abstraction to the administrator view level of abstraction, as shown
@@ -150,14 +178,14 @@ derived from that common base type. However, inheritance should not be
 used to add technology-specific or vendor-specific implementations to
 system view node types.
 
-##### Translating Administrator View to Device View
+#### Translating Administrator View to Device View
 We recommend using *derivation* to map from the administrator view
 level of abstraction to the device view level of abstraction, as shown
 in the following figure:
 
 ![Translate administrator view to device view](images/administrator-to-device.png)
 
-#### Translating Device View to Instance View
+### Translating Device View to Instance View
 
 Derivation could be used again to translate from the device view level
 of abstraction to the instance view level of abstraction, as shown in
@@ -179,7 +207,7 @@ not have any constructs to support such dynamic behavior.
 
 > This needs further discussion
 
-#### Mapping Relationship Types and Capability Types
+### Mapping Relationship Types and Capability Types
 
 > It is likely that the same guidelines about abstraction apply to
   relationship types as well. However, the TOSCA spec is somewhat
@@ -194,31 +222,7 @@ not have any constructs to support such dynamic behavior.
   capability types. Profile-specific types should derive from one of
   the base types defined in the common profile.
 
-### Common Base Node Types for System View Profiles
-
-At the highest level of abstraction, any service or application can be
-modeled using the generic service template shown in the following
-figure:
-
-![Applications, Data, Platforms, and Networks](images/platforms_with_networks.png)
-
-This service template defines four nodes:
-
-1. An *application* node of type `Application` that represents the
-   functionality provided by the service.
-2. A *data* node of type `Data` that represents the persistent data
-   processed by the service. This data node can model Data Sets, Data
-   Lakes, Databases or similar entities.
-3. A *platform* node of type `Platform` that represents the platform
-   on which the service is deployed.
-4. A *network* node of type `Network` that represents connectivity
-   between platforms.
-
-The TOSCA Community profiles define base node types that represent
-these *generic* abstractions as well as the relationships between
-these abstractions. Derived types add more specific details as needed.
-
-### Abstract Service Deployment: Placement Drives Substitution
+## Abstract Service Deployment: Placement Drives Substitution
 
 Abstract service deployment uses the following process:
 
@@ -228,7 +232,7 @@ Abstract service deployment uses the following process:
    services and platforms.
 4. Create substituting services based on selected platforms.
 
-#### Create Technology-Independent Service Designs
+### Create Technology-Independent Service Designs
 - High-level service designs should be *abstract and portable* and
   should be independent of the target platform on which the service
   will ultimately be deployed.
@@ -245,7 +249,7 @@ provides a context-aware personal assistant:
 
 ![Technology Independent Service Design](images/service-design.png)
 
-#### Create Technology-Independent Representations for Available Platforms
+### Create Technology-Independent Representations for Available Platforms
 
 Orchestrators should maintain representations of the available
 platforms on which services can be deployed.
@@ -268,7 +272,7 @@ specific customer.
 
 ![Available Platforms](images/platforms.png)
 
-#### Make Placement Decisions
+### Make Placement Decisions
 
 When deploying an abstract service, the Orchestrator first makes
 placement decision by *fulfilling* the dangling requirements of the
@@ -282,7 +286,7 @@ the following figure:
 
 ![Placement Decisions](images/placement.png)
 
-#### Substitute Based on Allocated Target Platform
+### Substitute Based on Allocated Target Platform
 
 Once placement decisions have been made, the Orchestrator finds
 substituting templates that are suitable for the allocated target
@@ -294,7 +298,7 @@ templates.
   platform, do we need to define a TOSCA function that returns a node
   type?
 
-##### Substitute for Kubernetes
+#### Substitute for Kubernetes
 
 The following figure shows an example where the abstract service is
 deployed on a Kubernetes cluster.
@@ -307,7 +311,7 @@ Profile are used for the templates in the substituting service:
 
 ![Substitution for Kubernetes](images/substitution-k8s.png)
 
-##### Substitute for Amazon Web Services
+#### Substitute for Amazon Web Services
 
 The following figure shows an alternative deployment on Amazon EC2:
 ![Placement on Amazon](images/placement-aws.png)
