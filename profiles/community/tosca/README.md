@@ -26,22 +26,10 @@ differences, for example:
 - Differences in the level of abstraction used to mode services. 
 
 The TOSCA community profiles are intended to harmonize these various
-profiles while at the same time including sufficient variability to
-accommodate these differences. With this goal in mind, the TOSCA
-Community has adopted the following guidelines for the development of
-TOSCA profiles:
-
-1. The *Model Continuum* in support of abstraction
-
-2. Generic base node types for System View profiles
-
-3. Special-purpose System View profiles
-
-4. Best practices for translating between levels of abstraction
-
-5. Profile organization
-
-6. Deploying abstract services
+profiles while at the same time allowing sufficient variability to
+accommodate these differences. With these goals in mind, the TOSCA
+Community has followed the guidelines described in this document for
+the development of TOSCA profiles.
 
 ## The Model Continuum in Support of Abstraction
 
@@ -102,6 +90,18 @@ follows:
   other direction: low-level monitoring data are summarized and
   aggregated into high-level *system health* attributes.
 
+As a *best practice*, TOSCA profile designers should avoid mixing and
+matching types defined at different levels of abstraction within the
+same profile. Instead, they should define separate profiles for system
+view models, for administrator view models, for device view models,
+and for instance view models, and use the techniques recommended in
+this document to translate between different levels of abstraction.
+
+The TOSCA Community provides separate TOSCA profiles for each level of
+abstraction and is very clear about the level of abstraction for which
+each profile is designed. The remainder of this document provides an
+introduction to these profiles.
+
 ## Generic Base Node Types for System View Profiles
 
 Top-down service design starts by defining TOSCA service templates at
@@ -141,7 +141,7 @@ figure:
 
 ![Generic System View Service Template](images/generic-template.png)
 
-### Component-Specific System View Profiles
+## Component-Specific System View Profiles
 
 In practice, abstract service templates generally will not use the
 *generic* base node types presented in the previous section. Instead,
@@ -164,15 +164,18 @@ such an abstract service template:
 
 ![Abstract Service Template](images/abstract-template.png)
 
-## Translating Between Levels of Abstraction
-During the orchestration process, models at a higher level of
-abstraction must be extended with information at the next lower level
-of abstraction. TOSCA provides two mechanisms to accomplish this:
+## Translating to Lower Levels of Abstraction
+
+During the orchestration process, TOSCA service templates that use
+types defined a higher level of abstraction must be extended with
+information that is specific to the next lower level of
+abstraction. The TOSCA language provides two mechanisms to accomplish
+this:
 
 ### Derivation
 
 Using the derivation approach, base node types define abstract
-definitions. Derived types provide concrete implementations for those
+entities. Derived types provide concrete implementations for those
 abstract definitions. This approach is shown in the following figure:
 
 ![Derivation](images/derivation.png)
@@ -187,16 +190,6 @@ shown in the following figure:
 ![Substitution](images/substitution.png)
 
 ### Abstraction Best Practices
-
-TOSCA Profile designers should create separate TOSCA profiles for each
-level of abstraction and should be very clear about the level of
-abstraction for which each profile is designed. Said a different way,
-profile designers should avoid mixing and matching types defined at
-different levels of abstraction within the same profile. Instead, they
-should define separate profiles for system view models, for
-administrator view models, for device view models, and for instance
-view models, and use the techniques recommended in this document to
-translate between different levels of abstraction.
 
 #### Translating System View to Administrator View
 
@@ -257,6 +250,24 @@ not have any constructs to support such dynamic behavior.
   profile should only define top-level relationship types or
   capability types. Profile-specific types should derive from one of
   the base types defined in the common profile.
+
+### Profile Organization
+
+The approach recommended in this section has resulted in a set of
+profiles as shown in the following figure:
+
+![TOSCA Community Profiles Organization](images/profile-organization.png)
+
+The profiles on the right are *Administrator View* and *Device View*
+profiles, where *Device View* node types derive from node types
+defined in *Administrator View* profiles. One such Administrator View
+profile is the IaaS profile that defines node types that represent
+entities managed by Infrastructure-as-a-Service platforms. These types
+are then refined in profiles specific to each IaaS provider, such as
+AWS, Azure, etc.
+
+The *Core* profile defines types, repositories, functions, etc. that
+are shared by profiles at different levels of abstraction.
 
 ## Abstract Service Deployment: Placement Drives Substitution
 
@@ -359,33 +370,4 @@ infrastructure. TOSCA type definitions from the TOSCA AWS Profile are
 used for the templates in the substituting service:
 
 ![Substitution for Amazon](images/substitution-aws.png)
-
-## Profile Organization
-
-The TOSCA Community Profiles have been designed with these recommended
-best practices in mind. Their organization is shown in the following
-figure:
-
-![TOSCA Community Profiles Organization](images/profile-organization.png)
-
-We define the following profiles:
-
-### System View Profiles
-
-- The Common Profile (*to be provided*) defines abstract node
-  types that are used to define system architectures. These types are
-  technology and vendor-independent and are intended to be substituted
-  by templates that use types defined in the vendor-specific profiles.
-
-### Administrator View Profiles
-
-### Shared Profiles
-
-- The Core Profile defines types that are shared
-  between profiles at different levels of abstraction. It primarily
-  defines base capability types, base relationship types, common data
-  types, and common artifact types.
-
-
-
 
