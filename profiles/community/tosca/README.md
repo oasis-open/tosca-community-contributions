@@ -214,7 +214,7 @@ in the following figure:
 
 ![Translate administrator view to device view](images/administrator-to-device.png)
 
-### Translating Device View to Instance View
+#### Translating Device View to Instance View
 
 Derivation could be used again to translate from the device view level
 of abstraction to the instance view level of abstraction, as shown in
