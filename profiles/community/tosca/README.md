@@ -189,7 +189,7 @@ shown in the following figure:
 
 ![Substitution](images/substitution.png)
 
-### Abstraction Best Practices
+### Translation Best Practices
 
 #### Translating System View to Administrator View
 
