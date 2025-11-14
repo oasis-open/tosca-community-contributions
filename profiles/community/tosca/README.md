@@ -104,31 +104,48 @@ follows:
 
 ## Generic Base Node Types for System View Profiles
 
-Using the Model Continuum, top-down service design starts by defining
-TOSCA service templates at the highest level of abstraction, which is
-the System View level.  At this level of abstraction, any service or
-application can be modeled using the generic service template shown in
-the following figure:
+Top-down service design starts by defining TOSCA service templates at
+the highest level of abstraction, which is the System View level in
+the Model Continuum. At this level of abstraction, any service or
+application generally consist of the following:
 
-![Generic System View Service Template](images/platforms_with_networks.png)
+- *Application* components that provide the functionality provided by
+  the service.
+- Storage components that provide the persistent *data* that are
+  processed by the service.
+- One or more underlying *platforms* that run the application
+  components that make up the service or that make persistent data
+  available.
+- *Networks* that connect various platforms.
 
-This service template defines four kinds of nodes:
+To assist with the development of abstract service templates, the
+TOSCA Community profiles include a System View profile that defines
+base node types for these four *generic* abstractions. Specifically,
+it defines:
 
-1. An *application* node of type `Application` that represents the
-   functionality provided by the service.
-2. A *data* node of type `Data` that represents the persistent data
-   processed by the service. This data node can model Data Sets, Data
-   Lakes, Databases or similar entities.
-3. A *platform* node of type `Platform` that represents the platform
-   on which the service is deployed.
-4. A *network* node of type `Network` that represents connectivity
-   between platforms.
+- An `Application` node type that represents the functionality
+  provided by the service.
+- A `Data` node type that represents the persistent data processed by
+  the service. This data node type can model Data Sets, Data Lakes,
+  Databases or similar entities.
+- A `Platform` node type that represents the platforms on which the
+  service components are deployed.
+- A `Network` node type that represents connectivity between
+  platforms.
 
-The TOSCA Community profiles define base node types that represent
-these *generic* abstractions as well as the relationships between
-these abstractions. Derived types add more specific details as needed.
+These node types&mdash;as well as the supporting relationship types
+and capability types&mdash;are organized in the
+`community.tosca.common` profile. It can be used in the development of
+abstract service templates as shown in the following figure:
 
-## Best Practices for Translating Between Levels of Abstraction
+![Generic System View Service Template](images/generic-template.png)
+
+### Component-Specific System View Profiles
+
+Derived types add more specific details as needed.
+
+
+## Translating Between Levels of Abstraction
 During the orchestration process, models at a higher level of
 abstraction must be extended with information at the next lower level
 of abstraction. TOSCA provides two mechanisms to accomplish this:
