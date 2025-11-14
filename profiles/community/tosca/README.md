@@ -135,15 +135,34 @@ it defines:
 
 These node types&mdash;as well as the supporting relationship types
 and capability types&mdash;are organized in the
-`community.tosca.common` profile. It can be used in the development of
-abstract service templates as shown in the following figure:
+`community.tosca.common` profile. It can be used to guide the
+development of abstract service templates as shown in the following
+figure:
 
 ![Generic System View Service Template](images/generic-template.png)
 
 ### Component-Specific System View Profiles
 
-Derived types add more specific details as needed.
+In practice, abstract service templates generally will not use the
+*generic* base node types presented in the previous section. Instead,
+they will use derived types that further refine and extend these base
+types. For example, derived `Data` node types could distinguish
+between databases and data lakes, or derived `Platform` node types
+could specify whether applications are deployed on Kubernetes clusters
+or on servers provisioned on IaaS platforms, etc.
 
+To this end, the TOSCA Community defines four additional System View
+profiles as shown in the following figure:
+
+![System View Profiles](images/system-view-profiles.png)
+
+Each of these profiles defines derived node types for one of the four
+base node types defined in the common profile. These profiles can then
+be used to define abstract TOSCA service templates that define specific
+applications or services. The following figure shown an example of
+such an abstract service template:
+
+![Abstract Service Template](images/abstract-template.png)
 
 ## Translating Between Levels of Abstraction
 During the orchestration process, models at a higher level of
