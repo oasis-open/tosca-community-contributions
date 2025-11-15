@@ -269,45 +269,44 @@ AWS, Azure, etc.
 The *Core* profile defines types, repositories, functions, etc. that
 are shared by profiles at different levels of abstraction.
 
-## Abstract Service Deployment: Placement Drives Substitution
+## Deploying Abstract Services
 
-Abstract service deployment uses the following process:
+This section describes the process for deploying abstract
+services. This process recommends the following steps:
 
-1. Create technology-independent service designs.
-2. Create representations for available platforms.
-3. Make placement decisions based on abstract representations of
-   services and platforms.
-4. Create substituting services based on selected platforms.
+1. Decouple applications and data from platforms.
+2. Make placement decisions based on available platforms.
+3. Placement decisions drive substitution.
 
-### Create Technology-Independent Service Designs
-- High-level service designs should be *abstract and portable* and
-  should be independent of the target platform on which the service
-  will ultimately be deployed.
-- Abstract service designs should show the functional architecture of
-  the system: what are the system components and how do they interact?
-- Abstract service designs should be modeled using an *Administrator
-  View* profile that is technology-independent.
-- Each component in the functional architecture should specify the
-  requirements for capabilities in the target platform(s) on which the
-  service can be deployed.
+### Decouple Applications and Data from Platforms
 
-The following shows a hypothetical example of an abstract service that
-provides a context-aware personal assistant:
+High-level service designs should be *abstract and portable*, which
+means the should be independent of the target platform on which these
+services will ultimately be deployed. With this goal in mind, abstract
+TOSCA service templates should focus on application topology only and
+must not include node templates for the platforms on which the
+services are deployed. Instead, node templates for applications and
+data in abstract service templates should include requirements for
+capabilities in the target platform(s) on which the service can be
+deployed.
+
+The following shows a hypothetical example of such an abstract service
+template that defines a simple web application that operates on data
+stored in a relational database:
 
 ![Technology Independent Service Design](images/service-design.png)
 
-### Create Technology-Independent Representations for Available Platforms
+In this example, the `host` requirements of the application and data
+node templates are left *dangling*. These requirements need to be
+fulfilled by the TOSCA Processor at service deployment time.
 
-Orchestrators should maintain representations of the available
-platforms on which services can be deployed.
+To fulfill these dangling requirements, TOSCA processors should
+maintain representations of the available platforms on which services
+can be deployed. These representations should contain sufficient
+information to allow TOSCA processors to make intelligent placement
+decisions. For example, platform representations could include the
+following:
 
-- Platforms should be modeled using an *Administrator View* profile,
-  since we are not concerned with details about the internals of the
-  platforms.
-- Instead, representations for the available platforms should contain
-  just enough information to allow Orchestrators to make intelligent
-  orchestration decisions (e.g. placement decisions). This information
-  should include the following:
   - Location: where is the platform physically located?
   - Capabilities: what type of platform is it and what types of
     workloads can the platform support?
@@ -321,24 +320,22 @@ specific customer.
 
 ### Make Placement Decisions
 
-When deploying an abstract service, the Orchestrator first makes
-placement decision by *fulfilling* the dangling requirements of the
-nodes in the abstract service representation using capabilities of the
-nodes in the abstract platform representations. Node filters can be
-used to narrow down the set of candidate target platforms. The
-following example shows a node filter that drives placement for the
-`analytics` node in the abstract service template.
-
-the following figure:
+When deploying an abstract service, the TOSCA Processor first makes
+placement decision by *fulfilling* the dangling `host` requirements of
+the nodes in the abstract service representation using capabilities of
+the nodes in the abstract platform representations. Node filters can
+be used to narrow down the set of candidate target platforms. The
+following figure shows a node filter that drives placement for the
+`application` node in the abstract service template.
 
 ![Placement Decisions](images/placement.png)
 
-### Substitute Based on Allocated Target Platform
+### Placement Drives Substitution
 
-Once placement decisions have been made, the Orchestrator finds
+Once placement decisions have been made, the TOSCA Processor finds
 substituting templates that are suitable for the allocated target
 platform. This is done by using information about that target platform
-into the substitution filters for the candidate substituting
+into the *substitution filters* for the candidate substituting
 templates.
 
 > If substitution decisions made based on the type of the allocated
@@ -347,29 +344,29 @@ templates.
 
 #### Substitute for Kubernetes
 
-The following figure shows an example where the abstract service is
-deployed on a Kubernetes cluster.
+The following figure shows an example where the application node in
+the abstract service is deployed on a Kubernetes cluster.
 
 ![Placement on Kubernetes](images/placement-k8s.png)
 
-This information is then used to substitute the abstract nodes with
-substituting templates that implement those nodes by deploying
+This information is then used to substitute the abstract application
+node with substituting templates that implement this node by deploying
 Kubernetes resources. TOSCA type definitions from the TOSCA Kubernetes
 Profile are used for the templates in the substituting service:
 
 ![Substitution for Kubernetes](images/substitution-k8s.png)
 
-#### Substitute for Amazon Web Services
+#### Substitute for Docker
 
-The following figure shows an alternative deployment on Amazon EC2:
+The following figure shows an alternative deployment on a Docker
+engine:
 
 ![Placement on Docker Engine](images/placement-docker.png)
 
-In this scenario, abstract nodes are substituted using templates that
-implement those nodes by deploying infrastructure on AWS and
-installing the necessary software components on that
-infrastructure. TOSCA type definitions from the TOSCA AWS Profile are
-used for the templates in the substituting service:
+In this scenario, the abstract application node is substituted using
+templates that implement this nodeq by deploying the application
+directly using Docker. TOSCA type definitions from the TOSCA Docker
+Profile are used for the templates in the substituting service:
 
-![Substitution for Amazon](images/substitution-docker.png)
+![Substitution for Docker](images/substitution-docker.png)
 
