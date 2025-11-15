@@ -349,7 +349,7 @@ templates.
 
 The following figure shows an example where the abstract service is
 deployed on a Kubernetes cluster.
-![Placement on Kubernetes](images/placement-gke.png)
+![Placement on Kubernetes](images/placement-k8s.png)
 
 This information is then used to substitute the abstract nodes with
 substituting templates that implement those nodes by deploying
@@ -361,7 +361,7 @@ Profile are used for the templates in the substituting service:
 #### Substitute for Amazon Web Services
 
 The following figure shows an alternative deployment on Amazon EC2:
-![Placement on Amazon](images/placement-aws.png)
+![Placement on Docker Engine](images/placement-docker.png)
 
 In this scenario, abstract nodes are substituted using templates that
 implement those nodes by deploying infrastructure on AWS and
@@ -369,5 +369,5 @@ installing the necessary software components on that
 infrastructure. TOSCA type definitions from the TOSCA AWS Profile are
 used for the templates in the substituting service:
 
-![Substitution for Amazon](images/substitution-aws.png)
+![Substitution for Amazon](images/substitution-docker.png)
 
