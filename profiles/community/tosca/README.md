@@ -349,6 +349,7 @@ templates.
 
 The following figure shows an example where the abstract service is
 deployed on a Kubernetes cluster.
+
 ![Placement on Kubernetes](images/placement-k8s.png)
 
 This information is then used to substitute the abstract nodes with
@@ -361,6 +362,7 @@ Profile are used for the templates in the substituting service:
 #### Substitute for Amazon Web Services
 
 The following figure shows an alternative deployment on Amazon EC2:
+
 ![Placement on Docker Engine](images/placement-docker.png)
 
 In this scenario, abstract nodes are substituted using templates that
