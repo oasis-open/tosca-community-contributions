@@ -2,7 +2,7 @@ tosca_definitions_version: tosca_2_0
 
 imports:
   - profile: community.tosca.microservices:0.1
-    namespace: ms
+    namespace: app
   - profile: community.tosca.kubernetes:0.1
     namespace: k8s
 
@@ -20,9 +20,9 @@ node_types:
         value:
           name:
             $concat:
-              - $ms:to_uppercase: [{$get_property: [SELF, label]}]
+              - $app:to_uppercase: [{$get_property: [SELF, label]}]
               - _SERVICE_ADDR
-          value: {$ms:to_string: [{$get_property: [SELF, CAPABILITY, endpoint, port]}]}
+          value: {$app:to_string: [{$get_property: [SELF, CAPABILITY, endpoint, port]}]}
   Deployment:
     derived_from: k8s:Deployment
     requirements:
@@ -32,7 +32,7 @@ node_types:
           
 service_template:
   substitution_mappings:
-    node_type: ms:MicroService
+    node_type: app:MicroService
     properties:
       name: name
       [CAPABILITY, endpoint, port]: port
@@ -69,7 +69,7 @@ service_template:
         env:
           $concat:
             - - name: PORT
-                value: {$ms:to_string: [{$get_property: [SELF, container-port]}]}
+                value: {$app:to_string: [{$get_property: [SELF, container-port]}]}
             - $get_property: [SELF, RELATIONSHIP, endpoint, TARGET, address]
         container-port: {$get_input: target-port}
       requirements:

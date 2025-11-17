@@ -138,7 +138,7 @@ it defines:
 
 These node types&mdash;as well as the supporting relationship types
 and capability types&mdash;are organized in the
-`community.tosca.common` profile. It can be used to guide the
+`community.tosca.base` profile. It can be used to guide the
 development of abstract service templates as shown in the following
 figure:
 
@@ -147,7 +147,7 @@ figure:
 ## Component-Specific System View Profiles
 
 In practice, abstract service templates generally will not use the
-*generic* base node types presented in the `community.tosca.common`
+*generic* base node types presented in the `community.tosca.base`
 profile. Instead, they will use derived types that further refine and
 extend these base types. For example, derived `Data` node types could
 distinguish between databases and data lakes, or derived `Platform`
@@ -160,7 +160,7 @@ profiles as shown in the following figure:
 ![System View Profiles](images/system-view-profiles.png)
 
 Each of these profiles defines derived node types for one of the four
-base node types defined in the common profile. These profiles can then
+base node types defined in the base profile. These profiles can then
 be used to define abstract TOSCA service templates that define specific
 applications or services. The following figure shown an example of
 such an abstract service template:
@@ -206,7 +206,7 @@ Note that this recommendation does not prohibit the use of
 *inheritance* to further refine types defined in *system view*
 profiles. In fact, inheritance could be useful to define base node
 types that define common functionality (e.g. interfaces) that is then
-shared by all node types derived from that common base type. However,
+shared by all node types derived from that base type. However,
 inheritance should not be used to add technology-specific or
 vendor-specific implementations to system view node types.
 
@@ -252,7 +252,7 @@ not have any constructs to support such dynamic behavior.
   and may need to be organized in a *shared* profile.  This shared
   profile should only define top-level relationship types or
   capability types. Profile-specific types should derive from one of
-  the base types defined in the common profile.
+  the base types defined in the base profile.
 
 ### Profile Organization
 

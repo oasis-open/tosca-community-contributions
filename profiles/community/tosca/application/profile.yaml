@@ -27,12 +27,10 @@ capability_types:
         type: string
         required: false
 
-
 relationship_types:
   InteractsWith:
     description: >-
       Models interaction between microservices
-
 
 node_types:
   MicroServiceApp:

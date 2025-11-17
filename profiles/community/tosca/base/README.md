@@ -1,47 +1,11 @@
-# TOSCA Community Common Profile
+# TOSCA Community Base Profile
 
-The Common profile defines types for modeling services and
+The Base profile defines types for modeling services and
 applications at the highest level of abstraction. It also defines
 types to represent the platforms on which these services and
 applications are deployed. 
 
 ## Node Types
-At the highest level of abstraction, a service or application can be
-modeled using the service template shown in the following figure:
-
-![Applications, Data, and Platforms](images/applications_vs_platforms.png)
-
-This service template defines three nodes:
-
-1. An *application* node of type `Application` that represents the
-   functionality provided by the service.
-2. A *data* node of type `Data` that represents the persistent data
-   processed by the service. This data node can model Data Sets, Data
-   Lakes, Databases or similar entities.
-3. A *platform* node of type `Platform` that represents the platform
-   on which the service is deployed.
-
-Each of these nodes is defined as abstract using the `substitute`
-directive and is intended to be implemented using *substitution
-mapping*.
-
-The figure above shows a scenario where *Application* and *Data* are
-hosted on the same *Platform*, for example container application that
-uses data hosted on a Postgres or a mongodb instance running into
-another container in the same Kubernetes cluster.
-
-The following figure shows variant of the previous case where
-*Application* and *Data* are hosted on different *Platforms*, for
-example an on-premise application running on bare-metal that uses
-persistent data on AWS S3 object storage.:
-
-![Applications, Data, Platforms, and Networks](images/platforms_with_networks.png)
-
-This service template adds a fourth node type:
-
-4. A *network* node of type `Network` that represents connectivity
-   between platforms.
-
 ## Relationship Types
 
 The nodes in the service template above relate to one-another using
