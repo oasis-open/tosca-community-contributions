@@ -10,31 +10,49 @@ data_types:
     description: >-
       The json type defines strings that contain data in the JSON format
     derived_from: string
-    #constraints: TBD
+    #validation: TBD (may need custom functions)
   yaml:
     description: >-
       The yaml type defines strings that contain data in the YAML format
     derived_from: string
-    #constraints: TBD
-  
-capability_types:
-  Endpoint:
+    #validation: TBD (may need custom functions)
+  ipv4:
     description: >-
-      Endpoint for interaction between microservices
+      The ipv4 type defines string that contain an IPv4 address
+    derived_from: string
+    validation: { $matches: [ $value, "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" ] }
+  port:
+    description: >-
+      The port type defines integer that contain valid ports
+    derived_from: integer
+    validation: { $in_range: [ $value, [ 0, 0xFFFF ] ] }
+  ipv4Socket:
+    description: >-
+      This complex type represents an IPv4 socket (address+port)
     properties:
-      port:
-        type: integer
-      target-port:
-        type: integer
-      name:
-        type: string
-        required: False
-      protocol:
-        type: string
-        required: False
-        
-relationship_types:
-  InteractsWith:
-    description: >-
-      Models interaction between microservices
+      ip-address:
+        type: ipv4
+      transport-port:
+        type: port
 
+functions:
+  to_string:
+    description: >-
+      Convert an integer to string 
+    signatures:
+      - arguments:
+          - type: integer
+            description: >-
+              The integer to convert to string
+        result: string
+        implementation: functions.string:to_string
+  to_uppercase:
+    description: >-
+      Convert a string to upper case
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The string to convert to upper case.
+        result: string
+        implementation: functions.string:to_uppercase

@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_2_0
+
+profile: community.tosca.data:0.1
+
+description: >-
+  TOSCA Data Profile type definitions. This files contains
+  definitions that provide more concrete types derived from
+  Data abstract node type
+
+imports:
+- profile: community.tosca.common:0.1
+
+# Below a set of partial definitions
+node_types:
+  AtRestData:
+    description: >-
+      This node type represents a set of data available in some
+      kind of repository, local or remote (e.g. DB, file,
+      ftp/sftp, object storage, etc.)
+    derived_from: Data
+  StreamingData:
+    description: >-
+      This node type represents a set of streaming data
+      (e.g. queues, topics, such as Kafka, etc.)
+    derived_from: Data
+  ApiData:
+    description: >-
+      This node type represents a set of data available by
+      invoking a webservice/API (e.g. (REST, gRPC, GraphQL))
+    derived_from: Data
+

@@ -6,11 +6,16 @@ description: >-
   TOSCA Common Profile type definitions. This files contains
   highest-level definitions of abstract types.
 
+imports:
+- profile: community.tosca.core:0.1
+
+
 data_types:
   ImplementationDetails:
     description: >-
       This abstract Data Type is used as a container for implementation
       details of abstract nodes and relationships.
+
 
 capability_types:
   ExecutionEnvironment:
@@ -33,6 +38,13 @@ capability_types:
       derived from the Data node type to make available data for an
       application.
     valid_relationship_types: [Processes]
+  Linkable:
+    description: >-
+      This capability types is exposed by Network node types to target
+      Platform relationships. It expresses the ability of a node template
+      derived from the Platform node type to connect to a specific network.
+    valid_relationship_types: [LinksTo]
+
 
 relationship_types:
   RunsOn:
@@ -68,6 +80,18 @@ relationship_types:
         type: ImplementationDetails
         required: false
     valid_capability_types: [DataSource]
+  LinksTo:
+    description: >-
+      Used for Relationship between nodes derived from the abstract
+      Platform and Netork node types defined here
+    metadata:
+      relationship_kind: dependency
+    properties:
+      implementation-details:
+        type: ImplementationDetails
+        required: false
+    valid_capability_types: [Linkable]
+
 
 node_types:
   Platform:
@@ -83,13 +107,29 @@ node_types:
         type: ExecutionEnvironment
       data-platform:
         type: DataPlatform
+    requirements:
+      - links-to:
+          capability: Linkable
+          relationship: LinksTo
+          count_range: [0, UNBOUNDED]
   Application:
     description: >-
       Abstract Node Type modeling a generic application
     properties:
+      name:
+        type: string
       implementation-details:
         type: ImplementationDetails
         required: false
+    requirements:
+      - processes:
+          capability: DataSource
+          relationship: Processes
+          count_range: [0, UNBOUNDED]
+      - runs-on:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+          count_range: [1, 1]
   Data:
     description: >-
       Abstract Node Type modeling a generic set of data
@@ -100,3 +140,19 @@ node_types:
     capabilities:
       data-source:
         type: DataSource
+    requirements:
+      - available-on:
+          capability: DataPlatform
+          relationship: AvailableOn
+          count_range: [1, 1]
+  Network:
+    description: >-
+      Abstract Node Type modeling a generic network
+    properties:
+      implementation-details:
+        type: ImplementationDetails
+        required: false
+    capabilities:
+      linkable:
+        type: Linkable
+
