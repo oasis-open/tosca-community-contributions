@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_2_0
 
-profile: community.tosca.common:0.1
+profile: community.tosca.base:0.1
 
 description: >-
   TOSCA Common Profile type definitions. This files contains

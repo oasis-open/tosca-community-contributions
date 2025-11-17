@@ -8,7 +8,7 @@ description: >-
   Application abstract node type
 
 imports:
-- profile: community.tosca.common:0.1
+- profile: community.tosca.base:0.1
 
 # Below a set of partial definitions for microservice based applications
 capability_types:
