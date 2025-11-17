@@ -1,8 +1,8 @@
-# TOSCA MicroServices Profile
+# TOSCA Community Application Profile
 
 This profile defines TOSCA types that support the deployment of
-microservices. These microservices will typically be deployed on
-Kubernetes clusters, although other deployment platform can be
+abstract applications. These applications will frequently be deployed
+on Kubernetes clusters, although other deployment platform can be
 considered as well.
 
 ## Why TOSCA for Deploying Services on Kubernetes
