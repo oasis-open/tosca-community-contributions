@@ -4,7 +4,7 @@ This directory contains TOSCA profiles that are created by the TOSCA
 Community&mdash;an informal group of TOSCA implementors and TOSCA
 users that meet periodically and collaborate on TOSCA profiles and
 examples that can be used by all members. TOSCA community profiles all
-use `community.tosca` as their top-level domain name.
+use `community.tosca` as their top-level profile name.
 
 ## Objectives
 
@@ -18,14 +18,15 @@ sufficient similarities between these profiles that should allow them
 to be harmonized. However, there are likely also significant
 differences, for example:
 
+- Differences in the *level of abstraction* at which services are
+  modeled.
 - Differences in the *target platforms* on which components modeled by
   node types are intended to be deployed (e.g. IaaS clouds, PaaS
   platforms, Kubernetes clusters, dedicated compute devices, etc.)
-- Differences in the deployment technologies used to interact with the
-  physical resources (e.g., Ansible, Terraform, Bash, etc.)
-- Differences in the level of abstraction used to mode services. 
+- Differences in the *deployment technologies* used to interact with
+  the physical resources (e.g., Ansible, Terraform, Bash, etc.)
 
-The TOSCA community profiles are intended to harmonize these various
+The TOSCA Community profiles are intended to harmonize these various
 profiles while at the same time allowing sufficient variability to
 accommodate these differences. With these goals in mind, the TOSCA
 Community has followed the guidelines described in this document for
@@ -56,22 +57,24 @@ as shown in the following picture:
 - **Business View**: describes services in terms of business goals. It
   models services as products that are available to customers.
 - **System View**: describes the architectural components of the
-  service in a technology-agnostic fashion. It the system architecture
-  used to meet the business objectives specified in the business view.
+  service in a technology-agnostic fashion. It defines the system
+  architecture used to meet the business objectives specified in the
+  business view.
 - **Administrator View**: specifies technologies used for each of the
   architectural components in the system. It introduces
   technology-specific implementations for the architecture specified
   in the system view.
-- **Device View**: lists specific devices or software components-as
-  well as their associated configurations-for all of the components of
-  the service. It introduces vendor-specific equipment for the
-  technologies used in the administrator view.
+- **Device View**: lists specific devices or software
+  components&mdash;as well as their associated
+  configurations&mdash;for all of the components of the service. It
+  introduces vendor-specific equipment for the technologies used in
+  the administrator view.
 - **Instance View**: captures the state of each instance and specifies
   details about the interfaces for managing these instances.
 
-The model continuum enables a **top-down** modeling approach, where
-high-level designs are incrementally refined into lower levels as
-follows:
+The model continuum enables a **top-down** service design approach,
+where high-level designs are incrementally refined into lower levels
+as follows:
 
 1. System designers create abstract *system view* models to define the
    architecture of their systems.
@@ -144,12 +147,12 @@ figure:
 ## Component-Specific System View Profiles
 
 In practice, abstract service templates generally will not use the
-*generic* base node types presented in the previous section. Instead,
-they will use derived types that further refine and extend these base
-types. For example, derived `Data` node types could distinguish
-between databases and data lakes, or derived `Platform` node types
-could specify whether applications are deployed on Kubernetes clusters
-or on servers provisioned on IaaS platforms, etc.
+*generic* base node types presented in the `community.tosca.common`
+profile. Instead, they will use derived types that further refine and
+extend these base types. For example, derived `Data` node types could
+distinguish between databases and data lakes, or derived `Platform`
+node types could specify whether applications are deployed on
+Kubernetes clusters or on servers provisioned on IaaS platforms, etc.
 
 To this end, the TOSCA Community defines four additional System View
 profiles as shown in the following figure:
@@ -164,7 +167,7 @@ such an abstract service template:
 
 ![Abstract Service Template](images/abstract-template.png)
 
-## Translating to Lower Levels of Abstraction
+## Translating Between Levels of Abstraction
 
 During the orchestration process, TOSCA service templates that use
 types defined a higher level of abstraction must be extended with
@@ -193,19 +196,19 @@ shown in the following figure:
 
 #### Translating System View to Administrator View
 
-We recommend using *substitution* to map from the system view level of
-abstraction to the administrator view level of abstraction, as shown
-in the following figure:
+We recommend using *substitution mapping* to tranlate from the system
+view level of abstraction to the administrator view level of
+abstraction, as shown in the following figure:
 
 ![Translate system view to administrator view](images/system-to-administrator.png)
 
-Note that this recommendation do not prohibit the use of *inheritance*
-for types defined in *system view* profiles. In fact, inheritance
-could be useful to define base node types that define common
-functionality (e.g. interfaces) that is then shared by all node types
-derived from that common base type. However, inheritance should not be
-used to add technology-specific or vendor-specific implementations to
-system view node types.
+Note that this recommendation does not prohibit the use of
+*inheritance* to further refine types defined in *system view*
+profiles. In fact, inheritance could be useful to define base node
+types that define common functionality (e.g. interfaces) that is then
+shared by all node types derived from that common base type. However,
+inheritance should not be used to add technology-specific or
+vendor-specific implementations to system view node types.
 
 #### Translating Administrator View to Device View
 We recommend using *derivation* to map from the administrator view
@@ -271,8 +274,9 @@ are shared by profiles at different levels of abstraction.
 
 ## Deploying Abstract Services
 
-This section describes the process for deploying abstract
-services. This process recommends the following steps:
+This section describes the process that could be implemented by TOSCA
+processors for deploying abstract services. This process recommends
+the following steps:
 
 1. Decouple applications and data from platforms.
 2. Make placement decisions based on available platforms.
@@ -281,7 +285,7 @@ services. This process recommends the following steps:
 ### Decouple Applications and Data from Platforms
 
 High-level service designs should be *abstract and portable*, which
-means the should be independent of the target platform on which these
+means they should be independent of the target platform on which these
 services will ultimately be deployed. With this goal in mind, abstract
 TOSCA service templates should focus on application topology only and
 must not include node templates for the platforms on which the
