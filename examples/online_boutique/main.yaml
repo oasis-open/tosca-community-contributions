@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_2_0
 
 imports:
-  - profile: community.tosca.microservices:0.1
+  - profile: community.tosca.application:0.1
     namespace: ms
 
 description: >-
@@ -10,7 +10,7 @@ description: >-
 service_template:
   node_templates:
     frontend:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: frontend
@@ -29,7 +29,7 @@ service_template:
         - endpoint: currency
         - endpoint: checkout
     checkout:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: checkout
@@ -47,7 +47,7 @@ service_template:
         - endpoint: payment
         - endpoint: email
     ad:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: ad
@@ -58,7 +58,7 @@ service_template:
             target-port: 9555
             name: grpc
     recommend:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: recommendation
@@ -71,7 +71,7 @@ service_template:
       requirements:
         - endpoint: catalog
     cart:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: cart
@@ -84,7 +84,7 @@ service_template:
       requirements:
         - endpoint: redis
     catalog:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: product_catalog
@@ -95,7 +95,7 @@ service_template:
             target-port: 3550
             name: grpc
     shipping:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: shipping
@@ -106,7 +106,7 @@ service_template:
             target-port: 50051
             name: grpc
     currency:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: currency
@@ -117,7 +117,7 @@ service_template:
             target-port: 7000
             name: grpc
     payment:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: payment
@@ -128,7 +128,7 @@ service_template:
             target-port: 50051
             name: grpc
     email:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: email
@@ -139,7 +139,7 @@ service_template:
             target-port: 8080
             name: grpc
     redis:
-      type: ms:MicroService
+      type: app:MicroService
       directives: [substitute]
       properties:
         name: redis
