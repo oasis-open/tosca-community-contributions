@@ -1,0 +1,62 @@
+tosca_definitions_version: tosca_2_0
+
+profile: community.tosca.application:0.1
+
+description: >-
+  TOSCA Application Profile type definitions. This files contains
+  definitions that provide more concrete types derived from
+  Application abstract node type
+
+imports:
+- profile: community.tosca.base:0.1
+
+# Below a set of partial definitions for microservice based applications
+capability_types:
+  Endpoint:
+    description: >-
+      Endpoint for interaction between microservices
+    properties:
+      port:
+        type: port
+      target-port:
+        type: port
+      name:
+        type: string
+        required: false
+      protocol:
+        type: string
+        required: false
+
+
+relationship_types:
+  InteractsWith:
+    description: >-
+      Models interaction between microservices
+
+
+node_types:
+  MicroServiceApp:
+    description: >-
+      This node type represents a whole microservice application
+      (i.e. not the single microservice). In some cases it may be
+      a good candidate for being replaced by a substituting template.
+      It is derived from the Application abstract type and inherits
+      its properties, capabilities and requirements
+    derived_from: Application
+
+  MicroService:
+    description: >-
+      This node type represents a single microservice, and can be used
+      when the Service Template at the top-level explodes the topology
+      of microservices. In that case, each single microservice is
+      candidate for substitution.
+      This type inherits from the Application abstract type and inherits
+      its properties, capabilities and requirements.
+    derived_from: Application
+    capabilities:
+      endpoint:
+        type: Endpoint
+    requirements:
+      - endpoint:
+          capability: Endpoint
+          relationship: InteractsWith
