@@ -50,7 +50,7 @@ service_template:
               create:
                 implementation: wordpress_create.sh
               configure: 
-                implementation: wordpress_configure.sh            
+                implementation: wordpress_configure.sh
                 inputs:
                   wp-db-port:
                     $get_property:

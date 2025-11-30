@@ -28,7 +28,7 @@ The metadata file is, at present, a Python file which defines a test and expecte
 
 Each pytest file will be crafted to match the associated test file although expected that in most cases customization will be minimal. For an example pytest file see ./tests/tosca_2_0/tosca-definitions-version/version_test.py. It assumes the name of the file can be derived from its own name.
 
-The pytest file may be adapted to create a CSAR file on the fly before sending it to the TOSCA processor under test. (An example can be seen in tosca_2_0/examples/s26a_test.py)
+The pytest file may be adapted to create a CSAR file on the fly before sending it to the TOSCA processor under test. (An example can be seen in tosca_2_0/operation-definition/s118_test.py)
 
 The pytest file calls a program called wrapper with a reference to the tosca file. Wrapper provides a standard interface to the TOSCA Processor under test and is further described in [validation](validation.md).
 

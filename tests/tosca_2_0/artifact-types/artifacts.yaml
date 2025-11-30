@@ -1,0 +1,60 @@
+tosca_definitions_version: tosca_2_0
+# This test is incorrect as credential is not a valid keyword in repository PJ 2025/11/15
+
+metadata:
+
+  template_name: Artifacts Example
+  template_author: Puccini
+
+repositories:
+
+  centos:
+    url: https://cloud.centos.org/centos/7/images/
+    credential:
+      user: puccini
+      token: puccini123
+      keys:
+        cert: centos.pem
+
+artifact_types:
+
+  QCOW:
+    derived_from: tosca:Deployment.Image.VM
+    properties:
+      os:
+        type: string
+      version:
+        type: version
+    mime_type: application/x-qcow
+    file_ext: [ qcow, qcow2 ]
+
+node_types:
+
+  Orchestrator:
+    derived_from: tosca:Compute
+    # When you attach an artifact to a node type it is *not* automatically attached to node templates
+    # It's just a way to provide default values
+    artifacts:
+      image:
+        type: QCOW
+        artifact_version: '2'
+        # You don't have to use a repository like we do here
+        # Without a repository, path is relative to this file's location, even if it's within a CSAR
+        repository: centos
+        # The extension must match our definition at the artifact type
+        file: CentOS-7-x86_64-GenericCloud-1804_02.qcow2
+        properties:
+          os: CentOS
+          version: '7.0'
+
+service_template:
+
+  node_templates:
+
+    orchestrator:
+      type: Orchestrator
+      artifacts:
+        # Note that you can attach artifacts here even if they are not defined at the node type
+        # But if they are, you must use the same artifact type or a derived type
+        image:
+          deploy_path: /var/lib/orchestration/images/

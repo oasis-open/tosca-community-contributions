@@ -1,4 +1,4 @@
-# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/dsl-definitions/dsl_definitions-invalid-list_test.py
+
 import subprocess
 import unittest
 import os
@@ -19,4 +19,4 @@ class TestWrapperProgram(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True, shell=True)
         # Expected fail
         self.assertEqual(result.returncode, 1,
-                         f"Expected return code 1, but got {result.returncode} with message\n {result.stdout}")
+                         f"Expected return code 1, but got {result.returncode} with message\n {result.stdout} {result.stderr}")

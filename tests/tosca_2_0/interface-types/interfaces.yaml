@@ -1,0 +1,134 @@
+tosca_definitions_version: tosca_2_0
+
+metadata:
+
+  template_name: Interfaces Example
+  template_author: Puccini
+
+node_types:
+
+  # (You can also define interfaces in group and relationship types)
+
+  Server:
+    interfaces:
+      interfaces.root:
+        description: The root interface introduced to test inheritance.
+      operations:
+        create:
+          description: Create the server
+      Maintenance:
+        type: Maintenance
+        operations:
+          maintenance_on:
+            description: Turn maintenance mode on
+          maintenance_off:
+            description: Turn maintenance mode off
+      Standard:
+        type: Standard
+        # (You can override the type here, but only if it's a derived type)
+        # You can define operations both at the interface type and at the node type 
+        operations:
+          create:
+            # You *must* define inputs in order to assign them at the template
+            inputs:
+              retries:
+                type:
+                  integer
+
+
+  BetterServer:
+    derived_from: Server
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              # Inputs are inherited (both from interface type and node type)
+              retries:
+                # You can override the type, but only if it's a derived type
+                type: Retries
+
+data_types:
+
+  Retries:
+    derived_from: integer
+    validation:
+    # Constraints changed to "validation" in TOSCA 2.0
+    - $greater_or_equal: 0
+
+interface_types:
+
+  Maintenance:
+    # You can define inputs for the interface as a whole as well as for individual operations
+    inputs:
+      mode:
+        type: string
+        validation:
+        # Constraints changed to "validation" in TOSCA 2.0
+        - $valid_values: [ staging, production ]
+    operations:
+      maintenance_on:
+        description: Turn maintenance mode on
+      maintenance_off:
+        description: Turn maintenance mode off
+        inputs:
+          priority:
+            type: float
+    notifications:
+      progress:
+        description: Progress on maintenance mode
+        outputs:
+          # Notification outputs map to *attributes*
+          # The attribute must be declared at the type
+          percentage: [ SELF, progress ]
+    Standard:
+      operations:
+        start:
+          description: Start the server
+        stop:
+          description: Stop the server
+        configure:
+          description: Configure the server
+          inputs:
+            config_file:
+              type: string
+service_template:
+
+  node_templates:
+
+    server:
+      type: Server
+      interfaces:
+        Standard:
+          operations:
+            # Shortest notation has just the implementation
+            start: /opt/scripts/start.sh
+            stop: /opt/scripts/start.sh
+
+            # Longer notation with inputs
+            create:
+              implementation: scripts/create.sh
+              inputs:
+                retries: 3
+
+            # Longest notation also allows adding dependencies and other params to the implementation
+            configure:
+              implementation:
+                primary: /opt/scripts/configure.sh
+                dependencies:
+                - /opt/scripts/utils.sh
+                - /opt/scripts/config.yaml
+                timeout: 3
+                operation_host: SELF
+
+        Maintenance:
+          inputs:
+            mode: production
+          operations:
+            maintenance_on: /opt/scripts/maintenance_on.sh
+            maintenance_off:
+              implementation: /opt/scripts/maintenance_off.sh
+              inputs:
+                priority: .75
+          notifications:
+            progress: /opt/scripts/progress.sh

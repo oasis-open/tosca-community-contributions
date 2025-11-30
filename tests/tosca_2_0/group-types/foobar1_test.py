@@ -1,4 +1,4 @@
-# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/group-types/foobar_test.py
+
 import subprocess
 import unittest
 import os
@@ -14,4 +14,4 @@ class TestWrapperProgram(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True, shell=True)
         # Expected pass
         self.assertEqual(result.returncode, 0,
-                         f"Expected return code 0, but got {result.returncode} with message\n {result.stdout}")
+                         f"Expected return code 0, but got {result.returncode} with message\n {result.stdout} {result.stderr}")

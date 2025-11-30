@@ -22,4 +22,4 @@ class TestWrapperProgram(unittest.TestCase):
         command = (f'python3 {wrapper_path} {tosca_file_path}')
         result = subprocess.run(command, capture_output=True, text=True, shell=True)
         self.assertEqual(result.returncode, 0, 
-                         f"Expected return code 0, but got {result.returncode} with message\n {result.stdout}")
+                         f"Expected return code 0, but got {result.returncode} with message\n {result.stdout} {result.stderr}")
