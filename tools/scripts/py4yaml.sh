@@ -28,7 +28,7 @@ create_pyfile() {
   local base="$2"
   local verdict="$3"
   cat > "$pyfile" <<EOF
-# filepath: $pyfile
+
 import subprocess
 import unittest
 import os

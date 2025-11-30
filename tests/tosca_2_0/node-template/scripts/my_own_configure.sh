@@ -1,0 +1,1 @@
+# Dummy script file for use in s48

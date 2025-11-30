@@ -1,0 +1,277 @@
+tosca_definitions_version: tosca_2_0
+# Intented to be valid tosca but contains invalid yaml PJ 2024-06-11   
+metadata:
+
+  template_name: Data Types Example
+  template_author: Puccini
+
+node_types:
+
+  DataNode:
+    properties:
+
+      # Primitive types
+      string:
+        type: string
+      integer:
+        type: integer
+      float:
+        type: float
+        default: -0.1
+      boolean:
+        type: boolean
+        required: false
+      # Note: We must wrap "null" in quotes so that the YAML parser won't treat it as null
+      'null':
+        type: 'null'
+
+      # List and map types *must* specify "entry_schema" for entry types
+      integer_list:
+        type: list
+        entry_schema: integer
+      string_map:
+        type: map
+        entry_schema: string
+
+      # Complex types are defined in "data_types"
+      complex:
+        type: Complex
+
+      # The "entry_schema" can be a complex type
+      complex_list:
+        type: list
+        entry_schema: Complex
+
+      # The following are "special" types
+      # Puccini will insert an object that has a rich API, accessible in JavaScript
+      scalar_unit_size:
+        type: scalar-unit.size
+      scalar_unit_time:
+        type: scalar-unit.time
+      scalar_unit_frequency:
+        type: scalar-unit.frequency
+      scalar_unit_bitrate:
+        type: scalar-unit.bitrate
+      timestamp1:
+        type: timestamp
+      timestamp2:
+        type: timestamp
+      version:
+        type: version
+      range:
+        type: range
+
+      # These can also be considered to be "special" types
+      # Though they are currently part of the Simple Profile
+      json:
+        type: tosca.datatypes.json
+      xml:
+        type: tosca.datatypes.xml
+
+      # Properties can have constraints
+      # Note that constraints *must* use literal values (no function calls)
+      # (*All* constraints must be satisfied by values; it's a logical "and")
+      constrained_string:
+        type: string
+        validation:
+        # Constraints changed to "validation" in TOSCA 2.0
+        $length:
+          - $greater_or_equal: 2
+          - $less_or_equal: 5
+
+      # This property is also constrained, but not here: see the data type
+      # (You can also add *additional* constraints here if needed; it's logical "and")
+      lowercase:
+        type: LowerCase
+
+      # We can constrain map keys via the "key_schema"
+      # The key_schema must be string (the default) or a derivative
+      lowercase_string_map:
+        type: map
+        key_schema: LowerCase
+        entry_schema: string
+
+      # Using a longer notation you can also set constraints for the entry schema
+      # (Remember: logical "and")
+      constrained_float_list:
+        type: list
+        entry_schema:
+          type: float
+          validation:
+          # Constraints changed to "validation" in TOSCA 2.0
+          - $in_range: [ -1.0, 1.0 ]
+
+      # Constraints are type-aware, such that comparisons of special type values
+      # will be done semantically, e.g. a "scalar-unit":
+      constrained_time:
+        type: scalar-unit.time
+        validation:
+        # Constraints changed to "validation" in TOSCA 2.0
+        - $in_range: [ 1m, 1h ]
+
+      # Another example showing semantic "version" comparison
+      constrained_version:
+        type: version
+        validation:
+        # Constraints changed to "validation" in TOSCA 2.0
+        - $in_range: [ 1.2.3.beta-3, 1.2.3.beta-5 ]
+
+      # In Puccini you can also create your own custom constraints
+      # See: examples/javascript/constraints.yaml
+
+data_types:
+  
+  Complex:
+    # (Poorly named: these are really "fields" of our complex type, rather than "properties")
+    properties:
+      string:
+        type: string
+        # Individual "properties" can have default values
+        default: Default Value
+      integer:
+        type: integer
+      float:
+        type: float
+        # "Properties" are required by default
+        required: false
+      # Complex types can be nested
+      nested:
+        type: Nested
+
+  Nested:
+    # (Just to demonstrate, we won't derive from root for this type; there's nothing there to inherit anyway)
+    properties:
+      nested_float:
+        type: float
+        validation:
+        # Constraints changed to "validation" in TOSCA 2.0
+        - $greater_or_equal: 0.0
+      nested_string:
+        type: string
+        required: false
+
+  # Puccini lets you derive from primitive types; useful for adding constraints
+  # Note that if you derive from a primitive you *cannot* also define properties
+  LowerCase:
+    derived_from: string
+    description: Lowercase string
+    validation:
+    # Constraints changed to "validation" in TOSCA 2.0
+    - $matches: '[a-z]*'
+
+service_template:
+
+  node_templates:
+
+    data:
+      type: DataNode
+      properties:
+
+        string: Hello, Puccini
+        integer: 123
+        float: 12.3
+        boolean: true
+        # The "null" type can have only the null value
+        'null': null
+
+        integer_list: [ 1, 2, 3 ]
+
+        string_map:
+          Greeting: Hello
+          # Note that map keys could be function calls
+          { concat: [ Recip, ient ] }: Puccini
+
+        lowercase_string_map:
+          greeting: Hello
+          { concat: [ recip, ient ] }: Puccini
+
+        complex:
+          string: Hello, Puccini
+          integer: 123
+          nested:
+            nested_float: 12.3
+
+        complex_list:
+        - integer: 123
+          nested:
+            nested_float: 45.6
+        - integer: 789
+          nested:
+            nested_float: 1.0
+
+        # Size is normalized to number of bytes (unsigned integer)
+        # GiB, MiB, etc. are also supported for multiples of 1024
+        # For most scalars the case of the unit doesn't matter ("gB" = "Gb")
+        scalar_unit_size: 1.23 gb
+
+        # Time is normalized to seconds (float)
+        # Also, you don't need a space between the scalar and the unit
+        scalar_unit_time: 1.23ms
+
+        # Frequency is normalized to Hz (float)
+        scalar_unit_frequency: 123e3 kHz
+
+        # Bitrate is normalized to bits-per-second (float)
+        # This is the only scalar in which the case *does* matter:
+        # Use "b" for bits and "B" for bytes
+        # Gibps, Mibps, etc. are also supported for multiples of 1024
+        scalar_unit_bitrate: 1.23 KiBps
+
+        # "timestamp" follows YAML 1.1's format, which is a subset of ISO8601:
+        # http://yaml.org/type/timestamp.html
+        timestamp1: '1975-09-15 12:34:56.7 +2'
+
+        # Note that you can also use the YAML timestamp type directly:
+        # (In this case the YAML parser parses the timestamp, not Puccini's TOSCA parser)
+        timestamp2: !!timestamp 1975-09-15t12:34:56.7+02:00
+
+        # The version structure in TOSCA is very specific and might not fit your needs
+        # This example has all fields: major.minor.fix.qualifier-build
+        # (You need *at least* major.minor)
+        # With "--quirk=data_types.string.permissive" enabled Puccini will also accept
+        # literal integers such as "5" and literal floats such as "5.2"
+        version: 1.2.3.beta-4
+
+        # Range is actually quite limited in use:
+        # * Unsigned integers only        
+        # * Upper must be >= than lower
+        # You can also use "UNBOUNDED" string for the upper bound, which will be converted to
+        # the maximum uint value
+        range: [ 1, UNBOUNDED ]
+
+        # These are validated, but otherwise the text will be left as is
+        json: |-
+          {
+            "key1": "value",
+            "key2": [1, 2, 3]
+          }
+        xml:
+          # Constraints are applied *after* functions are called
+          concat:
+          - |
+            <tag1>value</tag1>
+            <tag2>
+              <entry>1</entry>
+              <entry>2</entry>
+              <entry>3</entry>
+          - |-
+            </tag2>
+  
+        # Constraints: min length = 2 and max length = 5
+        # (The length-related constraints work on both strings and lists)
+        constrained_string: ABCDE
+
+        # Constraints: lowercase letters only
+        lowercase: helloworld
+
+        # Constraints: -1.0 <= x <= 1.0
+        constrained_float_list:
+        - -0.999
+        - 0.0
+        - 1.0
+
+        # Constraints: 1m <= x <= 1h
+        constrained_time: 10.5m
+
+        # Constraints: 1.2.3.beta-3 <= x <= 1.2.3.beta-5
+        constrained_version: 1.2.3.beta-4

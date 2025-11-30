@@ -28,7 +28,13 @@ The metadata file is, at present, a Python file which defines a test and expecte
 
 Each pytest file will be crafted to match the associated test file although expected that in most cases customization will be minimal. For an example pytest file see ./tests/tosca_2_0/tosca-definitions-version/version_test.py. It assumes the name of the file can be derived from its own name.
 
-The pytest file may be adapted to create a CSAR file on the fly before sending it to the TOSCA processor under test. (An example can be seen in tosca_2_0/examples/s26a_test.py)
+The pytest file may be adapted to create a CSAR file on the fly before sending it to the TOSCA processor under test. (An example can be seen in tosca_2_0/operation-definition/s118_test.py)
+
+The pytest file may also contain a pytest marker e.g. @pytest.mark.empty. These can be used to mark particular types of test. e.g. running
+```
+pytest -m "not empty"
+```
+will exclude tests which have the empty decorator which indicates they test for empty TOSCA elements.
 
 The pytest file calls a program called wrapper with a reference to the tosca file. Wrapper provides a standard interface to the TOSCA Processor under test and is further described in [validation](validation.md).
 
@@ -56,4 +62,4 @@ Wrapper also returns a json response containing details of the command which inv
 }
 ```
 
-There is a program called py4yaml.sh in [tools/scripts](https://github.com/oasis-open/tosca-community-contributions/tools/scripts) which can be used to generate pytest files from TOSCA files.
+There is a program called py4yaml.sh in [tools/scripts](https://github.com/oasis-open/tosca-community-contributions/tools/scripts) which can be used to generate pytest files from TOSCA files. Files generated in this way do not have decorators or CSAR generation.

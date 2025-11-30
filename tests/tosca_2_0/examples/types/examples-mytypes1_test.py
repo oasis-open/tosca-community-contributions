@@ -1,4 +1,4 @@
-# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/examples/types/examples-mytypes1_test.py
+
 import subprocess
 import unittest
 import os
@@ -11,7 +11,7 @@ here = os.path.dirname(os.path.abspath(__file__))
 # and that the extension is .yaml
 tosca_file_path = here + '/' + Path(__file__).stem.split("_test")[0] + ".yaml"
 
-wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
+wrapper_path = here + '/../../../../tools/wrappers/wrapper.py'
 
 class TestWrapperProgram(unittest.TestCase):
     def test_wrapper_with_yaml(self):
@@ -19,4 +19,4 @@ class TestWrapperProgram(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True, shell=True)
         # Expected pass
         self.assertEqual(result.returncode, 0,
-                         f"Expected return code 0, but got {result.returncode} with message\n {result.stdout}")
+                         f"Expected return code 0, but got {result.returncode} with message\n {result.stdout} {result.stderr}")

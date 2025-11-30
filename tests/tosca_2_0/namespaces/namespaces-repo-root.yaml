@@ -9,8 +9,6 @@ repositories:
       created: "01-01-2025"
     description: A repository
     url: https://github.com/my-project/
-    credential:
-      user: username
-      token: password
+
 
 

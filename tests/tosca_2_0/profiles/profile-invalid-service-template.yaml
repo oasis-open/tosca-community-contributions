@@ -9,10 +9,8 @@ node_types:
 profile: com.example.tosca_profiles.cloud_computing:2.0 
 # Invalid as file includes both a profile and a service_template
 service_template:
-  name: InvalidProfileServiceTemplate
   description: A service template with an invalid profile reference.
-  topology_template:
-    node_templates:
-      my_node:
-        type: MyNodeType
+  node_templates:
+    my_node:
+      type: MyNodeType
 

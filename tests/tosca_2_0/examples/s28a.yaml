@@ -1,0 +1,14 @@
+tosca_definitions_version: tosca_2_0
+# Changed from s28 to add repo definition
+# Ubicity says file:types/ is not a valid URL but I think it is PJ 2025-11-08
+repositories: 
+  my-company-repo:
+    url: file:types/
+# tag::s28[]
+# Short notation and long notation supported
+imports:
+- types/examples-mytypes1.yaml
+- url: examples-mytypes2.yaml    
+  repository: my-company-repo
+  namespace: mycompany
+# end::s28[]

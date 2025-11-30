@@ -1,0 +1,5 @@
+# pyproject.toml
+[tool.pytest.ini_options]
+markers = [
+    "empty: marks tests which expect empty TOSCA elements to be rejected as invalid"
+]

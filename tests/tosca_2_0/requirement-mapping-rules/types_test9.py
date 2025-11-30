@@ -1,4 +1,4 @@
-# filepath: /home/paul/tosca-community-contributions/tools/scripts/../../tests/tosca_2_0/requirement-mapping-rules/types_test.py
+
 import subprocess
 import unittest
 import os

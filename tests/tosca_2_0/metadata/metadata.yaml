@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_2_0
+
+# Metadata does not have any specified use
+# But, because it's compiled to Clout, it's a great way to add hints for your Clout processor
+# or orchestrator
+
+# For example, Puccini uses metadata to define custom functions
+# See: examples/javascript/
+
+# The service template can have optional metadata
+metadata:
+  # The following fields are "normative" and expected in TOSCA 
+  template_name: Metadata Example
+  template_author: Puccini
+  template_version: '1.0' # (must be a string so we add quotes to avoid being read as a float)
+  # And you can add your custom metadata
+  # (The "." has no special general meaning for metadata names)
+  galactic.planet: Mercury
+
+node_types:
+
+  Server:
+
+    # You can also add metadata to any type
+    # Note that it is not normally inherited: every distinct type has its own metadata
+    # However, every node template in Clout will get a map of its entire type hierarchy with the
+    # metadata for each one, so you can decide to interpret any metadata as inheritable
+    metadata:
+      galactic.planet: Jupiter
+
+service_template:
+
+  node_templates:
+
+    server:
+      type: Server
+      # Node templates don't have metadata, but you can assign a list of string directives
+      # The only "normative" directive mentioned in the TOSCA spec is "substitutable"
+      # (See: substitution-mapping-client.yaml) 
+      directives:
+      - create
+      

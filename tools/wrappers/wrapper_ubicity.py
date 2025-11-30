@@ -10,8 +10,8 @@ def printJsonResponse(pSuccess, pError, pErrorReason, processor_command, result)
             "executedCommand": processor_command,
             "success": pSuccess,
             "error": pError,
-            "errorReason": pErrorReason,
-            "outputs": "not yet implemented"
+            "errorReason": pErrorReason
+            #"outputs": "not yet implemented"
         },
         "processorResult": {
             "stdout": result.stdout,
