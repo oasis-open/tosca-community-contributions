@@ -3,11 +3,13 @@ import subprocess
 import unittest
 import os
 from pathlib import Path
+import pytest
 
 here = os.path.dirname(os.path.abspath(__file__))
 tosca_file_path = here + '/workflow-definitions-empty-inv.yaml'
 wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
+@pytest.mark.empty
 class TestWrapperProgram(unittest.TestCase):
     def test_wrapper_with_yaml(self):
         command = f'python3 {wrapper_path} {tosca_file_path}'
