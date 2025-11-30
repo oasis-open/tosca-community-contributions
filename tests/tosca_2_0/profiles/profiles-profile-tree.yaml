@@ -12,13 +12,11 @@ node_types:
         description: An further refinement of the node type
 
 service_template:
-  name: ProfileTreeServiceTemplate
   description: A service template utilizing a node defined in a profile tree.
-  topology_template:
-    node_templates:
-      my_node:
-        type: p2.com.example.tosca_profiles.example2:1.0.ExampleNodeType
-        properties:
-          example_property: "Example Value" # property defined in example1 profile
-          additional_property: 42 # property defined in example2 profile
-          further_additional_property: 100 # property defined in this profile
+  node_templates:
+    my_node:
+      type: p2.com.example.tosca_profiles.example2:1.0.ExampleNodeType
+      properties:
+        example_property: "Example Value" # property defined in example1 profile
+        additional_property: 42 # property defined in example2 profile
+        further_additional_property: 100 # property defined in this profile
