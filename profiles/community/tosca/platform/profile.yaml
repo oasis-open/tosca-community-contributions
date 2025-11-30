@@ -5,37 +5,23 @@ profile: community.tosca.platform:0.1
 description: >-
   TOSCA Community Platform Profile type definitions.
 
+imports:
+- profile: community.tosca.base:0.1
+
 capability_types:
-  Container:
-    description: >-
-      Base capability type for capabilities that can be targeted by a
-      ContainedBy relationship.  Advertizes the ability to contain one
-      or more other nodes.
-    valid_relationship_types: [ContainedBy]
   Provider:
     description: The ability to provide service
 
 relationship_types:
-  ContainedBy:
-    description: >-
-      The ContainedBy type represents a containment relationship between
-      two nodes.
-    valid_capability_types: [Container]
   ProvidedBy:
     description: Relationship between a service and its provider. 
-      
+  
 node_types:
   Provider:
     description: Service Provider
     capabilities:
       provider:
         type: Provider
-  Platform:
-    description: |
-      Base platform node type
-    capabilities:
-      host:
-        type: Container
   BareMetalPlatform:
     description: |
       Bare metal platform node type. Represents a device without

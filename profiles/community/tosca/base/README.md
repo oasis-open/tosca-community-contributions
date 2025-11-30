@@ -5,11 +5,25 @@ applications at the highest level of abstraction. It also defines
 types to represent the platforms on which these services and
 applications are deployed. 
 
-## Node Types
-## Relationship Types
+## Type Definitions
 
-The nodes in the service template above relate to one-another using
-the following relationships:
+The `community.tosca.base` profile defines four node types as shown in
+the following diagram.
+
+```mermaid
+classDiagram
+    class Platform
+    class Application
+    class Data
+    class Network
+    Platform "0..*" --> "1" Network:LinksTo
+    Data "1" --> "1" Platform:AvailableOn
+    Application "1" --> "1" Platform:RunsOn
+    Application "0..*" --> "1" Data:Processes
+```
+
+These node types relate to one-another using the following
+relationships:
 
 - Application nodes define a relationship of type `RunsOn` to a
   platform node. This is a containment relationship that defines which

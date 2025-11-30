@@ -1,7 +1,7 @@
 tosca_definitions_version: tosca_2_0
 
 imports:
-  - profile: community.tosca.microservices:0.1
+  - profile: community.tosca.application:0.1
     namespace: app
   - profile: community.tosca.kubernetes:0.1
     namespace: k8s
@@ -42,7 +42,7 @@ service_template:
     capabilities:
       endpoint: [service, endpoint]
     requirements:
-      - host:
+      - runs-on:
           - [service-account, host] 
           - [deployment, host] 
           - [service, host] 
@@ -51,9 +51,9 @@ service_template:
     name:
       type: string
     port:
-      type: integer
+      type: k8s:core:port
     target-port:
-      type: integer
+      type: k8s:core:port
     port-name:
       type: string
       required: False

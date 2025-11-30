@@ -9,7 +9,7 @@ description: >-
 
 imports:
 - profile: community.tosca.base:0.1
-
+  
 # Below a set of partial definitions for microservice based applications
 capability_types:
   Endpoint:

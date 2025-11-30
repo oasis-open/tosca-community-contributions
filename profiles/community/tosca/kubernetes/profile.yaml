@@ -30,6 +30,20 @@ capability_types:
       Ability to be claimed
   Feature:
     description: placeholder for now.
+  ServiceEndpoint:
+    description: Endpoint exposed by a Service
+    properties:
+      port:
+        type: core:port
+      target-port:
+        type: core:port
+      name:
+        type: string
+        required: false
+      protocol:
+        type: string
+        required: false
+
 relationship_types:
   AttachesTo:
     description: >
@@ -57,6 +71,9 @@ relationship_types:
     description: >-
       Relationship type for specifying the service to which Ingress
       traffic is routed.
+  Consumes:
+    description: >-
+      Relationship to a service endpoint
 
 node_types:
   Resource:
@@ -64,8 +81,8 @@ node_types:
       Base class for Kubernetes resources
     requirements:
       - host:
-          capability: ptfm:Container
-          relationship: ptfm:ContainedBy
+          capability: ptfm:ExecutionEnvironment
+          relationship: ptfm:RunsOn
           node: ptfm:KubernetesCluster
           count_range: [1, 1]
   ClusterScopedResource:
@@ -228,8 +245,8 @@ node_types:
           node: Volume
           count_range: [0, UNBOUNDED]
       - endpoint:
-          capability: core:Endpoint
-          relationship: core:InteractsWith
+          capability: ServiceEndpoint
+          relationship: Consumes
           node: Service
           count_range: [0, UNBOUNDED]
   ReplicaSet:
@@ -248,7 +265,7 @@ node_types:
     derived_from: NamespacedResource
     capabilities:
       endpoint:
-        type: core:Endpoint
+        type: ServiceEndpoint
       router:
         type: Feature
     requirements:
