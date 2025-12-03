@@ -115,8 +115,8 @@ might interact:
 
 ```mermaid
 classDiagram
-    Platform --> Provider:ProvidedBy
+    Platform "0..1" --> "*" Provider:ProvidedBy
+    Platform "*" --> Platform:HostedOn
     Platform --> Credential:AuthorizedUsing
     Credential *-- Provider:IssuedBy
 ```
-
