@@ -84,16 +84,59 @@ already-existing platform nodes. This layering is expressed using a
 `HostedOn` relationship, and and the corresponding platform node types
 must express valid target nodes in their `host` requirement.
 
-The following figures shows three examples of platform layering:
+The section describes several examples of platform layering.
 
-1. It shows a virtual `ComputePlatform` node (a VM) instantiated directly on AWS.
-2. It shows a second VM instantantiated on a Proxmox node, which is in
-   turn deployed on a physical `ComputePlatform` node (a physical
-   server).
+#### Virtual Machine on an Infrastructure-as-a-Service Platform
+
+The following figure shows a virtual `ComputePlatform` node (a VM)
+instantiated directly on AWS.
+
+![Virtual Machine on IaaS Platform](images/compute-on-iaas.png)
+
+#### IaaS Platform on Compute Platform
+
+In some scenarios, the `HostedOn` relationship can be reversed and the
+Infrastructure-as-a-Service platform can be deployed on a Compute
+platform. This is the case when a Proxmox node is deployed on a
+physical or virtual server as shown in the following figure:
+
+![IaaS Platform on Compute Platform](images/iaas-on-compute.png)
+
+In this scenario, the Proxmox node can in turn be used to *host* other
+(virtual) Compute platforms.
+
 3. And finally, it shows a third VM instantiated on Kubevirt, which is
    in turn installed as an add-on on a Kubernetes cluster.
 
-![Layering of Platforms](images/layering.png)
+#### Kubernetes Cluster on Compute Platform
+
+Another obvious layering scnenario is the deployment of a Kubernetes
+cluster on a Compute platform as shown in the following figure:
+
+![Kubernetes Cluster on Compute Platform](images/cluster-on-compute.png)
+
+#### Kubernetes Cluster on Multiple Compute Platforms
+
+Kubernetes clusters typically consist of multiple worker nodes, each
+of which is deployed on a different server. We can model this scenario
+using multiple `HostedOn` relationships, one to each of the Compute
+platforms that hosts a worker node. This scenario is shown in the
+following figure:
+
+![Kubernetes Cluster on Multiple Compute Platforms](images/cluster-on-multiple-compute.png)
+
+#### IaaS Platform on Kubernetes Clusters
+
+Kubernetes clusters can be extended with support for Kubevirt which
+allows for the creation and management of virtual machines. This
+effectively turns Kubernetes into an IaaS platform. This can be
+modeled by layering Kubevirt on top of a Kubernetes cluster as shown
+in the following figure:
+
+![IaaS on Kubernetes Cluster on Multiple Compute Platforms](images/iaas-on-cluster.png)
+
+Kubevirt can then in turn be used to *host* virtual machines as also
+shown in the figure.
 
 ## Providers and Credentials
 

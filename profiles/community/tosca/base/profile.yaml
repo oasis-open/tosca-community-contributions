@@ -9,13 +9,11 @@ description: >-
 imports:
 - profile: community.tosca.core:0.1
 
-
 data_types:
   ImplementationDetails:
     description: >-
       This abstract Data Type is used as a container for implementation
       details of abstract nodes and relationships.
-
 
 capability_types:
   ExecutionEnvironment:
@@ -44,7 +42,6 @@ capability_types:
       Platform relationships. It expresses the ability of a node template
       derived from the Platform node type to connect to a specific network.
     valid_relationship_types: [LinksTo]
-
 
 relationship_types:
   RunsOn:
