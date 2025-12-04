@@ -1,92 +1,64 @@
-# Ubicity Profile Type Definitions
+# TOSCA Profile Design Patterns
 
-This directory contains the main Ubicity TOSCA Profile. This profile
-defines *administrator view* types as defined in the [abstraction
-continuum](../README.md#modeling-at-different-levels-of-abstraction)
-used by Ubicity. These types assume specific technologies but don't
-prescribe any specific implementations. Instead, they are intended to
-be used as base types for vendor-specific types defined in *device
-view* profiles.
+Ubicity uses a number of design patterns to aid the development of
+TOSCA profiles. These patterns are described in this section.
 
-## Relationship Types
+## Component/Port Pattern
 
-Relationship types defined in the Ubicity TOSCA Profile are derived
-from one of the three *base* relationship types defined in the
-[Ubicity Core Profile](../core/1.0/README.md) as shown in the
-following type hiearchy:
+TOSCA uses a **Component/Port** pattern where a component’s touch
+points for interacting with other components are modeled separately
+from that component using *port* abstractions. Using TOSCA, components
+are modeled using *Node Types* and the ports of those components are
+modeled using the following two different abstractions associated with
+node types:
+- Capabilities: for functionality exposed by a component and usable by
+  other components.
+- Requirements: for dependencies of one component on functionality
+  exposed by other components.
 
-```mermaid
-classDiagram
-    Root <|-- ContainedBy 
-    Root <|-- DependsOn 
-    Root <|-- AssociatesWith
-    ContainedBy <|-- HostedOn 
-    ContainedBy <|-- LayeredOn 
-    DependsOn <|-- ConnectsTo
-    DependsOn <|-- ManagedBy 
-    DependsOn <|-- AuthorizedUsing 
-    DependsOn <|-- ProtectedBy
-    DependsOn <|-- Monitors 
-    DependsOn <|-- BindsTo 
-    DependsOn <|-- LinksTo 
-    DependsOn <|-- AttachesTo 
-```
+The Ubicity Component/Port pattern defines *common* categories of
+functionality that are typically exposed by all components. It then
+attempts to define *common* capability types and *common* relationship
+types to represent each of these categories of functionality. Note
+that this pattern is inspired by the [ONF Core Information
+Model](https://opennetworking.org/software-defined-standards/models-apis/),
+the [TMF Open Digital Architecture](https://www.tmforum.org/oda/), and
+other modeling efforts that use a similar approach. These standard
+categories of functionality are shown in the following picture:
 
-### Capability Types
+![Component/Port Pattern](images/component-port.png?raw=true)
 
-Capability types defined in the Ubicity TOSCA Profile are derived from
-one of the three base capability types in the [Ubicity Core
-Profile](../core/1.0/README.md) as shown in the following type
-hiearchy:
+- **Runtime environment**: most if not all TOSCA nodes are contained
+  by (*hosted on*) another node and their lifecycle is determined by
+  the lifecycle of the containing node. This containment dependency is
+  expressed using an *execution environment requirement* that must be
+  fulfilled by a corresponding *execution environment capability* of
+  the containing node. Nodes that can *host* other nodes typically
+  have their own *runtime environment requirement*.
+- **Core functionality**: the main function of a TOSCA node is to
+  provide a specific set of features or functionality to other
+  nodes. This is expressed using a *core functionality
+  capability**. Other nodes will define requirements for this
+  functionality.
+- **Management**: many TOSCA nodes are matched with a corresponding
+  management tool. This relationship is expressed as a *management
+  requirement* of the managed TOSCA node rather than as a *management
+  capability* to express potential deployment dependencies: if the
+  management tool is used to configure the TOSCA node, the management
+  tool must be deployed before the managed node can be fully deployed.
+  Note that for management tools, the management functions are exposed
+  as their *core functionality capability*.
+- **Monitoring**: many TOSCA nodes are matched with a corresponding
+  monitoring tool. This relationship is expressed as a *monitoring*
+  capability of the monitored node.
 
-```mermaid
-classDiagram
-    Container <|-- Runtime
-    Runtime <|-- OperatingSystem
-    Container <|-- Layer
-    Feature <|-- Observable
-    Feature <|-- Manager
-    Feature <|-- Endpoint
-    Feature <|-- Bindable
-    Feature <|-- Linkable
-    Feature <|-- Attachable
-    class Partner
-```
+  > This pattern was discussed in the TOSCA TC but never formalized.
 
-## Node Types
+- **Security**: access to TOSCA nodes may need to be secured.
 
-The Ubicity TOSCA Profile defines *base* node types from which other
-*system view* types can be derived. Those base node types are shown in
-the following figure:
+  > This pattern needs further work
 
-```mermaid
-classDiagram
-%%    Root <|-- Subnet
-%%    Root <|-- Port
-%%    Root <|-- Compute
-    Compute <|-- PhysicalCompute
-    Compute <|-- VirtualCompute
-    Compute --> KeyPair:AuthorizedUsing
-    Compute --> Storage:AttachesTo
-    Compute *-- Software:HostedOn
-    ComputeMonitor --> Compute:Monitors
-    VirtualCompute *-- VirtualPlatform:ContainedBy
-%%    Root <|-- Region
-%%    Root <|-- Storage
-%%    Root <|-- Software
-    Software <|-- InstallablePackage
-    Software <|-- PipPackage
-    Software <|-- DockerContainer
-    Compute --> Port:LinksTo
-    Compute <-- Port:BindsTo
-    Port --> Port:LayeredOn
-    Subnet <-- Port:LinksTo
-```
-
-Note that each of the top-level node types in this diagram derive from
-a `Root` node type which is not shown.
-
-> Should we distinguish between *virtual* infrastructure and *cloud*
-  infrastructure?
-
+As stated earlier, Ubicity uses this pattern to define common
+capability types and common relationship types for these various
+categories of functionality. 
 
