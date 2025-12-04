@@ -74,7 +74,7 @@ classDiagram
     DBaasPlatform <|-- AwsAurora
 ```
 
-### Layering of Platforms
+## Layering of Platforms
 
 While platform node types are primarily used to create (abstract)
 representations of available platform resources, these types can also
@@ -86,14 +86,14 @@ must express valid target nodes in their `host` requirement.
 
 The section describes several examples of platform layering.
 
-#### Virtual Machine on an Infrastructure-as-a-Service Platform
+### Virtual Machine on an Infrastructure-as-a-Service Platform
 
 The following figure shows a virtual `ComputePlatform` node (a VM)
 instantiated directly on AWS.
 
 ![Virtual Machine on IaaS Platform](images/compute-on-iaas.png)
 
-#### IaaS Platform on Compute Platform
+### IaaS Platform on Compute Platform
 
 In some scenarios, the `HostedOn` relationship can be reversed and the
 Infrastructure-as-a-Service platform can be deployed on a Compute
@@ -108,14 +108,14 @@ In this scenario, the Proxmox node can in turn be used to *host* other
 3. And finally, it shows a third VM instantiated on Kubevirt, which is
    in turn installed as an add-on on a Kubernetes cluster.
 
-#### Kubernetes Cluster on Compute Platform
+### Kubernetes Cluster on Compute Platform
 
 Another obvious layering scnenario is the deployment of a Kubernetes
 cluster on a Compute platform as shown in the following figure:
 
 ![Kubernetes Cluster on Compute Platform](images/cluster-on-compute.png)
 
-#### Kubernetes Cluster on Multiple Compute Platforms
+### Kubernetes Cluster on Multiple Compute Platforms
 
 Kubernetes clusters typically consist of multiple worker nodes, each
 of which is deployed on a different server. We can model this scenario
@@ -125,7 +125,7 @@ following figure:
 
 ![Kubernetes Cluster on Multiple Compute Platforms](images/cluster-on-multiple-compute.png)
 
-#### IaaS Platform on Kubernetes Clusters
+### IaaS Platform on Kubernetes Clusters
 
 Kubernetes clusters can be extended with support for Kubevirt which
 allows for the creation and management of virtual machines. This
