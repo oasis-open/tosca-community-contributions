@@ -105,9 +105,6 @@ physical or virtual server as shown in the following figure:
 In this scenario, the Proxmox node can in turn be used to *host* other
 (virtual) Compute platforms.
 
-3. And finally, it shows a third VM instantiated on Kubevirt, which is
-   in turn installed as an add-on on a Kubernetes cluster.
-
 ### Kubernetes Cluster on Compute Platform
 
 Another obvious layering scnenario is the deployment of a Kubernetes
