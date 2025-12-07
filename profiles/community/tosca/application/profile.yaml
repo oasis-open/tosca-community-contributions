@@ -7,14 +7,31 @@ description: >-
   definitions that provide more concrete types derived from
   Application abstract node type
 
+
 imports:
 - profile: community.tosca.base:0.1
-  
-# Below a set of partial definitions for microservice based applications
+- profile: community.tosca.platform:0.1
+  namespace: platform
+
+
+data_types:
+  Process:
+    description: This data type provides command and parameters needed
+      to launch a single process
+    properties:
+      command:
+        type: string
+        required: true
+      parameters:
+        type: string
+        required: false
+
+
 capability_types:
+  # Used to relate application nodes of the same type
   Endpoint:
     description: >-
-      Endpoint for interaction between microservices
+      Endpoint for interaction between application nodes of the same type
     properties:
       port:
         type: port
@@ -26,14 +43,19 @@ capability_types:
       protocol:
         type: string
         required: false
+    valid_relationship_types: [InteractsWith]
+
 
 relationship_types:
+  # Used to relate application nodes of the same type
   InteractsWith:
     description: >-
-      Models interaction between microservices
+      Models interaction between application nodes of the same type
+    valid_capability_types: [Endpoint]
+
 
 node_types:
-  MicroServiceApp:
+  MicroServiceApplication:
     description: >-
       This node type represents a whole microservice application
       (i.e. not the single microservice). In some cases it may be
@@ -41,13 +63,18 @@ node_types:
       It is derived from the Application abstract type and inherits
       its properties, capabilities and requirements
     derived_from: Application
+    requirements:
+      - runs-on:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+          node: platform:ContainerPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
 
   MicroService:
     description: >-
       This node type represents a single microservice, and can be used
       when the Service Template at the top-level explodes the topology
-      of microservices. In that case, each single microservice is
-      candidate for substitution.
+      of microservices. In that case, each single microservice shall
+      be substituted separately and independently from the others.
       This type inherits from the Application abstract type and inherits
       its properties, capabilities and requirements.
     derived_from: Application
@@ -56,5 +83,53 @@ node_types:
         type: Endpoint
     requirements:
       - endpoint:
+          node: MicroService
           capability: Endpoint
           relationship: InteractsWith
+
+  SingleHostApplication:
+    description: >-
+      This node type can be used to represent a Monolith, a Modular Monolith
+      or even a Distributed Application made up by several processes running
+      on a single host. Multiple nodes of this type can be combined together
+      to represent distributed applications over distinct nodes (e.g. N-tier
+      or client-server applications)
+    derived_from: Application
+    properties:
+      implementation-details:
+        description: For the SingleHostApplication node type, specific
+          implementation details consist in the list of processes that
+          compose the application (which run all on the same host)
+        required: true
+        type: list
+        entry_schema:
+          description:
+          type: Process
+    capabilities:
+      endpoint:
+        type: Endpoint
+    requirements:
+      - endpoint:
+          node: SingleHostApplication
+          capability: Endpoint
+          relationship: InteractsWith
+      - runs-on:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+          node: platform:ComputePlatform   # shall be defined in Platform Profile as derived from Platform abstract node
+
+
+  ServerlessApplication:
+    description: >-
+      This node type represents a whole serverless application
+      (i.e. not the single serverless function). In some cases it may be
+      a good candidate for being replaced by a substituting template.
+      It is derived from the Application abstract type and inherits
+      its properties, capabilities and requirements
+    derived_from: Application
+    requirements:
+      - runs-on:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+          node: platform:ServerlessPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
+
