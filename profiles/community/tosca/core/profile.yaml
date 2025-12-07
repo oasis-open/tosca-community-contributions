@@ -34,6 +34,28 @@ data_types:
         type: ipv4
       transport-port:
         type: port
+  genericId:
+    description: >-
+      The genericId type represents a generic string identifier. It can be used to
+      derive specific types, by adding proper validation
+    derived_from: string
+  alphanumericId:
+    description: >-
+      The alphanumericId type represents an alphanumeric type of arbitrary length
+      made up only by digits and uppercase/lowercase letters
+    derived_from: genericId
+    validation: { $matches: [ $value, "^[A-Za-z0-9]+$" ] }
+  uuid:
+    description: >-
+      The uuid type represents an IETF RFC4122 compliant universal identifier (types 1-5)
+    derived_from: genericId
+    validation: { $matches: [ $value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$" ] }
+  uuidRelaxed:
+    description: >-
+      The uuidRelaxed type represents an identifier with format 8-4-4-4-12 (hex digits with dashes),
+      but without full compliance to IETF RFC4122
+    derived_from: genericId
+    validation: { $matches: [ $value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" ] }
 
 functions:
   to_string:

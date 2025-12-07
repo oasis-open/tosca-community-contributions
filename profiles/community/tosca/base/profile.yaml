@@ -108,7 +108,6 @@ node_types:
       - links-to:
           capability: Linkable
           relationship: LinksTo
-          count_range: [0, UNBOUNDED]
   Application:
     description: >-
       Abstract Node Type modeling a generic application
@@ -122,11 +121,9 @@ node_types:
       - processes:
           capability: DataSource
           relationship: Processes
-          count_range: [0, UNBOUNDED]
       - runs-on:
           capability: ExecutionEnvironment
           relationship: RunsOn
-          count_range: [1, 1]
   Data:
     description: >-
       Abstract Node Type modeling a generic set of data
@@ -141,7 +138,6 @@ node_types:
       - available-on:
           capability: DataPlatform
           relationship: AvailableOn
-          count_range: [1, 1]
   Network:
     description: >-
       Abstract Node Type modeling a generic network
