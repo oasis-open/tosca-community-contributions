@@ -3,17 +3,11 @@ tosca_definitions_version: tosca_2_0
 profile: community.tosca.base:0.1
 
 description: >-
-  TOSCA Common Profile type definitions. This files contains
+  TOSCA Base Profile type definitions. This files contains
   highest-level definitions of abstract types.
 
 imports:
 - profile: community.tosca.core:0.1
-
-data_types:
-  ImplementationDetails:
-    description: >-
-      This abstract Data Type is used as a container for implementation
-      details of abstract nodes and relationships.
 
 capability_types:
   ExecutionEnvironment:
@@ -52,7 +46,7 @@ relationship_types:
       relationship_kind: containment
     properties:
       implementation-details:
-        type: ImplementationDetails
+        type: json
         required: false
     valid_capability_types: [ExecutionEnvironment]
   AvailableOn:
@@ -63,7 +57,7 @@ relationship_types:
       relationship_kind: containment
     properties:
       implementation-details:
-        type: ImplementationDetails
+        type: json
         required: false
     valid_capability_types: [DataPlatform]
   Processes:
@@ -74,7 +68,7 @@ relationship_types:
       relationship_kind: dependency
     properties:
       implementation-details:
-        type: ImplementationDetails
+        type: json
         required: false
     valid_capability_types: [DataSource]
   LinksTo:
@@ -85,7 +79,7 @@ relationship_types:
       relationship_kind: dependency
     properties:
       implementation-details:
-        type: ImplementationDetails
+        type: json
         required: false
     valid_capability_types: [Linkable]
 
@@ -97,7 +91,10 @@ node_types:
       and capabilities to host a running application and/or to store a dataset
     properties:
       implementation-details:
-        type: ImplementationDetails
+        description: >-
+          Opaque data that are intended to be processed by
+          substituting templates.
+        type: json
         required: false
     capabilities:
       execution-environment:
@@ -115,7 +112,10 @@ node_types:
       name:
         type: string
       implementation-details:
-        type: ImplementationDetails
+        description: >-
+          Opaque data that are intended to be processed by
+          substituting templates.
+        type: json
         required: false
     requirements:
       - processes:
@@ -129,7 +129,10 @@ node_types:
       Abstract Node Type modeling a generic set of data
     properties:
       implementation-details:
-        type: ImplementationDetails
+        description: >-
+          Opaque data that are intended to be processed by
+          substituting templates.
+        type: json
         required: false
     capabilities:
       data-source:
@@ -143,7 +146,10 @@ node_types:
       Abstract Node Type modeling a generic network
     properties:
       implementation-details:
-        type: ImplementationDetails
+        description: >-
+          Opaque data that are intended to be processed by
+          substituting templates.
+        type: json
         required: false
     capabilities:
       linkable:
