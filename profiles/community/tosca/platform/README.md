@@ -5,29 +5,26 @@ on which services can be *orchestrated* as well as the *providers* of
 these platforms. It builds on and extends existing [TOSCA type
 definitions for platforms](inventory.md).
 
-## Platforms
+## Platform Types
 
-The following figure shows different types of platforms under
-consideration:
+This profile consider the following types of platforms:
 
-![Platforms](images/platforms.png)
-
-This figure represents the following:
-- Bare Metal: A device without operating system software or firmware
-  installed. 
-- Compute: A device with operating system software or firmware
-  installed.
+- *Bare Metal*: A device without operating system software or firmware
+  pre-installed. Instead, this device exposes an interface that allows
+  it to be managed remotely (e.g. an HPE server with an iILO
+  interface) and that allows for remote installation of the operating
+  system or hypervisor software.
+- *Server*: A device with operating system software or firmware
+  pre-installed.
+- *Hypervisor Platform*: a platform that allows for the creation of
+   virtual infrastructure on a server or bare metal device.
 - IaaS (Infrastructure as a Service): A platform that allows on-demand
-  creation of networks, virtual machines and storage
-- Container Platform: A container orchestration system such as
-  Kubernetes that handles scheduling, scaling, load balancing,
-  networking, and self-healing of applications. A Container platform
-  sits somewhere between IaaS and PaaS
-  - It’s more than IaaS (because it abstracts servers into a unified
-    cluster).
-  - It’s less than PaaS (because it doesn’t abstract away deployment
-    complexity for developers by default).
-- PaaS (Platform as a Service): A platform for developing and
+  creation of networks, virtual machines and storage in the cloud. 
+- *Container  Platform*: A platform that supports containerized
+  applications. This could be a container orchestration system such as
+  Kubernetes or a server that uses Docker to deploy and run
+  containerized applications.
+- *PaaS (Platform as a Service)*: A platform for developing and
   deploying apps. It allows developers to push code and the platform
   handles builds, dependencies, deployment, scaling, etc..  Examples
   of PaaS include
@@ -36,42 +33,24 @@ This figure represents the following:
   - Microsoft Azure App Service
   - AWS Elastic Beanstalk
   - Red Hat OpenShift
-- SaaS (Software as a Service): A platform for renting and using a
-  finished application. Examples of SaaS include:
-  - Gmail
-  - Salesforce
+- *SaaS (Software as a Service)*: A platform for renting and using a
+  finished application. Examples of SaaS include: - Gmail - Salesforce
+- *Serverless Platform*: Represents a platform that provides the
+  ephemeral runtime support for serverless functions, such as AWS
+  Lambda, Azure Functions, Google Cloud Functions or OpenFaaS
 
-> Do we need to call out Serverless/Functions-as-a-Service separately
-  or is FaaS just a special type of PaaS?
-
-
-Based on the [inventory](inventory.md) of node type definitions above,
-the following node type hierarchy is proposed:
+Based on this classification, the following node type hierarchy is
+proposed:
 
 ```mermaid
 classDiagram
-    class Platform
-    Platform <|-- BareMetalPlatform
-    Platform <|-- ComputePlatform
-    Platform <|-- IaasPlatform
+    class Provider
+    Platform <|-- ServerPlatform
+    Platform <|-- VirtualizationPlatform
     Platform <|-- ContainerPlatform
     Platform <|-- PaasPlatform
     Platform <|-- SaasPlatform
-    IaasPlatform <|-- GoogleCloudPlatform
-    IaasPlatform <|-- AwsEc2
-    IaasPlatform <|-- OpenStack
-    IaasPlatform <|-- Azure
-    IaasPlatform <|-- Proxmox
-    IaasPlatform <|-- Kubevirt
-    ContainerPlatform <|-- KubernetesCluster
-    ContainerPlatform <|-- DockerEngine
-    PaasPlatform <|-- GoogleAppEngine
-    PaasPlatform <|-- AwsBeanstalk
-    PaasPlatform <|-- OpenShift
-    PaasPlatform <|-- Heroku
-    SaasPlatform <|-- Auth0
-    SaasPlatform <|-- DBaasPlatform
-    DBaasPlatform <|-- AwsAurora
+    Platform <|-- ServerlessPlatform
 ```
 
 ## Layering of Platforms

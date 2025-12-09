@@ -83,7 +83,7 @@ node_types:
       - host:
           capability: ptfm:ExecutionEnvironment
           relationship: ptfm:RunsOn
-          node: ptfm:KubernetesCluster
+          node: ptfm:ContainerPlatform
           count_range: [1, 1]
   ClusterScopedResource:
     derived_from: Resource
