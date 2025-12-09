@@ -113,6 +113,18 @@ relationship_types:
         required: false
     valid_capability_types: [Linkable]
 
+interface_types:
+  Standard:
+    operations:
+      create:
+        description: >-
+          Operation to create a node.
+      modify:
+        description: >-
+          Operation to modify a node.
+      delete:
+        description: >-
+          Operation to delete a node.
 
 node_types:
   Platform:
@@ -140,6 +152,9 @@ node_types:
       - links-to:
           capability: Linkable
           relationship: LinksTo
+    interfaces:
+      standard:
+        type: Standard
   Application:
     description: >-
       Abstract Node Type modeling a generic application
@@ -159,6 +174,9 @@ node_types:
       - runs-on:
           capability: ExecutionEnvironment
           relationship: RunsOn
+    interfaces:
+      standard:
+        type: Standard
   Data:
     description: >-
       Abstract Node Type modeling a generic set of data
@@ -176,6 +194,9 @@ node_types:
       - available-on:
           capability: DataPlatform
           relationship: AvailableOn
+    interfaces:
+      standard:
+        type: Standard
   Network:
     description: >-
       Abstract Node Type modeling a generic network
@@ -189,4 +210,7 @@ node_types:
     capabilities:
       linkable:
         type: Linkable
+    interfaces:
+      standard:
+        type: Standard
 
