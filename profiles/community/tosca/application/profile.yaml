@@ -96,10 +96,10 @@ node_types:
       or client-server applications)
     derived_from: Application
     properties:
-      implementation-details:
-        description: For the SingleHostApplication node type, specific
-          implementation details consist in the list of processes that
-          compose the application (which run all on the same host)
+      processes:
+        description: >-
+          List of processes that compose the application (which run
+          all on the same host)
         required: true
         type: list
         entry_schema:
