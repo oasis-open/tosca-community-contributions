@@ -7,17 +7,16 @@ description: >-
   definitions that provide more concrete types derived from
   Application abstract node type
 
-
 imports:
 - profile: community.tosca.base:0.1
 - profile: community.tosca.platform:0.1
   namespace: platform
 
-
 data_types:
   Process:
-    description: This data type provides command and parameters needed
-      to launch a single process
+    description: >-
+      This data type provides command and parameters needed to launch
+      a single process
     properties:
       command:
         type: string
@@ -26,12 +25,12 @@ data_types:
         type: string
         required: false
 
-
 capability_types:
   # Used to relate application nodes of the same type
   Endpoint:
     description: >-
       Endpoint for interaction between application nodes of the same type
+    derived_from: Feature
     properties:
       port:
         type: port
@@ -45,14 +44,13 @@ capability_types:
         required: false
     valid_relationship_types: [InteractsWith]
 
-
 relationship_types:
   # Used to relate application nodes of the same type
   InteractsWith:
     description: >-
       Models interaction between application nodes of the same type
+    derived_from: DependsOn
     valid_capability_types: [Endpoint]
-
 
 node_types:
   MicroServiceApplication:
@@ -96,10 +94,10 @@ node_types:
       or client-server applications)
     derived_from: Application
     properties:
-      implementation-details:
-        description: For the SingleHostApplication node type, specific
-          implementation details consist in the list of processes that
-          compose the application (which run all on the same host)
+      processes:
+        description: >-
+          List of processes that compose the application (which run
+          all on the same host)
         required: true
         type: list
         entry_schema:
@@ -116,7 +114,7 @@ node_types:
       - runs-on:
           capability: ExecutionEnvironment
           relationship: RunsOn
-          node: platform:ComputePlatform   # shall be defined in Platform Profile as derived from Platform abstract node
+          node: platform:ServerPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
 
 
   ServerlessApplication:

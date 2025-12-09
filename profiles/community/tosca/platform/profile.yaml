@@ -18,28 +18,25 @@ relationship_types:
   ProvidedBy:
     description: Relationship between a service and its provider. 
 
-  
 node_types:
   Provider:
     description: Service Provider
     capabilities:
       provider:
         type: Provider
-  BareMetalPlatform:
+  ServerPlatform:
     description: |
-      Bare metal platform node type. Represents a device without
-      operating system software or firmware installed.
+      Represents a single device. This could be a server with
+      operating system software or firmware installed or a bare metal
+      device on which operating system or hypervisor software needs to
+      be installed.
     derived_from: Platform
-  ComputePlatform:
+  VirtualizationPlatform:
     description: |
-      Compute platform node type. Represents a device with operating
-      system software or firmware installed.
-    derived_from: Platform
-  IaasPlatform:
-    description: |
-      Infrastructure as a Service platform node type. Represents a
-      platform that allows on-demand creation of networks, virtual
-      machines and storage.
+      Represents a platform that allows on-demand creation of
+      networks, virtual machines and storage. This could represent a
+      Hypervisor installed on a device or an IaaS platform in the
+      cloud.
     derived_from: Platform
   ContainerPlatform:
     description: |
@@ -64,38 +61,4 @@ node_types:
         the ephemeral runtime support for serverless functions, such as
         AWS Lambda, Azure Functions, Google Cloud Functions or OpenFaaS
     derived_from: Platform
-
-  # Should the following node types be moved to a technology specific profile
-  # (administrator view level in the model continuum)?
-  GoogleCloudPlatform:
-    derived_from: IaasPlatform
-  AwsEc2:
-    derived_from: IaasPlatform
-  OpenStack:
-    derived_from: IaasPlatform
-  Azure:
-    derived_from: IaasPlatform
-  Proxmox:
-    derived_from: IaasPlatform
-  Kubevirt:
-    derived_from: IaasPlatform
-  KubernetesCluster:
-    derived_from: ContainerPlatform
-  DockerEngine:
-    derived_from: ContainerPlatform
-  GoogleAppEngine:
-    derived_from: PaasPlatform
-  AwsBeanstalk:
-    derived_from: PaasPlatform
-  OpenShift:
-    derived_from: PaasPlatform
-  Heroku:
-    derived_from: PaasPlatform
-  Auth0:
-    derived_from: SaasPlatform
-  DBaasPlatform:
-    derived_from: SaasPlatform
-  AwsAurora:
-    derived_from: DBaasPlatform
-
 

@@ -15,7 +15,7 @@ service_template:
         $greater_than: [$value, 0]
   node_templates:
     k8s-cluster:
-      type: plt:KubernetesCluster
+      type: plt:ContainerPlatform
       description: >-
         Kubernetes Cluster
       count: {$get_input: number_of_clusters}

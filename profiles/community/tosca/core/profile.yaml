@@ -3,22 +3,25 @@ tosca_definitions_version: tosca_2_0
 profile: community.tosca.core:0.1
 
 description: >-
-  TOSCA Community Core Profile type definitions
+  TOSCA Community Core Profile type definitions. These definitions are
+  intended to be shared between profiles of all levels of abstraction.
 
 data_types:
   json:
     description: >-
-      The json type defines strings that contain data in the JSON format
+      The json type defines a string that contain data in the JSON
+      format
     derived_from: string
     #validation: TBD (may need custom functions)
   yaml:
     description: >-
-      The yaml type defines strings that contain data in the YAML format
+      The yaml type defines a string that contain data in the YAML
+      format
     derived_from: string
     #validation: TBD (may need custom functions)
   ipv4:
     description: >-
-      The ipv4 type defines string that contain an IPv4 address
+      The ipv4 type defines a string that contain an IPv4 address
     derived_from: string
     validation: { $matches: [ $value, "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" ] }
   port:
@@ -57,6 +60,57 @@ data_types:
     derived_from: genericId
     validation: { $matches: [ $value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" ] }
 
+relationship_types:
+  Root: 
+    description: >-
+      Base relationship type from which all other relationship types
+      derived. This is intended to hold an interface definition that
+      is shared by all relationship types.
+    metadata:
+      relationship_kind: ASSOCIATION
+  ContainedBy:
+    description: >-
+      The ContainedBy type represents a containment relationship between
+      two nodes.
+    metadata:
+      relationship_kind: CONTAINMENT
+    derived_from: Root
+    valid_capability_types: [Container]
+  DependsOn:
+    description: >-
+      Generic dependency on a feature
+    metadata:
+      relationship_kind: DEPENDENCY
+    valid_capability_types: [Feature]
+    derived_from: Root
+  AssociatesWith:
+    description: >-
+      The AssociatesWith type represents an association relationship between
+      two nodes.
+    metadata:
+      relationship_kind: ASSOCIATION
+    derived_from: Root
+    valid_capability_types: [Partner]
+
+capability_types:
+  Container:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      ContainedBy relationship.  Advertizes the ability to contain one
+      or more other nodes.
+    valid_relationship_types: [ContainedBy]
+  Feature:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      DependsOn relationship. Derived types define
+      application-specific functionality.
+    valid_relationship_types: [DependsOn]
+  Partner:
+    description: >-
+      Base capability type for capabilities that can be targeted by an
+      AssociatesWith relationship.
+    valid_relationship_types: [AssociatesWith]
+    
 functions:
   to_string:
     description: >-

@@ -3,56 +3,77 @@ tosca_definitions_version: tosca_2_0
 profile: community.tosca.base:0.1
 
 description: >-
-  TOSCA Common Profile type definitions. This files contains
+  TOSCA Base Profile type definitions. This files contains
   highest-level definitions of abstract types.
 
 imports:
 - profile: community.tosca.core:0.1
 
-data_types:
-  ImplementationDetails:
-    description: >-
-      This abstract Data Type is used as a container for implementation
-      details of abstract nodes and relationships.
-
 capability_types:
+  PlatformHost:
+    description: >-
+      This capability type is exposed by Platform node types and is
+      targeted by HostedOn relationships. It expresses the ability of
+      a node template derived from the Platform node type to host
+      another platform.
+    derived_from: Container
+    valid_relationship_types: [HostedOn]
   ExecutionEnvironment:
     description: >-
-      This capability types is exposed by Platform node types to target
-      RunsOn relationships. It expresses the ability of a node template
-      derived from the Platform node type to provide the execution environment
-      for a specific application.
+      This capability type is exposed by Platform node types and is
+      targeted by RunsOn relationships. It expresses the ability of a
+      node template derived from the Platform node type to provide the
+      execution environment for a specific application.
+    derived_from: Container
     valid_relationship_types: [RunsOn]
   DataPlatform:
     description: >-
-      This capability types is exposed by Platform node types to target
-      AvailableOn relationships. It expresses the ability of a node template
-      derived from the Platform node type to host data.
+      This capability type is exposed by Platform node types and is
+      targeted by AvailableOn relationships. It expresses the ability
+      of a node template derived from the Platform node type to host
+      data.
+    derived_from: Container
     valid_relationship_types: [AvailableOn]
   DataSource:
     description: >-
-      This capability types is exposed by Data node types to target
-      Processes relationships. It expresses the ability of a node template
-      derived from the Data node type to make available data for an
-      application.
+      This capability type is exposed by Data node types and is
+      targeted by Processes relationships. It expresses the ability of
+      a node template derived from the Data node type to make
+      available data for an application.
+    derived_from: Feature
     valid_relationship_types: [Processes]
   Linkable:
     description: >-
-      This capability types is exposed by Network node types to target
-      Platform relationships. It expresses the ability of a node template
-      derived from the Platform node type to connect to a specific network.
+      This capability type is exposed by Network node types and is
+      targeted by Platform relationships. It expresses the ability of
+      a node template derived from the Platform node type to connect
+      to a specific network.
+    derived_from: Feature
     valid_relationship_types: [LinksTo]
 
 relationship_types:
+  HostedOn:
+    description: >-
+      Used for Relationship between nodes derived from the abstract
+      Platform node types defined here
+    metadata:
+      relationship_kind: containment
+    derived_from: ContainedBy
+    properties:
+      implementation-details:
+        type: json
+        required: false
+    valid_capability_types: [PlatformHost]
   RunsOn:
     description: >-
       Used for Relationship between nodes derived from the abstract
       Application and Platform node types defined here
     metadata:
       relationship_kind: containment
+    derived_from: ContainedBy
     properties:
       implementation-details:
-        type: ImplementationDetails
+        type: json
         required: false
     valid_capability_types: [ExecutionEnvironment]
   AvailableOn:
@@ -61,9 +82,10 @@ relationship_types:
       Data and Platform node types defined here
     metadata:
       relationship_kind: containment
+    derived_from: ContainedBy
     properties:
       implementation-details:
-        type: ImplementationDetails
+        type: json
         required: false
     valid_capability_types: [DataPlatform]
   Processes:
@@ -72,9 +94,10 @@ relationship_types:
       Application and Data node types defined here
     metadata:
       relationship_kind: dependency
+    derived_from: DependsOn
     properties:
       implementation-details:
-        type: ImplementationDetails
+        type: json
         required: false
     valid_capability_types: [DataSource]
   LinksTo:
@@ -83,12 +106,25 @@ relationship_types:
       Platform and Netork node types defined here
     metadata:
       relationship_kind: dependency
+    derived_from: DependsOn
     properties:
       implementation-details:
-        type: ImplementationDetails
+        type: json
         required: false
     valid_capability_types: [Linkable]
 
+interface_types:
+  Standard:
+    operations:
+      create:
+        description: >-
+          Operation to create a node.
+      modify:
+        description: >-
+          Operation to modify a node.
+      delete:
+        description: >-
+          Operation to delete a node.
 
 node_types:
   Platform:
@@ -97,17 +133,28 @@ node_types:
       and capabilities to host a running application and/or to store a dataset
     properties:
       implementation-details:
-        type: ImplementationDetails
+        description: >-
+          Opaque data that are intended to be processed by
+          substituting templates.
+        type: json
         required: false
     capabilities:
+      host:
+        type: PlatformHost
       execution-environment:
         type: ExecutionEnvironment
       data-platform:
         type: DataPlatform
     requirements:
+      - host:
+          capability: PlatformHost
+          relationship: HostedOn
       - links-to:
           capability: Linkable
           relationship: LinksTo
+    interfaces:
+      standard:
+        type: Standard
   Application:
     description: >-
       Abstract Node Type modeling a generic application
@@ -115,7 +162,10 @@ node_types:
       name:
         type: string
       implementation-details:
-        type: ImplementationDetails
+        description: >-
+          Opaque data that are intended to be processed by
+          substituting templates.
+        type: json
         required: false
     requirements:
       - processes:
@@ -124,12 +174,18 @@ node_types:
       - runs-on:
           capability: ExecutionEnvironment
           relationship: RunsOn
+    interfaces:
+      standard:
+        type: Standard
   Data:
     description: >-
       Abstract Node Type modeling a generic set of data
     properties:
       implementation-details:
-        type: ImplementationDetails
+        description: >-
+          Opaque data that are intended to be processed by
+          substituting templates.
+        type: json
         required: false
     capabilities:
       data-source:
@@ -138,14 +194,23 @@ node_types:
       - available-on:
           capability: DataPlatform
           relationship: AvailableOn
+    interfaces:
+      standard:
+        type: Standard
   Network:
     description: >-
       Abstract Node Type modeling a generic network
     properties:
       implementation-details:
-        type: ImplementationDetails
+        description: >-
+          Opaque data that are intended to be processed by
+          substituting templates.
+        type: json
         required: false
     capabilities:
       linkable:
         type: Linkable
+    interfaces:
+      standard:
+        type: Standard
 
