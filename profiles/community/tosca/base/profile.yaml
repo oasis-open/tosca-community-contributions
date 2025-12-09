@@ -16,6 +16,7 @@ capability_types:
       targeted by HostedOn relationships. It expresses the ability of
       a node template derived from the Platform node type to host
       another platform.
+    derived_from: Container
     valid_relationship_types: [HostedOn]
   ExecutionEnvironment:
     description: >-
@@ -23,6 +24,7 @@ capability_types:
       targeted by RunsOn relationships. It expresses the ability of a
       node template derived from the Platform node type to provide the
       execution environment for a specific application.
+    derived_from: Container
     valid_relationship_types: [RunsOn]
   DataPlatform:
     description: >-
@@ -30,6 +32,7 @@ capability_types:
       targeted by AvailableOn relationships. It expresses the ability
       of a node template derived from the Platform node type to host
       data.
+    derived_from: Container
     valid_relationship_types: [AvailableOn]
   DataSource:
     description: >-
@@ -37,6 +40,7 @@ capability_types:
       targeted by Processes relationships. It expresses the ability of
       a node template derived from the Data node type to make
       available data for an application.
+    derived_from: Feature
     valid_relationship_types: [Processes]
   Linkable:
     description: >-
@@ -44,6 +48,7 @@ capability_types:
       targeted by Platform relationships. It expresses the ability of
       a node template derived from the Platform node type to connect
       to a specific network.
+    derived_from: Feature
     valid_relationship_types: [LinksTo]
 
 relationship_types:
@@ -53,6 +58,7 @@ relationship_types:
       Platform node types defined here
     metadata:
       relationship_kind: containment
+    derived_from: ContainedBy
     properties:
       implementation-details:
         type: json
@@ -64,6 +70,7 @@ relationship_types:
       Application and Platform node types defined here
     metadata:
       relationship_kind: containment
+    derived_from: ContainedBy
     properties:
       implementation-details:
         type: json
@@ -75,6 +82,7 @@ relationship_types:
       Data and Platform node types defined here
     metadata:
       relationship_kind: containment
+    derived_from: ContainedBy
     properties:
       implementation-details:
         type: json
@@ -86,6 +94,7 @@ relationship_types:
       Application and Data node types defined here
     metadata:
       relationship_kind: dependency
+    derived_from: DependsOn
     properties:
       implementation-details:
         type: json
@@ -97,6 +106,7 @@ relationship_types:
       Platform and Netork node types defined here
     metadata:
       relationship_kind: dependency
+    derived_from: DependsOn
     properties:
       implementation-details:
         type: json
