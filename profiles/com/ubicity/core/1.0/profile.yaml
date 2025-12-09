@@ -3,55 +3,5 @@ tosca_definitions_version: tosca_2_0
 profile: com.ubicity.core:1.0
 
 description: >-
-  Ubicity Core Profile type definitions. These definitions are
-  intended to be shared between profiles of all levels of abstraction.
+  Ubicity Core Profile type definitions.
 
-relationship_types:
-  Root: 
-    description: >-
-      Base relationship type from which all other relationship types
-      derived. This is intended to hold an interface definition that
-      is shared by all relationship types.
-    metadata:
-      kind: ASSOCIATION
-  ContainedBy:
-    description: >-
-      The ContainedBy type represents a containment relationship between
-      two nodes.
-    metadata:
-      kind: CONTAINMENT
-    derived_from: Root
-    valid_capability_types: [Container]
-  DependsOn:
-    description: >-
-      Generic dependency on a feature
-    kind: DEPENDENCY
-    valid_capability_types: [Feature]
-    derived_from: Root
-  AssociatesWith:
-    description: >-
-      The AssociatesWith type represents an association relationship between
-      two nodes.
-    metadata:
-      kind: ASSOCIATION
-    derived_from: Root
-    valid_capability_types: [Partner]
-
-capability_types:
-  Container:
-    description: >-
-      Base capability type for capabilities that can be targeted by a
-      ContainedBy relationship.  Advertizes the ability to contain one
-      or more other nodes.
-    valid_relationship_types: [ContainedBy]
-  Feature:
-    description: >-
-      Base capability type for capabilities that can be targeted by a
-      DependsOn relationship. Derived types define
-      application-specific functionality.
-    valid_relationship_types: [DependsOn]
-  Partner:
-    description: >-
-      Base capability type for capabilities that can be targeted by an
-      AssociatesWith relationship.
-    valid_relationship_types: [AssociatesWith]
