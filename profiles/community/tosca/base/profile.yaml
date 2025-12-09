@@ -12,7 +12,7 @@ imports:
 capability_types:
   PlatformHost:
     description: >-
-      This capability types is exposed by Platform node types and is
+      This capability type is exposed by Platform node types and is
       targeted by HostedOn relationships. It expresses the ability of
       a node template derived from the Platform node type to host
       another platform.
@@ -20,7 +20,7 @@ capability_types:
     valid_relationship_types: [HostedOn]
   ExecutionEnvironment:
     description: >-
-      This capability types is exposed by Platform node types and is
+      This capability type is exposed by Platform node types and is
       targeted by RunsOn relationships. It expresses the ability of a
       node template derived from the Platform node type to provide the
       execution environment for a specific application.
@@ -28,7 +28,7 @@ capability_types:
     valid_relationship_types: [RunsOn]
   DataPlatform:
     description: >-
-      This capability types is exposed by Platform node types and is
+      This capability type is exposed by Platform node types and is
       targeted by AvailableOn relationships. It expresses the ability
       of a node template derived from the Platform node type to host
       data.
@@ -36,7 +36,7 @@ capability_types:
     valid_relationship_types: [AvailableOn]
   DataSource:
     description: >-
-      This capability types is exposed by Data node types and is
+      This capability type is exposed by Data node types and is
       targeted by Processes relationships. It expresses the ability of
       a node template derived from the Data node type to make
       available data for an application.
@@ -44,7 +44,7 @@ capability_types:
     valid_relationship_types: [Processes]
   Linkable:
     description: >-
-      This capability types is exposed by Network node types and is
+      This capability type is exposed by Network node types and is
       targeted by Platform relationships. It expresses the ability of
       a node template derived from the Platform node type to connect
       to a specific network.

@@ -30,6 +30,7 @@ capability_types:
   Endpoint:
     description: >-
       Endpoint for interaction between application nodes of the same type
+    derived_from: Feature
     properties:
       port:
         type: port
@@ -48,6 +49,7 @@ relationship_types:
   InteractsWith:
     description: >-
       Models interaction between application nodes of the same type
+    derived_from: DependsOn
     valid_capability_types: [Endpoint]
 
 node_types:
