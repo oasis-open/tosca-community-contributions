@@ -67,12 +67,13 @@ the mechanism for how this works.
    lower-level details that can simply be ignored at the highest level
    of abstraction. The value of this property can be encoded using a
    variety of ways&mdash;include JSON, YAML, or some other
-   mechanism&mdash;but the base profile uses JSON encoding and defines
-   a `json` data type for this purpose.  The abstract node should
-   validate that the provided string is valid JSON, but it does not
-   need to know about the specific values carried in that string. This
-   allows arbitrary implementation detail data to be provided in the
-   abstract node.
+   mechanism&mdash;but the base profile uses JSON encoding. The [core
+   profile](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/community/tosca/core)
+   defines a `json` data type for this purpose. The abstract node
+   should validate that the provided string is valid JSON, but it does
+   not need to know about the specific values carried in that
+   string. This allows arbitrary implementation detail data to be
+   provided in the abstract node.
 2. In the substituting template, we define a substitution mapping that
    maps the `mplementation-details` property value to an input of the
    substituting template. For example, the following shows how the
