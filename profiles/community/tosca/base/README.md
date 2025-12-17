@@ -76,14 +76,14 @@ the mechanism for how this works.
 2. In the substituting template, we define a substitution mapping that
    maps the `mplementation-details` property value to an input of the
    substituting template. For example, the following shows how the
-   `implementation-detail` property is mapped to a service template
+   `implementation-details` property is mapped to a service template
    input called `json-data` which is also of type `json`:
    ```
    service_template:
      substitution_mappings:
        node_type: app:MicroService
        properties:
-	 implementation_details: json_data
+	 implementation-details: json_data
      inputs:
        json_data:
 	 type: json
