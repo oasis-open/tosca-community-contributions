@@ -12,10 +12,10 @@ the following diagram.
 
 ```mermaid
 classDiagram
-    Root <|-- Data
-    Root <|-- Application
-    Root <|-- Network
-    Root <|-- Platform
+    Base <|-- Data
+    Base <|-- Application
+    Base <|-- Network
+    Base <|-- Platform
     Application "0..*" --> "1" Data:Processes
     Application "1" --> "1" Platform:RunsOn
     Platform "0..*" --> "1" Network:LinksTo
@@ -24,7 +24,7 @@ classDiagram
 
 The abstract nodes in the diagram above are intended to be decomposed
 into concrete Service Templates using the TOSCA substitution mapping
-mechanism. This approach can be used to orchestrate both the
+feature. This approach can be used to orchestrate both the
 infrastructure and the application. For example, a TOSCA Orchestrator
 may build a service from scratch by:
 
