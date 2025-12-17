@@ -12,15 +12,27 @@ the following diagram.
 
 ```mermaid
 classDiagram
-    class Platform
-    class Application
-    class Data
-    class Network
+    Base <|-- Data
+    Base <|-- Application
+    Base <|-- Network
+    Base <|-- Platform
+    Application "0..*" --> "1" Data:Processes
+    Application "1" --> "1" Platform:RunsOn
     Platform "0..*" --> "1" Network:LinksTo
     Data "1" --> "1" Platform:AvailableOn
-    Application "1" --> "1" Platform:RunsOn
-    Application "0..*" --> "1" Data:Processes
 ```
+
+The abstract nodes in the diagram above are intended to be decomposed
+into concrete Service Templates using the TOSCA substitution mapping
+feature. This approach can be used to orchestrate both the
+infrastructure and the application. For example, a TOSCA Orchestrator
+may build a service from scratch by:
+
+- First setting up a K8s cluster, and then
+- Deploying a service on the newly created K8s cluster
+
+> Reference specific profiles that define types that derive from the
+  types defined in the base profile.
 
 These node types relate to one-another using the following
 relationships:
@@ -38,97 +50,92 @@ relationships:
   node. This is a dependency relationship that defines the network(s)
   to which platforms connect.
 
-## Substitutions
+## Adding Implementation Details
 
-The abstract nodes in the Service Template shown above are intended to
-be decomposed into concrete Service Templates using the TOSCA
-substitution mapping mechanism. This approach can be used to
-orchestrate both the infrastructure and the application. For example,
-a TOSCA Orchestrator may build a service from scratch by:
+Since the abstract node types defined in this profile *hide* any
+details required at the lower levels, a mechanism is needed to add
+such lower-level details during substitution mapping without burdening
+the abstract node types with unnecessary information. The approach
+adopted by the base profile defines an *opaque*
+`implementation-details` property on the abstract nodes that is passed
+to the substituting template and that is only parsed and interpreted
+in the context of that substituting template. This section describes
+the mechanism for how this works.
 
-- First setting up a K8s cluster, and then
-- Deploying a service on the newly created K8s cluster
-
-The substituting templates can use one or more levels of derivation
-down to the lowest level (the Instance View in the Policy
-Continuum) by defining the appropriate profiles as follows:
-
-- Separate profiles are needed to model Applications and Platforms.
-- Another Profile may be needed to represent types that are common to
-  both templates.
-- Additional profiles may be needed for specific technologies/devices.
-
-### Adding Implementation Details
-
-One area that needs more discussion is the following: since
-higher-levels of abstraction *hide* the details of the lower levels,
-we need to design a way to add those lower-level details during
-substitution mapping without burdening the abstract node types at the
-higher levels with implementation-specific details. The following two
-approaches have been suggested:
-
-#### Opaque Implementation Properties
-
-This approach adds an optional property to the abstract node type,
-which we may call `implementation-detail`. It may contain a structured
-set of lower-level details (encoded using JSON, YAML, or some other
-mechanism) that can be simply ignored at the highest abstraction
-level. When a (more) concrete node is derived from the abstract node
-type, it refines this property by making it required and giving it a
-structure.
-
-For example, given the following hhierarchy of derived node types:
-```mermaid
-classDiagram
-    Application <|-- MicroserviceApplication
-    MicroserviceApplication <|-- KubernetesApplication
-```
-
-the `implementation-detail` property may become mandatory and may be
-assigned a structure at the `KubernetesApplication` level (where
-details such as images, exposed ports, etc. become relevant). Further,
-the KubernetesApplication is the element in the chain that is
-substitutable (e.g. by the online boutique service template). The
-implementation-detail property, which becomes an input for the
-orchestrator, is mapped to the substituting template for deployment.
-
-The TOSCA profile in this directory defines an optional
-`implementation-details` property in node and relationship types, with
-the aim of conveying details needed for implementation. The idea is
-that the property (better, the corresponding data type,
-i.e. `ImplementationDetails`) is refined by adding domain specific
-parameters. As an example, consider this case:
-
-- A `ComputeImplDetails` data type derives from the
-  `ImplementationDetails` data type, adding domain specific properties
-  (e.g. RAM, CPU, Storage, GPUAvailability, etc.)
-- A `ComputePlatform` node type derives from the `Platform` node
-  type. The `implementation-details` property is refined as follows:
-  - Its type becomes `ComputeImplDetails` (instead of the base type
-    `ImplementationDetails`)
-  - Its `required` flag becomes `true`
-
-#### *Under-the-Hood* Input Values
-
-The Ubicity implementation uses the following approach:
-
-- The substituting template defines all the necessary inputs that are
-  required to deploy and configure the substituting service. These
-  inputs effectively specify all the necessary *implementation
-  details*.
-- Some of these inputs are provided by mapping property values of the
-  substituted node to inputs of the substituting template (as
-  specified by the substitution mapping)
-- However, there may be other required input values that are not
-  mapped. Typically, those input values are used for configuration
-  parameters that are *abstracted away* in the substituted node. When
-  deploying the abstract service that includes the substituted node,
-  the user must provide those additional input values as well as the
-  input values required by the abstract service template. The Ubicity
-  API expects input values to be provided as JSON. It expects the
-  additional input values required by the substituting template under
-  the `substitutions` keyword in the JSON structure.
-
-Unfortunately, this approach assumes that the user knows which
-substituting service template will be used at deployment time, which
-undermines the *hiding away details* benefit of abstraction.
+1. All abstract nodes define a property called
+   `implementation-details` that contains a structured set of
+   lower-level details that can simply be ignored at the highest level
+   of abstraction. The value of this property can be encoded using a
+   variety of ways&mdash;include JSON, YAML, or some other
+   mechanism&mdash;but the base profile uses JSON encoding. The [core
+   profile](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/community/tosca/core)
+   defines a `json` data type for this purpose. The abstract node
+   should validate that the provided string is valid JSON, but it does
+   not need to know about the specific values carried in that
+   string. This allows arbitrary implementation detail data to be
+   provided in the abstract node.
+2. In the substituting template, we define a substitution mapping that
+   maps the `mplementation-details` property value to an input of the
+   substituting template. For example, the following shows how the
+   `implementation-details` property is mapped to a service template
+   input called `json-data` which is also of type `json`:
+   ```
+   service_template:
+     substitution_mappings:
+       node_type: app:MicroService
+       properties:
+	 implementation-details: json_data
+     inputs:
+       json_data:
+	 type: json
+   ```
+3. The substituting template then defines another service template
+   input that uses a TOSCA data type to represent the implementation
+   details. For example, the following shows a TOSCA data type called
+   `ImplementationDetails` and an input value of that type called
+   `implementation-details`. Note that ubstituting templates are free
+   to chose different data type names and different input names:
+   ```
+   data_types:
+     ImplementationDetails:
+       properties:
+	 service_label:
+	   type: string
+	 deployment_label:
+	   type: string
+	 security_context:
+	   type: k8s:SecurityContext
+   service_template:
+     inputs:
+       json_data:
+	 type: json
+       implementation-details:
+	 type: ImplementationDetails
+   ```
+4. Finally, the key to making this work is to fix the value of the
+   `implementation-details` input to the data that are returned by
+   decoding the JSON string in the `json_data` input, as follows:
+   ```
+   service_template:
+     substitution_mappings:
+       node_type: app:MicroService
+       properties:
+	 implementation-details: json_data
+     inputs:
+       json_data:
+	 type: json
+       implementation-details:
+	 type: ImplementationDetails
+	 value: {$decode_json: [{$get_input: json_data}]}
+   ```
+   Note that this requires a custom `$decode_json` function.
+5. The TOSCA processor will then validate the data returned by the
+   `$decode_json` function against the `ImplementationDetails` data
+   type, thereby ensuring (at deployment time) that correct
+   implementation details have been provided in the abstract node.
+6. In the substituting template, whenever one of the implementation
+   detail values are required, they could be retrieved using
+   `$get_input` function calls, for example as follows:
+   ```
+   $get_input: [implementation-details, label]
+   ```

@@ -9,13 +9,13 @@ description: >-
 data_types:
   json:
     description: >-
-      The json type defines a string that contain data in the JSON
+      The json type defines a string that contains data in the JSON
       format
     derived_from: string
-    #validation: TBD (may need custom functions)
+    validation: {$validate_json: [$value]}
   yaml:
     description: >-
-      The yaml type defines a string that contain data in the YAML
+      The yaml type defines a string that contains data in the YAML
       format
     derived_from: string
     #validation: TBD (may need custom functions)
@@ -122,6 +122,7 @@ functions:
               The integer to convert to string
         result: string
         implementation: functions.string:to_string
+        # The implementation string is currently not standard TOSCA
   to_uppercase:
     description: >-
       Convert a string to upper case
@@ -132,3 +133,23 @@ functions:
               The string to convert to upper case.
         result: string
         implementation: functions.string:to_uppercase
+        # The implementation string is currently not standard TOSCA
+  validate_json:
+    description: >-
+      Check if a string argument contains valid JSON.
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The json string to validate.
+        result: boolean
+        implementation: functions.json_utils:validate_json
+        # The implementation string is currently not standard TOSCA
+  decode_json:
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The json string to decode
+        implementation: functions.json_utils:decode_json
+        # The implementation string is currently not standard TOSCA
