@@ -127,10 +127,9 @@ interface_types:
           Operation to delete a node.
 
 node_types:
-  Platform:
+  Base:
     description: >-
-      Abstract Node Type modeling a generic platform, providing resources
-      and capabilities to host a running application and/or to store a dataset
+      Common parent type for all node types in the base profile.
     properties:
       implementation-details:
         description: >-
@@ -138,6 +137,13 @@ node_types:
           substituting templates.
         type: json
         required: false
+    interfaces:
+      Standard:
+        type: Standard
+  Platform:
+    description: >-
+      Abstract Node Type modeling a generic platform, providing resources
+      and capabilities to host a running application and/or to store a dataset
     capabilities:
       host:
         type: PlatformHost
@@ -152,21 +158,12 @@ node_types:
       - links-to:
           capability: Linkable
           relationship: LinksTo
-    interfaces:
-      standard:
-        type: Standard
   Application:
     description: >-
       Abstract Node Type modeling a generic application
     properties:
       name:
         type: string
-      implementation-details:
-        description: >-
-          Opaque data that are intended to be processed by
-          substituting templates.
-        type: json
-        required: false
     requirements:
       - processes:
           capability: DataSource
@@ -174,19 +171,9 @@ node_types:
       - runs-on:
           capability: ExecutionEnvironment
           relationship: RunsOn
-    interfaces:
-      standard:
-        type: Standard
   Data:
     description: >-
       Abstract Node Type modeling a generic set of data
-    properties:
-      implementation-details:
-        description: >-
-          Opaque data that are intended to be processed by
-          substituting templates.
-        type: json
-        required: false
     capabilities:
       data-source:
         type: DataSource
@@ -194,23 +181,9 @@ node_types:
       - available-on:
           capability: DataPlatform
           relationship: AvailableOn
-    interfaces:
-      standard:
-        type: Standard
   Network:
     description: >-
       Abstract Node Type modeling a generic network
-    properties:
-      implementation-details:
-        description: >-
-          Opaque data that are intended to be processed by
-          substituting templates.
-        type: json
-        required: false
     capabilities:
       linkable:
         type: Linkable
-    interfaces:
-      standard:
-        type: Standard
-
