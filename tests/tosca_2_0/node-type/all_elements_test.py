@@ -4,8 +4,13 @@ import unittest
 import os
 from pathlib import Path
 
+# Set the path to the tosca file
 here = os.path.dirname(os.path.abspath(__file__))
-tosca_file_path = here + '/copy.yaml'
+# To save re-typing the tosca file name into every test file,
+# guess that the tosca file has the same root as the name of this test file
+# and that the extension is .yaml
+tosca_file_path = here + '/' + Path(__file__).stem.split("_test")[0] + ".yaml"
+
 wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
 class TestWrapperProgram(unittest.TestCase):
@@ -14,4 +19,4 @@ class TestWrapperProgram(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True, shell=True)
         # Expected pass
         self.assertEqual(result.returncode, 0,
-                         f"Expected return code 0, but got {result.returncode} with message\n {result.stdout} {result.stderr}")
+                         f"Expected return code 0, but got {result.returncode} with message\n {result.stdout}")

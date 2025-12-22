@@ -1,0 +1,85 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  Endpoint.Database: {}
+  Monitoring: {}
+relationship_types:
+  ConnectsTo: {}
+artifact_types:
+  AppImage:
+    description: Application image artifact
+interface_types:
+  Standard:
+    operations:
+      create:
+        description: Create operation
+      delete:
+        description: Delete operation
+node_types:
+  Database:
+    capabilities:
+      database:
+        type: Endpoint.Database
+  SoftwareComponent: {}
+  MyApp:
+    derived_from: SoftwareComponent
+    metadata:
+      author: "TOSCA Community"
+      version: "1.0"
+      tags:
+        - application
+        - web-service
+    description: My company's custom application with all node_type elements
+    version: 1.0.0
+    properties:
+      my-app-password:
+        type: string
+        description: Application password
+        default: DefaultPassword123
+        required: true
+        status: SUPPORTED
+        validation: { $greater_or_equal: [ {$length: [ $value ] }, 10 ] }
+      my-app-port:
+        type: integer
+        description: Application port
+        default: 8080
+        required: false
+      deployment-version:
+        type: string
+        description: Deployment version
+        default: "1.0"
+    attributes:
+      my-app-port:
+        type: integer
+        description: Application port number
+      application-status:
+        type: string
+        description: Current status of the application
+      connection-string:
+        type: string
+        description: Database connection string
+    capabilities:
+      monitoring:
+        type: Monitoring
+        description: Monitoring capability
+    requirements:
+    - some-database:
+        capability: Endpoint.Database
+        node: Database    
+        relationship: ConnectsTo
+    - backup-database:
+        capability: Endpoint.Database
+        node: Database
+        relationship: ConnectsTo
+    interfaces:
+      Standard:
+        type: Standard
+        operations:
+          create:
+            description: Create the application
+          delete:
+            description: Delete the application
+    artifacts:
+      app-image:
+        type: AppImage
+        file: container-images/myapp
+        description: Docker image for the application
