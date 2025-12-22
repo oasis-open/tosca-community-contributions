@@ -68,5 +68,5 @@ service_template:
       interfaces:
         standard:
           operations:
-            configure: scripts/my_own_configure.sh
+            configure:
 # end::s48[]

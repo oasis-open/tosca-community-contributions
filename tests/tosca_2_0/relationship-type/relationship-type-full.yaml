@@ -1,0 +1,44 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  someAppFeature: {}
+  someOtherAppFeature: {}
+interface_types:
+  standard:
+    operations:
+      monitor:
+        description: Monitor operation for relationships
+        inputs:
+          frequency:
+            type: integer
+            description: Monitoring frequency in seconds
+            default: 60
+node_types:
+  appServer: {}
+  applicationComponent: {}
+relationship_types:
+  basicRelationship:
+    description: A relationship type with no elements defined
+  fullRelationship:
+    derived_from: basicRelationship
+    properties:
+      criticality:
+        type: integer
+        description: Level of criticality of the relationship
+        default: 5
+    attributes:
+      latency:
+        type: float
+        description: Latency introduced by the relationship
+        default: 0.0
+    interfaces:
+      control:
+        type: standard
+        operations:
+          monitor:
+            inputs:
+              frequency: 120
+    valid_capability_types: [someAppFeature, someOtherAppFeature]
+    valid_target_node_types: [appServer]
+    valid_source_node_types: [applicationComponent]
+
+

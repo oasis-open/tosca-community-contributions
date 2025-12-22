@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  Endpoint.Database: {}
+relationship_types:
+  ConnectsTo: {}
+node_types:
+  Database:
+    capabilities:
+      database:
+        type: Endpoint.Database
+  SoftwareComponent: {}
+  MyApp:
+    derived_from: SoftwareComponent
+    description: My company's custom application
+    properties:
+      my-app-password:
+        type: string
+        description: Application password
+        validation: { $greater_or_equal: [ {$length: [ $value ] }, 10 ] }
+    # INVALID: attributes should be a map, not a list
+    attributes:
+      - my-app-port:
+          type: integer
+          description: Application port number
+      - my-app-version:
+          type: string
+          description: Application version
+    requirements:
+    - some-database:
+        capability: Endpoint.Database
+        node: Database    
+        relationship: ConnectsTo
