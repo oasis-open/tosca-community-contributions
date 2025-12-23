@@ -1,0 +1,70 @@
+tosca_definitions_version: tosca_2_0
+relationship_types:
+  DependsOn:
+    description: Indicates that a node is dependent on another node
+capability_types:
+  MyCapabilityTypeName:
+    properties:
+      limit:
+        type: integer
+    attributes:
+      current-usage:
+        type: integer
+    valid_source_node_types: [Server]
+    valid_relationship_types: 
+        - DependsOn
+node_types:
+  Server:
+    description: A generic server node type
+  SpecialServer:
+    derived_from: Server
+    description: A specialized server node type
+  MyNodeType:
+    capabilities:
+      some-capability: 
+        type: MyCapabilityTypeName
+        description: A sample capability
+        metadata:
+          creator: TestUser
+        properties:
+          limit:
+            default: 100
+        attributes:
+          current-usage:
+            default: 0
+        valid_source_node_types: [Server]
+        valid_relationship_types: 
+        - DependsOn
+  MySpecialNodeType:
+    derived_from: MyNodeType
+    capabilities:
+      some-capability:
+        # include capability type
+        type: MyCapabilityTypeName
+        description: An overridden description for the capability
+        properties:
+          limit:
+            default: 200
+        attributes:
+          current-usage:
+            default: 10
+        # refine valid source node types
+        valid_source_node_types: [SpecialServer]
+        valid_relationship_types: 
+        - DependsOn
+  MyOtherNodeType:
+    derived_from: MyNodeType
+    capabilities:
+      some-capability:
+        # omit capability type to inherit from parent node type
+        description: Another overridden description for the capability
+        properties:
+          limit:
+            default: 300
+        attributes:
+          current-usage:
+            default: 20
+service_template:
+  node_templates:
+    my-node:
+      type: MyNodeType

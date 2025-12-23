@@ -1,0 +1,23 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  MyCompanyNodes:
+    description: Nodes in my domain
+relationship_types:
+  DependsOn:
+    description: A relationship indicating dependency
+capability_types:
+  MyFeature:
+    description: A custom feature of my company's application
+    properties:
+      my-feature-setting:
+        type: string
+      my-feature-value:
+        type: integer
+    attributes:
+      - my-feature-attribute:
+          type: string
+    valid_source_node_types:
+    - MyCompanyNodes
+    valid_relationship_types: [DependsOn]
+    
+

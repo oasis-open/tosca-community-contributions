@@ -1,0 +1,86 @@
+tosca_definitions_version: tosca_2_0
+capability_types:
+  Endpoint.Database:
+    description: Database endpoint
+  host: {}
+interface_types:
+  standard_interface:
+    description: Standard interface type
+    operations:
+      connect:
+        description: Connect operation
+      disconnect:
+        description: Disconnect operation
+relationship_types:
+  CustomDbConnection:
+    description: Custom database connection
+    properties:
+      port:
+        type: integer
+        description: Port number for the database connection
+    attributes:
+      status:
+        type: string
+        description: Connection status
+    interfaces:
+      Standard:
+        type: standard_interface
+        operations:
+          connect:
+            description: Establish the database connection
+          disconnect:
+            description: Terminate the database connection
+node_types:
+  WebApplication:
+    description: A web app
+    requirements:
+      - database: Endpoint.Database
+    attributes:
+      status:
+        type: string
+        description: Status of the web application
+  WebServer:
+    description: A web server
+    capabilities:
+      host:
+        type: host
+  Database:
+    description: A database
+    capabilities:
+      endpoint:
+        type: Endpoint.Database
+    requirements:
+      - host:
+          node: WebServer
+          relationship: CustomDbConnection
+          capability: host
+
+service_template:
+  node_templates:
+    my-database:
+      type: Database
+    my-application:
+      type: WebApplication
+      requirements:
+      - database: 
+          node: my-database
+          capability: endpoint
+          relationship: 
+            type: CustomDbConnection
+            properties:
+              port: 5432
+            # attributes:
+            #   status:
+            #     description: overwrite the description
+            interfaces:
+              Standard:
+                operations:
+                  connect:
+                    description: overwrite the description
+          node_filter:
+            $equal:
+              - $get_attribute: [SELF, database, status]
+              - active
+    
+
+

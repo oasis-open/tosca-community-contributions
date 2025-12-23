@@ -1,0 +1,97 @@
+tosca_definitions_version: tosca_2_0
+relationship_types:
+  HostedOn:
+    description: Relationship type for hosting
+    properties:
+      administrative-status:
+        type: string
+        description: Administrative status of the hosting relationship
+    attributes:
+      uptime:
+        type: integer
+        description: Uptime in hours
+    interfaces:
+      HostedOnControl:
+        type: control
+
+
+interface_types:
+  control:
+    description: Control interface type
+    inputs:
+      create-timeout:
+        type: integer
+        description: Timeout for create operation
+    operations:
+      configure:
+        inputs:
+          script:
+            type: string
+            description: The script to run
+capability_types:
+  compute:
+    properties:
+      class:
+        type: string
+        required: false
+  db-server:
+    properties:
+      type:
+        type: string
+        required: false
+node_types:
+  DBMS.MySQL:
+    properties:
+      root-password:
+        type: string
+        description: The password for the root user
+      port:
+        type: integer
+        description: The port number for the MySQL server
+    interfaces:
+      standard:
+        type: control
+        operations:
+          configure:
+            inputs:
+              script:
+                type: string
+                default: scripts/configure_mysql.sh
+    requirements:
+      - host:
+          capability: db-server
+          relationship: HostedOn
+  db-server:
+    properties:
+      num_cpus:
+        type: integer
+        description: Number of CPUs
+    capabilities:
+      host:
+        type: db-server
+service_template:
+  inputs:
+    my-mysql-rootpw:
+      type: string
+    my-mysql-port:
+      type: integer
+  node_templates:
+    my-db-server:
+      type: db-server
+      properties:
+        num_cpus: 4
+    mysql:
+      type: DBMS.MySQL
+      properties:
+        root-password: { $get_input: my-mysql-rootpw }
+        port: { $get_input: my-mysql-port }
+      requirements:
+        - host: 
+            node: my-db-server
+            capability: host
+            relationship:
+              type: HostedOn
+              properties:
+                administrative-status: active
+            allocation:
+              target-count: 1
