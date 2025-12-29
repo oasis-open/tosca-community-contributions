@@ -23,12 +23,13 @@ data_types:
     description: >-
       The ipv4 type defines a string that contain an IPv4 address
     derived_from: string
-    validation: { $matches: [ $value, "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$" ] }
+    validation:
+      $matches: [$value, "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"]
   port:
     description: >-
       The port type defines integer that contain valid ports
     derived_from: integer
-    validation: { $in_range: [ $value, [ 0, 0xFFFF ] ] }
+    validation: {$in_range: [$value, [0, 0xFFFF]]}
   ipv4Socket:
     description: >-
       This complex type represents an IPv4 socket (address+port)
@@ -47,18 +48,21 @@ data_types:
       The alphanumericId type represents an alphanumeric type of arbitrary length
       made up only by digits and uppercase/lowercase letters
     derived_from: genericId
-    validation: { $matches: [ $value, "^[A-Za-z0-9]+$" ] }
+    validation:
+      $matches: [$value, "^[A-Za-z0-9]+$"]
   uuid:
     description: >-
       The uuid type represents an IETF RFC4122 compliant universal identifier (types 1-5)
     derived_from: genericId
-    validation: { $matches: [ $value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$" ] }
+    validation:
+      $matches: [$value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"]
   uuidRelaxed:
     description: >-
       The uuidRelaxed type represents an identifier with format 8-4-4-4-12 (hex digits with dashes),
       but without full compliance to IETF RFC4122
     derived_from: genericId
-    validation: { $matches: [ $value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" ] }
+    validation:
+      $matches: [$value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"]
 
 relationship_types:
   Root: 
@@ -70,8 +74,8 @@ relationship_types:
       relationship_kind: ASSOCIATION
   ContainedBy:
     description: >-
-      The ContainedBy type represents a containment relationship between
-      two nodes.
+      The ContainedBy type represents a containment relationship
+      between two nodes.
     metadata:
       relationship_kind: CONTAINMENT
     derived_from: Root
@@ -85,8 +89,8 @@ relationship_types:
     derived_from: Root
   AssociatesWith:
     description: >-
-      The AssociatesWith type represents an association relationship between
-      two nodes.
+      The AssociatesWith type represents an association relationship
+      between two nodes.
     metadata:
       relationship_kind: ASSOCIATION
     derived_from: Root
