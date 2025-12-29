@@ -19,7 +19,10 @@ def printJsonResponse(pSuccess, pError, pErrorReason, processor_command, result)
             "return_code": result.returncode
         }
     }
-    print(json.dumps(response, indent=2))
+    # Dump JSON and replace escaped newline sequences (\n) with actual newlines
+    json_text = json.dumps(response, indent=2)
+    json_text = json_text.replace('\\n', '\n')
+    print(json_text)
 
 def main():
     # Confirm that the correct number of arguments were passed
