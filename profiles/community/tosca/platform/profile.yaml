@@ -13,10 +13,12 @@ imports:
 capability_types:
   Provider:
     description: The ability to provide service
+    derived_from: Feature
 
 relationship_types:
   ProvidedBy:
     description: Relationship between a service and its provider. 
+    derived_from: DependsOn
 
 node_types:
   Provider:
