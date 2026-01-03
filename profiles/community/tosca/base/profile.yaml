@@ -144,6 +144,7 @@ node_types:
     description: >-
       Abstract Node Type modeling a generic platform, providing resources
       and capabilities to host a running application and/or to store a dataset
+    derived_from: Base
     capabilities:
       host:
         type: PlatformHost
@@ -161,6 +162,7 @@ node_types:
   Application:
     description: >-
       Abstract Node Type modeling a generic application
+    derived_from: Base
     properties:
       name:
         type: string
@@ -174,6 +176,7 @@ node_types:
   Data:
     description: >-
       Abstract Node Type modeling a generic set of data
+    derived_from: Base
     capabilities:
       data-source:
         type: DataSource
@@ -184,6 +187,7 @@ node_types:
   Network:
     description: >-
       Abstract Node Type modeling a generic network
+    derived_from: Base
     capabilities:
       linkable:
         type: Linkable
