@@ -3,6 +3,7 @@ import unittest
 import os
 import zipfile
 from pathlib import Path
+import pytest
 
 
 # Set the path to the tosca file
@@ -39,6 +40,7 @@ with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zf:
 # Set the path to the wrapper
 wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
+@pytest.mark.allocation
 class TestWrapperProgram(unittest.TestCase):
 
     def test_wrapper_with_version_yaml(self):

@@ -1,0 +1,86 @@
+tosca_definitions_version: tosca_2_0
+# An example intented to test the following clause from the TOSCA 2.0 spec:
+# Within a node template definition where the "select" directive is defined. The node_filter is used to select an already existing node from another service representation graph.
+# derived from s144a
+# But it needs the 'another service representation graph' to be defined in a differnt service template
+# Can't just import the other service template (as there can only be one in a file
+# so presumably the other service template must be in a profile
+# and we don't yet have a standard way to reference profiles
+# PJ 2025-12-31
+profile: computeInfrastructure.yaml
+
+capability_types:
+  Feature:
+    properties:
+      target-count:
+        type: integer
+        required: false
+  ServiceCapability:
+    description: A service capability
+  Compute:
+    description: Ability to compute.
+  Host:
+    description: >-
+      Ability to host software.
+  Service:
+    description: Ability to provide a service.
+
+relationship_types:
+  HostedOn:
+    description: >-
+      Relationship to a host.
+  ServedBy: 
+    description: Relationship to a service.
+  Uses: {}
+node_types:
+  Server:
+    description: A server
+    capabilities:
+      service:
+        type: ServiceCapability
+  Client:
+    description: A client
+    requirements:
+      - service: ServiceCapability
+      - host:
+          capability: Host
+          relationship: HostedOn
+  Compute:
+    description: A compute node
+    capabilities:
+      host:
+        type: Host
+
+  ClientSoftware:
+    description: An software application
+    requirements:
+      - host:
+          capability: Host
+          relationship: HostedOn
+
+
+service_template:
+  substitution_mappings:
+    node_type: Client
+    requirements:
+    - host: compute
+
+  node_templates:
+    software1:
+      type: ClientSoftware
+      requirements:
+        - host: compute
+    software2:
+      type: ClientSoftware
+      requirements:
+        - host: compute
+
+
+    compute:
+      type: Compute
+      directives: [select]
+      node_filter:
+        $greater_or_equal:
+          - $get_property: [SELF, properties, num_cpus]
+          - 4
+

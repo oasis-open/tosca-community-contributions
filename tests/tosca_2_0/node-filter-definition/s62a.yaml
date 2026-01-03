@@ -9,19 +9,25 @@ data_types:
       MB: 1000000
 
 capability_types:
-  host_capability:
-
-node_types:
-  Compute:
-    description: A compute node
+  Host:
     properties:
       num-cpus:
         type: integer
       mem-size:
         type: scalar-unit.size
-    capabilities:
-      host:
-        type: host_capability
+      
+relationship_types:
+  HostedOn:
+    description: >-
+      Relationship to a host.
+
+node_types:
+  Compute:
+    description: A compute node
+    requirements:
+      - host: 
+          relationship: HostedOn
+          capability: Host
 
 
 # tag::s62[]
@@ -31,13 +37,13 @@ service_template:
       type: Compute
       # other details omitted for brevity
       requirements:
-      - host:
-          node_filter:
-            $and:
-              - $in_range:
-                - $get_property: [ SELF, CAPABILITY, num-cpus ]
-                - [ 1, 4 ]
-              - $greater_or_equal:
-                - $get_property: [ SELF, CAPABILITY, mem-size ]
-                - 512 MB 
+        - host:
+            node_filter:
+              $and:
+                - $in_range:
+                  - $get_property: [ SELF, CAPABILITY, num-cpus ]
+                  - [ 1, 4 ]
+                - $greater_or_equal:
+                  - $get_property: [ SELF, CAPABILITY, mem-size ]
+                  - 512 MB 
 # end::s62[]

@@ -10,12 +10,15 @@ capability_types:
   host_capability:
     description: Hosting capability
 
+relationship_types:
+  host:
+    description: Host relationship
 
 node_types:
   WebApplication:
     description: A web app
     requirements:
-      - host: host
+      - host: host_capability
 
   Compute:
     description: A compute node

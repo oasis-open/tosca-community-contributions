@@ -34,7 +34,7 @@ The pytest file may also contain a pytest marker e.g. @pytest.mark.empty. These 
 ```
 pytest -m "not empty"
 ```
-will exclude tests which have the empty decorator which indicates they test for empty TOSCA elements.
+will exclude tests which have the empty decorator which indicates they test for empty TOSCA elements. All such decorators are registered in [pyproject.toml](../pyproject.toml).
 
 The pytest file calls a program called wrapper with a reference to the tosca file. Wrapper provides a standard interface to the TOSCA Processor under test and is further described in [validation](validation.md).
 
