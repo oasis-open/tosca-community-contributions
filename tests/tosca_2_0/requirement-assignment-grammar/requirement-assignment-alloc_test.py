@@ -5,7 +5,6 @@ import os
 from pathlib import Path
 import pytest
 
-
 # Set the path to the tosca file
 here = os.path.dirname(os.path.abspath(__file__))
 # To save re-typing the tosca file name into every test file,

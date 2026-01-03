@@ -2,6 +2,7 @@ import subprocess
 import unittest
 import os
 from pathlib import Path
+import pytest
 
 
 # Set the path to the tosca file
@@ -16,6 +17,7 @@ tosca_file_path = here + '/' + Path(__file__).stem.split("_test")[0] + ".yaml"
 # Set the path to the wrapper
 wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
 
+@pytest.mark.allocation
 class TestWrapperProgram(unittest.TestCase):
 
     def test_wrapper_with_version_yaml(self):

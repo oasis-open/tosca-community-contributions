@@ -1,0 +1,46 @@
+tosca_definitions_version: tosca_2_0
+relationship_types:
+  HostedOn:
+    properties:
+      description:
+        type: string
+        default: "Indicates that a node is hosted on another node."
+capability_types:
+  Compute_capability:
+    properties:
+      os_type:
+        type: string
+      cpu_cores:
+        type: integer
+node_types:
+  server_node:
+    capabilities:
+      Compute:
+        type: Compute_capability
+        properties:
+          cpu_cores:
+            type: integer
+            default: 2
+  database_application:
+    properties:
+      db_name:
+        type: string
+      db_port:
+        type: integer
+        default: 3306
+    requirements:
+      - host:
+          capability: Compute_capability
+          node: server_node
+          relationship: HostedOn
+          node_filter:
+            $and:
+              - $equal:
+                - $get_property: [SELF, CAPABILITY, os_type]
+                - "Linux"
+              - $in_range:
+                - $get_property: [SELF, CAPABILITY, cpu_cores]
+                - [4, 16]
+          # count should be integer, not float
+          count_range: [1.0, 2.5]
+  

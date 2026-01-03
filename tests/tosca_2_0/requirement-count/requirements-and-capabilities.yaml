@@ -1,4 +1,5 @@
 tosca_definitions_version: tosca_2_0
+# PJ 2025-12-29 ubicity fails this test from puncini
 
 # This is by far the most elaborate aspect of TOSCA
 # There are many ways to define and assign requirements and relationships

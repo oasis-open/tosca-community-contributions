@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_2_0
+imports:
+- requirement-count-types.yaml
+
+node_types:
+  Client:
+    requirements:
+      - service:
+          capability: ServiceCapability
+          count_range: [ 3, 4 ]
+
+service_template:
+  node_templates:
+    server1:
+      type: Server
+
+    server2:
+      type: Server
+
+    server3:
+      type: Server
+
+    server4:
+      type: Server
+
+    server5:
+      type: Server
+
+    client:
+      type: Client
+      directives: [ substitute ]
+      requirements:
+      - service: server1
+      - service: server2
+      # Requirement count under here
+

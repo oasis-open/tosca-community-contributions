@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_2_0
+relationship_types:
+  DependsOn:
+    description: Indicates that a node is dependent on another node
+capability_types:
+  MyCapabilityTypeName:
+    properties:
+      limit:
+        type: integer
+    attributes:
+      current-usage:
+        type: integer
+node_types:
+  Server:
+    description: A generic server node type
+  MyNodeType:
+    capabilities:
+
+      some-capability: 
+        type: MyCapabilityTypeName
+        description: A sample capability
+        metadata:
+          creator: TestUser
+        properties:
+          limit:
+            default: 100
+        attributes:
+          current-usage:
+            default: 0
+        valid_source_node_types: [Server]
+        valid_relationship_types: 
+        - DependsOn
+service_template:
+  node_templates:
+    my-node:
+      type: MyNodeType

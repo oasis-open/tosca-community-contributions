@@ -1,0 +1,26 @@
+tosca_definitions_version: tosca_2_0
+
+capability_types:
+  Host:
+    description: >-
+      Ability to host software.
+
+node_types:  
+  Compute:
+    description: A compute node
+    capabilities:
+      host:
+        type: Host
+    properties:
+      num_cpus:
+        type: integer
+service_template:
+  node_templates:
+    small_host:
+      type: Compute
+      properties:
+        num_cpus: 2
+    larger_host:
+      type: Compute
+      properties:
+        num_cpus: 4

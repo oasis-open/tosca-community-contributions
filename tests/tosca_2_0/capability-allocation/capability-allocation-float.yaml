@@ -1,0 +1,44 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  scalar-unit.size:
+    derived_from: scalar
+    data_type: integer
+    units:
+      B: 1
+      MB: 1000000
+capability_types:
+  host_capability:
+    description: Hosting capability
+
+relationship_types:
+  host:
+    description: Host relationship
+
+node_types:
+  WebApplication:
+    description: A web app
+    requirements:
+      - host: host_capability
+
+  Compute:
+    description: A compute node
+    properties:
+      speed:
+        type: float
+      mem-size:
+        type: scalar-unit.size
+    capabilities:
+      host:
+        type: host_capability
+
+service_template:
+  node_templates:
+    my-application:
+      type: WebApplication
+      requirements:
+      - host:
+          node: Compute
+          allocation:
+            speed: 2.0
+            mem-size: 128 MB
+

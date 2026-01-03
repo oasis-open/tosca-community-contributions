@@ -1,5 +1,6 @@
 # pyproject.toml
 [tool.pytest.ini_options]
 markers = [
+    "allocation: marks tests which excerise the allocation keyword of TOSCA",
     "empty: marks tests which expect empty TOSCA elements to be rejected as invalid"
 ]
