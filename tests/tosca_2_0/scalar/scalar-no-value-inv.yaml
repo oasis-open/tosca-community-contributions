@@ -1,0 +1,44 @@
+tosca_definitions_version: tosca_2_0
+
+dsl_definitions:
+  # Defined a reusable set of prefixes taken from ISO80000
+  iso-prefixes: &ISO80000 # Prefixes for smaller multipliers omitted
+    μ: 0.0001
+    m: 0.001
+    c: 0.01
+    d: 0.1
+    "": 1.0 # allows use of the base unit without any prefix
+    da: 10 # units may be multiple characters
+    h: 100 # integer multipliers auto-converted to floats
+    k: 1000
+    M: 1000000
+    # Prefixes for larger multipliers omitted
+
+data_types:
+  PositiveInteger:
+    derived_from: integer
+    validation: { $greater_or_equal: [$value, 1] }
+
+
+
+
+  Mass:
+    derived_from: scalar
+    units: { g: 1 } # Short notation. Integer automatically converted to float
+    prefixes: *ISO80000 # Note map of prefixes is used by both Length and Mass by means of YAML anchor and alias
+
+node_types:
+  Box:
+    properties:
+      weight:
+        type: Mass
+
+service_template:
+  node_templates:
+    node:
+      type: Box
+      properties:
+        # error: missing unit
+        weight: g
+
+

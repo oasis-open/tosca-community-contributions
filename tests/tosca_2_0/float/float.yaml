@@ -1,0 +1,38 @@
+tosca_definitions_version: tosca_2_0
+
+node_types:
+  Node:
+    properties:
+      speed:
+        type: float
+      offset:
+        type: float
+      signed_zero:
+        type: float
+      very_big:
+        type: float
+      infinity:
+        type: float
+      not_a_number:
+        type: float
+      canonical:
+        type: float
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        speed: 0.1
+        offset: -0.5
+        signed_zero: -0.0
+        very_big: 1.8e+308
+        infinity: -.inf 
+        not_a_number: .NaN
+        canonical: 1.23015e+3
+
+         
+
+
+
+

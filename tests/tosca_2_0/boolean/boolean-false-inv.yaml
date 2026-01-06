@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_2_0
+# PJ 2026-01-04 ubicity passes this but shouls reject it
+node_types:
+  Node:
+    properties:
+      black_is_white:
+        type: boolean
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        # value should be false not False
+        black_is_white: False
+
+
+

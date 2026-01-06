@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Node:
+    properties:
+      name:
+        type: string
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        name: "|
+          This is a literal
+          string example
+          that spans multiple
+          lines and preserves line breaks."
+

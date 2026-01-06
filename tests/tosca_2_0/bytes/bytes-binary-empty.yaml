@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+# PJ 2025-01-04 Ubicity fails but empty bytes should be valid
+node_types:
+  Node:
+    properties:
+      preamble:
+        type: bytes
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        preamble: ""
+

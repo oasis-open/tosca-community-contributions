@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_2_0
+
+node_types:
+  Node:
+    properties:
+      count:
+        type: integer
+
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        # count is float instead of integer
+        count: 1.0
+
