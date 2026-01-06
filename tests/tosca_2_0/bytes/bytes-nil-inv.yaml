@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+
+node_types:
+  Node:
+    properties:
+      preamble:
+        type: bytes
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        preamble: null
+

@@ -4,6 +4,7 @@ metadata:
 
   template_name: Unicode Example
   template_author: Puccini
+  # modified to remove v1 scalar unit types
 
 node_types:
 
@@ -14,7 +15,7 @@ node_types:
   電源面板:
     properties:
       年齡:
-        type: scalar-unit.time
+        type: integer
     capabilities:
       主要: 插座
 
@@ -26,8 +27,7 @@ capability_types:
         type: string
       電壓:
         type: float
-      電頻:
-        type: scalar-unit.frequency
+
 
 relationship_types:
 
@@ -55,10 +55,10 @@ service_template:
     主面板:
       type: 電源面板
       properties:
-        年齡: 5 d
+        年齡: 5
       capabilities:
         主要:
           properties:
             標準: 高頻
             電壓: 110.0
-            電頻: 120 hz
+

@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_2_0
+
+node_types:
+  Node:
+    properties:
+      black_is_white:
+        type: boolean
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        # value should be false not 0
+        black_is_white: 0
+
+
+

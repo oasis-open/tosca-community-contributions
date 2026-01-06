@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+node_types:
+  Node:
+    properties:
+      time1:
+        type: timestamp
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        # space between date and time is invalid
+        time1: "2001-12-14 21:59:43.10"
+

@@ -1,0 +1,24 @@
+tosca_definitions_version: tosca_2_0
+
+node_types:
+  Node:
+    properties:
+      count:
+        type: integer
+      offset:
+        type: integer
+      bitmask:
+        type: integer
+      permissions_octet:
+        type: integer
+
+
+service_template:
+  node_templates:
+    node:
+      type: Node
+      properties:
+        count: 1
+        offset: -1
+        bitmask: 0xFFFF0000
+        permissions_octet: 0o755
