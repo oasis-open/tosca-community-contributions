@@ -147,6 +147,14 @@ The following three apporaches have been proposed:
    relationship is introduced between the KubeVirt node and the
    corresponding Kubernetes node.
 
+   Another option is that each platform can be considered to have a
+   *control plane* as well as a *data plane*. For most platforms,
+   modeling the hosting relationships used by the data plane is
+   sufficient. However, for some platforms, it may also be necessary
+   to model where the control plane is deployed. Control plane
+   deployment is not modeled using a hosting relationship, but rather
+   using a `RunsOn` relationship.
+
    > How do we make sure that the Kubevirt nodes are HostedOn the same
      ComputePlatform nodes as the Kubernetes nodes?
 
