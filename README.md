@@ -1,15 +1,16 @@
 # TOSCA Community Contributions
 
-This GitHub public repository ( <b><a
-href="https://github.com/oasis-open/tosca-community-contributions">https://github.com/oasis-open/tosca-community-contributions</a></b>
-) was created at the <a
-href="https://issues.oasis-open.org/browse/TCADMIN-2420"> request</a>
-of the <a href="https://www.oasis-open.org/committees/tosca/">OASIS
-Topology and Orchestration Specification for Cloud Applications
-(TOSCA) TC</a> as an <a
-href="https://www.oasis-open.org/resources/open-repositories/">OASIS
-TC Open Repository</a> to support development of open source resources
-related to Technical Committee work.
+This [GitHub public
+repository](https://github.com/oasis-open/tosca-community-contributions)
+was created at the
+[request](https://issues.oasis-open.org/browse/TCADMIN-2420) of the
+[OASIS Topology and Orchestration Specification for Cloud Applications
+(TOSCA)
+TC](https://groups.oasis-open.org/communities/tc-community-home2?CommunityKey=f9412cf3-297d-4642-8598-018dc7d3f409)
+as an [OASIS TC Open
+Repository](https://www.oasis-open.org/resources/open-repositories/)
+to support development of open source resources related to Technical
+Committee work.
 
 While this TC Open Repository remains associated with the sponsor TC,
 its development priorities, leadership, intellectual property terms,

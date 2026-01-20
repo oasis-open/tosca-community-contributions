@@ -114,6 +114,66 @@ in the following figure:
 Kubevirt can then in turn be used to *host* virtual machines as also
 shown in the figure.
 
+#### Kubernetes-Kubevirt Layering Modeling Challenges
+
+There are severals challenges with this layering of platform node
+types, particularly regarding the relationship between Kubernetes
+clusters and Kubevirt virtualization platforms:
+
+- The abstract model above shows Kubevirt running on top of a
+  Kubernetes cluster.
+- In practice however, the relationships are more complex, since
+  Kubevirt requires installation of at least two very different
+  types of components:
+  - KVM virtualization, which is installed directly on the underlying
+    ComputePlatform. If the Kubernetes cluster uses multiple worker
+    nodes, then each of those nodes must have KVM.
+  - The Kubevirt operator(s) and custom resource definitions, which
+    are installed on the Kubernetes cluster.
+- To support these different installations, a single HostedOn
+  relationship between the Kubevirt node and the Kubernetes node is
+  insufficient. Additional information is required to identify not
+  just the Kubernetes cluster, but also the ComputePlatform(s) on
+  which the Kubernetes cluster is deployed.
+
+The layering approach proposed above needs refinement to accurately
+represent these complex dependencies.
+
+The following three apporaches have been proposed:
+
+1. Introduce additional relationships: using this approach, the
+   abstract Kubevirt node is HostedOn on a ComputePlatform node
+   directly, but an additional `ControlledBy` or `ManagedBy`
+   relationship is introduced between the KubeVirt node and the
+   corresponding Kubernetes node.
+
+   Another option is that each platform can be considered to have a
+   *control plane* as well as a *data plane*. For most platforms,
+   modeling the hosting relationships used by the data plane is
+   sufficient. However, for some platforms, it may also be necessary
+   to model where the control plane is deployed. Control plane
+   deployment is not modeled using a hosting relationship, but rather
+   using a `RunsOn` relationship.
+
+   > How do we make sure that the Kubevirt nodes are HostedOn the same
+     ComputePlatform nodes as the Kubernetes nodes?
+
+2. Use properties on the Kubernetes node to indicate whether Kubevirt
+   is supported. With this approach, Kubevirt is no longer modeled as
+   a separate Platform node. Instead, it becomes part of the
+   Kubernetes platform node, and substitution filters are used to
+   select a substituting template that installs Kubevirt if necessary.
+
+   > With this approach, how do we indicated whether the Kubernetes
+     platform can host ComputePlatform nodes or now (since this
+     capability can not be turned on or off dynamically based on a
+     property value).
+
+3. Introduce Aggregate platform node types: with this approach, a new
+   derived platform node type is introduced that is composed of both a
+   Kubernetes platform as well as a Kubevirt platform. This aggregate
+   node type is HostedOn the same ComputePlatform node(s)
+
 ## Providers and Credentials
 
 This profile also defines node types for modeling the *providers* that
