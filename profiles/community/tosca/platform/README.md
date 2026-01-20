@@ -109,7 +109,7 @@ effectively turns Kubernetes into an IaaS platform. This can be
 modeled by layering Kubevirt on top of a Kubernetes cluster as shown
 in the following figure:
 
-![IaaS on Kubernetes Cluster on Multiple Compute Platforms](images/iaas-on-cluster.png)
+![IaaS on Kubernetes Cluster on Compute Platform](images/iaas-on-cluster.png)
 
 Kubevirt can then in turn be used to *host* virtual machines as also
 shown in the figure.
@@ -141,13 +141,26 @@ represent these complex dependencies.
 
 The following three apporaches have been proposed:
 
-1. Introduce additional relationships: using this approach, the
+1. Introduce Aggregate platform node types: with this approach, a new
+   derived platform node type is introduced that is composed of both a
+   Kubernetes platform as well as a Kubevirt platform. This aggregate
+   node type is HostedOn the same ComputePlatform node(s)
+2. Use properties on the Kubernetes node to indicate whether Kubevirt
+   is supported. With this approach, Kubevirt is no longer modeled as
+   a separate Platform node. Instead, it becomes part of the
+   Kubernetes platform node, and substitution filters are used to
+   select a substituting template that installs Kubevirt if necessary.
+   > With this approach, how do we indicated whether the Kubernetes
+     platform can host ComputePlatform nodes or now (since this
+     capability can not be turned on or off dynamically based on a
+     property value).
+
+3. Introduce additional relationships: using this approach, the
    abstract Kubevirt node is HostedOn on a ComputePlatform node
    directly, but an additional `ControlledBy` or `ManagedBy`
    relationship is introduced between the KubeVirt node and the
    corresponding Kubernetes node.
-
-   Another option is that each platform can be considered to have a
+4. Another option is that each platform can be considered to have a
    *control plane* as well as a *data plane*. For most platforms,
    modeling the hosting relationships used by the data plane is
    sufficient. However, for some platforms, it may also be necessary
@@ -155,24 +168,10 @@ The following three apporaches have been proposed:
    deployment is not modeled using a hosting relationship, but rather
    using a `RunsOn` relationship.
 
+   ![IaaS on Kubernetes Cluster on Compute Platform](images/iaas-on-cluster-new.png)
+
    > How do we make sure that the Kubevirt nodes are HostedOn the same
      ComputePlatform nodes as the Kubernetes nodes?
-
-2. Use properties on the Kubernetes node to indicate whether Kubevirt
-   is supported. With this approach, Kubevirt is no longer modeled as
-   a separate Platform node. Instead, it becomes part of the
-   Kubernetes platform node, and substitution filters are used to
-   select a substituting template that installs Kubevirt if necessary.
-
-   > With this approach, how do we indicated whether the Kubernetes
-     platform can host ComputePlatform nodes or now (since this
-     capability can not be turned on or off dynamically based on a
-     property value).
-
-3. Introduce Aggregate platform node types: with this approach, a new
-   derived platform node type is introduced that is composed of both a
-   Kubernetes platform as well as a Kubevirt platform. This aggregate
-   node type is HostedOn the same ComputePlatform node(s)
 
 ## Providers and Credentials
 
