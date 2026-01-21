@@ -14,3 +14,7 @@ to TOSCA Simple Profile in YAML v1.3.
 
 A list of academic papers on TOSCA and related fields.
 
+## [Blog Posts and Articles about TOSCA](blog-posts.md)
+
+A list of blog posts and general articles on TOSCA and related fields.
+
