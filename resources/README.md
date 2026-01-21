@@ -10,3 +10,11 @@ to the attention of the TOSCA community.
 Documents the main enhancements in the TOSCA v2.0 standard as compared
 to TOSCA Simple Profile in YAML v1.3.
 
+## [Academic Papers on TOSCA](papers.md)
+
+A list of academic papers on TOSCA and related fields.
+
+## [Blog Posts and Articles about TOSCA](blog-posts.md)
+
+A list of blog posts and general articles on TOSCA and related fields.
+
