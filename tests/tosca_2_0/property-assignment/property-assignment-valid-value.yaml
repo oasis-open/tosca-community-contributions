@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+
+capability_types:
+  Endpoint:
+    properties:
+      protocol:
+        type: string
+        required: true
+        default: tcp
+      port:
+        type: integer
+        required: false
+
+node_types:
+  Host:
+    capabilities:
+      terminal:
+        type: Endpoint
+
+service_template:
+  node_templates:
+    my_host:
+      type: Host
+      capabilities:
+        terminal:
+          properties:
+            protocol: http
+            port: 8080

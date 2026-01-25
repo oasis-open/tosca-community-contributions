@@ -1,0 +1,25 @@
+# Error: Cannot assign a value to a property that already has a fixed value defined
+tosca_definitions_version: tosca_2_0
+
+capability_types:
+  Endpoint:
+    properties:
+      protocol:
+        type: string
+        value: tcp
+
+node_types:
+  Host:
+    capabilities:
+      terminal:
+        type: Endpoint
+
+service_template:
+  node_templates:
+    my_host:
+      type: Host
+      capabilities:
+        terminal:
+          type: Endpoint
+          properties:
+            protocol: http

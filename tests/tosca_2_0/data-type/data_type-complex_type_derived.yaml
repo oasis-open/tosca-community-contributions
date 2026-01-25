@@ -9,7 +9,7 @@ metadata:
     assert there is no errors
   oasis.testAssertion.prescription_level: mandatory
   oasis.testAssertion.normativeSource.refSourceItem.documentId: tosca_2_0
-  oasis.testAssertion.normativeSource.refSourceItem.versionId: 1.0.0
+  oasis.testAssertion.normativeSource.refSourceItem.versionId: 2.0.0
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 data_types:
@@ -23,6 +23,10 @@ data_types:
       age:
         type: integer
   tosca.example.types.AdvancedPerson:
+    version: 2.1.0
+    description: A data type that is derived from a complex type
+    metadata: 
+      metadata_string: "some metadata for the derived type"
     derived_from: tosca.example.types.Person
     properties:
       last_name: # override an existing property

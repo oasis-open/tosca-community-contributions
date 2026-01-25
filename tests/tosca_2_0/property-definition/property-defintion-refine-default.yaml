@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_2_0
+# PJ 20260113 Ubicity fails first validation when new default applied even when second validation is commented out
+data_types:
+  MapOfStrings:
+    properties:
+      a_map:
+        type: map
+        required: false
+        default: { key1: value1 }
+        description: >
+          Would not normally fix the value in a data type, but included here
+        metadata:
+          info: Fixed value for demonstration
+          # no practical reason to validate a fixed value, but included here for completeness
+        validation:
+          $has_key: [ $value, key1 ]
+        key_schema:
+          type: string
+        entry_schema:
+          type: string
+
+  ShortString:
+    derived_from: string
+    validation: { $less_or_equal: [ { $length: [ $value ] }, 16 ] }
+
+  AnotherMapOfStrings:
+    derived_from: MapOfStrings
+    properties:
+      a_map:
+        required: true
+        # modify default
+        default: { key1: value1, key2: value2 }
+        # apply further validation
+        validation:
+          $has_key: [ $value, key2 ]
+        # refine types of schemas
+        key_schema:
+          type: ShortString
+        entry_schema:
+          type: ShortString
+
+

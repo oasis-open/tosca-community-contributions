@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  MapOfStrings:
+    properties:
+      fixed:
+        type: map
+        required: false
+        default: { key1: value1, key2: value2 }
+        value: { key1: value1, key2: value2 }
+        description: >
+          Would not normally fix the value in a data type, but included here
+        metadata:
+          info: Fixed value for demonstration
+          # no practical reason to validate a fixed value, but included here for completeness
+        validation:
+          $has_key: [ $value, key1 ]
+        key_schema:
+          type: string
+        entry_schema:
+          type: string
+

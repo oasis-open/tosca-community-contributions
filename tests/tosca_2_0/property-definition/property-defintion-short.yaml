@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  PortDef:
+    properties:
+      port:
+        type: integer
+        validation:
+          $and:
+            - $greater_or_equal: [ $value, 1 ]
+            - $less_or_equal: [ $value, 65535 ] 
+capability_types:
+ Endpoint:
+    properties:
+      protocol:
+        type: string
+        required: true
+        default: tcp
+      port:
+        type: PortDef
+        required: false
+      secure:
+        type: boolean
+        required: false
+        default: false
+
+node_types:
+  Host:
+    capabilities:
+      Terminal:
+        type: Endpoint
+        properties:
+          secure: true
+
+

@@ -10,4 +10,4 @@ tests/__init__.py
 .vscode
 
 tools/wrappers/wrapper.py
-tools/scripts/deploy-ubicity.sh
+tools/scripts/init_ubicity.sh
