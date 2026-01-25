@@ -1,0 +1,33 @@
+tosca_definitions_version: tosca_2_0
+
+data_types:
+  ShortStr:
+    derived_from: string
+    validation: { $less_or_equal: [ { $length: [ $value ] }, 5 ] }
+
+node_types:
+  SchemaTester:
+    properties:
+      nested:
+        type: list
+        entry_schema:
+          type: map
+          description: A map with string keys and list of ShortStr values
+          validation: { $greater_or_equal: [ 1 , 0 ] }
+          # no need for complex validation here just need to test that the keyword is accepted
+
+          entry_schema:
+            type: list
+            entry_schema: ShortStr
+          key_schema:
+            type: string
+
+service_template:
+  node_templates:
+    tester1:
+      type: SchemaTester
+      properties:
+        nested:
+          - { user1: [ "one", "two" ] }
+          - { user2: [ "abc", "xy" ] }
+

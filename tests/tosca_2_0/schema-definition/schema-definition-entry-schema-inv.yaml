@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+
+data_types:
+  short_string:
+    derived_from: string
+    validation: { $less_or_equal: [ { $length: [ $value ] }, 10 ] }
+
+  map_with_schema:
+    derived_from: map
+    entry_schema: short_string
+
+  map_with_invalid_schema:
+    type: map
+    # Invalid: no entry_schema defined
+    

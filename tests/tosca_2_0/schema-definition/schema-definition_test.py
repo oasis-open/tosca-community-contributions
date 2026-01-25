@@ -1,4 +1,3 @@
-
 import subprocess
 import unittest
 import os
@@ -20,3 +19,4 @@ class TestWrapperProgram(unittest.TestCase):
         # Expected pass
         self.assertEqual(result.returncode, 0,
                          f"Expected return code 0, but got {result.returncode} with message\n {result.stdout}")
+

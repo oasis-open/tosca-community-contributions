@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_2_0
+data_types:
+  tosca.example.types.Person:
+    description: A data type that represents a person.
+    properties:
+      last_name:
+        type: string
+        required: false
+      first_name:
+        type: string
+      age:
+        type: integer
+  tosca.example.types.AdvancedPerson:
+    version: 2.1.0
+    description: A data type that is derived from a complex type
+    metadata: 
+      metadata_string: "some metadata for the derived type"
+    derived_from: tosca.example.types.Person
+    properties:
+      last_name: 
+        # Invalid, cannot change type in a property refinement
+        derived_from: integer
+        required: true
+
+

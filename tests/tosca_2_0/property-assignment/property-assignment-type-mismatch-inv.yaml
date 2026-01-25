@@ -1,0 +1,24 @@
+# Error: Property assignment value type does not match the property's declared type
+tosca_definitions_version: tosca_2_0
+
+capability_types:
+  Endpoint:
+    properties:
+      port:
+        type: integer
+        required: false
+
+node_types:
+  Host:
+    capabilities:
+      terminal:
+        type: Endpoint
+
+service_template:
+  node_templates:
+    my_host:
+      type: Host
+      capabilities:
+        terminal:
+          properties:
+            port: not_a_number

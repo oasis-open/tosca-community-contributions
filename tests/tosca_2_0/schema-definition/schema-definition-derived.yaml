@@ -1,0 +1,45 @@
+tosca_definitions_version: tosca_2_0
+
+data_types:
+  ShortStr:
+    derived_from: string
+    validation: { $less_or_equal: [ { $length: [ $value ] }, 5 ] }
+
+node_types:
+  SchemaTester:
+    properties:
+      a_tuple:
+        type: map
+        entry_schema:
+          type: integer
+        key_schema:
+          type: string
+     
+  EnhancementOfSchemaTester:
+    derived_from: SchemaTester
+    properties:
+      a_tuple:
+        entry_schema:
+          description: An integer value greater_or_equal
+          validation: { $greater_or_equal: [ { $value: [] }, 0 ] } 
+        key_schema:
+          description: A string key representing the item name  
+          validation:
+            $matches: "^[a-zA-Z_][a-zA-Z0-9_]*$"          
+
+service_template:
+  node_templates:
+    tester1:
+      type: SchemaTester
+      properties:
+        a_tuple:
+          item1: -1
+          item2: 2
+          item3: 3
+    tester2:
+      type: EnhancementOfSchemaTester
+      properties:
+        a_tuple:
+          item1: 5
+          item2: 10
+
