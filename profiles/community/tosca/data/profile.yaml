@@ -5,27 +5,59 @@ profile: community.tosca.data:0.1
 description: >-
   TOSCA Data Profile type definitions. This files contains
   definitions that provide more concrete types derived from
-  Data abstract node type
+  Data abstract node type. All node types defined hereafter
+  are derived from abstract Data node type defined in the
+  base profile.
+
 
 imports:
 - profile: community.tosca.base:0.1
 
-# Below a set of partial definitions
+
 node_types:
   AtRestData:
     description: >-
-      This node type represents a set of data available in some
-      kind of repository, local or remote (e.g. DB, file,
-      ftp/sftp, object storage, etc.)
+      This node type represents a set of authoritative,
+      persistent data stored within the system’s trust
+      boundary. It is durably persisted, accessible on
+      demand with predictable latency, and independent
+      of streaming or event-driven mechanisms (e.g. DB,
+      local/network filesystem, object storage, etc.)
+    derived_from: Data
+  BatchData:
+    description: >-
+      This node type represents data produced, delivered
+      or ingested at scheduled intervals rather than
+      continuously or on demand. It is not event-driven
+      and is typically generated via periodic processes
+      (e.g., ETL pipelines, daily exports)
     derived_from: Data
   StreamingData:
     description: >-
-      This node type represents a set of streaming data
-      (e.g. queues, topics, such as Kafka, etc.)
+      This node type represents produced and transmitted
+      as an ongoing, unbounded flow. Consumers process
+      data in real time or near real time as it arrives
+      (e.g. Kafka topics etc.)
+    derived_from: Data
+  EventData:
+    description: >-
+      This node type represents data generated or delivered
+      as discrete, individual events, not as a continuous
+      stream. Each event is meaningful on its own and
+      typically represents a state change or notification
+      (e.g. notifications, message queues, SQS, etc.)
     derived_from: Data
   ApiData:
     description: >-
-      This node type represents a set of data available by
-      invoking a webservice/API (e.g. (REST, gRPC, GraphQL))
+      This node type represents data obtained by invoking
+      a remote service via synchronous request/response
+      interactions (e.g. REST, gRPC, GraphQL)
     derived_from: Data
-
+  CachedData:
+    description: >-
+      This node type represents ephemeral, non-authoritative
+      data retrieved from a cache layer, either local or
+      distributed, that stores values temporarily to improve
+      performance or reduce load on authoritative sources
+      (e.g. Redis, Memcached, etc.)
+    derived_from: Data
