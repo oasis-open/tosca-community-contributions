@@ -61,7 +61,7 @@ relationship_types:
     derived_from: ContainedBy
     properties:
       implementation-details:
-        type: json
+        type: JSON
         required: false
     valid_capability_types: [PlatformHost]
   RunsOn:
@@ -73,7 +73,7 @@ relationship_types:
     derived_from: ContainedBy
     properties:
       implementation-details:
-        type: json
+        type: JSON
         required: false
     valid_capability_types: [ExecutionEnvironment]
   AvailableOn:
@@ -85,7 +85,7 @@ relationship_types:
     derived_from: ContainedBy
     properties:
       implementation-details:
-        type: json
+        type: JSON
         required: false
     valid_capability_types: [DataPlatform]
   Processes:
@@ -97,7 +97,7 @@ relationship_types:
     derived_from: DependsOn
     properties:
       implementation-details:
-        type: json
+        type: JSON
         required: false
     valid_capability_types: [DataSource]
   LinksTo:
@@ -109,7 +109,7 @@ relationship_types:
     derived_from: DependsOn
     properties:
       implementation-details:
-        type: json
+        type: JSON
         required: false
     valid_capability_types: [Linkable]
 
@@ -135,7 +135,7 @@ node_types:
         description: >-
           Opaque data that are intended to be processed by
           substituting templates.
-        type: json
+        type: JSON
         required: false
     interfaces:
       Standard:

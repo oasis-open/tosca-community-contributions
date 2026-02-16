@@ -7,37 +7,37 @@ description: >-
   intended to be shared between profiles of all levels of abstraction.
 
 data_types:
-  json:
+  JSON:
     description: >-
-      The json type defines a string that contains data in the JSON
+      The JSON type defines a string that contains data in the JSON
       format
     derived_from: string
     validation: {$validate_json: [$value]}
-  yaml:
+  YAML:
     description: >-
-      The yaml type defines a string that contains data in the YAML
+      The YAML type defines a string that contains data in the YAML
       format
     derived_from: string
     #validation: TBD (may need custom functions)
-  ipv4:
+  IPv4:
     description: >-
-      The ipv4 type defines a string that contain an IPv4 address
+      The IPv4 type defines a string that contain an IPv4 address
     derived_from: string
     validation:
       $matches: [$value, "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"]
-  port:
+  Port:
     description: >-
-      The port type defines integer that contain valid ports
+      The Port type defines integer that contain valid ports
     derived_from: integer
     validation: {$in_range: [$value, [0, 0xFFFF]]}
-  ipv4Socket:
+  IPv4Socket:
     description: >-
       This complex type represents an IPv4 socket (address+port)
     properties:
       ip-address:
-        type: ipv4
+        type: IPv4
       transport-port:
-        type: port
+        type: Port
   genericId:
     description: >-
       The genericId type represents a generic string identifier. It can be used to
