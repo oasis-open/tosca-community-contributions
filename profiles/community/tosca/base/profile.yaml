@@ -131,6 +131,20 @@ node_types:
     description: >-
       Common parent type for all node types in the base profile.
     properties:
+      technology:
+        description: >-
+          Technology that is intended to be used in the
+          implementation. This property is used to select substitution
+          candidates.
+        type: string
+        required: false
+      vendor:
+        description: >-
+          vendor-specific product that is intended to be used in the
+          implementation. This property is used to select substitution
+          candidates.
+        type: string
+        required: false
       implementation-details:
         description: >-
           Opaque data that are intended to be processed by
