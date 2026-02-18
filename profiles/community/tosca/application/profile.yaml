@@ -33,9 +33,9 @@ capability_types:
     derived_from: Feature
     properties:
       port:
-        type: port
+        type: Port
       target-port:
-        type: port
+        type: Port
       name:
         type: string
         required: false
