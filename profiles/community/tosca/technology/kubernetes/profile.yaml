@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_2_0
 
-profile: community.tosca.kubernetes:0.1
+profile: community.tosca.technology.kubernetes:0.1
 
 description: >-
   TOSCA Community Kubernetes Profile
@@ -8,7 +8,7 @@ description: >-
 imports:
   - profile: community.tosca.core:0.1
     namespace: core
-  - profile: community.tosca.platform:0.1
+  - profile: community.tosca.abstract.platform:0.1
     namespace: ptfm
 
 data_types:
