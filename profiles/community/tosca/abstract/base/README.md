@@ -7,7 +7,7 @@ applications are deployed.
 
 ## Type Definitions
 
-The `community.tosca.base` profile defines four node types as shown in
+The `community.tosca.abstract.base` profile defines four node types as shown in
 the following diagram.
 
 ```mermaid

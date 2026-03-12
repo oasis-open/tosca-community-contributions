@@ -138,7 +138,7 @@ it defines:
 
 These node types&mdash;as well as the supporting relationship types
 and capability types&mdash;are organized in the
-`community.tosca.base` profile. It can be used to guide the
+`community.tosca.abstract.base` profile. It can be used to guide the
 development of abstract service templates as shown in the following
 figure:
 
@@ -147,7 +147,7 @@ figure:
 ## Component-Specific System View Profiles
 
 In practice, abstract service templates generally will not use the
-*generic* base node types presented in the `community.tosca.base`
+*generic* base node types presented in the `community.tosca.abstract.base`
 profile. Instead, they will use derived types that further refine and
 extend these base types. For example, derived `Data` node types could
 distinguish between databases and data lakes, or derived `Platform`

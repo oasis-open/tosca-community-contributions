@@ -1,7 +1,7 @@
 # TOSCA Community Data Profile
 
 The Data profile defines types that specialize the abstract Data node type defined in the
-[base profile](https://github.com/Engineering-Research-and-Development/tosca-community-contributions/tree/master/profiles/community/tosca/base).
+[base profile](https://github.com/Engineering-Research-and-Development/tosca-community-contributions/tree/master/profiles/community/tosca/abstract/base).
 They are used to represent various types of Data Sources, which are classified based on their “*delivery modality*”, i.e., how data are accessed and consumed.
 
 The profile currently defines the following node type hierarchy:
