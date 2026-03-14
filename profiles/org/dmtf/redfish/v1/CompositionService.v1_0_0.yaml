@@ -1,0 +1,96 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: ResourceBlockCollection.yaml
+  namespace: rsrblccl
+- url: ZoneCollection.yaml
+  namespace: zncllctn
+- url: Core.yaml
+  namespace: core
+- url: ResourceBlockCollection_caps.yaml
+  namespace: rsblclcp
+- url: ZoneCollection_caps.yaml
+  namespace: zncllcp
+- url: CompositionService_caps.yaml
+  namespace: cmpsrvcp
+data_types:
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        description: >-
+          The available OEM specific actions for this resource.
+        required: false
+node_types:
+  CompositionService:
+    description: >-
+      This is the schema definition for the Composition Service.  It represents the
+      properties for the service itself and has links to the actual list of resources
+      available for composition.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this service is enabled.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    requirements:
+    - ResourceBlocks:
+        node: rsrblccl:ResourceBlockCollection
+        capability: rsblclcp:ResourceBlockCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The resource blocks available on the service.
+    - ResourceZones:
+        node: zncllctn:ZoneCollection
+        capability: zncllcp:ZoneCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The resource zones available on the service.
+    capabilities:
+      feature:
+        type: cmpsrvcp:CompositionServiceFeature
+      containable:
+        type: cmpsrvcp:CompositionServiceContainable

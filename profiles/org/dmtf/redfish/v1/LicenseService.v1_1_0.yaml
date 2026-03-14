@@ -1,0 +1,125 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: LicenseCollection.yaml
+  namespace: lcnscllc
+- url: Core.yaml
+  namespace: core
+- url: LicenseCollection_caps.yaml
+  namespace: lcncllcp
+- url: LicenseService_caps.yaml
+  namespace: lcnsrvcp
+data_types:
+  TransferProtocolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CIFS
+        - FTP
+        - SFTP
+        - HTTP
+        - HTTPS
+        - SCP
+        - TFTP
+        - OEM
+        - NFS
+interface_types:
+  LicenseServiceActions:
+    operations:
+      Install:
+        description: >-
+          This action installs one or more licenses from a remote file.
+        inputs:
+          AuthorizedDevices:
+            type: list
+            description: >-
+              An array of links to the devices to be authorized by the license.
+            required: false
+          LicenseFileURI:
+            type: string
+            description: >-
+              The URI of the license file to install.
+            required: true
+          Password:
+            type: string
+            description: >-
+              The password to access the URI specified by the LicenseFileURI parameter.
+            required: false
+          TargetServices:
+            type: list
+            description: >-
+              An array of links to the managers where the license will be installed.
+            required: false
+          TransferProtocol:
+            type: TransferProtocolType
+            description: >-
+              The network protocol that the license service uses to retrieve the license
+              file located at the URI provided in LicenseFileURI.  This parameter
+              is ignored if the URI provided in LicenseFileURI contains a scheme.
+            required: false
+          Username:
+            type: string
+            description: >-
+              The user name to access the URI specified by the LicenseFileURI parameter.
+            required: false
+node_types:
+  LicenseService:
+    description: >-
+      The LicenseService schema describes the license service and the properties for
+      the service itself with a link to the collection of licenses.  The license service
+      also provides methods for installing licenses in a Redfish service.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LicenseExpirationWarningDays:
+        type: integer
+        description: >-
+          The number of days prior to a license expiration that a warning message
+          is sent.  A value of zero indicates no warning message is sent.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+    requirements:
+    - Licenses:
+        node: lcnscllc:LicenseCollection
+        capability: lcncllcp:LicenseCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of licenses.
+    interfaces:
+      Actions:
+        type: LicenseServiceActions
+    capabilities:
+      feature:
+        type: lcnsrvcp:LicenseServiceFeature
+      containable:
+        type: lcnsrvcp:LicenseServiceContainable

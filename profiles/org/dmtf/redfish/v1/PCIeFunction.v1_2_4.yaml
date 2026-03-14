@@ -1,0 +1,512 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Drive.yaml
+  namespace: drive
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: EthernetInterface.yaml
+  namespace: ethrintr
+- url: NetworkDeviceFunction.yaml
+  namespace: ntwdvcfn
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: Protocol.yaml
+  namespace: protocol
+- url: Assembly.yaml
+  namespace: assembly
+- url: PortCollection.yaml
+  namespace: prtcllc
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: Core.yaml
+  namespace: core
+- url: Drive_caps.yaml
+  namespace: drvcps
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+- url: NetworkDeviceFunction_caps.yaml
+  namespace: ntdvfncp
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+- url: PCIeFunction_caps.yaml
+  namespace: pcfnccp
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: PortCollection_caps.yaml
+  namespace: prtcllcp
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+data_types:
+  DeviceClass:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - UnclassifiedDevice
+        - MassStorageController
+        - NetworkController
+        - DisplayController
+        - MultimediaController
+        - MemoryController
+        - Bridge
+        - CommunicationController
+        - GenericSystemPeripheral
+        - InputDeviceController
+        - DockingStation
+        - Processor
+        - SerialBusController
+        - WirelessController
+        - IntelligentController
+        - SatelliteCommunicationsController
+        - EncryptionController
+        - SignalProcessingController
+        - ProcessingAccelerators
+        - NonEssentialInstrumentation
+        - Coprocessor
+        - UnassignedClass
+        - Other
+  FunctionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Physical
+        - Virtual
+  CacheSummary:
+    description: >-
+      The cache memory of the storage controller in general detail.
+    properties:
+      PersistentCacheSizeMiB:
+        type: integer
+        description: >-
+          The portion of the cache memory that is persistent, measured in MiB.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TotalCacheSizeMiB:
+        type: integer
+        description: >-
+          The total configured cache memory, measured in MiB.
+        required: true
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  ControllerRates:
+    description: >-
+      This property describes the various controller rates used for processes such
+      as volume rebuild or consistency checks.
+    properties:
+      ConsistencyCheckRatePercent:
+        type: integer
+        description: >-
+          The percentage of controller resources used for performing a data consistency
+          check on volumes.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      RebuildRatePercent:
+        type: integer
+        description: >-
+          The percentage of controller resources used for rebuilding/repairing volumes.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      TransformationRatePercent:
+        type: integer
+        description: >-
+          The percentage of controller resources used for transforming volumes from
+          one configuration to another.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+relationship_types:
+  PCIeFunctionDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Drives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      EthernetInterfaces@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      NetworkDeviceFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      StorageControllers:
+        type: list
+        description: >-
+          An array of links to the storage controllers that this PCIe function produces.
+        required: false
+        entry_schema:
+          type: StorageController
+      StorageControllers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  PCIeFunction:
+    description: >-
+      The PCIeFunction schema describes the properties of a PCIe function that is
+      attached to a system.
+    properties:
+      ClassCode:
+        type: string
+        description: >-
+          The Class Code of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([0-9A-Fa-f]{2}){3}$
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DeviceClass:
+        type: DeviceClass
+        description: >-
+          The class for this PCIe function.
+        required: false
+      DeviceId:
+        type: string
+        description: >-
+          The Device ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([0-9A-Fa-f]{2}){2}$
+      FunctionId:
+        type: integer
+        description: >-
+          The PCIe function number.
+        required: false
+      FunctionType:
+        type: FunctionType
+        description: >-
+          The type of the PCIe function.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RevisionId:
+        type: string
+        description: >-
+          The Revision ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([0-9A-Fa-f]{2}){1}$
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SubsystemId:
+        type: string
+        description: >-
+          The Subsystem ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([0-9A-Fa-f]{2}){2}$
+      SubsystemVendorId:
+        type: string
+        description: >-
+          The Subsystem Vendor ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([0-9A-Fa-f]{2}){2}$
+      VendorId:
+        type: string
+        description: >-
+          The Vendor ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([0-9A-Fa-f]{2}){2}$
+    requirements:
+    - Drives:
+        node: drive:Drive
+        capability: drvcps:DriveFeature
+        relationship: PCIeFunctionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the drives that this PCIe function produces.
+    - EthernetInterfaces:
+        node: ethrintr:EthernetInterface
+        capability: ethintcp:EthernetInterfaceFeature
+        relationship: PCIeFunctionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the Ethernet interfaces that this PCIe function produces.
+    - NetworkDeviceFunctions:
+        node: ntwdvcfn:NetworkDeviceFunction
+        capability: ntdvfncp:NetworkDeviceFunctionFeature
+        relationship: PCIeFunctionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the network device functions that the PCIe function
+          produces.
+    - PCIeDevice:
+        node: pcdvc:PCIeDevice
+        capability: pcdvccps:PCIeDeviceFeature
+        relationship: PCIeFunctionDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the PCIe device on which this function resides.
+    capabilities:
+      feature:
+        type: pcfnccp:PCIeFunctionFeature
+      containable:
+        type: pcfnccp:PCIeFunctionContainable
+  StorageController:
+    description: >-
+      The StorageController schema describes a storage controller and its properties.  A
+      storage controller represents a physical or virtual storage device that produces
+      volumes.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this storage controller.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version of this storage controller.
+        required: false
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for the storage controller.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this storage controller.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          The unique identifier for the member within an array.
+        required: true
+      Model:
+        type: string
+        description: >-
+          The model number for the storage controller.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this storage controller.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this storage controller.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this storage controller.
+        required: false
+      SpeedGbps:
+        type: float
+        description: >-
+          The maximum speed of the storage controller's device interface.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Links:
+        type: Links
+        description: >-
+          The links to other resources that are related to this resource.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the storage controller.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the storage controller.
+        required: false
+      CacheSummary:
+        type: CacheSummary
+        description: >-
+          The cache memory of the storage controller in general detail.
+        required: false
+      PCIeInterface:
+        type: pcdvc:PCIeInterface
+        description: >-
+          The PCIe interface details for this controller.
+        required: false
+      SupportedRAIDTypes:
+        type: list
+        description: >-
+          The set of RAID types supported by the storage controller.
+        required: false
+        entry_schema:
+          type: string
+      ControllerRates:
+        type: ControllerRates
+        description: >-
+          This property describes the various controller rates used for processes
+          such as volume rebuild or consistency checks.
+        required: false
+      Measurements:
+        type: list
+        description: >-
+          An array of DSP0274-defined measurement blocks.
+        required: false
+        entry_schema:
+          type: sftwinvn:MeasurementBlock
+    requirements:
+    - SupportedControllerProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The supported set of protocols for communicating with this storage controller.
+    - SupportedDeviceProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The protocols that the storage controller can use to communicate with attached
+          devices.
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this storage controller.
+    - Ports:
+        node: prtcllc:PortCollection
+        capability: prtcllcp:PortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of ports that exist on the storage controller.
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates for device identity and attestation.
+    capabilities:
+      containable:
+        type: pcfnccp:StorageControllerContainable

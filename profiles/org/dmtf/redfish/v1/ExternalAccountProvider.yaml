@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ExternalAccountProvider.v1_8_2.yaml
+  namespace: extaccpr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ExternalAccountProvider_caps.yaml
+  namespace: exacprcp
+node_types:
+  ExternalAccountProvider:
+    description: >-
+      The `ExternalAccountProvider` schema represents a remote service that provides
+      accounts for this manager to use for authentication.
+    derived_from: extaccpr:ExternalAccountProvider
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: exacprcp:ExternalAccountProviderFeature
+      containable:
+        type: exacprcp:ExternalAccountProviderContainable

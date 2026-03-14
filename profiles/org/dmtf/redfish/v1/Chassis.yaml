@@ -1,0 +1,959 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: LogServiceCollection.yaml
+  namespace: lgsrvcl
+- url: Power.yaml
+  namespace: power
+- url: Thermal.yaml
+  namespace: thermal
+- url: Assembly.yaml
+  namespace: assembly
+- url: SensorCollection.yaml
+  namespace: snsrcllc
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: ControlCollection.yaml
+  namespace: cntrcllc
+- url: TrustedComponentCollection.yaml
+  namespace: trscmpcl
+- url: LeakDetectorCollection.yaml
+  namespace: lkdtccl
+- url: LogServiceCollection_caps.yaml
+  namespace: lgsrclcp
+- url: Power_caps.yaml
+  namespace: pwrcps
+- url: Thermal_caps.yaml
+  namespace: thrmlcps
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: SensorCollection_caps.yaml
+  namespace: snscllcp
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+- url: ControlCollection_caps.yaml
+  namespace: cntcllcp
+- url: TrustedComponentCollection_caps.yaml
+  namespace: trcmclcp
+- url: LeakDetectorCollection_caps.yaml
+  namespace: lkdtclcp
+data_types:
+  PhysicalSecurity:
+    description: >-
+      The physical security state of the chassis.
+    properties:
+      IntrusionSensor:
+        type: string
+        description: >-
+          The physical security state of the chassis, such as if hardware intrusion
+          is detected.
+        required: false
+      IntrusionSensorNumber:
+        type: integer
+        description: >-
+          A numerical identifier to represent the physical security sensor.
+        required: false
+      IntrusionSensorReArm:
+        type: string
+        description: >-
+          The policy that describes how the physical security state of the chassis
+          returns to a normal state.
+        required: false
+  Doors:
+    description: >-
+      The doors or access panels of the chassis.
+    properties:
+      Front:
+        type: Front
+        description: >-
+          The front door of the chassis.
+        required: false
+      Rear:
+        type: Rear
+        description: >-
+          The rear door of the chassis.
+        required: false
+  Front:
+    description: >-
+      The front door of the chassis.
+    properties:
+      DoorState:
+        type: string
+        description: >-
+          The state of the door.
+        required: false
+      Locked:
+        type: boolean
+        description: >-
+          Indicates if the door is locked.
+        required: false
+      UserLabel:
+        type: string
+        description: >-
+          A user-assigned label.
+        required: false
+  Rear:
+    description: >-
+      The rear door of the chassis.
+    properties:
+      DoorState:
+        type: string
+        description: >-
+          The state of the door.
+        required: false
+      Locked:
+        type: boolean
+        description: >-
+          Indicates if the door is locked.
+        required: false
+      UserLabel:
+        type: string
+        description: >-
+          A user-assigned label.
+        required: false
+relationship_types:
+  ChassisDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AutomationNodes@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Cables@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ComputerSystems@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedCoolingLoops@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Contains@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      CooledBy:
+        type: list
+        description: >-
+          An array of links to resources or objects that cool this chassis.  Normally,
+          the link is for either a chassis or a specific set of fans.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      CooledBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      CoolingUnits@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Drives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Fans@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagersInChassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeDevices@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      PowerDistribution:
+        type: string
+        description: >-
+          A link to power distribution functionality contained in this chassis.
+        required: false
+      PowerOutlets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      PowerSupplies@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      PoweredBy:
+        type: list
+        description: >-
+          An array of links to resources or objects that power this chassis.  Normally,
+          the link is for either a chassis or a specific set of power supplies.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      PoweredBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Processors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ResourceBlocks@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Storage@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Switches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  ChassisActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets the chassis.  Additionally, it could reset systems or
+          other contained resources depending on the `ResetType` used to invoke this
+          action.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  Chassis:
+    description: >-
+      The `Chassis` schema represents the physical components of a system.  This resource
+      represents the sheet-metal confined spaces and logical zones such as racks,
+      enclosures, chassis and all other containers.  Subsystems, such as sensors,
+      that operate outside of a system's data plane are linked either directly or
+      indirectly through this resource.  A subsystem that operates outside of a system's
+      data plane are not accessible to software that runs on the system.  It also
+      describes the location, such as a slot, socket, or bay, where a unit can be
+      installed, by populating a resource instance with an absent state if a unit
+      is not present.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag of this chassis.
+        required: false
+      ChassisType:
+        type: string
+        description: >-
+          The type of physical form factor of the chassis.
+        required: true
+        validation:
+          $valid_values:
+          - $value
+          - - Rack
+            - Blade
+            - Enclosure
+            - StandAlone
+            - RackMount
+            - Card
+            - Cartridge
+            - Row
+            - Pod
+            - Expansion
+            - Sidecar
+            - Zone
+            - Sled
+            - Shelf
+            - Drawer
+            - Module
+            - Component
+            - IPBasedDrive
+            - RackGroup
+            - StorageEnclosure
+            - ImmersionTank
+            - HeatExchanger
+            - PowerStrip
+            - Other
+      Description:
+        type: string
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IndicatorLED:
+        type: string
+        description: >-
+          The state of the indicator LED, which identifies the chassis.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this chassis.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number of the chassis.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number of the chassis.
+        required: false
+      PowerState:
+        type: string
+        description: >-
+          The current power state of the chassis.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU of the chassis.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number of the chassis.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      PhysicalSecurity:
+        type: PhysicalSecurity
+        description: >-
+          The physical security state of the chassis.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the chassis.
+        required: false
+      DepthMm:
+        type: float
+        description: >-
+          The depth of the chassis.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      HeightMm:
+        type: float
+        description: >-
+          The height of the chassis.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      WeightKg:
+        type: float
+        description: >-
+          The weight of the chassis.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      WidthMm:
+        type: float
+        description: >-
+          The width of the chassis.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      UUID:
+        type: string
+        description: >-
+          The UUID for this chassis.
+        required: false
+      EnvironmentalClass:
+        type: string
+        description: >-
+          The ASHRAE Environmental Class for this chassis.
+        required: false
+      MaxPowerWatts:
+        type: float
+        description: >-
+          The upper bound of the total power consumed by the chassis.
+        required: false
+      MinPowerWatts:
+        type: float
+        description: >-
+          The lower bound of the total power consumed by the chassis.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Measurements:
+        type: list
+        description: >-
+          An array of DSP0274-defined measurement blocks.
+        required: false
+        entry_schema:
+          type: sftwinvn:MeasurementBlock
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number of the chassis.
+        required: false
+      ElectricalSourceManagerURIs:
+        type: list
+        description: >-
+          The URIs of the management interfaces for the external electrical source
+          connections for this chassis.
+        required: false
+        entry_schema:
+          type: string
+      ElectricalSourceNames:
+        type: list
+        description: >-
+          The names of the external electrical sources, such as circuits or outlets,
+          connected to this chassis.
+        required: false
+        entry_schema:
+          type: string
+      PoweredByParent:
+        type: boolean
+        description: >-
+          Indicates that the chassis receives power from the containing chassis.
+        required: false
+      ThermalDirection:
+        type: string
+        description: >-
+          Indicates the thermal management path through the chassis.
+        required: false
+      ThermalManagedByParent:
+        type: boolean
+        description: >-
+          Indicates that the chassis is thermally managed by the parent chassis.
+        required: false
+      HotPluggable:
+        type: boolean
+        description: >-
+          An indication of whether this component can be inserted or removed while
+          the equipment is in operation.
+        required: false
+      Replaceable:
+        type: boolean
+        description: >-
+          An indication of whether this component can be independently replaced as
+          allowed by the vendor's replacement policy.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The hardware version of this chassis.
+        required: false
+      Doors:
+        type: Doors
+        description: >-
+          The doors or access panels of the chassis.
+        required: false
+      HeatingCoolingEquipmentNames:
+        type: list
+        description: >-
+          The names of the external heating or cooling equipment, such as coolant
+          distribution units, connected to this chassis.
+        required: false
+        entry_schema:
+          type: string
+      HeatingCoolingManagerURIs:
+        type: list
+        description: >-
+          The URIs of the management interfaces for the external heating or cooling
+          equipment for this chassis.
+        required: false
+        entry_schema:
+          type: string
+      HeightRackUnits:
+        type: float
+        description: >-
+          The height of the rack-mountable chassis in rack units.
+        required: false
+      RackMountCapacityUnits:
+        type: float
+        description: >-
+          The usable capacity of rack units provided by this chassis.
+        required: false
+      RackMountDepthMm:
+        type: float
+        description: >-
+          The usable depth of the rack-mountable area of the chassis.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RackMountWidth:
+        type: string
+        description: >-
+          The width of the rack-mountable chassis or rack-mounting space.
+        required: false
+      RackUnits:
+        type: string
+        description: >-
+          The type of rack-mount units.
+        required: false
+      ReadyToRemove:
+        type: boolean
+        description: >-
+          An indication of whether the chassis is prepared by the system for removal.
+        required: false
+    requirements:
+    - LogServices:
+        node: lgsrvcl:LogServiceCollection
+        capability: lgsrclcp:LogServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the logs for this chassis.
+    - Power:
+        node: power:Power
+        capability: pwrcps:PowerContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the power properties, or power supplies, power policies, and
+          sensors, for this chassis.
+    - Thermal:
+        node: thermal:Thermal
+        capability: thrmlcps:ThermalContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the thermal properties, such as fans, cooling, and sensors,
+          for this chassis.
+    - NetworkAdapters:
+        # node: ntwadpcl:NetworkAdapterCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of network adapters associated with this chassis.
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this chassis.
+    - PCIeSlots:
+        # node: pcslts:PCIeSlots
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the PCIe slot properties for this chassis.
+    - Sensors:
+        node: snsrcllc:SensorCollection
+        capability: snscllcp:SensorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of sensors located in the equipment and sub-components.
+    - PCIeDevices:
+        # node: pcdvccl:PCIeDeviceCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of PCIe devices located in this chassis.
+    - MediaControllers:
+        # node: mdcntcl:MediaControllerCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of media controllers located in this chassis.
+    - Memory:
+        # node: mmrycllc:MemoryCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of memory located in this chassis that belong
+          to fabric-related resource pools.
+    - MemoryDomains:
+        # node: mmrdmncl:MemoryDomainCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of memory domains located in this chassis that
+          belong to fabric-related resource pools.
+    - Drives:
+        # node: drvcllc:DriveCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of drives within this chassis.
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates for device identity and attestation.
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this chassis.
+    - PowerSubsystem:
+        # node: pwrsbsy:PowerSubsystem
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the power subsystem properties for this chassis.
+    - ThermalSubsystem:
+        # node: thrmsbsy:ThermalSubsystem
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the thermal subsystem properties for this chassis.
+    - Controls:
+        node: cntrcllc:ControlCollection
+        capability: cntcllcp:ControlCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of controls located in this chassis.
+    - FabricAdapters:
+        # node: fbradpcl:FabricAdapterCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of fabric adapters located in this chassis that
+          provide access to fabric-related resource pools.
+    - TrustedComponents:
+        node: trscmpcl:TrustedComponentCollection
+        capability: trcmclcp:TrustedComponentCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the trusted components in this chassis.
+    - Processors:
+        # node: prcscllc:ProcessorCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of processors located in this chassis that belong
+          to fabric-related resource pools.
+    - LeakDetectors:
+        node: lkdtccl:LeakDetectorCollection
+        capability: lkdtclcp:LeakDetectorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of leak detectors located in this chassis.
+    - AutomationNodes:
+        # node: atmtnnd:AutomationNode
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the automation nodes contained in this chassis.
+    - Cables:
+        # node: cable:Cable
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the cables connected to this chassis.
+    - ComputerSystems:
+        # node: cmptsyst:ComputerSystem
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the computer systems that this chassis directly and
+          wholly contains.
+    - ConnectedCoolingLoops:
+        # node: clnglp:CoolingLoop
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to cooling loops connected to this chassis.
+    - ContainedBy:
+        node: Chassis
+        capability: chssscps:ChassisFeature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the chassis that contains this chassis.
+    - Contains:
+        node: Chassis
+        capability: chssscps:ChassisFeature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to any other chassis that this chassis has in it.
+    - CoolingUnits:
+        # node: clngunt:CoolingUnit
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to cooling unit functionality contained in this chassis.
+    - Drives:
+        # node: drive:Drive
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the drives located in this chassis.
+    - Facility:
+        # node: facility:Facility
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the facility that contains this chassis.
+    - Fans:
+        # node: fan:Fan
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the fans that cool this chassis.
+    - ManagedBy:
+        # node: manager:Manager
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers responsible for managing this chassis.
+    - ManagersInChassis:
+        # node: manager:Manager
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers located in this chassis.
+    - PCIeDevices:
+        # node: pcdvc:PCIeDevice
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIe devices located in this chassis.
+    - PowerOutlets:
+        # node: outlet:Outlet
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the outlets that provide power to this chassis.
+    - PowerSupplies:
+        # node: pwrspply:PowerSupply
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the power supplies that provide power to this chassis.
+    - Processors:
+        # node: prcssr:Processor
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the processors located in this chassis.
+    - ResourceBlocks:
+        # node: rsrcblck:ResourceBlock
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the resource blocks located in this chassis.
+    - Storage:
+        # node: storage:Storage
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the storage subsystems connected to or inside this
+          chassis.
+    - Switches:
+        # node: switch:Switch
+        capability: core:Feature
+        relationship: ChassisDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switches located in this chassis.
+    interfaces:
+      Actions:
+        type: ChassisActions
+    capabilities:
+      feature:
+        type: chssscps:ChassisFeature
+      containable:
+        type: chssscps:ChassisContainable

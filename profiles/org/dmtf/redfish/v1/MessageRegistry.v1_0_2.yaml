@@ -1,0 +1,126 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: MessageRegistry_caps.yaml
+  namespace: mssrgscp
+data_types:
+  Message:
+    properties:
+      Description:
+        type: string
+        description: >-
+          This is a short description of how and when this message is to be used.
+        required: true
+      Message:
+        type: string
+        description: >-
+          The actual message.
+        required: true
+      Severity:
+        type: string
+        description: >-
+          This is the severity of the message.
+        required: true
+      NumberOfArgs:
+        type: float
+        description: >-
+          The number of arguments to be expected to be passed in as MessageArgs for
+          this message.
+        required: true
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ParamTypes:
+        type: list
+        description: >-
+          The MessageArg types, in order, for the message.
+        required: false
+        entry_schema:
+          type: ParamType
+      Resolution:
+        type: string
+        description: >-
+          Used to provide suggestions on how to resolve the situation that caused
+          the error.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+  MessageProperty: {}
+  ParamType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - string
+        - number
+node_types:
+  MessageRegistry:
+    description: >-
+      This is the schema definition for all Message Registries.  It represents the
+      properties for the registries themselves.  The MessageId is formed per the Redfish
+      specification.  It consists of the RegistryPrefix concatenated with the version
+      concatenated with the unique identifier for the message registry entry.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Language:
+        type: string
+        description: >-
+          This is the RFC 5646 compliant language code for the registry.
+        required: true
+      RegistryPrefix:
+        type: string
+        description: >-
+          This is the single word prefix used to form a messageID structure.
+        required: true
+      RegistryVersion:
+        type: string
+        description: >-
+          This is the message registry version which is used in the middle portion
+          of a messageID.
+        required: true
+      OwningEntity:
+        type: string
+        description: >-
+          This is the organization or company that publishes this registry.
+        required: true
+      Messages:
+        type: MessageProperty
+        description: >-
+          The pattern property indicates that a free-form string is the unique identifier
+          for the message within the registry.
+        required: true
+    capabilities:
+      feature:
+        type: mssrgscp:MessageRegistryFeature
+      containable:
+        type: mssrgscp:MessageRegistryContainable

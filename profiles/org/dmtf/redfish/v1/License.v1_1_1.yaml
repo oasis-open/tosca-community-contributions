@@ -1,0 +1,232 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Manager.yaml
+  namespace: manager
+- url: Core.yaml
+  namespace: core
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: License_caps.yaml
+  namespace: lcnscps
+data_types:
+  AuthorizationScope:
+    description: >-
+      The authorization scope of the license.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Device
+        - Capacity
+        - Service
+  ContactInfo:
+    description: >-
+      Contact information for this license.
+    properties:
+      ContactName:
+        type: string
+        description: >-
+          Name of this contact.
+        required: false
+      EmailAddress:
+        type: string
+        description: >-
+          Email address for this contact.
+        required: false
+      PhoneNumber:
+        type: string
+        description: >-
+          Phone number for this contact.
+        required: false
+  LicenseOrigin:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - BuiltIn
+        - Installed
+  LicenseType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Production
+        - Prototype
+        - Trial
+relationship_types:
+  LicenseDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AuthorizedDevices:
+        type: list
+        description: >-
+          An array of links to the devices authorized by the license.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      AuthorizedDevices@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      TargetServices@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  License:
+    description: >-
+      The License schema describes a license for a feature.
+    properties:
+      AuthorizationScope:
+        type: AuthorizationScope
+        description: >-
+          The authorization scope of the license.
+        required: false
+      Contact:
+        type: ContactInfo
+        description: >-
+          The contact of the license.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DownloadURI:
+        type: string
+        description: >-
+          The URI at which to download the license file.
+        required: false
+      EntitlementId:
+        type: string
+        description: >-
+          The entitlement identifier for this license.
+        required: false
+      ExpirationDate:
+        type: string
+        description: >-
+          The date and time when the license expires.
+        required: false
+      GracePeriodDays:
+        type: integer
+        description: >-
+          The grace days of this license.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InstallDate:
+        type: string
+        description: >-
+          The date and time when the license was installed.
+        required: false
+      LicenseInfoURI:
+        type: string
+        description: >-
+          The URI at which more information about this license can be obtained.
+        required: false
+      LicenseOrigin:
+        type: LicenseOrigin
+        description: >-
+          This indicates the origin of the license.
+        required: false
+      LicenseString:
+        type: string
+        description: >-
+          The Base64-encoded string of the license.
+        required: false
+      LicenseType:
+        type: LicenseType
+        description: >-
+          The type of the license.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer or producer of this license.
+        required: false
+      MaxAuthorizedDevices:
+        type: integer
+        description: >-
+          The maximum number of devices authorized by the license.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this license.
+        required: false
+      RemainingDuration:
+        type: string
+        description: >-
+          The remaining usage duration before the license expires.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      RemainingUseCount:
+        type: integer
+        description: >-
+          The remaining usage count before the license expires.
+        required: false
+      Removable:
+        type: boolean
+        description: >-
+          An indication of whether the license is removable.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this license.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this license.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status of the license.
+        required: false
+    requirements:
+    - TargetServices:
+        node: manager:Manager
+        capability: mngrcps:ManagerFeature
+        relationship: LicenseDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers where the license is installed.
+    capabilities:
+      feature:
+        type: lcnscps:LicenseFeature
+      containable:
+        type: lcnscps:LicenseContainable

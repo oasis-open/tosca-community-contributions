@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: AllowDeny.v1_0_3.yaml
+  namespace: allwdny
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: AllowDeny_caps.yaml
+  namespace: alldnycp
+node_types:
+  AllowDeny:
+    description: >-
+      The `AllowDeny` schema represents a set of allow or deny configurations.
+    derived_from: allwdny:AllowDeny
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: alldnycp:AllowDenyFeature
+      containable:
+        type: alldnycp:AllowDenyContainable

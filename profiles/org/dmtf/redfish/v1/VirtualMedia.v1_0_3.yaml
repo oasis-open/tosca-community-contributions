@@ -1,0 +1,95 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: VirtualMedia_caps.yaml
+  namespace: vrtmdcp
+data_types:
+  ConnectedVia:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NotConnected
+        - URI
+        - Applet
+        - Oem
+  MediaType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CD
+        - Floppy
+        - USBStick
+        - DVD
+node_types:
+  VirtualMedia:
+    description: >-
+      This resource allows monitoring and control of an instance of virtual media
+      (e.g. a remote CD, DVD, or USB device) functionality provided by a Manager for
+      a system or device.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      ImageName:
+        type: string
+        description: >-
+          The current image name.
+        required: false
+      Image:
+        type: string
+        description: >-
+          A URI providing the location of the selected image.
+        required: false
+      MediaTypes:
+        type: list
+        description: >-
+          This is the media types supported as virtual media.
+        required: false
+        entry_schema:
+          type: MediaType
+      ConnectedVia:
+        type: ConnectedVia
+        description: >-
+          Current virtual media connection methods.
+        required: false
+      Inserted:
+        type: boolean
+        description: >-
+          Indicates if virtual media is inserted in the virtual device.
+        required: false
+      WriteProtected:
+        type: boolean
+        description: >-
+          Indicates the media is write protected.
+        required: false
+    capabilities:
+      feature:
+        type: vrtmdcp:VirtualMediaFeature
+      containable:
+        type: vrtmdcp:VirtualMediaContainable

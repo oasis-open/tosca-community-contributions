@@ -1,0 +1,1139 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Drive.yaml
+  namespace: drive
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Chassis.yaml
+  namespace: chassis
+- url: ComputerSystem.yaml
+  namespace: cmptsyst
+- url: SimpleStorage.yaml
+  namespace: smplstrg
+- url: Core.yaml
+  namespace: core
+- url: Drive_caps.yaml
+  namespace: drvcps
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: ComputerSystem_caps.yaml
+  namespace: cmpsyscp
+- url: SimpleStorage_caps.yaml
+  namespace: smpstrcp
+- url: ConnectionCollection.yaml
+  namespace: cnnccllc
+- url: ConsistencyGroupCollection.yaml
+  namespace: cnsgrpcl
+- url: StorageControllerCollection.yaml
+  namespace: strcntcl
+- url: EndpointGroupCollection.yaml
+  namespace: endgrpcl
+- url: FileSystemCollection.yaml
+  namespace: flsyscl
+- url: StorageMetrics.yaml
+  namespace: strgmtrc
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: StorageGroupCollection.yaml
+  namespace: strgrpcl
+- url: StoragePoolCollection.yaml
+  namespace: strplcl
+- url: VolumeCollection.yaml
+  namespace: vlmcllc
+- url: ConnectionCollection_caps.yaml
+  namespace: cnncllcp
+- url: ConsistencyGroupCollection_caps.yaml
+  namespace: cngrclcp
+- url: StorageControllerCollection_caps.yaml
+  namespace: stcnclcp
+- url: EndpointGroupCollection_caps.yaml
+  namespace: engrclcp
+- url: FileSystemCollection_caps.yaml
+  namespace: flsyclcp
+- url: StorageMetrics_caps.yaml
+  namespace: strmtrcp
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: StorageGroupCollection_caps.yaml
+  namespace: stgrclcp
+- url: StoragePoolCollection_caps.yaml
+  namespace: stplclcp
+- url: VolumeCollection_caps.yaml
+  namespace: vlmcllcp
+- url: Storage_caps.yaml
+  namespace: strgcps
+- url: Assembly.yaml
+  namespace: assembly
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: PortCollection.yaml
+  namespace: prtcllc
+- url: Protocol.yaml
+  namespace: protocol
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: PCIeFunction.yaml
+  namespace: pcfnctn
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: PortCollection_caps.yaml
+  namespace: prtcllcp
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: PCIeFunction_caps.yaml
+  namespace: pcfnccp
+data_types:
+  AutoVolumeCreate:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Disabled
+        - NonRAID
+        - RAID0
+        - RAID1
+  CacheSummary:
+    description: >-
+      This type describes the cache memory of the storage controller in general detail.
+    properties:
+      PersistentCacheSizeMiB:
+        type: integer
+        description: >-
+          The portion of the cache memory that is persistent, measured in MiB.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TotalCacheSizeMiB:
+        type: integer
+        description: >-
+          The total configured cache memory, measured in MiB.
+        required: true
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  ConfigLockOptions:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unlocked
+        - Locked
+        - LockdownUnsupported
+        - CommandUnsupported
+  ConfigurationLock:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+        - Partial
+  EncryptionMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Disabled
+        - UseExternalKey
+        - UseLocalKey
+        - PasswordOnly
+        - PasswordWithExternalKey
+        - PasswordWithLocalKey
+  GetPersonalityNonceResponse:
+    description: >-
+      The personality nonce from a drive.
+    properties:
+      Nonce:
+        type: string
+        description: >-
+          The personality nonce.
+        required: true
+        validation:
+          $matches:
+          - $value
+          - ^([0-9a-fA-F]{2})+$
+  HotspareActivationPolicy:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OnDriveFailure
+        - OnDrivePredictedFailure
+        - OEM
+  MPF:
+    description: >-
+      Multiple physical function-related properties for storage controllers in a storage
+      subsystem.
+    properties:
+      ConfiguredPhysicalFunctions:
+        type: integer
+        description: >-
+          The current number of physical functions configured for the storage controller
+          in this storage subsystem.
+        required: false
+      MaximumSupportedPhysicalFunctions:
+        type: integer
+        description: >-
+          The maximum number of physical functions supported by the storage controller
+          in this storage subsystem.
+        required: false
+      VolumeAssignmentPolicy:
+        type: VolumeAssignmentPolicy
+        description: >-
+          The current volume assignment policy configured for the storage controller
+          in this storage subsystem.
+        required: false
+  NMVeMinimumRequiredResetType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NoReset
+        - ControllerLevel
+        - LimitedControllerLevel
+        - NVMSubsystemReset
+        - PowerCycle
+  NMVePersonalityKeyAlgorithm:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - HMAC_SHA384
+  NMVeUnfreezeAuthMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ProgrammedKey
+        - PhysicalId
+  NVMeConfigurationLockState:
+    description: >-
+      The configurable features that are able to be locked on an NVMe subsystem and
+      their current lock state.
+    properties:
+      FirmwareCommit:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-defined Firmware Commit command.
+        required: false
+      FirmwareImageDownload:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-defined Firmware Image Download command.
+        required: false
+      Lockdown:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-defined Lockdown command.
+        required: false
+      SecuritySend:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-defined Security Send command.
+        required: false
+      VPDWrite:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-MI-defined VPD Write command.
+        required: false
+  NVMePersonality:
+    description: >-
+      An active personality setting of an NVMe subsystem.
+    properties:
+      ChangeAffectsUserData:
+        type: boolean
+        description: >-
+          An indication of whether changing this personality affects user data.
+        required: false
+      Data:
+        type: string
+        description: >-
+          The personality data.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9a-fA-F]{2})+$
+      Default:
+        type: boolean
+        description: >-
+          An indication of whether this personality is set to the manufacturing default
+          values.
+        required: false
+      Frozen:
+        type: boolean
+        description: >-
+          An indication of whether this personality is frozen.
+        required: false
+      Identifier:
+        type: integer
+        description: >-
+          The personality identifier.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 254
+      MinimumRequiredResetType:
+        type: NMVeMinimumRequiredResetType
+        description: >-
+          The minimum reset type required to change the personality settings.
+        required: false
+      Pending:
+        type: boolean
+        description: >-
+          An indication of whether this personality contains pending changes.
+        required: false
+      UnfreezeAuthenticationModes:
+        type: list
+        description: >-
+          The authentication modes supported to unfreeze this personality.
+        required: false
+        entry_schema:
+          type: NMVeUnfreezeAuthMode
+  NVMeSubsystemProperties:
+    description: >-
+      Information specific to NVMe subsystems.
+    properties:
+      ActivePersonalities:
+        type: list
+        description: >-
+          The active personality settings of the NVMe subsystem.
+        required: false
+        entry_schema:
+          type: NVMePersonality
+      ConfigurationLockState:
+        type: NVMeConfigurationLockState
+        description: >-
+          The configurable features that are able to be locked from in-band usage
+          on an NVMe subsystem and their current lock state.
+        required: false
+      MaxNamespacesSupported:
+        type: float
+        description: >-
+          The maximum number of namespace attachments supported by this NVMe subsystem.
+        required: false
+      SharedNamespaceControllerAttachmentSupported:
+        type: boolean
+        description: >-
+          Indicates whether the subsystem supports shared namespace controller attachment,
+          allowing a shared namespace to be attached concurrently to two or more controllers
+          in an NVMe subsystem.
+        required: false
+  Rates:
+    description: >-
+      This type describes the various controller rates used for processes such as
+      volume rebuild or consistency checks.
+    properties:
+      ConsistencyCheckRatePercent:
+        type: integer
+        description: >-
+          The percentage of controller resources used for performing a data consistency
+          check on volumes.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      RebuildRatePercent:
+        type: integer
+        description: >-
+          The percentage of controller resources used for rebuilding/repairing volumes.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      TransformationRatePercent:
+        type: integer
+        description: >-
+          The percentage of controller resources used for transforming volumes from
+          one configuration to another.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+  ResetToDefaultsType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ResetAll
+        - PreserveVolumes
+  StorageControllerActions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: StorageControllerOemActions
+        description: >-
+          The available OEM-specific actions for this resource.
+        required: false
+  StorageControllerOemActions:
+    description: >-
+      The available OEM-specific actions for this resource.
+  TargetConfigurationLockLevel:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Baseline
+  VolumeAssignmentPolicy:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unassigned
+        - Supervisor
+        - WeightedRoundRobin
+relationship_types:
+  StorageDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      BlockSecurityIDUnsupportedDrives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      BlockSecurityIDUpdateUnsuccessfulDrives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Enclosures@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      HostingStorageSystems@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      NVMeoFDiscoverySubsystems@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      StorageServices@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      UnassignedVolumes@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  StorageActions:
+    operations:
+      FreezePersonality:
+        description: >-
+          This action freezes a personality for the NVMe subsystem.
+        inputs:
+          Personality:
+            type: integer
+            description: >-
+              The personality to freeze.  `255` indicates all personalities.
+            required: true
+      GetPersonalityNonce:
+        description: >-
+          This action obtains a nonce required to unfreeze personalities with a programmed
+          key.
+      ImportForeignDrives:
+        description: >-
+          This action imports encrypted foreign drives to a host-based storage controller
+          by supplying encryption access credentials.
+        inputs:
+          ControllerPassword:
+            type: string
+            description: >-
+              The current controller password.  This parameter is not required if
+              the controller does not currently have a password.
+            required: false
+          DriveEncryptionKey:
+            type: string
+            description: >-
+              The encryption key to unlock the drives.
+            required: true
+          DriveEncryptionKeyIdentifier:
+            type: string
+            description: >-
+              An encryption key identifier to filter the drives that are imported.  If
+              not provided, the controller attempts to import all foreign drives.
+            required: false
+      RekeyExternalKey:
+        description: >-
+          This action causes the controllers of the storage subsystem to request new
+          encryption keys managed by an external key service.
+      ResetToDefaults:
+        description: >-
+          The reset action resets the storage device to factory defaults.  This can
+          cause the loss of data.
+        inputs:
+          ResetType:
+            type: ResetToDefaultsType
+            description: >-
+              The type of reset to defaults.
+            required: true
+      RevertPersonalitiesToDefaults:
+        description: >-
+          This action reverts all personalities to their manufacturing default state
+          for the NVMe subsystem.
+      SetControllerPassword:
+        description: >-
+          This action sets the controller boot password for a host-based storage controller.
+        inputs:
+          CurrentPassword:
+            type: string
+            description: >-
+              The current controller password.  This parameter is not needed if the
+              controller does not currently have a password.
+            required: false
+          NewPassword:
+            type: string
+            description: >-
+              The new password to set for the controller.
+            required: true
+          SecurityKey:
+            type: string
+            description: >-
+              The security key for the controller.  This parameter is not needed if
+              the controller does not have a security key.
+            required: false
+      SetEncryptionKey:
+        description: >-
+          This action sets the local encryption key for the storage subsystem.
+        inputs:
+          CurrentEncryptionKey:
+            type: string
+            description: >-
+              The current local encryption key on the storage subsystem.  This parameter
+              is not needed if the controller does not currently have an encryption
+              key.
+            required: false
+          EncryptionKey:
+            type: string
+            description: >-
+              The local encryption key to set on the storage subsystem.
+            required: true
+          EncryptionKeyIdentifier:
+            type: string
+            description: >-
+              The local encryption key identifier used by the storage subsystem.
+            required: false
+      SetPersonalityKey:
+        description: >-
+          This action sets the personality key for the NVMe subsystem.
+        inputs:
+          Algorithm:
+            type: NMVePersonalityKeyAlgorithm
+            description: >-
+              The type of authentication algorithm for the key.
+            required: true
+          Key:
+            type: string
+            description: >-
+              The personality key to set on the NVMe subsystem.
+            required: true
+      UnfreezePersonality:
+        description: >-
+          This action unfreezes a personality for the NVMe subsystem.
+        inputs:
+          AuthenticationMethod:
+            type: NMVeUnfreezeAuthMode
+            description: >-
+              The authentication method for the unfreeze operation.
+            required: true
+          Key:
+            type: string
+            description: >-
+              The authentication key for the unfreeze operation.
+            required: true
+          Nonce:
+            type: string
+            description: >-
+              The personality nonce provided by the `GetPersonalityNonce` action.
+            required: false
+          Personality:
+            type: integer
+            description: >-
+              The personality to freeze.  `255` indicates all personalities.
+            required: true
+node_types:
+  Storage:
+    description: >-
+      The `Storage` schema defines a storage subsystem and its respective properties.  A
+      storage subsystem represents a set of physical or virtual storage controllers
+      and the resources, such as volumes, that can be accessed from that subsystem.
+    properties:
+      AutoVolumeCreate:
+        type: AutoVolumeCreate
+        description: >-
+          Indicates if this storage subsystem automatically creates new volumes for
+          unassigned drives.
+        required: false
+      BlockSecurityIDPolicy:
+        type: boolean
+        description: >-
+          Indicates if the storage controller sends a command to block establishment
+          of a TCG-defined security ID (SID) during each drive boot sequence for drives
+          that support it.
+        required: false
+      ConfigurationLock:
+        type: ConfigurationLock
+        description: >-
+          Indicates whether in-band configuration requests to the storage subsystem
+          are locked.  Other properties, such as `ConfigurationLockState`, contain
+          additional information regarding the status of the configuration lock.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Drives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      EncryptionMode:
+        type: EncryptionMode
+        description: >-
+          The encryption mode of this storage subsystem.
+        required: false
+      HotspareActivationPolicy:
+        type: HotspareActivationPolicy
+        description: >-
+          The policy under which hot spare drives in this storage domain will activate.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for the storage subsystem.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      LocalEncryptionKeyIdentifier:
+        type: string
+        description: >-
+          The local encryption key identifier used by the storage subsystem.
+        required: false
+      MPF:
+        type: MPF
+        description: >-
+          The multiple physical function-related properties for storage controllers
+          in this storage subsystem.
+        required: false
+      NVMeSubsystemProperties:
+        type: NVMeSubsystemProperties
+        description: >-
+          Information specific to NVMe subsystems.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      StorageControllers:
+        type: list
+        description: >-
+          The set of storage controllers that this resource represents.
+        required: false
+        entry_schema:
+          type: StorageController
+      StorageControllers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      TargetConfigurationLockLevel:
+        type: TargetConfigurationLockLevel
+        description: >-
+          Indicates the target configuration lock level for the drive based upon the
+          state of the `ConfigurationLock` property.  Other properties, such as `ConfigurationLockState`,
+          contain additional information regarding the status of the configuration
+          lock.
+        required: false
+    requirements:
+    - Connections:
+        node: cnnccllc:ConnectionCollection
+        capability: cnncllcp:ConnectionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The collection of links to the connections that this storage subsystem contains.
+    - ConsistencyGroups:
+        node: cnsgrpcl:ConsistencyGroupCollection
+        capability: cngrclcp:ConsistencyGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The consistency groups, each of which contains a set of volumes that are
+          treated by an application or set of applications as a single resource, that
+          are managed by this storage subsystem.
+    - Controllers:
+        node: strcntcl:StorageControllerCollection
+        capability: stcnclcp:StorageControllerCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The set of controllers instantiated by this storage subsystem.
+    - Drives:
+        node: drive:Drive
+        capability: drvcps:DriveContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of drives attached to the storage controllers that this resource
+          represents.
+    - EndpointGroups:
+        node: endgrpcl:EndpointGroupCollection
+        capability: engrclcp:EndpointGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          All of the endpoint groups, each of which contains a set of endpoints that
+          are used for a common purpose such as an ACL or logical identification,
+          that belong to this storage subsystem.
+    - FileSystems:
+        node: flsyscl:FileSystemCollection
+        capability: flsyclcp:FileSystemCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          All file systems that are allocated by this storage subsystem.
+    - Metrics:
+        node: strgmtrc:StorageMetrics
+        capability: strmtrcp:StorageMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metrics associated with this storage subsystem.
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Redundancy information for the storage subsystem.
+    - StorageGroups:
+        node: strgrpcl:StorageGroupCollection
+        capability: stgrclcp:StorageGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          All of the storage groups, each of which contains a set of volumes and endpoints
+          that are managed as a group for mapping and masking, that belong to this
+          storage subsystem.
+    - StoragePools:
+        node: strplcl:StoragePoolCollection
+        capability: stplclcp:StoragePoolCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The set of all storage pools that are allocated by this storage subsystem.  A
+          storage pool is the set of storage capacity that can be used to produce
+          volumes or other storage pools.
+    - Volumes:
+        node: vlmcllc:VolumeCollection
+        capability: vlmcllcp:VolumeCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The set of volumes that the storage controllers produce.
+    - BlockSecurityIDUnsupportedDrives:
+        node: drive:Drive
+        capability: drvcps:DriveFeature
+        relationship: StorageDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of drives in this storage subsystem that do not support blocking
+          of TCG-defined security ID (SID).
+    - BlockSecurityIDUpdateUnsuccessfulDrives:
+        node: drive:Drive
+        capability: drvcps:DriveFeature
+        relationship: StorageDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of drives in this storage subsystem for which the most recent attempt
+          to block TCG-defined security ID (SID) failed.
+    - Enclosures:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: StorageDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis to which this storage subsystem is attached.
+    - HostingStorageSystems:
+        node: cmptsyst:ComputerSystem
+        capability: cmpsyscp:ComputerSystemFeature
+        relationship: StorageDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The storage systems that host this storage subsystem.
+    - NVMeoFDiscoverySubsystems:
+        # node: storage:Storage
+        capability: core:Feature
+        relationship: StorageDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the discovery subsystems that discovered this subsystem
+          in an NVMe-oF environment.
+    - SimpleStorage:
+        node: smplstrg:SimpleStorage
+        capability: smpstrcp:SimpleStorageFeature
+        relationship: StorageDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the simple storage instance that corresponds to this storage.
+    - StorageServices:
+        # node: strgsrvc:StorageService
+        capability: core:Feature
+        relationship: StorageDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the storage services that connect to this storage subsystem.
+    - UnassignedVolumes:
+        # node: volume:Volume
+        capability: core:Feature
+        relationship: StorageDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of volumes in this storage subsystem that are not assigned to a
+          physical function.
+    interfaces:
+      Actions:
+        type: StorageActions
+    capabilities:
+      feature:
+        type: strgcps:StorageFeature
+      containable:
+        type: strgcps:StorageContainable
+  StorageController:
+    description: >-
+      The StorageController schema describes a storage controller and its properties.  A
+      storage controller represents a physical or virtual storage device that produces
+      volumes.
+    properties:
+      Actions:
+        type: StorageControllerActions
+        description: >-
+          The available actions for this resource.
+        required: false
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this storage controller.
+        required: false
+      CacheSummary:
+        type: CacheSummary
+        description: >-
+          The cache memory of the storage controller in general detail.
+        required: false
+      ControllerRates:
+        type: Rates
+        description: >-
+          This property describes the various controller rates used for processes
+          such as volume rebuild or consistency checks.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version of this storage controller.
+        required: false
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for the storage controller.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Links:
+        type: StorageControllerLinks
+        description: >-
+          The links to other resources that are related to this resource.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the storage controller.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this storage controller.
+        required: false
+      Measurements:
+        type: list
+        description: >-
+          An array of DSP0274-defined measurement blocks.
+        required: false
+        entry_schema:
+          type: sftwinvn:MeasurementBlock
+      MemberId:
+        type: string
+        description: >-
+          The unique identifier for the member within an array.
+        required: true
+      Model:
+        type: string
+        description: >-
+          The model number for the storage controller.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the storage controller.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeInterface:
+        type: string
+        description: >-
+          The PCIe interface details for this controller.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this storage controller.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this storage controller.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this storage controller.
+        required: false
+      SpeedGbps:
+        type: float
+        description: >-
+          The maximum speed of the storage controller's device interface.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SupportedRAIDTypes:
+        type: list
+        description: >-
+          The set of RAID types supported by the storage controller.
+        required: false
+        entry_schema:
+          type: string
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this storage controller.
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates for device identity and attestation.
+    - Ports:
+        node: prtcllc:PortCollection
+        capability: prtcllcp:PortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of ports that exist on the storage controller.
+    - SupportedControllerProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The supported set of protocols for communicating with this storage controller.
+    - SupportedDeviceProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The protocols that the storage controller can use to communicate with attached
+          devices.
+    capabilities:
+      containable:
+        type: strgcps:StorageControllerContainable
+  StorageControllerLinks:
+    description: >-
+      The links to other resources that are related to this resource.
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      StorageServices@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect to this controller.
+    - PCIeFunctions:
+        node: pcfnctn:PCIeFunction
+        capability: pcfnccp:PCIeFunctionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIe functions that the storage controller produces.
+    - StorageServices:
+        # node: strgsrvc:StorageService
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the storage services that connect to this controller.
+    capabilities:
+      containable:
+        type: strgcps:StorageControllerLinksContainable

@@ -1,0 +1,135 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: DataProtectionLineOfService.yaml
+  namespace: dtprlnos
+- url: DataProtectionLineOfService_caps.yaml
+  namespace: dtprlosc
+- url: DataProtectionLoSCapabilities_caps.yaml
+  namespace: dtprlsc
+relationship_types:
+  DataProtectionLoSCapabilitiesDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SupportedReplicaOptions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  DataProtectionLoSCapabilities:
+    description: >-
+      The capabilities to protect data from loss by the use of a replica.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The value identifies this resource.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SupportedLinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SupportedMinLifetimes:
+        type: list
+        description: >-
+          Supported minimum lifetime that replica must be maintained.
+        required: false
+        entry_schema:
+          type: string
+      SupportedRecoveryGeographicObjectives:
+        type: list
+        description: >-
+          Supported types of failure domains.
+        required: false
+        entry_schema:
+          type: string
+      SupportedRecoveryPointObjectiveTimes:
+        type: list
+        description: >-
+          Supported time intervals defining how much source information can be lost
+          on failure.
+        required: false
+        entry_schema:
+          type: string
+      SupportedRecoveryTimeObjectives:
+        type: list
+        description: >-
+          Supported expectations for time to access an alternate replica.
+        required: false
+        entry_schema:
+          type: string
+      SupportedReplicaTypes:
+        type: list
+        description: >-
+          Supported replica types.
+        required: false
+        entry_schema:
+          type: string
+      SupportsIsolated:
+        type: boolean
+        description: >-
+          Allocating a replica in a separate fault domain is supported.
+        required: false
+    requirements:
+    - SupportedLinesOfService:
+        node: dtprlnos:DataProtectionLineOfService
+        capability: dtprlosc:DataProtectionLineOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Collection of known and supported DataProtectionLinesOfService.
+    - SupportedReplicaOptions:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceFeature
+        relationship: DataProtectionLoSCapabilitiesDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Collection of known and supported replica Classes of Service.
+    capabilities:
+      feature:
+        type: dtprlsc:DataProtectionLoSCapabilitiesFeature
+      containable:
+        type: dtprlsc:DataProtectionLoSCapabilitiesContainable

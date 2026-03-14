@@ -1,0 +1,63 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: DataProtectionLoSCapabilities.yaml
+  namespace: dtprlsc
+- url: Core.yaml
+  namespace: core
+- url: DataStorageLineOfService_caps.yaml
+  namespace: dtstlosc
+node_types:
+  DataStorageLineOfService:
+    description: >-
+      Describe data storage and provisioning capabilities.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IsSpaceEfficient:
+        type: boolean
+        description: >-
+          True implies compression or deduplication of storage.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ProvisioningPolicy:
+        type: string
+        description: >-
+          Provisioning policy for storage.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Fixed
+            - Thin
+      RecoveryTimeObjectives:
+        type: dtprlsc:RecoveryAccessScope
+        description: >-
+          Expectations for time to access the primary store after disaster recover.
+        required: false
+    capabilities:
+      feature:
+        type: dtstlosc:DataStorageLineOfServiceFeature
+      containable:
+        type: dtstlosc:DataStorageLineOfServiceContainable

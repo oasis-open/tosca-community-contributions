@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CXLLogicalDevice.v1_3_0.yaml
+  namespace: cxlldvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CXLLogicalDevice_caps.yaml
+  namespace: cxldvccp
+node_types:
+  CXLLogicalDevice:
+    description: >-
+      The `CXLLogicalDevice` schema contains the properties of a CXL logical device
+      within a PCIe device.
+    derived_from: cxlldvc:CXLLogicalDevice
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: cxldvccp:CXLLogicalDeviceFeature
+      containable:
+        type: cxldvccp:CXLLogicalDeviceContainable

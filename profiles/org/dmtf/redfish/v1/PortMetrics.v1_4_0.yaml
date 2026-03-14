@@ -1,0 +1,502 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: Core.yaml
+  namespace: core
+- url: PortMetrics_caps.yaml
+  namespace: prtmtrcp
+data_types:
+  CXL:
+    description: >-
+      The port metrics specific to CXL ports.
+    properties:
+      BackpressureAveragePercentage:
+        type: integer
+        description: >-
+          The average congestion of the port as a percentage.
+        required: false
+  FibreChannel:
+    description: >-
+      The Fibre Channel-specific port metrics for network ports.
+    properties:
+      CorrectableFECErrors:
+        type: integer
+        description: >-
+          The total number of correctable forward error correction (FEC) errors.
+        required: false
+      InvalidCRCs:
+        type: integer
+        description: >-
+          The total number of invalid cyclic redundancy checks (CRCs).
+        required: false
+      InvalidTXWords:
+        type: integer
+        description: >-
+          The total number of invalid transmission words.
+        required: false
+      LinkFailures:
+        type: integer
+        description: >-
+          The total number of link failures.
+        required: false
+      LossesOfSignal:
+        type: integer
+        description: >-
+          The total number of losses of signal.
+        required: false
+      LossesOfSync:
+        type: integer
+        description: >-
+          The total number of losses of sync.
+        required: false
+      RXBBCreditZero:
+        type: integer
+        description: >-
+          The number of times the receive buffer-to-buffer credit count transitioned
+          to zero.
+        required: false
+      RXExchanges:
+        type: integer
+        description: >-
+          The total number of Fibre Channel exchanges received.
+        required: false
+      RXSequences:
+        type: integer
+        description: >-
+          The total number of Fibre Channel sequences received.
+        required: false
+      TXBBCreditZero:
+        type: integer
+        description: >-
+          The number of times the transmit buffer-to-buffer credit count transitioned
+          to zero.
+        required: false
+      TXBBCreditZeroDurationMilliseconds:
+        type: integer
+        description: >-
+          The total amount of time the port has been blocked from transmitting due
+          to lack of buffer credits.
+        required: false
+      TXBBCredits:
+        type: integer
+        description: >-
+          The number of transmit buffer-to-buffer credits the port is configured to
+          use.
+        required: false
+      TXExchanges:
+        type: integer
+        description: >-
+          The total number of Fibre Channel exchanges transmitted.
+        required: false
+      TXSequences:
+        type: integer
+        description: >-
+          The total number of Fibre Channel sequences transmitted.
+        required: false
+      UncorrectableFECErrors:
+        type: integer
+        description: >-
+          The total number of uncorrectable forward error correction (FEC) errors.
+        required: false
+  GenZ:
+    description: >-
+      The port metrics for a Gen-Z interface.
+    properties:
+      AccessKeyViolations:
+        type: integer
+        description: >-
+          The total number of Access Key Violations detected.
+        required: false
+      EndToEndCRCErrors:
+        type: integer
+        description: >-
+          The total number of ECRC transient errors detected.
+        required: false
+      LLRRecovery:
+        type: integer
+        description: >-
+          The total number of times Link-Level Reliability (LLR) recovery has been
+          initiated.
+        required: false
+      LinkNTE:
+        type: integer
+        description: >-
+          The total number of link-local non-transient errors detected.
+        required: false
+      MarkedECN:
+        type: integer
+        description: >-
+          The number of packets with the Congestion ECN bit set.
+        required: false
+      NonCRCTransientErrors:
+        type: integer
+        description: >-
+          The total number transient errors detected that are unrelated to CRC validation.
+        required: false
+      PacketCRCErrors:
+        type: integer
+        description: >-
+          The total number of PCRC transient errors detected.
+        required: false
+      PacketDeadlineDiscards:
+        type: integer
+        description: >-
+          The number of packets discarded due to the Congestion Deadline sub-field
+          reaching zero.
+        required: false
+      RXStompedECRC:
+        type: integer
+        description: >-
+          The total number of packets received with a stomped ECRC field.
+        required: false
+      ReceivedECN:
+        type: integer
+        description: >-
+          The number of packets received on this interface with the Congestion ECN
+          bit set.
+        required: false
+      TXStompedECRC:
+        type: integer
+        description: >-
+          The total number of packets that this interface stomped the ECRC field.
+        required: false
+  Networking:
+    description: >-
+      The port metrics for network ports, including Ethernet, Fibre Channel, and InfiniBand,
+      that are not specific to one of these protocols.
+    properties:
+      RDMAProtectionErrors:
+        type: integer
+        description: >-
+          The total number of RDMA protection errors.
+        required: false
+      RDMAProtocolErrors:
+        type: integer
+        description: >-
+          The total number of RDMA protocol errors.
+        required: false
+      RDMARXBytes:
+        type: integer
+        description: >-
+          The total number of RDMA bytes received on a port since reset.
+        required: false
+      RDMARXRequests:
+        type: integer
+        description: >-
+          The total number of RDMA requests received on a port since reset.
+        required: false
+      RDMATXBytes:
+        type: integer
+        description: >-
+          The total number of RDMA bytes transmitted on a port since reset.
+        required: false
+      RDMATXReadRequests:
+        type: integer
+        description: >-
+          The total number of RDMA read requests transmitted on a port since reset.
+        required: false
+      RDMATXRequests:
+        type: integer
+        description: >-
+          The total number of RDMA requests transmitted on a port since reset.
+        required: false
+      RDMATXSendRequests:
+        type: integer
+        description: >-
+          The total number of RDMA send requests transmitted on a port since reset.
+        required: false
+      RDMATXWriteRequests:
+        type: integer
+        description: >-
+          The total number of RDMA write requests transmitted on a port since reset.
+        required: false
+      RXBroadcastFrames:
+        type: integer
+        description: >-
+          The total number of valid broadcast frames received on a port since reset.
+        required: false
+      RXDiscards:
+        type: integer
+        description: >-
+          The total number of frames discarded in a port's receive path since reset.
+        required: false
+      RXFCSErrors:
+        type: integer
+        description: >-
+          The total number of frames received with frame check sequence (FCS) errors
+          on a port since reset.
+        required: false
+      RXFalseCarrierErrors:
+        type: integer
+        description: >-
+          The total number of false carrier errors received from phy on a port since
+          reset.
+        required: false
+      RXFrameAlignmentErrors:
+        type: integer
+        description: >-
+          The total number of frames received with alignment errors on a port since
+          reset.
+        required: false
+      RXFrames:
+        type: integer
+        description: >-
+          The total number of frames received on a port since reset.
+        required: false
+      RXMulticastFrames:
+        type: integer
+        description: >-
+          The total number of valid multicast frames received on a port since reset.
+        required: false
+      RXOversizeFrames:
+        type: integer
+        description: >-
+          The total number of frames that exceed the maximum frame size.
+        required: false
+      RXPFCFrames:
+        type: integer
+        description: >-
+          The total number of priority flow control (PFC) frames received on a port
+          since reset.
+        required: false
+      RXPauseXOFFFrames:
+        type: integer
+        description: >-
+          The total number of flow control frames from the network to pause transmission.
+        required: false
+      RXPauseXONFrames:
+        type: integer
+        description: >-
+          The total number of flow control frames from the network to resume transmission.
+        required: false
+      RXUndersizeFrames:
+        type: integer
+        description: >-
+          The total number of frames that are smaller than the minimum frame size
+          of 64 bytes.
+        required: false
+      RXUnicastFrames:
+        type: integer
+        description: >-
+          The total number of valid unicast frames received on a port since reset.
+        required: false
+      TXBroadcastFrames:
+        type: integer
+        description: >-
+          The total number of good broadcast frames transmitted on a port since reset.
+        required: false
+      TXDiscards:
+        type: integer
+        description: >-
+          The total number of frames discarded in a port's transmit path since reset.
+        required: false
+      TXExcessiveCollisions:
+        type: integer
+        description: >-
+          The number of times a single transmitted frame encountered more than 15
+          collisions.
+        required: false
+      TXFrames:
+        type: integer
+        description: >-
+          The total number of frames transmitted on a port since reset.
+        required: false
+      TXLateCollisions:
+        type: integer
+        description: >-
+          The total number of collisions that occurred after one slot time as defined
+          by IEEE 802.3.
+        required: false
+      TXMulticastFrames:
+        type: integer
+        description: >-
+          The total number of good multicast frames transmitted on a port since reset.
+        required: false
+      TXMultipleCollisions:
+        type: integer
+        description: >-
+          The times that a transmitted frame encountered 2-15 collisions.
+        required: false
+      TXPFCFrames:
+        type: integer
+        description: >-
+          The total number of priority flow control (PFC) frames sent on a port since
+          reset.
+        required: false
+      TXPauseXOFFFrames:
+        type: integer
+        description: >-
+          The total number of XOFF frames transmitted to the network.
+        required: false
+      TXPauseXONFrames:
+        type: integer
+        description: >-
+          The total number of XON frames transmitted to the network.
+        required: false
+      TXSingleCollisions:
+        type: integer
+        description: >-
+          The times that a successfully transmitted frame encountered a single collision.
+        required: false
+      TXUnicastFrames:
+        type: integer
+        description: >-
+          The total number of good unicast frames transmitted on a port since reset.
+        required: false
+  SAS:
+    description: >-
+      The physical metrics for Serial Attached SCSI (SAS).
+    properties:
+      InvalidDwordCount:
+        type: integer
+        description: >-
+          The number of invalid dwords that have been received by the phy outside
+          of phy reset sequences.
+        required: false
+      LossOfDwordSynchronizationCount:
+        type: integer
+        description: >-
+          The number of times the phy has restarted the link reset sequence because
+          it lost dword synchronization.
+        required: false
+      RunningDisparityErrorCount:
+        type: integer
+        description: >-
+          The number of dwords containing running disparity errors that have been
+          received by the phy outside of phy reset sequences.
+        required: false
+  Transceiver:
+    description: >-
+      The transceiver metrics.
+    properties:
+      RXInputPowerMilliWatts:
+        type: float
+        description: >-
+          The RX input power value of a small form-factor pluggable (SFP) transceiver.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      SupplyVoltage:
+        type: float
+        description: >-
+          The supply voltage of a small form-factor pluggable (SFP) transceiver.
+        required: false
+      TXBiasCurrentMilliAmps:
+        type: float
+        description: >-
+          The TX bias current value of a small form-factor pluggable (SFP) transceiver.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      TXOutputPowerMilliWatts:
+        type: float
+        description: >-
+          The TX output power value of a small form-factor pluggable (SFP) transceiver.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+node_types:
+  PortMetrics:
+    description: >-
+      The PortMetrics schema contains usage and health statistics for a switch device
+      or component port summary.
+    properties:
+      CXL:
+        type: CXL
+        description: >-
+          The port metrics specific to CXL ports.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FibreChannel:
+        type: FibreChannel
+        description: >-
+          The Fibre Channel-specific port metrics for network ports.
+        required: false
+      GenZ:
+        type: GenZ
+        description: >-
+          The port metrics specific to Gen-Z ports.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Networking:
+        type: Networking
+        description: >-
+          The port metrics for network ports, including Ethernet, Fibre Channel, and
+          InfiniBand, that are not specific to one of these protocols.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeErrors:
+        type: pcdvc:PCIeErrors
+        description: >-
+          The PCIe errors associated with this port.
+        required: false
+      RXBytes:
+        type: integer
+        description: >-
+          The total number of bytes received on a port since reset.
+        required: false
+      RXErrors:
+        type: integer
+        description: >-
+          The total number of received errors on a port since reset.
+        required: false
+      SAS:
+        type: list
+        description: >-
+          The physical (phy) metrics for Serial Attached SCSI (SAS).  Each member
+          represents a single phy.
+        required: false
+        entry_schema:
+          type: SAS
+      TXBytes:
+        type: integer
+        description: >-
+          The total number of bytes transmitted on a port since reset.
+        required: false
+      TXErrors:
+        type: integer
+        description: >-
+          The total number of transmission errors on a port since reset.
+        required: false
+      Transceivers:
+        type: list
+        description: >-
+          The metrics for the transceivers in this port.  Each member represents a
+          single transceiver.
+        required: false
+        entry_schema:
+          type: Transceiver
+    capabilities:
+      feature:
+        type: prtmtrcp:PortMetricsFeature
+      containable:
+        type: prtmtrcp:PortMetricsContainable

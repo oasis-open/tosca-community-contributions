@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: PowerSupply.v1_6_0.yaml
+  namespace: pwrspply
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PowerSupply_caps.yaml
+  namespace: pwrsppcp
+node_types:
+  PowerSupply:
+    description: >-
+      The `PowerSupply` schema describes a power supply unit.  It also describes the
+      location, such as a slot, socket, or bay, where a unit can be installed, by
+      populating a resource instance with an absent state if a unit is not present.
+    derived_from: pwrspply:PowerSupply
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: pwrsppcp:PowerSupplyFeature
+      containable:
+        type: pwrsppcp:PowerSupplyContainable

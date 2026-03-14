@@ -1,0 +1,91 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: MessageRegistryFile_caps.yaml
+  namespace: msrgflcp
+data_types:
+  Location:
+    properties:
+      Language:
+        type: string
+        description: >-
+          The language code for the file the schema is in.
+        required: false
+      Uri:
+        type: string
+        description: >-
+          Link to locally available URI for schema.
+        required: false
+      ArchiveUri:
+        type: string
+        description: >-
+          If the schema is hosted on the service in an archive file, this is the link
+          to the archive file.
+        required: false
+      PublicationUri:
+        type: string
+        description: >-
+          Link to publicly available (canonical) URI for schema.
+        required: false
+      ArchiveFile:
+        type: string
+        description: >-
+          If the schema is hosted on the service in an archive file, this is the name
+          of the file within the archive.
+        required: false
+node_types:
+  MessageRegistryFile:
+    description: >-
+      This is the schema definition for the Schema File locator resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Languages:
+        type: list
+        description: >-
+          Language codes for the schemas available.
+        required: true
+        entry_schema:
+          type: string
+      Registry:
+        type: string
+        description: >-
+          The Registry Name, Major and Minor version used in MessageID construction.
+        required: true
+      Location:
+        type: list
+        description: >-
+          Location information for this schema file.
+        required: true
+        entry_schema:
+          type: Location
+    capabilities:
+      feature:
+        type: msrgflcp:MessageRegistryFileFeature
+      containable:
+        type: msrgflcp:MessageRegistryFileContainable

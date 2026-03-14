@@ -1,0 +1,115 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: LogEntryCollection.yaml
+  namespace: lgentcl
+- url: Core.yaml
+  namespace: core
+- url: LogEntryCollection_caps.yaml
+  namespace: lgenclcp
+- url: LogService_caps.yaml
+  namespace: lgsrvcp
+data_types:
+  OverWritePolicy:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unknown
+        - WrapsWhenFull
+        - NeverOverWrites
+interface_types:
+  LogServiceActions:
+    operations:
+      ClearLog:
+        description: >-
+          This action is used to clear the log for this Log Service.
+node_types:
+  LogService:
+    description: >-
+      This resource represents the log service for the resource or service to which
+      it is associated.
+    properties:
+      DateTime:
+        type: string
+        description: >-
+          The current DateTime (with offset) for the log service, used to set or read
+          time.
+        required: false
+      DateTimeLocalOffset:
+        type: string
+        description: >-
+          The time offset from UTC that the DateTime property is set to in format:
+          +06:00 .
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ([-+][0-1][0-9]:[0-5][0-9])
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaxNumberOfRecords:
+        type: float
+        description: >-
+          The maximum number of log entries this service can have.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      OverWritePolicy:
+        type: OverWritePolicy
+        description: >-
+          The overwrite policy for this service that takes place when the log is full.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+    requirements:
+    - Entries:
+        node: lgentcl:LogEntryCollection
+        capability: lgenclcp:LogEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          References to the log entry collection.
+    interfaces:
+      Actions:
+        type: LogServiceActions
+    capabilities:
+      feature:
+        type: lgsrvcp:LogServiceFeature
+      containable:
+        type: lgsrvcp:LogServiceContainable

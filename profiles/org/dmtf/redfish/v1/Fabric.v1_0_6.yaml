@@ -1,0 +1,105 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: EndpointCollection.yaml
+  namespace: endpcllc
+- url: Protocol.yaml
+  namespace: protocol
+- url: SwitchCollection.yaml
+  namespace: swtccllc
+- url: ZoneCollection.yaml
+  namespace: zncllctn
+- url: EndpointCollection_caps.yaml
+  namespace: endcllcp
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: SwitchCollection_caps.yaml
+  namespace: swtcllcp
+- url: ZoneCollection_caps.yaml
+  namespace: zncllcp
+- url: Fabric_caps.yaml
+  namespace: fbrccps
+node_types:
+  Fabric:
+    description: >-
+      The Fabric schema represents a simple fabric consisting of one or more switches,
+      zero or more endpoints, and zero or more zones.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaxZones:
+        type: integer
+        description: >-
+          The maximum number of zones the switch can currently configure.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+    requirements:
+    - Endpoints:
+        node: endpcllc:EndpointCollection
+        capability: endcllcp:EndpointCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The collection of links to the endpoints that this fabric contains.
+    - FabricType:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol being sent over this fabric.
+    - Switches:
+        node: swtccllc:SwitchCollection
+        capability: swtcllcp:SwitchCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The collection of links to the switches that this fabric contains.
+    - Zones:
+        node: zncllctn:ZoneCollection
+        capability: zncllcp:ZoneCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The collection of links to the zones that this fabric contains.
+    capabilities:
+      feature:
+        type: fbrccps:FabricFeature
+      containable:
+        type: fbrccps:FabricContainable

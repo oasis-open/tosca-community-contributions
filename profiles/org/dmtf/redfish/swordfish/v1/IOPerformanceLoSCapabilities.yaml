@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: IOPerformanceLoSCapabilities.v1_3_0.yaml
+  namespace: iprlsc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: IOPerformanceLoSCapabilities_caps.yaml
+  namespace: iplsccp
+data_types:
+  IOWorkload:
+    description: >-
+      An IO Workload description.
+    derived_from: iprlsc:IOWorkload
+node_types:
+  IOPerformanceLoSCapabilities:
+    description: >-
+      Describe IO performance capabilities.
+    derived_from: iprlsc:IOPerformanceLoSCapabilities
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: iplsccp:IOPerformanceLoSCapabilitiesFeature
+      containable:
+        type: iplsccp:IOPerformanceLoSCapabilitiesContainable
+  IOWorkloadComponent:
+    description: >-
+      Describe a component of a IO workload.
+    derived_from: iprlsc:IOWorkloadComponent
+    capabilities:
+      feature:
+        type: iplsccp:IOWorkloadComponentFeature
+      containable:
+        type: iplsccp:IOWorkloadComponentContainable

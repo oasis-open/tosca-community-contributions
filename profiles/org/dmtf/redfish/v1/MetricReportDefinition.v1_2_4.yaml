@@ -1,0 +1,300 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MetricReport.yaml
+  namespace: mtrcrprt
+- url: Schedule.yaml
+  namespace: schedule
+- url: MetricReport_caps.yaml
+  namespace: mtrrprcp
+- url: Schedule_caps.yaml
+  namespace: schdlcps
+- url: MetricReportDefinition_caps.yaml
+  namespace: mtrpdfcp
+- url: Triggers_caps.yaml
+  namespace: trggcps
+data_types:
+  CalculationAlgorithmEnum:
+    description: >-
+      The function to apply to the list of metric properties.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Average
+        - Maximum
+        - Minimum
+        - Summation
+  CollectionTimeScope:
+    description: >-
+      The time scope of the related metric values.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Point
+        - Interval
+        - StartupInterval
+  Metric:
+    description: >-
+      Specifies a metric to include in the metric report.  The metrics are derived
+      by applying a calculation on each of the listed metric properties.
+    properties:
+      CollectionDuration:
+        type: string
+        description: >-
+          The duration over which the function is computed.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - -?P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?
+      CollectionFunction:
+        type: CalculationAlgorithmEnum
+        description: >-
+          Specifies the function to perform on each of the metric properties listed
+          in the MetricProperties property.
+        required: false
+      CollectionTimeScope:
+        type: CollectionTimeScope
+        description: >-
+          The scope of time over which the function is applied.
+        required: false
+      MetricId:
+        type: string
+        description: >-
+          The label for the metric definition that is derived by applying the collectionFunction
+          to the metric property.  It matches the Id property of the corresponding
+          metric definition.
+        required: false
+      MetricProperties:
+        type: list
+        description: >-
+          The set of URIs for the properties on which this metric is collected.
+        required: false
+        entry_schema:
+          type: string
+  MetricReportDefinitionType:
+    description: >-
+      Indicates when the metric report is generated.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Periodic
+        - OnChange
+        - OnRequest
+  ReportActionsEnum:
+    description: >-
+      Actions to perform when a metric report is generated.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - LogToMetricReportsCollection
+        - RedfishEvent
+  ReportUpdatesEnum:
+    description: >-
+      Handling of subsequent metric reports when a metric report exists.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Overwrite
+        - AppendWrapsWhenFull
+        - AppendStopsWhenFull
+        - NewReport
+  Wildcard:
+    description: >-
+      The wildcard and its substitution values.
+    properties:
+      Keys:
+        type: list
+        description: >-
+          An array of values to substitute for the wildcard.
+        required: false
+        entry_schema:
+          type: string
+      Name:
+        type: string
+        description: >-
+          The string used as a wildcard.
+        required: false
+      Values:
+        type: list
+        description: >-
+          An array of values to substitute for the wildcard.
+        required: false
+        entry_schema:
+          type: string
+relationship_types:
+  MetricReportDefinitionDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Triggers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  MetricReportDefinition:
+    description: >-
+      The MetricReportDefinition schema describes set of metrics that are collected
+      into a metric report.
+    properties:
+      AppendLimit:
+        type: integer
+        description: >-
+          The maximum number of entries that can be appended to a metric report.  When
+          the metric report reaches its limit, its behavior is dictated by the ReportUpdates
+          property.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MetricProperties:
+        type: list
+        description: >-
+          The list of URIs with wildcards and property identifiers to include in the
+          metric report.  If a URI has wildcards, the wildcards are substituted as
+          specified in the Wildcards property.
+        required: false
+        entry_schema:
+          type: string
+      MetricReportDefinitionEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the generation of new metric reports is enabled.
+        required: false
+      MetricReportDefinitionType:
+        type: MetricReportDefinitionType
+        description: >-
+          Specifies when the metric report is generated.
+        required: false
+      MetricReportHeartbeatInterval:
+        type: string
+        description: >-
+          The interval at which to send the complete metric report because the Redfish
+          client wants refreshed metric data even when the data has not changed.  This
+          property value is always greater than the recurrence interval of a metric
+          report, and it only applies when the SuppressRepeatedMetricValue property
+          is `true`.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - -?P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?
+      Metrics:
+        type: list
+        description: >-
+          The list of metrics to include in the metric report.  The metrics might
+          include metric properties or calculations applied to a metric property.
+        required: false
+        entry_schema:
+          type: Metric
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ReportActions:
+        type: list
+        description: >-
+          The set of actions to perform when a metric report is generated.
+        required: false
+        entry_schema:
+          type: ReportActionsEnum
+      ReportUpdates:
+        type: ReportUpdatesEnum
+        description: >-
+          The behavior for how subsequent metric reports are handled in relationship
+          to an existing metric report created from the metric report definition.  Namely,
+          whether to overwrite, append, or create a report resource.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SuppressRepeatedMetricValue:
+        type: boolean
+        description: >-
+          An indication of whether any metrics are suppressed from the generated metric
+          report.  If `true`, any metric that equals the same value in the previously
+          generated metric report is suppressed from the current report.  Also, duplicate
+          metrics are suppressed.  If `false`, no metrics are suppressed from the
+          current report.  The current report might contain no metrics if all metrics
+          equal the values in the previously generated metric report.
+        required: false
+      Wildcards:
+        type: list
+        description: >-
+          The set of wildcards and their substitution values for the entries in the
+          MetricProperties property.
+        required: false
+        entry_schema:
+          type: Wildcard
+    requirements:
+    - MetricReport:
+        node: mtrcrprt:MetricReport
+        capability: mtrrprcp:MetricReportContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The location where the resultant metric report is placed.
+    - Schedule:
+        node: schedule:Schedule
+        capability: schdlcps:ScheduleContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The schedule for generating the metric report.
+    - Triggers:
+        # node: triggers:Triggers
+        capability: core:Feature
+        relationship: MetricReportDefinitionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The triggers that cause this metric report definition to generate a new
+          metric report upon a trigger occurrence when the TriggerActions property
+          contains `RedfishMetricReport`.
+    capabilities:
+      feature:
+        type: mtrpdfcp:MetricReportDefinitionFeature
+      containable:
+        type: mtrpdfcp:MetricReportDefinitionContainable

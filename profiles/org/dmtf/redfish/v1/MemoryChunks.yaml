@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MemoryChunks.v1_6_2.yaml
+  namespace: mmrychnk
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MemoryChunks_caps.yaml
+  namespace: mmrchncp
+node_types:
+  MemoryChunks:
+    description: >-
+      The `MemoryChunks` schema contains the definition of a memory chunk and its
+      configuration.
+    derived_from: mmrychnk:MemoryChunks
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: mmrchncp:MemoryChunksFeature
+      containable:
+        type: mmrchncp:MemoryChunksContainable

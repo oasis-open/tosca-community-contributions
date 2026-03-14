@@ -1,0 +1,261 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: StorageControllerMetrics_caps.yaml
+  namespace: stcnmtcp
+data_types:
+  EGCriticalWarningSummary:
+    description: >-
+      The Endurance Group critical warnings summary.
+    properties:
+      NamespacesInReadOnlyMode:
+        type: boolean
+        description: >-
+          An indication of whether namespaces in one or more Endurance Groups are
+          in read-only mode not as a result of a change in the write protection state
+          of a namespace.
+        required: false
+      ReliabilityDegraded:
+        type: boolean
+        description: >-
+          An indication of whether the reliability of one or more Endurance Groups
+          is degraded due to significant media-related errors or any internal error
+          that degrades the NVM subsystem reliability.
+        required: false
+      SpareCapacityUnderThreshold:
+        type: boolean
+        description: >-
+          An indication of whether the available spare capacity of one or more Endurance
+          Groups is below the threshold.
+        required: false
+  NVMeSMARTMetrics:
+    description: >-
+      The NVMe SMART metrics.
+    properties:
+      AvailableSparePercent:
+        type: float
+        description: >-
+          The normalized percentage of the remaining spare capacity available.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      AvailableSpareThresholdPercent:
+        type: float
+        description: >-
+          The available spare threshold as a normalized percentage.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      CompositeTemperatureCelsius:
+        type: float
+        description: >-
+          The composite temperature (C).
+        required: false
+      ControllerBusyTimeMinutes:
+        type: integer
+        description: >-
+          The total time the controller is busy with I/O commands in minutes.
+        required: false
+      CriticalCompositeTempTimeMinutes:
+        type: integer
+        description: >-
+          The amount of time in minutes that the controller has been operational and
+          that the composite temperature has been greater than or equal to the critical
+          composite temperature threshold.
+        required: false
+      CriticalWarnings:
+        type: string
+        description: >-
+          The NVMe SMART critical warnings.
+        required: false
+      DataUnitsRead:
+        type: integer
+        description: >-
+          The number of 512 byte data units the host has read from the controller
+          as part of processing a SMART Data Units Read Command in units of one thousand.
+        required: false
+      DataUnitsWritten:
+        type: integer
+        description: >-
+          The number of 512 byte data units the host has written to the controller
+          as part of processing a User Data Out Command in units of one thousand.
+        required: false
+      EGCriticalWarningSummary:
+        type: EGCriticalWarningSummary
+        description: >-
+          The Endurance Group critical warnings summary.
+        required: false
+      HostReadCommands:
+        type: integer
+        description: >-
+          The number of SMART Host Read Commands completed by the controller.
+        required: false
+      HostWriteCommands:
+        type: integer
+        description: >-
+          The number of User Data Out Commands completed by the controller.
+        required: false
+      MediaAndDataIntegrityErrors:
+        type: integer
+        description: >-
+          The number of occurrences where the controller detected an unrecovered data
+          integrity error.
+        required: false
+      NumberOfErrorInformationLogEntries:
+        type: integer
+        description: >-
+          The number of error information log entries over the life of the controller.
+        required: false
+      PercentageUsed:
+        type: float
+        description: >-
+          The percentage of the NVM subsystem life used.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 255
+      PowerCycles:
+        type: integer
+        description: >-
+          The number of power cycles.
+        required: false
+      PowerOnHours:
+        type: float
+        description: >-
+          The number of power-on hours.
+        required: false
+      TemperatureSensorsCelsius:
+        type: list
+        description: >-
+          The temperature sensor readings in degree Celsius units for this storage
+          controller.
+        required: false
+        entry_schema:
+          type: float
+      ThermalMgmtTemp1TotalTimeSeconds:
+        type: integer
+        description: >-
+          The number of seconds the controller transitioned to lower power states
+          or performed vendor-specific thermal-management actions while minimizing
+          the impact on performance in order to attempt to reduce the composite temperature.
+        required: false
+      ThermalMgmtTemp1TransitionCount:
+        type: integer
+        description: >-
+          The number of times the controller transitioned to lower power states or
+          performed vendor-specific thermal-management actions while minimizing the
+          impact on performance in order to attempt to reduce the composite temperature.
+        required: false
+      ThermalMgmtTemp2TotalTimeSeconds:
+        type: integer
+        description: >-
+          The number of seconds the controller transitioned to lower power states
+          or performed vendor-specific thermal-management actions regardless of the
+          impact on performance in order to attempt to reduce the composite temperature.
+        required: false
+      ThermalMgmtTemp2TransitionCount:
+        type: integer
+        description: >-
+          The number of times the controller transitioned to lower power states or
+          performed vendor-specific thermal-management actions regardless of the impact
+          on performance in order to attempt to reduce the composite temperature.
+        required: false
+      UnsafeShutdowns:
+        type: integer
+        description: >-
+          The number of unsafe shutdowns.
+        required: false
+      WarningCompositeTempTimeMinutes:
+        type: integer
+        description: >-
+          The amount of time in minutes that the controller has been operational and
+          that the composite temperature has been greater than or equal to the warning
+          composite temperature threshold.
+        required: false
+node_types:
+  StorageControllerMetrics:
+    description: >-
+      The usage and health statistics for a storage controller.
+    properties:
+      CorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of correctable errors for the lifetime of the memory of the storage
+          controller.
+        required: false
+      CorrectableParityErrorCount:
+        type: integer
+        description: >-
+          The number of correctable parity errors for the lifetime of the memory of
+          the storage controller.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      NVMeSMART:
+        type: string
+        description: >-
+          The NVMe SMART metrics for this storage controller.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      StateChangeCount:
+        type: integer
+        description: >-
+          The number of state changes for this storage controller.
+        required: false
+      UncorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable errors for the lifetime of the memory of the
+          storage controller.
+        required: false
+      UncorrectableParityErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable parity errors for the lifetime of the memory
+          of the storage controller.
+        required: false
+    capabilities:
+      feature:
+        type: stcnmtcp:StorageControllerMetricsFeature
+      containable:
+        type: stcnmtcp:StorageControllerMetricsContainable

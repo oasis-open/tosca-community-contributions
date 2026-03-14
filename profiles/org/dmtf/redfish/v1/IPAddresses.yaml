@@ -1,0 +1,25 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: IPAddresses.v1_1_5.yaml
+  namespace: ipddrsss
+data_types:
+  IPv4Address:
+    description: >-
+      This type describes an IPv4 address.
+    derived_from: ipddrsss:IPv4Address
+  IPv6Address:
+    description: >-
+      This type describes an IPv6 address.
+    derived_from: ipddrsss:IPv6Address
+  IPv6GatewayStaticAddress:
+    description: >-
+      This type represents a single IPv6 static address to be assigned on a network
+      interface.
+    derived_from: ipddrsss:IPv6GatewayStaticAddress
+  IPv6StaticAddress:
+    description: >-
+      This type represents a single IPv6 static address to be assigned on a network
+      interface.
+    derived_from: ipddrsss:IPv6StaticAddress

@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: NetworkPort.v1_4_3.yaml
+  namespace: ntwrkprt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: NetworkPort_caps.yaml
+  namespace: ntwprtcp
+node_types:
+  NetworkPort:
+    description: >-
+      The `NetworkPort` schema describes a network port, which is a discrete physical
+      port that can connect to a network.
+    derived_from: ntwrkprt:NetworkPort
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: ntwprtcp:NetworkPortFeature
+      containable:
+        type: ntwprtcp:NetworkPortContainable

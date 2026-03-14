@@ -1,0 +1,295 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Sensor.yaml
+  namespace: sensor
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PowerSupplyMetrics_caps.yaml
+  namespace: pwspmtcp
+data_types:
+  CurrentSensors:
+    description: >-
+      The current sensors for this power supply.
+    properties:
+      Line1:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Line 1 current (A).
+        required: false
+      Line2:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Line 2 current (A).
+        required: false
+      Line3:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Line 3 current (A).
+        required: false
+      Neutral:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Neutral line current (A).
+        required: false
+  EnergySensors:
+    description: >-
+      The energy sensors for this power supply.
+    properties:
+      Line1ToLine2:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 1 to Line 2 energy (kWh) for this power supply.
+        required: false
+      Line1ToNeutral:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 1 to Neutral energy (kWh) for this power supply.
+        required: false
+      Line2ToLine3:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 2 to Line 3 energy (kWh) for this power supply.
+        required: false
+      Line2ToNeutral:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 2 to Neutral energy (kWh) for this power supply.
+        required: false
+      Line3ToLine1:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 3 to Line 1 energy (kWh) for this power supply.
+        required: false
+      Line3ToNeutral:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 3 to Neutral energy (kWh) for this power supply.
+        required: false
+  PowerSensors:
+    description: >-
+      The power sensors for this power supply.
+    properties:
+      Line1ToLine2:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 1 to Line 2 power (W) for this power supply.
+        required: false
+      Line1ToNeutral:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 1 to Neutral power (W) for this power supply.
+        required: false
+      Line2ToLine3:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 2 to Line 3 power (W) for this power supply.
+        required: false
+      Line2ToNeutral:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 2 to Neutral power (W) for this power supply.
+        required: false
+      Line3ToLine1:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 3 to Line 1 power (W) for this power supply.
+        required: false
+      Line3ToNeutral:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 3 to Neutral power (W) for this power supply.
+        required: false
+  VoltageSensors:
+    description: >-
+      The voltage sensors for this power supply.
+    properties:
+      Line1ToLine2:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 1 to Line 2 voltage (V) for this power supply.
+        required: false
+      Line1ToNeutral:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 1 to Neutral voltage (V) for this power supply.
+        required: false
+      Line2ToLine3:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 2 to Line 3 voltage (V) for this power supply.
+        required: false
+      Line2ToNeutral:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 2 to Neutral voltage (V) for this power supply.
+        required: false
+      Line3ToLine1:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 3 to Line 1 voltage (V) for this power supply.
+        required: false
+      Line3ToNeutral:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 3 to Neutral voltage (V) for this power supply.
+        required: false
+interface_types:
+  PowerSupplyMetricsActions:
+    operations:
+      ResetMetrics:
+        description: >-
+          This action resets the summary metrics related to this equipment.
+node_types:
+  PowerSupplyMetrics:
+    description: >-
+      The `PowerSupplyMetrics` schema contains definitions for the metrics of a power
+      supply.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EnergykWh:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The energy consumption (kWh) of this unit.
+        required: false
+      FanSpeedPercent:
+        type: sensor:SensorFanExcerpt
+        description: >-
+          The fan speed (percent) for this power supply.
+        required: false
+      FanSpeedsPercent:
+        type: list
+        description: >-
+          Fan speeds (percent).
+        required: false
+        entry_schema:
+          type: sensor:SensorFanArrayExcerpt
+      FanSpeedsPercent@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      FrequencyHz:
+        type: sensor:SensorExcerpt
+        description: >-
+          The frequency (Hz) for this power supply.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InputCurrentAmps:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          The input current (A) for this power supply.
+        required: false
+      InputPowerWatts:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The input power (W) for this power supply.
+        required: false
+      InputVoltage:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The input voltage (V) for this power supply.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OutputPowerWatts:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The total power output (W) for this power supply.
+        required: false
+      PolyPhaseCurrentAmps:
+        type: CurrentSensors
+        description: >-
+          The input polyphase current readings for this power supply.
+        required: false
+      PolyPhaseEnergykWh:
+        type: EnergySensors
+        description: >-
+          The input polyphase energy consumption readings for this power supply.
+        required: false
+      PolyPhasePowerWatts:
+        type: PowerSensors
+        description: >-
+          The input polyphase power readings for this power supply.
+        required: false
+      PolyPhaseVoltage:
+        type: VoltageSensors
+        description: >-
+          The input polyphase voltage readings for this power supply.
+        required: false
+      RailCurrentAmps:
+        type: list
+        description: >-
+          The output currents (A) for this power supply.
+        required: false
+        entry_schema:
+          type: sensor:SensorCurrentExcerpt
+      RailCurrentAmps@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RailPowerWatts:
+        type: list
+        description: >-
+          The output power readings (W) for this power supply.
+        required: false
+        entry_schema:
+          type: sensor:SensorPowerExcerpt
+      RailPowerWatts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RailVoltage:
+        type: list
+        description: >-
+          The output voltages (V) for this power supply.
+        required: false
+        entry_schema:
+          type: sensor:SensorVoltageExcerpt
+      RailVoltage@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TemperatureCelsius:
+        type: sensor:SensorExcerpt
+        description: >-
+          The temperature (C) for this power supply.
+        required: false
+    interfaces:
+      Actions:
+        type: PowerSupplyMetricsActions
+    capabilities:
+      feature:
+        type: pwspmtcp:PowerSupplyMetricsFeature
+      containable:
+        type: pwspmtcp:PowerSupplyMetricsContainable

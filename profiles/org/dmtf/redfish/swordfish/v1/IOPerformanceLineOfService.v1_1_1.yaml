@@ -1,0 +1,68 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: IOPerformanceLoSCapabilities.v1_0_0.yaml
+  namespace: iprlsc
+- url: Core.yaml
+  namespace: core
+- url: IOPerformanceLineOfService_caps.yaml
+  namespace: iplnofsc
+node_types:
+  IOPerformanceLineOfService:
+    description: >-
+      Describe service option within the IO performance line of service.
+    properties:
+      AverageIOOperationLatencyMicroseconds:
+        type: integer
+        description: >-
+          Expected average IO latency.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      IOOperationsPerSecondIsLimited:
+        type: boolean
+        description: >-
+          Limit the IOPS.
+        required: false
+      IOWorkload:
+        type: iprlsc:IOWorkload
+        description: >-
+          A description of the expected workload.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaxIOOperationsPerSecondPerTerabyte:
+        type: integer
+        description: >-
+          The amount of IOPS a volume of a given committed size can support.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SamplePeriod:
+        type: string
+        description: >-
+          Sampling period over which average values are calculated.
+        required: false
+    capabilities:
+      feature:
+        type: iplnofsc:IOPerformanceLineOfServiceFeature
+      containable:
+        type: iplnofsc:IOPerformanceLineOfServiceContainable

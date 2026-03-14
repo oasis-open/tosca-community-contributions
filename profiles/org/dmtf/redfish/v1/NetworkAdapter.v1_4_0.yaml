@@ -1,0 +1,369 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: NetworkDeviceFunction.yaml
+  namespace: ntwdvcfn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: NetworkPort.yaml
+  namespace: ntwrkprt
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: Assembly.yaml
+  namespace: assembly
+- url: NetworkDeviceFunctionCollection.yaml
+  namespace: ntdvfncl
+- url: NetworkPortCollection.yaml
+  namespace: ntwprtcl
+- url: Core.yaml
+  namespace: core
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: NetworkDeviceFunctionCollection_caps.yaml
+  namespace: ntdvfncc
+- url: NetworkPortCollection_caps.yaml
+  namespace: ntprclcp
+- url: NetworkAdapter_caps.yaml
+  namespace: ntwadpcp
+- url: NetworkDeviceFunction_caps.yaml
+  namespace: ntdvfncp
+- url: NetworkPort_caps.yaml
+  namespace: ntwprtcp
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+data_types:
+  ControllerCapabilities:
+    description: >-
+      The capabilities of a controller.
+    properties:
+      DataCenterBridging:
+        type: DataCenterBridging
+        description: >-
+          Data center bridging (DCB) for this controller.
+        required: false
+      NPAR:
+        type: NicPartitioning
+        description: >-
+          NIC Partitioning (NPAR) capabilities for this controller.
+        required: false
+      NPIV:
+        type: NPIV
+        description: >-
+          N_Port ID Virtualization (NPIV) capabilities for this controller.
+        required: false
+      NetworkDeviceFunctionCount:
+        type: integer
+        description: >-
+          The maximum number of physical functions available on this controller.
+        required: false
+      NetworkPortCount:
+        type: integer
+        description: >-
+          The number of physical ports on this controller.
+        required: false
+      VirtualizationOffload:
+        type: VirtualizationOffload
+        description: >-
+          Virtualization offload for this controller.
+        required: false
+  Controllers:
+    description: >-
+      A network controller ASIC that makes up part of a network adapter.
+    properties:
+      ControllerCapabilities:
+        type: ControllerCapabilities
+        description: >-
+          The capabilities of this controller.
+        required: false
+      FirmwarePackageVersion:
+        type: string
+        description: >-
+          The version of the user-facing firmware package.
+        required: false
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for the network adapter controller.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Links:
+        type: ControllerLinks
+        description: >-
+          The links to other resources that are related to this resource.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the network adapter controller.
+        required: false
+      PCIeInterface:
+        type: pcdvc:PCIeInterface
+        description: >-
+          The PCIe interface details for this controller.
+        required: false
+  DataCenterBridging:
+    description: >-
+      Data center bridging (DCB) for capabilities of a controller.
+    properties:
+      Capable:
+        type: boolean
+        description: >-
+          An indication of whether this controller is capable of data center bridging
+          (DCB).
+        required: false
+  NPIV:
+    description: >-
+      N_Port ID Virtualization (NPIV) capabilities for a controller.
+    properties:
+      MaxDeviceLogins:
+        type: integer
+        description: >-
+          The maximum number of N_Port ID Virtualization (NPIV) logins allowed simultaneously
+          from all ports on this controller.
+        required: false
+      MaxPortLogins:
+        type: integer
+        description: >-
+          The maximum number of N_Port ID Virtualization (NPIV) logins allowed per
+          physical port on this controller.
+        required: false
+  NicPartitioning:
+    description: >-
+      NIC Partitioning capability, status, and configuration for a controller.
+    properties:
+      NparCapable:
+        type: boolean
+        description: >-
+          An indication of whether the controller supports NIC function partitioning.
+        required: false
+      NparEnabled:
+        type: boolean
+        description: >-
+          An indication of whether NIC function partitioning is active on this controller.
+        required: false
+  SRIOV:
+    description: >-
+      Single-root input/output virtualization (SR-IOV) capabilities.
+    properties:
+      SRIOVVEPACapable:
+        type: boolean
+        description: >-
+          An indication of whether this controller supports single root input/output
+          virtualization (SR-IOV) in Virtual Ethernet Port Aggregator (VEPA) mode.
+        required: false
+  VirtualFunction:
+    description: >-
+      A virtual function of a controller.
+    properties:
+      DeviceMaxCount:
+        type: integer
+        description: >-
+          The maximum number of virtual functions supported by this controller.
+        required: false
+      MinAssignmentGroupSize:
+        type: integer
+        description: >-
+          The minimum number of virtual functions that can be allocated or moved between
+          physical functions for this controller.
+        required: false
+      NetworkPortMaxCount:
+        type: integer
+        description: >-
+          The maximum number of virtual functions supported per network port for this
+          controller.
+        required: false
+  VirtualizationOffload:
+    description: >-
+      A Virtualization offload capability of a controller.
+    properties:
+      SRIOV:
+        type: SRIOV
+        description: >-
+          Single-root input/output virtualization (SR-IOV) capabilities.
+        required: false
+      VirtualFunction:
+        type: VirtualFunction
+        description: >-
+          The virtual function of the controller.
+        required: false
+interface_types:
+  NetworkAdapterActions:
+    operations:
+      ResetSettingsToDefault:
+        description: >-
+          This action is to clear the settings back to factory defaults.
+node_types:
+  NetworkAdapter:
+    description: >-
+      The NetworkAdapter schema represents a physical network adapter capable of connecting
+      to a computer network.  Examples include but are not limited to Ethernet, Fibre
+      Channel, and converged network adapters.
+    properties:
+      Controllers:
+        type: list
+        description: >-
+          The set of network controllers ASICs that make up this NetworkAdapter.
+        required: false
+        entry_schema:
+          type: Controllers
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for the network adapter.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the network adapter.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer or OEM of this network adapter.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model string for this network adapter.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          Part number for this network adapter.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The manufacturer SKU for this network adapter.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this network adapter.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly resource associated with this adapter.
+    - NetworkDeviceFunctions:
+        node: ntdvfncl:NetworkDeviceFunctionCollection
+        capability: ntdvfncc:NetworkDeviceFunctionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of network device functions associated with this
+          network adapter.
+    - NetworkPorts:
+        node: ntwprtcl:NetworkPortCollection
+        capability: ntprclcp:NetworkPortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of network ports associated with this network
+          adapter.
+    interfaces:
+      Actions:
+        type: NetworkAdapterActions
+    capabilities:
+      feature:
+        type: ntwadpcp:NetworkAdapterFeature
+      containable:
+        type: ntwadpcp:NetworkAdapterContainable
+  ControllerLinks:
+    description: >-
+      The links to other resources that are related to this resource.
+    properties:
+      NetworkDeviceFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      NetworkPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeDevices@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - NetworkDeviceFunctions:
+        node: ntwdvcfn:NetworkDeviceFunction
+        capability: ntdvfncp:NetworkDeviceFunctionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the network device functions associated with this network
+          controller.
+    - NetworkPorts:
+        node: ntwrkprt:NetworkPort
+        capability: ntwprtcp:NetworkPortContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the network ports associated with this network controller.
+    - PCIeDevices:
+        node: pcdvc:PCIeDevice
+        capability: pcdvccps:PCIeDeviceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIe devices associated with this network controller.
+    capabilities:
+      containable:
+        type: ntwadpcp:ControllerLinksContainable

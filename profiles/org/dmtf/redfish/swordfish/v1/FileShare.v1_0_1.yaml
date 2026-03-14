@@ -1,0 +1,184 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: FileSystem.yaml
+  namespace: flsystm
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: FileSystem_caps.yaml
+  namespace: flsyscp
+- url: DataStorageLoSCapabilities.yaml
+  namespace: dtstlsc
+- url: EthernetInterfaceCollection.yaml
+  namespace: ethintcl
+- url: StorageReplicaInfo.yaml
+  namespace: strrplin
+- url: EthernetInterfaceCollection_caps.yaml
+  namespace: etinclcp
+- url: FileShare_caps.yaml
+  namespace: flshrcps
+data_types:
+  QuotaType:
+    description: >-
+      Indicates whether quotas are enabled and enforced by this file share. A value
+      of Soft means that quotas are enabled but not enforced, and a value of Hard
+      means that quotas are enabled and enforced.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Soft
+        - Hard
+relationship_types:
+  FileShareDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  FileShare:
+    description: >-
+      An instance of a shared set of files with a common directory structure.
+    properties:
+      CASupported:
+        type: boolean
+        description: >-
+          Continuous Availability is supported. Client/Server mediated recovery from
+          network and server failure with application transparency.
+        required: false
+      DefaultAccessCapabilities:
+        type: list
+        description: >-
+          An array of default access capabilities for the file share. The types of
+          default access can include Read, Write, and/or Execute.
+        required: false
+        entry_schema:
+          type: dtstlsc:StorageAccessCapability
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ExecuteSupport:
+        type: boolean
+        description: >-
+          Execute access is supported by the file share.
+        required: false
+      FileSharePath:
+        type: string
+        description: >-
+          A path to an exported file or directory on the file system where this file
+          share is hosted.
+        required: false
+      FileShareQuotaType:
+        type: QuotaType
+        description: >-
+          Specifies the type of quota enforcement.
+        required: false
+      FileShareRemainingQuotaBytes:
+        type: integer
+        description: >-
+          The number of remaining bytes that may be used by this file share.
+        required: false
+      FileShareTotalQuotaBytes:
+        type: integer
+        description: >-
+          The maximum number of bytes that may be used by this file share.
+        required: false
+      FileSharingProtocols:
+        type: list
+        description: >-
+          An array of file sharing protocols supported by this file share.
+        required: false
+        entry_schema:
+          type: flsystm:FileProtocol
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LowSpaceWarningThresholdPercents:
+        type: list
+        description: >-
+          An array of low space warning threshold percentages for the file share.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+        entry_schema:
+          type: integer
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RootAccess:
+        type: boolean
+        description: >-
+          Root access is allowed by the file share.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          Indicates the status of the file share.
+        required: false
+      WritePolicy:
+        type: strrplin:ReplicaUpdateMode
+        description: >-
+          Defines how writes are replicated to the shared source.
+        required: false
+    requirements:
+    - EthernetInterfaces:
+        node: ethintcl:EthernetInterfaceCollection
+        capability: etinclcp:EthernetInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the collection of Ethernet interfaces that provide access to this
+          file share.
+    - ClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceFeature
+        relationship: FileShareDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the ClassOfService for this file share.
+    - FileSystem:
+        node: flsystm:FileSystem
+        capability: flsyscp:FileSystemFeature
+        relationship: FileShareDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the file system containing the file share.
+    capabilities:
+      feature:
+        type: flshrcps:FileShareFeature
+      containable:
+        type: flshrcps:FileShareContainable

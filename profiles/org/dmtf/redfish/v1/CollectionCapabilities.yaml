@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CollectionCapabilities.v1_4_1.yaml
+  namespace: cllccpbl
+- url: Core.yaml
+  namespace: core
+- url: CollectionCapabilities_caps.yaml
+  namespace: cllcpbcp
+node_types:
+  CollectionCapabilities:
+    description: >-
+      This type describes the capabilities of a collection.
+    derived_from: cllccpbl:CollectionCapabilities
+    capabilities:
+      feature:
+        type: cllcpbcp:CollectionCapabilitiesFeature
+      containable:
+        type: cllcpbcp:CollectionCapabilitiesContainable

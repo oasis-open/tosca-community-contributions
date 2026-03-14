@@ -1,0 +1,126 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: DataSecurityLineOfService_caps.yaml
+  namespace: dtsclosc
+node_types:
+  DataSecurityLineOfService:
+    description: >-
+      Describes data security service level requirements.
+    properties:
+      AntivirusEngineProvider:
+        type: string
+        description: >-
+          AntiVirus provider.
+        required: false
+      AntivirusScanPolicies:
+        type: list
+        description: >-
+          Policy for triggering an AntiVirus scan.
+        required: false
+        entry_schema:
+          type: string
+      ChannelEncryptionStrength:
+        type: string
+        description: >-
+          Key size for transport channel encryption.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Bits_0
+            - Bits_112
+            - Bits_128
+            - Bits_192
+            - Bits_256
+      DataSanitizationPolicy:
+        type: string
+        description: >-
+          Data sanitization policy.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - None
+            - Clear
+            - CryptographicErase
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      HostAuthenticationType:
+        type: string
+        description: >-
+          Authentication type for hosts (servers) or initiator endpoints.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - None
+            - PKI
+            - Ticket
+            - Password
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MediaEncryptionStrength:
+        type: string
+        description: >-
+          Key size for media encryption.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Bits_0
+            - Bits_112
+            - Bits_128
+            - Bits_192
+            - Bits_256
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SecureChannelProtocol:
+        type: string
+        description: >-
+          Protocol that provide encrypted communication.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - None
+            - TLS
+            - IPsec
+            - RPCSEC_GSS
+      UserAuthenticationType:
+        type: string
+        description: >-
+          Authentication type for users (or programs).
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - None
+            - PKI
+            - Ticket
+            - Password
+    capabilities:
+      feature:
+        type: dtsclosc:DataSecurityLineOfServiceFeature
+      containable:
+        type: dtsclosc:DataSecurityLineOfServiceContainable

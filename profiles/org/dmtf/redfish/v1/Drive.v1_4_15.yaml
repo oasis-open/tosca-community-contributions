@@ -1,0 +1,368 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Assembly.yaml
+  namespace: assembly
+- url: Protocol.yaml
+  namespace: protocol
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: Drive_caps.yaml
+  namespace: drvcps
+- url: Task.yaml
+  namespace: task
+- url: Task_caps.yaml
+  namespace: taskcaps
+data_types:
+  EncryptionAbility:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - SelfEncryptingDrive
+        - Other
+  EncryptionStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unecrypted
+        - Unlocked
+        - Locked
+        - Foreign
+        - Unencrypted
+  HotspareType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - Global
+        - Chassis
+        - Dedicated
+  MediaType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - HDD
+        - SSD
+        - SMR
+  StatusIndicator:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OK
+        - Fail
+        - Rebuild
+        - PredictiveFailureAnalysis
+        - Hotspare
+        - InACriticalArray
+        - InAFailedArray
+relationship_types:
+  DriveDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Volumes@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  DriveActions:
+    operations:
+      SecureErase:
+        description: >-
+          This action securely erases the contents of the drive.
+node_types:
+  Drive:
+    description: >-
+      The `Drive` schema represents a single physical drive for a system, including
+      links to associated volumes.  It also describes the location, such as a slot,
+      socket, or bay, where a unit can be installed, by populating a resource instance
+      with an absent state if a unit is not present.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this drive.
+        required: false
+      BlockSizeBytes:
+        type: integer
+        description: >-
+          The size, in bytes, of the smallest addressable unit, or block.
+        required: false
+      CapableSpeedGbs:
+        type: float
+        description: >-
+          The speed, in gigabits per second (Gbit/s) units, at which this drive can
+          communicate to a storage controller in ideal conditions.
+        required: false
+      CapacityBytes:
+        type: integer
+        description: >-
+          The size, in bytes, of this drive.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EncryptionAbility:
+        type: EncryptionAbility
+        description: >-
+          The encryption ability of this drive.
+        required: false
+      EncryptionStatus:
+        type: EncryptionStatus
+        description: >-
+          The status of the encryption of this drive.
+        required: false
+      FailurePredicted:
+        type: boolean
+        description: >-
+          An indication of whether this drive currently predicts a failure in the
+          near future.
+        required: false
+      HotspareType:
+        type: HotspareType
+        description: >-
+          The type of hot spare that this drive serves as.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for the drive.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      IndicatorLED:
+        type: resource:IndicatorLED
+        description: >-
+          The state of the indicator LED, that identifies the drive.
+        required: false
+      Location:
+        type: list
+        description: >-
+          The location of the drive.
+        required: false
+        entry_schema:
+          type: resource:Location
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this drive.
+        required: false
+      MediaType:
+        type: MediaType
+        description: >-
+          The type of media contained in this drive.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for the drive.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NegotiatedSpeedGbs:
+        type: float
+        description: >-
+          The speed, in gigabits per second (Gbit/s) units, at which this drive currently
+          communicates to the storage controller.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Operations:
+        type: list
+        description: >-
+          The operations currently running on the drive.
+        required: false
+        entry_schema:
+          type: Operations
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this drive.
+        required: false
+      PhysicalLocation:
+        type: resource:Location
+        description: >-
+          The location of the drive.  This property is equivalent to the `Location`
+          property common to other standard Redfish resources.
+        required: false
+      PredictedMediaLifeLeftPercent:
+        type: float
+        description: >-
+          The percentage of reads and writes that are predicted to be available for
+          the media.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Revision:
+        type: string
+        description: >-
+          The revision of this drive.  For SCSI-based drives, this is the version
+          of the drive from the 'Inquiry' command, which can be the firmware or hardware
+          version.  For other types of drives, this is the hardware version.
+        required: false
+      RotationSpeedRPM:
+        type: float
+        description: >-
+          The rotation speed of this drive, in revolutions per minute (RPM) units.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this drive.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this drive.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      StatusIndicator:
+        type: StatusIndicator
+        description: >-
+          The state of the status indicator, which communicates status information
+          about this drive.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this drive.
+    - Protocol:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol that this drive currently uses to communicate to the storage
+          controller.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the chassis that contains this drive.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect to this drive.
+    - Volumes:
+        # node: volume:Volume
+        capability: core:Feature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the volumes that this drive either wholly or only partially
+          contains.
+    interfaces:
+      Actions:
+        type: DriveActions
+    capabilities:
+      feature:
+        type: drvcps:DriveFeature
+      containable:
+        type: drvcps:DriveContainable
+  Operations:
+    description: >-
+      An operation currently running on this resource.
+    properties:
+      OperationName:
+        type: string
+        description: >-
+          The name of the operation.
+        required: false
+      PercentageComplete:
+        type: integer
+        description: >-
+          The percentage of the operation that has been completed.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+    requirements:
+    - AssociatedTask:
+        node: task:Task
+        capability: taskcaps:TaskContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the task associated with the operation, if any.
+    capabilities:
+      containable:
+        type: drvcps:OperationsContainable

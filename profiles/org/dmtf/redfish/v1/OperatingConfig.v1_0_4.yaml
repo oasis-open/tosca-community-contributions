@@ -1,0 +1,152 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: OperatingConfig_caps.yaml
+  namespace: oprcnfcp
+data_types:
+  BaseSpeedPrioritySettings:
+    description: >-
+      The clock speed for a set of cores.
+    properties:
+      BaseSpeedMHz:
+        type: integer
+        description: >-
+          The clock speed to configure the set of cores in MHz.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      CoreCount:
+        type: integer
+        description: >-
+          The number of cores to configure with a specified speed.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      CoreIDs:
+        type: list
+        description: >-
+          The identifier of the cores to configure with the specified speed.
+        required: false
+        entry_schema:
+          type: integer
+  TurboProfileDatapoint:
+    description: >-
+      The turbo profile for a set of active cores.
+    properties:
+      ActiveCoreCount:
+        type: integer
+        description: >-
+          The number of active cores to be configured with the specified maximum clock
+          speed.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MaxSpeedMHz:
+        type: integer
+        description: >-
+          The maximum turbo clock speed that correspond to the number of active cores
+          in MHz.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+node_types:
+  OperatingConfig:
+    description: >-
+      The `OperatingConfig` schema specifies a configuration that can be used when
+      the processor is operational.
+    properties:
+      BaseSpeedMHz:
+        type: integer
+        description: >-
+          The base (nominal) clock speed of the processor in MHz.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      BaseSpeedPrioritySettings:
+        type: list
+        description: >-
+          The clock speed for sets of cores when the configuration is operational.
+        required: false
+        entry_schema:
+          type: BaseSpeedPrioritySettings
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaxJunctionTemperatureCelsius:
+        type: integer
+        description: >-
+          The maximum temperature of the junction in degree Celsius units.
+        required: false
+      MaxSpeedMHz:
+        type: integer
+        description: >-
+          The maximum clock speed to which the processor can be configured in MHz.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      TDPWatts:
+        type: integer
+        description: >-
+          The thermal design point of the processor in watt units.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      TotalAvailableCoreCount:
+        type: integer
+        description: >-
+          The number of cores in the processor that can be configured.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      TurboProfile:
+        type: list
+        description: >-
+          The turbo profiles for the processor.  A turbo profile is the maximum turbo
+          clock speed as a function of the number of active cores.
+        required: false
+        entry_schema:
+          type: TurboProfileDatapoint
+    capabilities:
+      feature:
+        type: oprcnfcp:OperatingConfigFeature
+      containable:
+        type: oprcnfcp:OperatingConfigContainable

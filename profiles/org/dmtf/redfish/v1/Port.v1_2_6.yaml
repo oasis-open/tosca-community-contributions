@@ -1,0 +1,329 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: RouteEntryCollection.yaml
+  namespace: rtentcl
+- url: VCATEntryCollection.yaml
+  namespace: vctncllc
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Port.yaml
+  namespace: port
+- url: Switch.yaml
+  namespace: switch
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Port_caps.yaml
+  namespace: portcaps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+- url: PortMetrics.yaml
+  namespace: prtmtrcs
+- url: Protocol.yaml
+  namespace: protocol
+- url: PortMetrics_caps.yaml
+  namespace: prtmtrcp
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: RouteEntryCollection_caps.yaml
+  namespace: rtenclcp
+- url: VCATEntryCollection_caps.yaml
+  namespace: vctcllcp
+data_types:
+  LinkNetworkTechnology:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Ethernet
+        - InfiniBand
+        - FibreChannel
+        - GenZ
+  LinkState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+  LinkStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - LinkUp
+        - Starting
+        - Training
+        - LinkDown
+        - NoLink
+  PortMedium:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Electrical
+        - Optical
+  PortType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - UpstreamPort
+        - DownstreamPort
+        - InterswitchPort
+        - ManagementPort
+        - BidirectionalPort
+        - UnconfiguredPort
+relationship_types:
+  PortDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AssociatedEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitchPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  PortActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets this port.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  Port:
+    description: >-
+      The Port schema contains properties that describe a port of a switch, controller,
+      chassis, or any other device that could be connected to another entity.
+    properties:
+      ActiveWidth:
+        type: integer
+        description: >-
+          The number of active lanes for this interface.
+        required: false
+      CurrentSpeedGbps:
+        type: float
+        description: >-
+          The current speed of this port.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      GenZ:
+        type: GenZ
+        description: >-
+          Gen-Z specific properties.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InterfaceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the interface is enabled.
+        required: false
+      LinkNetworkTechnology:
+        type: LinkNetworkTechnology
+        description: >-
+          The link network technology capabilities of this port.
+        required: false
+      LinkState:
+        type: LinkState
+        description: >-
+          The desired link state for this interface.
+        required: false
+      LinkStatus:
+        type: LinkStatus
+        description: >-
+          The link status for this interface.
+        required: false
+      LinkTransitionIndicator:
+        type: integer
+        description: >-
+          The number of link state transitions for this interface.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the port.
+        required: false
+      MaxSpeedGbps:
+        type: float
+        description: >-
+          The maximum speed of this port as currently configured.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PortId:
+        type: string
+        description: >-
+          The label of this port on the physical package for this port.
+        required: false
+      PortMedium:
+        type: PortMedium
+        description: >-
+          The physical connection medium for this port.
+        required: false
+      PortType:
+        type: PortType
+        description: >-
+          The type of this port.
+        required: false
+      SignalDetected:
+        type: boolean
+        description: >-
+          An indication of whether a signal is detected on this interface.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Width:
+        type: integer
+        description: >-
+          The number of lanes, phys, or other physical transport links that this port
+          contains.
+        required: false
+    requirements:
+    - Metrics:
+        node: prtmtrcs:PortMetrics
+        capability: prtmtrcp:PortMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metrics associated with this port.
+    - PortProtocol:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol being sent over this port.
+    - AssociatedEndpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints at the other end of the link.
+    - ConnectedPorts:
+        node: port:Port
+        capability: portcaps:PortFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the remote device ports at the other end of the link.
+    - ConnectedSwitchPorts:
+        node: port:Port
+        capability: portcaps:PortFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switch ports at the other end of the link.
+    - ConnectedSwitches:
+        node: switch:Switch
+        capability: swtchcps:SwitchFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switches at the other end of the link.
+    interfaces:
+      Actions:
+        type: PortActions
+    capabilities:
+      feature:
+        type: portcaps:PortFeature
+      containable:
+        type: portcaps:PortContainable
+  GenZ:
+    description: >-
+      This type defines Gen-Z specific port properties.
+    requirements:
+    - LPRT:
+        node: rtentcl:RouteEntryCollection
+        capability: rtenclcp:RouteEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The Linear Packet Relay Table for the port.
+    - MPRT:
+        node: rtentcl:RouteEntryCollection
+        capability: rtenclcp:RouteEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          the Multi-subnet Packet Relay Table for the port.
+    - VCAT:
+        node: vctncllc:VCATEntryCollection
+        capability: vctcllcp:VCATEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          the Virtual Channel Action Table for the port.
+    capabilities:
+      containable:
+        type: portcaps:GenZContainable

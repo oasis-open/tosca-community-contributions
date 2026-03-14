@@ -1,0 +1,344 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Sensor.yaml
+  namespace: sensor
+- url: Circuit.yaml
+  namespace: circuit
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Outlet.yaml
+  namespace: outlet
+- url: Core.yaml
+  namespace: core
+- url: Circuit_caps.yaml
+  namespace: crctcps
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Outlet_caps.yaml
+  namespace: otltcps
+- url: PowerSupply_caps.yaml
+  namespace: pwrsppcp
+data_types:
+  CurrentSensors:
+    description: >-
+      The current sensors for this outlet.
+    properties:
+      Line1:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Line 1 current sensor.
+        required: false
+      Line2:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Line 2 current sensor.
+        required: false
+      Line3:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Line 3 current sensor.
+        required: false
+      Neutral:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Neutral line current sensor.
+        required: false
+  VoltageSensors:
+    description: >-
+      The voltage readings for this outlet.
+    properties:
+      Line1ToLine2:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 1 to Line 2 voltage reading for this outlet.
+        required: false
+      Line1ToNeutral:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 1 to Neutral voltage reading for this outlet.
+        required: false
+      Line2ToLine3:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 2 to Line 3 voltage reading for this outlet.
+        required: false
+      Line2ToNeutral:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 2 to Neutral voltage reading for this outlet.
+        required: false
+      Line3ToLine1:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 3 to Line 1 voltage reading for this outlet.
+        required: false
+      Line3ToNeutral:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 3 to Neutral voltage reading for this outlet.
+        required: false
+  VoltageType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - AC
+        - DC
+relationship_types:
+  OutletDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      DistributionCircuits@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerSupplies@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  OutletActions:
+    operations:
+      PowerControl:
+        description: >-
+          This action turns the outlet on or off.
+        inputs:
+          PowerState:
+            type: outlet:PowerState
+            description: >-
+              The desired power state of the outlet.
+            required: false
+      ResetMetrics:
+        description: >-
+          This action resets metrics related to this outlet.
+node_types:
+  Outlet:
+    description: >-
+      The Outlet schema contains definition for an electrical outlet.
+    properties:
+      CurrentAmps:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          The current reading for this single phase outlet.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ElectricalConsumerNames:
+        type: list
+        description: >-
+          An array of names of downstream devices that are powered by this outlet.
+        required: false
+        entry_schema:
+          type: string
+      ElectricalContext:
+        type: sensor:ElectricalContext
+        description: >-
+          The combination of current-carrying conductors.
+        required: false
+      EnergykWh:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The energy reading for this outlet.
+        required: false
+      FrequencyHz:
+        type: sensor:SensorExcerpt
+        description: >-
+          The frequency reading for this outlet.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IndicatorLED:
+        type: resource:IndicatorLED
+        description: >-
+          The state of the indicator LED, which identifies the outlet.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NominalVoltage:
+        type: circuit:NominalVoltageType
+        description: >-
+          The nominal voltage for this outlet.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OutletType:
+        type: outlet:ReceptacleType
+        description: >-
+          The type of receptacle according to NEMA, IEC, or regional standards.
+        required: false
+      PhaseWiringType:
+        type: circuit:PhaseWiringType
+        description: >-
+          The number of ungrounded current-carrying conductors (phases) and the total
+          number of conductors (wires).
+        required: false
+      PolyPhaseCurrentAmps:
+        type: CurrentSensors
+        description: >-
+          The current readings for this outlet.
+        required: false
+      PolyPhaseVoltage:
+        type: VoltageSensors
+        description: >-
+          The voltage readings for this outlet.
+        required: false
+      PowerCycleDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power on after a PowerControl action to cycle
+          power.  Zero seconds indicates no delay.
+        required: false
+      PowerEnabled:
+        type: boolean
+        description: >-
+          Indicates if the outlet can be powered.
+        required: false
+      PowerLoadPercent:
+        type: sensor:SensorExcerpt
+        description: >-
+          The power load (%) for this outlet.
+        required: false
+      PowerOffDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power off after a PowerControl action.  Zero
+          seconds indicates no delay to power off.
+        required: false
+      PowerOnDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power up after a power cycle or a PowerControl
+          action.  Zero seconds indicates no delay to power up.
+        required: false
+      PowerRestoreDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power on after power has been restored.  Zero
+          seconds indicates no delay.
+        required: false
+      PowerRestorePolicy:
+        type: circuit:PowerRestorePolicyTypes
+        description: >-
+          The desired power state of the outlet when power is restored after a power
+          loss.
+        required: false
+      PowerState:
+        type: resource:PowerState
+        description: >-
+          The power state of the outlet.
+        required: false
+      PowerWatts:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The power reading for this outlet.
+        required: false
+      RatedCurrentAmps:
+        type: float
+        description: >-
+          The rated maximum current allowed for this outlet.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UserLabel:
+        type: string
+        description: >-
+          A user-assigned label.
+        required: false
+      Voltage:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The voltage reading for this single phase outlet.
+        required: false
+      VoltageType:
+        type: VoltageType
+        description: >-
+          The type of voltage applied to the outlet.
+        required: false
+    requirements:
+    - BranchCircuit:
+        node: circuit:Circuit
+        capability: crctcps:CircuitFeature
+        relationship: OutletDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the branch circuit related to this outlet.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: OutletDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Any array of links to chassis connected to this outlet.
+    - DistributionCircuits:
+        node: circuit:Circuit
+        capability: crctcps:CircuitFeature
+        relationship: OutletDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to mains or input circuits powered by this outlet.
+    - PowerSupplies:
+        # node: pwrspply:PowerSupply
+        capability: core:Feature
+        relationship: OutletDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the power supplies connected to this outlet.
+    interfaces:
+      Actions:
+        type: OutletActions
+    capabilities:
+      feature:
+        type: otltcps:OutletFeature
+      containable:
+        type: otltcps:OutletContainable

@@ -1,0 +1,84 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Privileges.v1_0_0.yaml
+  namespace: prvlgs
+- url: Core.yaml
+  namespace: core
+- url: Role_caps.yaml
+  namespace: rolecaps
+data_types:
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        description: >-
+          The available OEM specific actions for this resource.
+        required: false
+node_types:
+  Role:
+    description: >-
+      This resource defines a user role to be used in conjunction with a Manager Account.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      IsPredefined:
+        type: boolean
+        description: >-
+          This property is used to indicate if the Role is one of the Redfish Predefined
+          Roles vs a Custom role.
+        required: false
+      AssignedPrivileges:
+        type: list
+        description: >-
+          The redfish privileges that this role includes.
+        required: false
+        entry_schema:
+          type: prvlgs:PrivilegeType
+      OemPrivileges:
+        type: list
+        description: >-
+          The OEM privileges that this role includes.
+        required: false
+        entry_schema:
+          type: string
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+      RoleId:
+        type: string
+        description: >-
+          This property contains the name of the Role.
+        required: false
+    capabilities:
+      feature:
+        type: rolecaps:RoleFeature
+      containable:
+        type: rolecaps:RoleContainable

@@ -1,0 +1,94 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: JsonSchemaFile_caps.yaml
+  namespace: jsscflcp
+data_types:
+  Location:
+    description: >-
+      Location information for a schema file.
+    properties:
+      ArchiveFile:
+        type: string
+        description: >-
+          The name of the file in the archive, if the schema is hosted on the service
+          in an archive file.
+        required: false
+      ArchiveUri:
+        type: string
+        description: >-
+          The link to an archive file, if the schema is hosted on the service in an
+          archive file.
+        required: false
+      Language:
+        type: string
+        description: >-
+          The language code for the schema file.
+        required: false
+      PublicationUri:
+        type: string
+        description: >-
+          The link to publicly available (canonical) URI for schema.
+        required: false
+      Uri:
+        type: string
+        description: >-
+          The link to locally available URI for schema.
+        required: false
+node_types:
+  JsonSchemaFile:
+    description: >-
+      The JsonSchemaFile schema contains the properties that describe the locations,
+      as URIs, of a Redfish Schema definition that a Redfish Service implements or
+      references.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Languages:
+        type: list
+        description: >-
+          The RFC5646-conformant language codes for the available schemas.
+        required: true
+        entry_schema:
+          type: string
+      Location:
+        type: list
+        description: >-
+          Location information for this schema file.
+        required: true
+        entry_schema:
+          type: Location
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Schema:
+        type: string
+        description: >-
+          The @odata.type name this schema describes.
+        required: true
+    capabilities:
+      feature:
+        type: jsscflcp:JsonSchemaFileFeature
+      containable:
+        type: jsscflcp:JsonSchemaFileContainable

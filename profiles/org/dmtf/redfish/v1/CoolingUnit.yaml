@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CoolingUnit.v1_5_0.yaml
+  namespace: clngunt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CoolingUnit_caps.yaml
+  namespace: clnuntcp
+node_types:
+  CoolingUnit:
+    description: >-
+      The `CoolingUnit` schema contains the definition for a cooling system component
+      or unit, such as a coolant distribution unit (CDU) or a heat exchanger.
+    derived_from: clngunt:CoolingUnit
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: clnuntcp:CoolingUnitFeature
+      containable:
+        type: clnuntcp:CoolingUnitContainable

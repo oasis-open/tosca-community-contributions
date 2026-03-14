@@ -1,0 +1,83 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CollectionCapabilities_caps.yaml
+  namespace: cllcpbcp
+- url: Resource.yaml
+  namespace: resource
+data_types:
+  Capability:
+    description: >-
+      This type describes a capability of a collection for a specific use case.
+    properties:
+      CapabilitiesObject:
+        type: odatav4:idRef
+        description: >-
+          The link to the Resource the client may GET to understand how to form a
+          POST request for a collection.
+        required: true
+      Links:
+        type: Links
+        description: >-
+          The links to other Resources that are related to this Resource.
+        required: true
+      UseCase:
+        type: UseCase
+        description: >-
+          The use case in which a client may issue a POST request to the collection.
+        required: true
+  Links:
+    description: >-
+      The links to other Resources that are related to this Resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          The ID(s) of the Resources associated with this capability.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      TargetCollection:
+        type: resource:ResourceCollection
+        description: >-
+          Reference to the collection that this capabilities structure is describing.
+        required: true
+  UseCase:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ComputerSystemComposition
+        - VolumeCreation
+node_types:
+  CollectionCapabilities:
+    description: >-
+      This type describes the capabilities of a collection.
+    properties:
+      Capabilities:
+        type: list
+        description: >-
+          The list of capabilities supported by this Resource.
+        required: false
+        entry_schema:
+          type: Capability
+    capabilities:
+      feature:
+        type: cllcpbcp:CollectionCapabilitiesFeature
+      containable:
+        type: cllcpbcp:CollectionCapabilitiesContainable

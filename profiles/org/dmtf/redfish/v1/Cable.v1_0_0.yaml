@@ -1,0 +1,301 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Port_caps.yaml
+  namespace: portcaps
+- url: Resource_caps.yaml
+  namespace: rsrccps
+- url: Assembly.yaml
+  namespace: assembly
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: Cable_caps.yaml
+  namespace: cblcps
+data_types:
+  CableClass:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Power
+        - Network
+        - Storage
+        - Fan
+        - PCIe
+        - USB
+        - Video
+        - Fabric
+        - Serial
+        - General
+  CableStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Normal
+        - Degraded
+        - Failed
+        - Testing
+        - Disabled
+        - SetByService
+  ConnectorType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ACPower
+        - DB9
+        - DCPower
+        - DisplayPort
+        - HDMI
+        - ICI
+        - IPASS
+        - PCIe
+        - Proprietary
+        - RJ45
+        - SATA
+        - SCSI
+        - SlimSAS
+        - SFP
+        - SFPPlus
+        - USBA
+        - USBC
+        - QSFP
+relationship_types:
+  CableDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      DownstreamChassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      DownstreamPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      DownstreamResources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      UpstreamChassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      UpstreamPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      UpstreamResources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  Cable:
+    description: >-
+      The Cable schema contains properties that describe a cable connecting endpoints
+      of a chassis, port, or any other cable-compatible endpoint.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this cable.
+        required: false
+      CableClass:
+        type: CableClass
+        description: >-
+          The identifier for the downstream resource.
+        required: false
+      CableStatus:
+        type: CableStatus
+        description: >-
+          The user-reported status of this resource.
+        required: false
+      CableType:
+        type: string
+        description: >-
+          The type of this cable.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DownstreamConnectorTypes:
+        type: list
+        description: >-
+          The connector types this cable supports.
+        required: false
+        entry_schema:
+          type: ConnectorType
+      DownstreamName:
+        type: string
+        description: >-
+          The identifier for the downstream resource.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LengthMeters:
+        type: float
+        description: >-
+          The length of the cable in meters.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the assembly.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this cable.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number of the cable.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this cable.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this cable.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this cable.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UpstreamConnectorTypes:
+        type: list
+        description: >-
+          The connector types this cable supports.
+        required: false
+        entry_schema:
+          type: ConnectorType
+      UpstreamName:
+        type: string
+        description: >-
+          The identifier for the downstream resource.
+        required: false
+      UserDescription:
+        type: string
+        description: >-
+          The description of this cable.
+        required: false
+      Vendor:
+        type: string
+        description: >-
+          The manufacturer of this cable.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this cable.
+    - DownstreamChassis:
+        node: Chassis
+        capability: chssscps:ChassisFeature
+        relationship: CableDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the downstream chassis connected to this cable.
+    - DownstreamPorts:
+        node: Port
+        capability: portcaps:PortFeature
+        relationship: CableDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the downstream ports connected to this cable.
+    - DownstreamResources:
+        node: resource:Resource
+        capability: rsrccps:ResourceFeature
+        relationship: CableDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the downstream resources connected to this cable.
+    - UpstreamChassis:
+        # node: chassis:Chassis
+        capability: core:Feature
+        relationship: CableDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the upstream chassis connected to this cable.
+    - UpstreamPorts:
+        # node: port:Port
+        capability: core:Feature
+        relationship: CableDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the upstream ports connected to this cable.
+    - UpstreamResources:
+        node: resource:Resource
+        capability: rsrccps:ResourceFeature
+        relationship: CableDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the upstream resources connected to this cable.
+    capabilities:
+      feature:
+        type: cblcps:CableFeature
+      containable:
+        type: cblcps:CableContainable

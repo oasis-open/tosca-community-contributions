@@ -1,0 +1,18 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+- url: Resource_caps.yaml
+  namespace: rsrccps
+data_types:
+  ReferenceableMember: {}
+  ResourceCollection: {}
+node_types:
+  Resource:
+    capabilities:
+      feature:
+        type: rsrccps:ResourceFeature
+      containable:
+        type: rsrccps:ResourceContainable

@@ -1,0 +1,70 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: RouteSetEntryCollection.yaml
+  namespace: rtstencl
+- url: Core.yaml
+  namespace: core
+- url: RouteSetEntryCollection_caps.yaml
+  namespace: rtstencc
+- url: RouteEntry_caps.yaml
+  namespace: rtentcp
+node_types:
+  RouteEntry:
+    description: >-
+      The RouteEntry schema describes the content of route entry rows.  Each route
+      entry contains route sets that list the possible routes for the route entry.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MinimumHopCount:
+        type: integer
+        description: >-
+          The minimum number of hops.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RawEntryHex:
+        type: string
+        description: >-
+          The raw data of route entry rows.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){8}$
+    requirements:
+    - RouteSet:
+        node: rtstencl:RouteSetEntryCollection
+        capability: rtstencc:RouteSetEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of route set entries associated with this route.
+    capabilities:
+      feature:
+        type: rtentcp:RouteEntryFeature
+      containable:
+        type: rtentcp:RouteEntryContainable

@@ -1,0 +1,87 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ComputerSystem.yaml
+  namespace: cmptsyst
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: BootOption_caps.yaml
+  namespace: btoptcp
+node_types:
+  BootOption:
+    description: >-
+      The BootOption schema reports information about a single boot option in a system.  It
+      represents the properties of a bootable device available in the system.
+    properties:
+      Alias:
+        type: cmptsyst:BootSource
+        description: >-
+          The alias of this boot source.
+        required: false
+      BootOptionEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the boot option is enabled.  If `true`, it is enabled.  If
+          `false`, the boot option that the boot order array on the computer system
+          contains is skipped.  In the UEFI context, this property influences the
+          load option active flag for the boot option.
+        required: false
+      BootOptionReference:
+        type: string
+        description: >-
+          The unique boot option.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DisplayName:
+        type: string
+        description: >-
+          The user-readable display name of the boot option that appears in the boot
+          order list in the user interface.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          An array of links to resources or objects associated with this boot option.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      UefiDevicePath:
+        type: string
+        description: >-
+          The UEFI device path to access this UEFI boot option.
+        required: false
+    capabilities:
+      feature:
+        type: btoptcp:BootOptionFeature
+      containable:
+        type: btoptcp:BootOptionContainable

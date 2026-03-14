@@ -1,0 +1,121 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: NVMeFirmwareImage.yaml
+  namespace: nvmfrmim
+- url: NVMeFirmwareImage_caps.yaml
+  namespace: nvfrimcp
+- url: Resource_caps.yaml
+  namespace: rsrccps
+- url: NVMeDomain_caps.yaml
+  namespace: nvmdmncp
+relationship_types:
+  NVMeDomainDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AssociatedDomains@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  NVMeDomain:
+    description: >-
+      Properties for the Domain.
+    properties:
+      AvailableFirmwareImages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DomainMembers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaximumCapacityPerEnduranceGroupBytes:
+        type: integer
+        description: >-
+          The maximum capacity per endurance group in bytes of this NVMe Domain.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TotalDomainCapacityBytes:
+        type: integer
+        description: >-
+          The total capacity in bytes of this NVMe Domain.
+        required: false
+      UnallocatedDomainCapacityBytes:
+        type: integer
+        description: >-
+          The total unallocated capacity in bytes of this NVMe Domain.
+        required: false
+    requirements:
+    - AvailableFirmwareImages:
+        node: nvmfrmim:NVMeFirmwareImage
+        capability: nvfrimcp:NVMeFirmwareImageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A collection of available firmware images.
+    - DomainMembers:
+        node: resource:Resource
+        capability: rsrccps:ResourceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The members of the domain.
+    - AssociatedDomains:
+        # node: nvmdmn:NVMeDomain
+        capability: core:Feature
+        relationship: NVMeDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to associated domains.
+    capabilities:
+      feature:
+        type: nvmdmncp:NVMeDomainFeature
+      containable:
+        type: nvmdmncp:NVMeDomainContainable

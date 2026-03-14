@@ -1,0 +1,75 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: IOStatistics.yaml
+  namespace: isttstcs
+- url: Core.yaml
+  namespace: core
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+- url: StorageMetrics_caps.yaml
+  namespace: strmtrcp
+node_types:
+  StorageMetrics:
+    description: >-
+      The usage and health statistics for a storage subsystem.
+    properties:
+      CompressionSavingsBytes:
+        type: integer
+        description: >-
+          Current compression savings on the storage system in bytes.
+        required: false
+      DeduplicationSavingsBytes:
+        type: integer
+        description: >-
+          Current deduplication savings on the storage system in bytes.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      StateChangeCount:
+        type: float
+        description: >-
+          The number of state changes for this storage subsystem.
+        required: false
+      ThinProvisioningSavingsBytes:
+        type: integer
+        description: >-
+          Current thin provisioning savings on the storage system in bytes.
+        required: false
+    requirements:
+    - IOStatistics:
+        node: isttstcs:IOStatistics
+        capability: isttcps:IOStatisticsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Statistics for this storage system.
+    capabilities:
+      feature:
+        type: strmtrcp:StorageMetricsFeature
+      containable:
+        type: strmtrcp:StorageMetricsContainable

@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Session.v1_8_0.yaml
+  namespace: session
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Session_caps.yaml
+  namespace: sssncps
+node_types:
+  Session:
+    description: >-
+      The `Session` resource describes a single connection (session) between a client
+      and a Redfish service instance.
+    derived_from: session:Session
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: sssncps:SessionFeature
+      containable:
+        type: sssncps:SessionContainable

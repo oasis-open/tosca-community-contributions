@@ -1,0 +1,149 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.v1_3_0.yaml
+  namespace: resource
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: Schedule.yaml
+  namespace: schedule
+- url: Core.yaml
+  namespace: core
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: Schedule_caps.yaml
+  namespace: schdlcps
+- url: DataProtectionLineOfService_caps.yaml
+  namespace: dtprlosc
+data_types:
+  Actions:
+    properties:
+      '#DataProtectionLineOfService_CreateReplicas':
+        type: CreateReplicas
+        description: >-
+          This action creates an on-demand replica.
+        required: false
+  CreateReplicas:
+    description: >-
+      This action creates an on-demand replica.
+    properties:
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+node_types:
+  DataProtectionLineOfService:
+    description: >-
+      Describes a data protection service option.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IsIsolated:
+        type: boolean
+        description: >-
+          The replica is in a separate fault domain.
+        required: false
+      MinLifetime:
+        type: string
+        description: >-
+          Minimum lifetime (seconds) that replica must be maintained.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RecoveryGeographicObjective:
+        type: string
+        description: >-
+          Geographic distribution scopes.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Server
+            - Rack
+            - RackGroup
+            - Row
+            - Datacenter
+            - Region
+      RecoveryPointObjectiveTime:
+        type: string
+        description: >-
+          Time interval defining how much source data that can be lost on failure.
+        required: false
+      RecoveryTimeObjective:
+        type: string
+        description: >-
+          An enumeration value that indicates the expected time to access an alternate
+          replica.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - OnlineActive
+            - OnlinePassive
+            - Nearline
+            - Offline
+      ReplicaAccessLocation:
+        type: resource:Location
+        description: >-
+          Location that supplies data access to the replica.
+        required: false
+      ReplicaType:
+        type: string
+        description: >-
+          Type of replica.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Mirror
+            - Snapshot
+            - Clone
+            - TokenizedClone
+    requirements:
+    - ReplicaClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The replica's class of service.
+    - Schedule:
+        node: schedule:Schedule
+        capability: schdlcps:ScheduleContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A schedule for making periodic point in time replicas.
+    capabilities:
+      feature:
+        type: dtprlosc:DataProtectionLineOfServiceFeature
+      containable:
+        type: dtprlosc:DataProtectionLineOfServiceContainable

@@ -1,0 +1,105 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: MemoryChunksCollection.yaml
+  namespace: mmrchncl
+- url: Core.yaml
+  namespace: core
+- url: MemoryChunksCollection_caps.yaml
+  namespace: mmchclcp
+- url: MemoryDomain_caps.yaml
+  namespace: mmrdmncp
+- url: Memory.yaml
+  namespace: memory
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Memory_caps.yaml
+  namespace: mmrycps
+node_types:
+  MemoryDomain:
+    description: >-
+      The `MemoryDomain` schema describes a memory domain and its configuration.  Memory
+      domains indicate to the client which memory, or DIMMs, can be grouped together
+      in memory chunks to represent addressable memory.
+    properties:
+      AllowsBlockProvisioning:
+        type: boolean
+        description: >-
+          An indication of whether this memory domain supports the provisioning of
+          blocks of memory.
+        required: false
+      AllowsMemoryChunkCreation:
+        type: boolean
+        description: >-
+          An indication of whether this memory domain supports the creation of memory
+          chunks.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InterleavableMemorySets:
+        type: list
+        description: >-
+          The interleave sets for the memory chunk.
+        required: false
+        entry_schema:
+          type: MemorySet
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - MemoryChunks:
+        node: mmrchncl:MemoryChunksCollection
+        capability: mmchclcp:MemoryChunksCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of memory chunks associated with this memory
+          domain.
+    capabilities:
+      feature:
+        type: mmrdmncp:MemoryDomainFeature
+      containable:
+        type: mmrdmncp:MemoryDomainContainable
+  MemorySet:
+    description: >-
+      The interleave sets for a memory chunk.
+    properties:
+      MemorySet@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - MemorySet:
+        node: memory:Memory
+        capability: mmrycps:MemoryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of memory for a particular interleave set.
+    capabilities:
+      containable:
+        type: mmrdmncp:MemorySetContainable

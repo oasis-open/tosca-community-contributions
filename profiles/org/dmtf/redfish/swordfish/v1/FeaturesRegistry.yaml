@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: FeaturesRegistry.v1_2_1.yaml
+  namespace: ftrsrgst
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: FeaturesRegistry_caps.yaml
+  namespace: ftrrgscp
+node_types:
+  FeaturesRegistry:
+    description: >-
+      This is the schema definition for all Features Registries.  It represents the
+      properties for the registries themselves.  The FeatureId is formed per the Redfish
+      specification.  It consists of the RegistryPrefix concatenated with the version
+      concatenated with the unique identifier for the feature registry entry.
+    derived_from: ftrsrgst:FeaturesRegistry
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: ftrrgscp:FeaturesRegistryFeature
+      containable:
+        type: ftrrgscp:FeaturesRegistryContainable

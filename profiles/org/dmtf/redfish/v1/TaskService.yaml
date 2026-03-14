@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: TaskService.v1_3_0.yaml
+  namespace: tsksrvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: TaskService_caps.yaml
+  namespace: tsksrvcp
+node_types:
+  TaskService:
+    description: >-
+      The `TaskService` schema describes a task service that enables management of
+      long-duration operations, includes the properties for the task service itself,
+      and has links to the resource collection of tasks.
+    derived_from: tsksrvc:TaskService
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: tsksrvcp:TaskServiceFeature
+      containable:
+        type: tsksrvcp:TaskServiceContainable

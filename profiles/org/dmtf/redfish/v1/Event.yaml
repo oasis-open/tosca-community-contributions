@@ -1,0 +1,45 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Event.v1_13_0.yaml
+  namespace: event
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Event_caps.yaml
+  namespace: evntcps
+data_types:
+  EventType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - StatusChange
+        - ResourceUpdated
+        - ResourceAdded
+        - ResourceRemoved
+        - Alert
+        - MetricReport
+        - Other
+node_types:
+  Event:
+    description: >-
+      The `Event` schema describes the JSON payload received by an event destination,
+      which has subscribed to event notification, when events occur.  This resource
+      contains data about events, including descriptions, severity, and a `MessageId`
+      reference to a message registry that can be accessed for further information.  For
+      standard message definitions, see DSP2065.
+    derived_from: event:Event
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: evntcps:EventFeature
+      containable:
+        type: evntcps:EventContainable

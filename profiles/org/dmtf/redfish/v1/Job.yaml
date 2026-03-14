@@ -1,0 +1,412 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Message.yaml
+  namespace: message
+- url: Schedule.yaml
+  namespace: schedule
+- url: Message_caps.yaml
+  namespace: mssgcps
+- url: Schedule_caps.yaml
+  namespace: schdlcps
+- url: Job_caps.yaml
+  namespace: jobcaps
+data_types:
+  Payload:
+    description: >-
+      The HTTP and JSON request payload details for this user-specified job.
+    properties:
+      HttpHeaders:
+        type: list
+        description: >-
+          An array of HTTP headers in this job.
+        required: false
+        entry_schema:
+          type: string
+      HttpOperation:
+        type: string
+        description: >-
+          The HTTP operation that executes this job.
+        required: false
+      JsonBody:
+        type: string
+        description: >-
+          The JSON payload to use in the execution of this job.
+        required: false
+      TargetUri:
+        type: string
+        description: >-
+          The link to the target for this job.
+        required: false
+  JobExcerpt:
+    properties:
+      JobState:
+        type: string
+        description: >-
+          The state of the job.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - New
+            - Starting
+            - Running
+            - Suspended
+            - Interrupted
+            - Pending
+            - Stopping
+            - Completed
+            - Cancelled
+            - Exception
+            - Service
+            - UserIntervention
+            - Continue
+            - Validating
+            - Invalid
+      PercentComplete:
+        type: integer
+        description: >-
+          The completion percentage of this job.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      EstimatedCompletionTime:
+        type: string
+        description: >-
+          The date and time when the job is expected to complete.
+        required: false
+relationship_types:
+  JobDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      CreatedResources:
+        type: list
+        description: >-
+          An array of URIs referencing the resources created as the result of this
+          job.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      CreatedResources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Executor:
+        type: string
+        description: >-
+          A link to the executor that is running this job.
+        required: false
+      JobDocument:
+        type: string
+        description: >-
+          A link to the job document that was used to create this job.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ParentJob:
+        type: string
+        description: >-
+          The link to the job that created this job.
+        required: false
+      PreferredExecutors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SubsidiaryJobs@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ValidatedExecutors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  JobActions:
+    operations:
+      Cancel:
+        description: >-
+          Cancels the job.
+      ForceStart:
+        description: >-
+          Forces the job to start.
+      Invalidate:
+        description: >-
+          Invalidates the job.
+      Resubmit:
+        description: >-
+          Resubmits the job.
+        inputs:
+          StartTime:
+            type: string
+            description: >-
+              The time to start the job.
+            required: false
+      Resume:
+        description: >-
+          Resumes the job.
+      Suspend:
+        description: >-
+          Suspends the job.
+      Validate:
+        description: >-
+          Validates the job.
+node_types:
+  Job:
+    description: >-
+      The `Job` schema contains information about a job that a Redfish job service
+      schedules or executes.  Clients create jobs to describe a series of operations
+      that occur at periodic intervals.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      CreatedBy:
+        type: string
+        description: >-
+          The person or program that created this job entry.
+        required: false
+      Description:
+        type: string
+        required: false
+      EndTime:
+        type: string
+        description: >-
+          The date and time when the job was completed.
+        required: false
+      HidePayload:
+        type: boolean
+        description: >-
+          An indication of whether the contents of the payload or parameters should
+          be hidden from view after the job has been created.  If `true`, responses
+          do not return the payload or parameters.  If `false`, responses return the
+          payload or parameters.  If this property is not present when the job is
+          created, the default is `false`.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      JobState:
+        type: string
+        description: >-
+          The state of the job.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - New
+            - Starting
+            - Running
+            - Suspended
+            - Interrupted
+            - Pending
+            - Stopping
+            - Completed
+            - Cancelled
+            - Exception
+            - Service
+            - UserIntervention
+            - Continue
+            - Validating
+            - Invalid
+      JobStatus:
+        type: resource:Health
+        description: >-
+          The status of the job.
+        required: false
+      MaxExecutionTime:
+        type: string
+        description: >-
+          The maximum amount of time the job is allowed to execute.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Payload:
+        type: Payload
+        description: >-
+          The HTTP and JSON request payload details for this user-specified job.
+        required: false
+      PercentComplete:
+        type: integer
+        description: >-
+          The completion percentage of this job.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      StartTime:
+        type: string
+        description: >-
+          The date and time when the job was started or is scheduled to start.
+        required: false
+      StepOrder:
+        type: list
+        description: >-
+          The serialized execution order of the job steps.
+        required: false
+        entry_schema:
+          type: string
+      EstimatedDuration:
+        type: string
+        description: >-
+          The estimated total time required to complete the job.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      CreationTime:
+        type: string
+        description: >-
+          The date and time when the job was created.
+        required: false
+      EstimatedCompletionTime:
+        type: string
+        description: >-
+          The date and time when the job is expected to complete.
+        required: false
+      JobPriority:
+        type: integer
+        description: >-
+          The requested priority for this job.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      JobType:
+        type: string
+        description: >-
+          The type of this job.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - DocumentBased
+            - UserSpecified
+            - ServiceGenerated
+      Parameters:
+        type: map
+        description: >-
+          The parameters specified for running this document-based job.
+        required: false
+    requirements:
+    - Messages:
+        node: message:Message
+        capability: mssgcps:MessageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of messages associated with the job.
+    - Schedule:
+        node: schedule:Schedule
+        capability: schdlcps:ScheduleContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The schedule settings for this job.
+    - Steps:
+        # node: jbcllctn:JobCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of steps for this job.
+    - PreferredExecutors:
+        # node: jbexctr:JobExecutor
+        capability: core:Feature
+        relationship: JobDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the preferred executors to run this job.
+    - SubsidiaryJobs:
+        # node: job:Job
+        capability: core:Feature
+        relationship: JobDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the jobs created by this job.
+    - ValidatedExecutors:
+        # node: jbexctr:JobExecutor
+        capability: core:Feature
+        relationship: JobDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the executors that have been validated to run this
+          job.
+    interfaces:
+      Actions:
+        type: JobActions
+    capabilities:
+      feature:
+        type: jobcaps:JobFeature
+      containable:
+        type: jobcaps:JobContainable

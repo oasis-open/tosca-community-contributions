@@ -1,0 +1,63 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Sensor.yaml
+  namespace: sensor
+- url: Core.yaml
+  namespace: core
+- url: PowerDistributionMetrics_caps.yaml
+  namespace: pwdsmtcp
+interface_types:
+  PowerDistributionMetricsActions:
+    operations:
+      ResetMetrics:
+        description: >-
+          This action resets the summary metrics related to this equipment.
+node_types:
+  PowerDistributionMetrics:
+    description: >-
+      The `PowerDistributionMetrics` schema contains metrics of a power distribution
+      component or unit, such as a floor power distribution unit (PDU) or switchgear.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EnergykWh:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          Energy consumption (kWh).
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerWatts:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          Power consumption (W).
+        required: false
+    interfaces:
+      Actions:
+        type: PowerDistributionMetricsActions
+    capabilities:
+      feature:
+        type: pwdsmtcp:PowerDistributionMetricsFeature
+      containable:
+        type: pwdsmtcp:PowerDistributionMetricsContainable

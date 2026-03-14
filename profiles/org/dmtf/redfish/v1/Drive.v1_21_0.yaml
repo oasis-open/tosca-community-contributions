@@ -1,0 +1,739 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: Chassis.yaml
+  namespace: chassis
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: NetworkDeviceFunction.yaml
+  namespace: ntwdvcfn
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: NetworkDeviceFunction_caps.yaml
+  namespace: ntdvfncp
+- url: Assembly.yaml
+  namespace: assembly
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: DriveMetrics.yaml
+  namespace: drvmtrcs
+- url: Protocol.yaml
+  namespace: protocol
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+- url: DriveMetrics_caps.yaml
+  namespace: drvmtrcp
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: Drive_caps.yaml
+  namespace: drvcps
+- url: Task.yaml
+  namespace: task
+- url: Task_caps.yaml
+  namespace: taskcaps
+data_types:
+  ConfigLockOptions:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unlocked
+        - Locked
+        - LockdownUnsupported
+        - CommandUnsupported
+  ConfigurationLock:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+        - Partial
+  DataSanitizationType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - BlockErase
+        - CryptographicErase
+        - Overwrite
+  EncryptionAbility:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - SelfEncryptingDrive
+        - Other
+  EncryptionStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unecrypted
+        - Unlocked
+        - Locked
+        - Foreign
+        - Unencrypted
+  FormFactor:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Drive3_5
+        - Drive2_5
+        - EDSFF
+        - EDSFF_1U_Long
+        - EDSFF_1U_Short
+        - EDSFF_E3_Short
+        - EDSFF_E3_Long
+        - M2
+        - M2_2230
+        - M2_2242
+        - M2_2260
+        - M2_2280
+        - M2_22110
+        - U2
+        - PCIeSlotFullLength
+        - PCIeSlotLowProfile
+        - PCIeHalfLength
+        - OEM
+  HotspareReplacementModeType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Revertible
+        - NonRevertible
+  HotspareType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - Global
+        - Chassis
+        - Dedicated
+  MediaType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - HDD
+        - SSD
+        - SMR
+  NVMe:
+    description: >-
+      NVMe properties for a drive.
+    properties:
+      ConfigurationLockState:
+        type: NVMeConfigurationLockState
+        description: >-
+          The configurable features that are able to be locked from in-band usage
+          on an NVMe subsystem and their current lock state.
+        required: false
+  NVMeConfigurationLockState:
+    description: >-
+      The configurable features that are able to be locked on an NVMe subsystem and
+      their current lock state.
+    properties:
+      FirmwareCommit:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-defined Firmware Commit command.
+        required: false
+      FirmwareImageDownload:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-defined Firmware Image Download command.
+        required: false
+      Lockdown:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-defined Lockdown command.
+        required: false
+      SecuritySend:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-defined Security Send command.
+        required: false
+      VPDWrite:
+        type: ConfigLockOptions
+        description: >-
+          The lock state of the NVMe-MI-defined VPD Write command.
+        required: false
+  StatusIndicator:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OK
+        - Fail
+        - Rebuild
+        - PredictiveFailureAnalysis
+        - Hotspare
+        - InACriticalArray
+        - InAFailedArray
+  TargetConfigurationLockLevel:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Baseline
+relationship_types:
+  DriveDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      NetworkDeviceFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SoftwareImages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      StoragePools@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Volumes@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  DriveActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets this drive.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+      RevertToOriginalFactoryState:
+        description: >-
+          This action reverts a self-encrypting drive (SED) to the original factory
+          state.
+        inputs:
+          PhysicalSecureID:
+            type: string
+            description: >-
+              The physical secure ID (PSID).  The PSID is generally printed on the
+              drive label and used to revert an encrypted SED.
+            required: false
+      SecureErase:
+        description: >-
+          This action securely erases the contents of the drive.
+        inputs:
+          OverwritePasses:
+            type: integer
+            description: >-
+              The number of times to overwrite the drive if performing an overwrite
+              type of sanitization.
+            required: false
+          SanitizationType:
+            type: DataSanitizationType
+            description: >-
+              The type of data sanitization to perform.
+            required: false
+node_types:
+  Drive:
+    description: >-
+      The `Drive` schema represents a single physical drive for a system, including
+      links to associated volumes.  It also describes the location, such as a slot,
+      socket, or bay, where a unit can be installed, by populating a resource instance
+      with an absent state if a unit is not present.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this drive.
+        required: false
+      BlockSecurityIDEnabled:
+        type: boolean
+        description: >-
+          Indicates if establishment of a TCG-defined security ID (SID) on the drive
+          is blocked.
+        required: false
+      BlockSizeBytes:
+        type: integer
+        description: >-
+          The size, in bytes, of the smallest addressable unit, or block.
+        required: false
+      CapableSpeedGbs:
+        type: float
+        description: >-
+          The speed, in gigabits per second (Gbit/s) units, at which this drive can
+          communicate to a storage controller in ideal conditions.
+        required: false
+      CapacityBytes:
+        type: integer
+        description: >-
+          The size, in bytes, of this drive.
+        required: false
+      ConfigurationLock:
+        type: ConfigurationLock
+        description: >-
+          Indicates whether in-band configuration requests to the drive are locked.  Other
+          properties, such as `ConfigurationLockState`, contain additional information
+          regarding the status of the configuration lock.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DriveFormFactor:
+        type: FormFactor
+        description: >-
+          The form factor of the drive inserted in this slot.
+        required: false
+      EncryptionAbility:
+        type: EncryptionAbility
+        description: >-
+          The encryption ability of this drive.
+        required: false
+      EncryptionStatus:
+        type: EncryptionStatus
+        description: >-
+          The status of the encryption of this drive.
+        required: false
+      FailurePredicted:
+        type: boolean
+        description: >-
+          An indication of whether this drive currently predicts a failure in the
+          near future.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version for this drive.
+        required: false
+      HardwareVersion:
+        type: string
+        description: >-
+          The hardware version of this drive.
+        required: false
+      HotspareReplacementMode:
+        type: HotspareReplacementModeType
+        description: >-
+          The replacement mode for the hot spare drive.
+        required: false
+      HotspareType:
+        type: HotspareType
+        description: >-
+          The type of hot spare that this drive serves as.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for the drive.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      IndicatorLED:
+        type: resource:IndicatorLED
+        description: >-
+          The state of the indicator LED, that identifies the drive.
+        required: false
+      Location:
+        type: list
+        description: >-
+          The location of the drive.
+        required: false
+        entry_schema:
+          type: resource:Location
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this drive.
+        required: false
+      Measurements:
+        type: list
+        description: >-
+          An array of DSP0274-defined measurement blocks.
+        required: false
+        entry_schema:
+          type: sftwinvn:MeasurementBlock
+      MediaType:
+        type: MediaType
+        description: >-
+          The type of media contained in this drive.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for the drive.
+        required: false
+      Multipath:
+        type: boolean
+        description: >-
+          An indication of whether the drive is accessible from multiple paths.
+        required: false
+      NVMe:
+        type: NVMe
+        description: >-
+          NVMe properties for this drive.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NegotiatedSpeedGbs:
+        type: float
+        description: >-
+          The speed, in gigabits per second (Gbit/s) units, at which this drive currently
+          communicates to the storage controller.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Operations:
+        type: list
+        description: >-
+          The operations currently running on the drive.
+        required: false
+        entry_schema:
+          type: Operations
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this drive.
+        required: false
+      PhysicalLocation:
+        type: resource:Location
+        description: >-
+          The location of the drive.  This property is equivalent to the `Location`
+          property common to other standard Redfish resources.
+        required: false
+      PredictedMediaLifeLeftPercent:
+        type: float
+        description: >-
+          The percentage of reads and writes that are predicted to be available for
+          the media.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ReadyToRemove:
+        type: boolean
+        description: >-
+          An indication of whether the drive is prepared by the system for removal.
+        required: false
+      Revision:
+        type: string
+        description: >-
+          The revision of a SCSI-based drive, as returned from the 'Inquiry' command,
+          which can be the firmware or hardware version.  For other types of drives,
+          the `HardwareVersion` and `FirmwareVersion` properties are recommended in
+          favor of this property.
+        required: false
+      RotationSpeedRPM:
+        type: float
+        description: >-
+          The rotation speed of this drive, in revolutions per minute (RPM) units.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this drive.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this drive.
+        required: false
+      SlotFormFactor:
+        type: FormFactor
+        description: >-
+          The form factor of the slot.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number of the drive.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      StatusIndicator:
+        type: StatusIndicator
+        description: >-
+          The state of the status indicator, which communicates status information
+          about this drive.
+        required: false
+      TargetConfigurationLockLevel:
+        type: TargetConfigurationLockLevel
+        description: >-
+          Indicates the target configuration lock level for the drive based upon the
+          state of the `ConfigurationLock` property.  Other properties, such as `ConfigurationLockState`,
+          contain additional information regarding the status of the configuration
+          lock.
+        required: false
+      WriteCacheEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the drive write cache is enabled.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this drive.
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates for device identity and attestation.
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this drive.
+    - Metrics:
+        node: drvmtrcs:DriveMetrics
+        capability: drvmtrcp:DriveMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metrics associated with this drive.
+    - Protocol:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol that this drive currently uses to communicate to the storage
+          controller.
+    - SlotCapableProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The drive protocols capable in this slot.
+    - ActiveSoftwareImage:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the software inventory that represents the active drive firmware
+          image.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the chassis that contains this drive.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect to this drive.
+    - NetworkDeviceFunctions:
+        node: ntwdvcfn:NetworkDeviceFunction
+        capability: ntdvfncp:NetworkDeviceFunctionFeature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the network device functions that provide network connectivity
+          for this drive.
+    - PCIeFunctions:
+        # node: pcfnctn:PCIeFunction
+        capability: core:Feature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIe functions that the drive produces.
+    - SoftwareImages:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The images that are associated with this drive.
+    - Storage:
+        # node: storage:Storage
+        capability: core:Feature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the storage subsystem to which this drive belongs.
+    - StoragePools:
+        # node: strgpl:StoragePool
+        capability: core:Feature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the storage pools to which this drive belongs.
+    - Volumes:
+        # node: volume:Volume
+        capability: core:Feature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the volumes that this drive either wholly or only partially
+          contains.
+    interfaces:
+      Actions:
+        type: DriveActions
+    capabilities:
+      feature:
+        type: drvcps:DriveFeature
+      containable:
+        type: drvcps:DriveContainable
+  Operations:
+    description: >-
+      An operation currently running on this resource.
+    properties:
+      Operation:
+        type: string
+        description: >-
+          The type of the operation.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Deduplicate
+            - CheckConsistency
+            - Initialize
+            - Replicate
+            - Delete
+            - ChangeRAIDType
+            - Rebuild
+            - Encrypt
+            - Decrypt
+            - Resize
+            - Compress
+            - Sanitize
+            - Format
+            - ChangeStripSize
+      OperationName:
+        type: string
+        description: >-
+          The name of the operation.
+        required: false
+      PercentageComplete:
+        type: integer
+        description: >-
+          The percentage of the operation that has been completed.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+    requirements:
+    - AssociatedTask:
+        node: task:Task
+        capability: taskcaps:TaskContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the task associated with the operation, if any.
+    capabilities:
+      containable:
+        type: drvcps:OperationsContainable

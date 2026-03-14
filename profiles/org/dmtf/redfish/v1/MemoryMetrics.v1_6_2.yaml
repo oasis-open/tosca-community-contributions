@@ -1,0 +1,290 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: MemoryMetrics_caps.yaml
+  namespace: mmrmtrcp
+data_types:
+  AlarmTrips:
+    description: >-
+      The alarm trip information about the memory.  These alarms are reset when the
+      system resets.  Note that if they are re-discovered they can be reasserted.
+    properties:
+      AddressParityError:
+        type: boolean
+        description: >-
+          An indication of whether an address parity error was detected that a retry
+          could not correct.
+        required: false
+      CorrectableECCError:
+        type: boolean
+        description: >-
+          An indication of whether the correctable error threshold crossing alarm
+          trip was detected.
+        required: false
+      SpareBlock:
+        type: boolean
+        description: >-
+          An indication of whether the spare block capacity crossing alarm trip was
+          detected.
+        required: false
+      Temperature:
+        type: boolean
+        description: >-
+          An indication of whether a temperature threshold alarm trip was detected.
+        required: false
+      UncorrectableECCError:
+        type: boolean
+        description: >-
+          An indication of whether the uncorrectable error threshold alarm trip was
+          detected.
+        required: false
+  AlertCapabilities:
+    description: >-
+      The conditions that would generate an alert to the CXL Fabric Manager or host.
+    properties:
+      CorrectableECCError:
+        type: boolean
+        description: >-
+          Indicates whether correctable ECC errors generate an alert to the CXL Fabric
+          Manager or host.
+        required: false
+      SpareBlock:
+        type: boolean
+        description: >-
+          Indicates whether spare block conditions generate an alert to the CXL Fabric
+          Manager or host.
+        required: false
+      Temperature:
+        type: boolean
+        description: >-
+          Indicates whether temperature conditions generate an alert to the CXL Fabric
+          Manager or host.
+        required: false
+      UncorrectableECCError:
+        type: boolean
+        description: >-
+          Indicates whether uncorrectable ECC errors generate an alert to the CXL
+          Fabric Manager or host.
+        required: false
+  CXL:
+    description: >-
+      The memory metrics specific to CXL devices.
+    properties:
+      AlertCapabilities:
+        type: AlertCapabilities
+        description: >-
+          The conditions that would generate an alert to the CXL Fabric Manager or
+          host.
+        required: false
+  CurrentPeriod:
+    description: >-
+      The memory metrics since the last system reset or ClearCurrentPeriod action.
+    properties:
+      BlocksRead:
+        type: integer
+        description: >-
+          The number of blocks read since reset.
+        required: false
+      BlocksWritten:
+        type: integer
+        description: >-
+          The number of blocks written since reset.
+        required: false
+      CorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of correctable errors since reset.
+        required: false
+      IndeterminateCorrectableErrorCount:
+        type: integer
+        description: >-
+          The number of indeterminate correctable errors since reset.
+        required: false
+      IndeterminateUncorrectableErrorCount:
+        type: integer
+        description: >-
+          The number of indeterminate uncorrectable errors since reset.
+        required: false
+      UncorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable errors since reset.
+        required: false
+  HealthData:
+    description: >-
+      The health information of the memory.
+    properties:
+      AlarmTrips:
+        type: AlarmTrips
+        description: >-
+          Alarm trip information about the memory.
+        required: false
+      DataLossDetected:
+        type: boolean
+        description: >-
+          An indication of whether data loss was detected.
+        required: false
+      LastShutdownSuccess:
+        type: boolean
+        description: >-
+          An indication of whether the last shutdown succeeded.
+        required: false
+      PerformanceDegraded:
+        type: boolean
+        description: >-
+          An indication of whether performance has degraded.
+        required: false
+      PredictedMediaLifeLeftPercent:
+        type: float
+        description: >-
+          The percentage of reads and writes that are predicted to still be available
+          for the media.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      RemainingSpareBlockPercentage:
+        type: float
+        description: >-
+          The remaining spare blocks, as a percentage.
+        required: false
+  LifeTime:
+    description: >-
+      The memory metrics for the lifetime of the memory.
+    properties:
+      BlocksRead:
+        type: integer
+        description: >-
+          The number of blocks read for the lifetime of the memory.
+        required: false
+      BlocksWritten:
+        type: integer
+        description: >-
+          The number of blocks written for the lifetime of the memory.
+        required: false
+      CorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of correctable errors for the lifetime of the memory.
+        required: false
+      IndeterminateCorrectableErrorCount:
+        type: integer
+        description: >-
+          The number of indeterminate correctable errors for the lifetime of the memory.
+        required: false
+      IndeterminateUncorrectableErrorCount:
+        type: integer
+        description: >-
+          The number of indeterminate uncorrectable errors for the lifetime of the
+          memory.
+        required: false
+      UncorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable errors for the lifetime of the memory.
+        required: false
+interface_types:
+  MemoryMetricsActions:
+    operations:
+      ClearCurrentPeriod:
+        description: >-
+          This action sets the CurrentPeriod property's values to 0.
+node_types:
+  MemoryMetrics:
+    description: >-
+      The usage and health statistics for a memory device or system memory summary.
+    properties:
+      BandwidthPercent:
+        type: float
+        description: >-
+          The memory bandwidth utilization as a percentage.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      BlockSizeBytes:
+        type: integer
+        description: >-
+          The block size, in bytes.
+        required: false
+      CXL:
+        type: CXL
+        description: >-
+          The memory metrics specific to CXL devices.
+        required: false
+      CorrectedPersistentErrorCount:
+        type: integer
+        description: >-
+          The number of corrected errors in persistent memory.
+        required: false
+      CorrectedVolatileErrorCount:
+        type: integer
+        description: >-
+          The number of corrected errors in volatile memory.
+        required: false
+      CurrentPeriod:
+        type: CurrentPeriod
+        description: >-
+          The memory metrics since the last reset or ClearCurrentPeriod action.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DirtyShutdownCount:
+        type: integer
+        description: >-
+          The number of shutdowns while outstanding writes have not completed to persistent
+          memory.
+        required: false
+      HealthData:
+        type: HealthData
+        description: >-
+          The health information of the memory.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LifeTime:
+        type: LifeTime
+        description: >-
+          The memory metrics for the lifetime of the memory.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OperatingSpeedMHz:
+        type: integer
+        description: >-
+          Operating speed of memory in MHz or MT/s as appropriate.
+        required: false
+    interfaces:
+      Actions:
+        type: MemoryMetricsActions
+    capabilities:
+      feature:
+        type: mmrmtrcp:MemoryMetricsFeature
+      containable:
+        type: mmrmtrcp:MemoryMetricsContainable

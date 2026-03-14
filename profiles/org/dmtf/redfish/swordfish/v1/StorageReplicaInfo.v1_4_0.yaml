@@ -1,0 +1,378 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: DataProtectionLineOfService.yaml
+  namespace: dtprlnos
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: StorageReplicaInfo_caps.yaml
+  namespace: strpincp
+- url: DataProtectionLineOfService_caps.yaml
+  namespace: dtprlosc
+data_types:
+  ConsistencyState:
+    description: >-
+      The values of ConsistencyState indicate the consistency type used by the source
+      and its associated target group.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Consistent
+        - Inconsistent
+  ConsistencyStatus:
+    description: >-
+      The values of ConsistencyStatus indicate the current status of consistency.
+      Consistency may have been disabled or might be experiencing an error condition.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Consistent
+        - InProgress
+        - Disabled
+        - InError
+  ConsistencyType:
+    description: >-
+      The values of ConsistencyType indicates the consistency type used by the source
+      and its associated target group.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SequentiallyConsistent
+  ReplicaPriority:
+    description: >-
+      ReplicaPriority allows the priority of background copy engine I/O to be managed
+      relative to host I/O operations during a sequential background copy operation.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Low
+        - Same
+        - High
+        - Urgent
+  ReplicaProgressStatus:
+    description: >-
+      Values of ReplicaProgressStatus describe the status of the session with respect
+      to Replication activity.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Completed
+        - Dormant
+        - Initializing
+        - Preparing
+        - Synchronizing
+        - Resyncing
+        - Restoring
+        - Fracturing
+        - Splitting
+        - FailingOver
+        - FailingBack
+        - Detaching
+        - Aborting
+        - Mixed
+        - Suspending
+        - RequiresFracture
+        - RequiresResync
+        - RequiresActivate
+        - Pending
+        - RequiresDetach
+        - Terminating
+        - RequiresSplit
+        - RequiresResume
+  ReplicaReadOnlyAccess:
+    description: >-
+      Values of ReplicaReadOnlyAccess specify whether the source, the target, or both
+      elements are read only to the host.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SourceElement
+        - ReplicaElement
+        - Both
+  ReplicaRecoveryMode:
+    description: >-
+      Values of ReplicaRecoveryMode describe whether the copy operation continues
+      after a broken link is restored.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Automatic
+        - Manual
+  ReplicaRole:
+    description: >-
+      Values of ReplicaRole specify whether the resource is a source of replication
+      or the target of replication.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Source
+        - Target
+  ReplicaState:
+    description: >-
+      Values of ReplicaState describe the state of the relationship with respect to
+      Replication activity.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Initialized
+        - Unsynchronized
+        - Synchronized
+        - Broken
+        - Fractured
+        - Split
+        - Inactive
+        - Suspended
+        - Failedover
+        - Prepared
+        - Aborted
+        - Skewed
+        - Mixed
+        - Partitioned
+        - Invalid
+        - Restored
+  UndiscoveredElement:
+    description: >-
+      Values of UndiscoveredElement specify whether the source, the target, or both
+      elements involved in a copy operation are undiscovered. An element is considered
+      undiscovered if its object model is not known to the service performing the
+      copy operation.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SourceElement
+        - ReplicaElement
+node_types:
+  StorageReplicaInfo:
+    description: >-
+      Defines the characteristics of a Storage Replica.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: strpincp:StorageReplicaInfoFeature
+      containable:
+        type: strpincp:StorageReplicaInfoContainable
+  ReplicaInfo:
+    description: >-
+      Defines the characteristics of a replica.
+    properties:
+      ConsistencyEnabled:
+        type: boolean
+        description: >-
+          True if consistency is enabled.
+        required: false
+      ConsistencyState:
+        type: ConsistencyState
+        description: >-
+          The current state of consistency.
+        required: false
+      ConsistencyStatus:
+        type: ConsistencyStatus
+        description: >-
+          The current status of consistency.
+        required: false
+      ConsistencyType:
+        type: ConsistencyType
+        description: >-
+          Indicates the consistency type used by the source and its associated target
+          group.
+        required: false
+      FailedCopyStopsHostIO:
+        type: boolean
+        description: >-
+          If true, the storage array tells host to stop sending data to source element
+          if copying to a remote element fails.
+        required: false
+      PercentSynced:
+        type: integer
+        description: >-
+          Specifies the percent of the work completed to reach synchronization.
+        required: false
+      RemoteSourceReplica:
+        type: string
+        description: >-
+          ReplicaFaultDomain describes the fault domain (local or remote) of the replica
+          relationship.
+        required: false
+      Replica:
+        type: odatav4:idRef
+        description: >-
+          Deprecated - Use Source Replica. The resource that is the source of this
+          replica.
+        required: false
+      ReplicaFaultDomain:
+        type: string
+        description: >-
+          ReplicaFaultDomain describes the fault domain (local or remote) of the replica
+          relationship.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Local
+            - Remote
+      ReplicaPriority:
+        type: ReplicaPriority
+        description: >-
+          The priority of background copy engine I/O to be managed relative to host
+          I/O operations during a sequential background copy operation.
+        required: false
+      ReplicaProgressStatus:
+        type: ReplicaProgressStatus
+        description: >-
+          The status of the session with respect to Replication activity.
+        required: false
+      ReplicaReadOnlyAccess:
+        type: ReplicaReadOnlyAccess
+        description: >-
+          This property specifies whether the source, the target, or both elements
+          are read only to the host.
+        required: false
+      ReplicaRecoveryMode:
+        type: ReplicaRecoveryMode
+        description: >-
+          Describes whether the copy operation continues after a broken link is restored.
+        required: false
+      ReplicaRole:
+        type: ReplicaRole
+        description: >-
+          The source or target role of this replica.
+        required: false
+      ReplicaSkewBytes:
+        type: integer
+        description: >-
+          Applies to Adaptive mode and it describes maximum number of bytes the SyncedElement
+          (target) can be out of sync.
+        required: false
+      ReplicaState:
+        type: ReplicaState
+        description: >-
+          ReplicaState describes the state of the relationship with respect to Replication
+          activity.
+        required: false
+      ReplicaType:
+        type: string
+        description: >-
+          ReplicaType describes the intended outcome of the replication.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Mirror
+            - Snapshot
+            - Clone
+            - TokenizedClone
+      ReplicaUpdateMode:
+        type: string
+        description: >-
+          Describes whether the target elements will be updated synchronously or asynchronously.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Active
+            - Synchronous
+            - Asynchronous
+            - Adaptive
+      RequestedReplicaState:
+        type: ReplicaState
+        description: >-
+          The last requested or desired state for the relationship.
+        required: false
+      SourceReplica:
+        type: odatav4:idRef
+        description: >-
+          The URI to the source replica when located on a different Swordfish service
+          instance.
+        required: false
+      SyncMaintained:
+        type: boolean
+        description: >-
+          Synchronization is maintained.
+        required: false
+      UndiscoveredElement:
+        type: UndiscoveredElement
+        description: >-
+          This property specifies whether the source, the target, or both elements
+          involved in a copy operation are undiscovered.
+        required: false
+      WhenActivated:
+        type: string
+        description: >-
+          Specifies when point-in-time copy was taken or when the replication relationship
+          is activated, reactivated, resumed or re-established.
+        required: false
+      WhenDeactivated:
+        type: string
+        description: >-
+          Specifies when the replication relationship is deactivated.
+        required: false
+      WhenEstablished:
+        type: string
+        description: >-
+          Specifies when the replication relationship is established.
+        required: false
+      WhenSuspended:
+        type: string
+        description: >-
+          Specifies when the replication relationship is suspended.
+        required: false
+      WhenSynced:
+        type: string
+        description: >-
+          The point in time that the Elements were synchronized.
+        required: false
+      WhenSynchronized:
+        type: string
+        description: >-
+          Specifies when the replication relationship is synchronized.
+        required: false
+    requirements:
+    - DataProtectionLineOfService:
+        node: dtprlnos:DataProtectionLineOfService
+        capability: dtprlosc:DataProtectionLineOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A pointer to the DataProtection line of service element that describes this
+          replica.
+    capabilities:
+      containable:
+        type: strpincp:ReplicaInfoContainable

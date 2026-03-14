@@ -1,0 +1,21 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Capability types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+capability_types:
+  ComponentIntegrityFeature:
+    derived_from: core:Feature
+  ComponentIntegrityContainable:
+    derived_from: core:Containable
+  CommonAuthInfoContainable:
+    derived_from: core:Containable
+  SPDMGetSignedMeasurementsResponseContainable:
+    derived_from: core:Containable
+  SPDMrequesterAuthContainable:
+    derived_from: core:Containable
+  SPDMresponderAuthContainable:
+    derived_from: core:Containable
+  TPMauthContainable:
+    derived_from: core:Containable

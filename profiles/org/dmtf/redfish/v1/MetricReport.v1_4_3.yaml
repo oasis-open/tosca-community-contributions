@@ -1,0 +1,129 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: MetricReportDefinition.yaml
+  namespace: mtrrprdf
+- url: Core.yaml
+  namespace: core
+- url: MetricReportDefinition_caps.yaml
+  namespace: mtrpdfcp
+- url: MetricReport_caps.yaml
+  namespace: mtrrprcp
+- url: MetricDefinition.yaml
+  namespace: mtrcdfnt
+- url: MetricDefinition_caps.yaml
+  namespace: mtrdfncp
+node_types:
+  MetricReport:
+    description: >-
+      The MetricReport schema represents a set of collected metrics.
+    properties:
+      Context:
+        type: string
+        description: >-
+          A context can be supplied at subscription time.  This property is the context
+          value supplied by the subscriber.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MetricValues:
+        type: list
+        description: >-
+          An array of metric values for the metered items of this metric report.
+        required: false
+        entry_schema:
+          type: MetricValue
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ReportSequence:
+        type: string
+        description: >-
+          The current sequence identifier for this metric report.
+        required: false
+      Timestamp:
+        type: string
+        description: >-
+          The time associated with the metric report in its entirety.  The time of
+          the metric report can be relevant when the time of individual metrics are
+          minimally different.
+        required: false
+    requirements:
+    - MetricReportDefinition:
+        node: mtrrprdf:MetricReportDefinition
+        capability: mtrpdfcp:MetricReportDefinitionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the definition of this metric report.
+    capabilities:
+      feature:
+        type: mtrrprcp:MetricReportFeature
+      containable:
+        type: mtrrprcp:MetricReportContainable
+  MetricValue:
+    description: >-
+      Properties that capture a metric value and other associated information.
+    properties:
+      MetricId:
+        type: string
+        description: >-
+          The metric definitions identifier that contains additional information for
+          the source metric.
+        required: false
+      MetricProperty:
+        type: string
+        description: >-
+          The URI for the property from which this metric is derived.
+        required: false
+      MetricValue:
+        type: string
+        description: >-
+          The metric value, as a string.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Timestamp:
+        type: string
+        description: >-
+          The date and time when the metric is obtained.  A management application
+          can establish a time series of metric data by retrieving the instances of
+          metric value and sorting them according to their timestamp.
+        required: false
+    requirements:
+    - MetricDefinition:
+        node: mtrcdfnt:MetricDefinition
+        capability: mtrdfncp:MetricDefinitionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metric definition for this metric.
+    capabilities:
+      containable:
+        type: mtrrprcp:MetricValueContainable

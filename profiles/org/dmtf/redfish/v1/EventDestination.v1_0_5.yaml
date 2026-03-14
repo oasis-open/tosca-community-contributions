@@ -1,0 +1,88 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Event.yaml
+  namespace: event
+- url: Core.yaml
+  namespace: core
+- url: EventDestination_caps.yaml
+  namespace: evndstcp
+data_types:
+  EventDestinationProtocol:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Redfish
+  HttpHeaderProperty:
+    description: >-
+      The value of the HTTP header is the property value.  The header name is the
+      property name.
+node_types:
+  EventDestination:
+    description: >-
+      An Event Destination desribes the target of an event subscription, including
+      the types of events subscribed and context to provide to the target in the Event
+      payload.
+    properties:
+      Context:
+        type: string
+        description: >-
+          A client-supplied string that is stored with the event destination subscription.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Destination:
+        type: string
+        description: >-
+          The URI of the destination Event Service.
+        required: false
+      EventTypes:
+        type: list
+        description: >-
+          This property shall contain the types of events that shall be sent to the
+          desination.
+        required: false
+        entry_schema:
+          type: event:EventType
+      HttpHeaders:
+        type: list
+        description: >-
+          This is for setting HTTP headers, such as authorization information.  This
+          object will be null on a GET.
+        required: false
+        entry_schema:
+          type: HttpHeaderProperty
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Protocol:
+        type: EventDestinationProtocol
+        description: >-
+          The protocol type of the event connection.
+        required: false
+    capabilities:
+      feature:
+        type: evndstcp:EventDestinationFeature
+      containable:
+        type: evndstcp:EventDestinationContainable

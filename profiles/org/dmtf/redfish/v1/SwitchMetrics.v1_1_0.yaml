@@ -1,0 +1,111 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: SwitchMetrics_caps.yaml
+  namespace: swtmtrcp
+data_types:
+  CurrentPeriod:
+    description: >-
+      The memory metrics since the last switch reset or `ClearCurrentPeriod` action
+      for a switch.
+    properties:
+      CorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of correctable errors of memory since reset.
+        required: false
+      UncorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable errors of memory since reset.
+        required: false
+  InternalMemoryMetrics:
+    description: >-
+      The memory metrics for a switch.
+    properties:
+      CurrentPeriod:
+        type: CurrentPeriod
+        description: >-
+          The memory metrics since the last reset for this switch.
+        required: false
+      LifeTime:
+        type: LifeTime
+        description: >-
+          The memory metrics for the lifetime of this switch.
+        required: false
+  LifeTime:
+    description: >-
+      The memory metrics for the lifetime for a switch.
+    properties:
+      CorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of correctable errors for the lifetime of the memory.
+        required: false
+      UncorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable errors for the lifetime of the memory.
+        required: false
+interface_types:
+  SwitchMetricsActions:
+    operations:
+      ClearCurrentPeriod:
+        description: >-
+          This action sets the `CurrentPeriod` property's values to 0.
+node_types:
+  SwitchMetrics:
+    description: >-
+      The `SwitchMetrics` schema contains usage and health statistics for a switch
+      device.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InternalMemoryMetrics:
+        type: InternalMemoryMetrics
+        description: >-
+          The memory metrics for a switch.
+        required: false
+      LifetimeStartDateTime:
+        type: string
+        description: >-
+          The date and time when the switch started accumulating data for the `LifeTime`
+          property.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeErrors:
+        type: string
+        description: >-
+          The PCIe errors associated with this switch.
+        required: false
+    interfaces:
+      Actions:
+        type: SwitchMetricsActions
+    capabilities:
+      feature:
+        type: swtmtrcp:SwitchMetricsFeature
+      containable:
+        type: swtmtrcp:SwitchMetricsContainable

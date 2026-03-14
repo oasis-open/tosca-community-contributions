@@ -1,0 +1,547 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Switch.yaml
+  namespace: switch
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+- url: Assembly.yaml
+  namespace: assembly
+- url: CXLLogicalDeviceCollection.yaml
+  namespace: cxldvccl
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: PCIeFunctionCollection.yaml
+  namespace: pcfnccl
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: CXLLogicalDeviceCollection_caps.yaml
+  namespace: cxdvclcp
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+- url: PCIeFunctionCollection_caps.yaml
+  namespace: pcfnclcp
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: PCIeFunction_caps.yaml
+  namespace: pcfnccp
+- url: Processor_caps.yaml
+  namespace: prcscps
+data_types:
+  CXLDevice:
+    description: >-
+      The CXL-specific properties of a PCIe device.
+    properties:
+      DeviceType:
+        type: CXLDeviceType
+        description: >-
+          The CXL device type.
+        required: false
+      DynamicCapacity:
+        type: CXLDynamicCapacity
+        description: >-
+          The CXL dynamic capacity device (DCD) information for this CXL device.
+        required: false
+      EgressPortCongestionSupport:
+        type: boolean
+        description: >-
+          Indicates whether the CXL device supports egress port congestion management.
+        required: false
+      MaxNumberLogicalDevices:
+        type: float
+        description: >-
+          The maximum number of logical devices supported by this CXL device.
+        required: false
+      ThroughputReductionSupport:
+        type: boolean
+        description: >-
+          Indicates whether the CXL device supports throughput reduction.
+        required: false
+      Timestamp:
+        type: string
+        description: >-
+          The timestamp set on the CXL device.
+        required: false
+  CXLDeviceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Type1
+        - Type2
+        - Type3
+  CXLDynamicCapacity:
+    description: >-
+      The CXL dynamic capacity device (DCD) information for a CXL device.
+    properties:
+      AddCapacityPoliciesSupported:
+        type: list
+        description: >-
+          The set of selection policies supported by the CXL device when dynamic capacity
+          is added.
+        required: false
+        entry_schema:
+          type: CXLDynamicCapacityPolicies
+      MaxDynamicCapacityRegions:
+        type: integer
+        description: >-
+          The maximum number of dynamic capacity memory regions available per host
+          from this CXL device.
+        required: false
+      MaxHosts:
+        type: integer
+        description: >-
+          The maximum number of hosts supported by this CXL device.
+        required: false
+      MemoryBlockSizesSupported:
+        type: list
+        description: >-
+          The set of memory block sizes supported by memory regions in this CXL device.
+        required: false
+        entry_schema:
+          type: CXLRegionBlockSizes
+      ReleaseCapacityPoliciesSupported:
+        type: list
+        description: >-
+          The set of removal policies supported by the CXL device when dynamic capacity
+          is released.
+        required: false
+        entry_schema:
+          type: CXLDynamicCapacityPolicies
+      SanitizationOnReleaseSupport:
+        type: list
+        description: >-
+          An indication of whether the sanitization on capacity release is configurable
+          for the memory regions in this CXL device.
+        required: false
+        entry_schema:
+          type: CXLRegionSanitization
+      TotalDynamicCapacityMiB:
+        type: integer
+        description: >-
+          The total memory media capacity of the CXL device available for dynamic
+          assignment in mebibytes (MiB).
+        required: false
+  CXLDynamicCapacityPolicies:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Free
+        - Contiguous
+        - Prescriptive
+        - TagBased
+  CXLRegionBlockSizes:
+    description: >-
+      Set of memory block sizes supported by memory region in the CXL device.
+    properties:
+      BlockSizeMiB:
+        type: list
+        description: >-
+          Set of memory block sizes supported by this memory region defined in mebibytes
+          (MiB).
+        required: false
+        entry_schema:
+          type: integer
+      RegionNumber:
+        type: integer
+        description: >-
+          The memory region number.
+        required: false
+  CXLRegionSanitization:
+    description: >-
+      An indication of whether the sanitization on capacity release is configurable
+      for the memory region.
+    properties:
+      RegionNumber:
+        type: integer
+        description: >-
+          The memory region number.
+        required: false
+      SanitizationOnReleaseSupported:
+        type: boolean
+        description: >-
+          An indication of whether the sanitization on capacity release is configurable
+          for this memory region.
+        required: false
+  DeviceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SingleFunction
+        - MultiFunction
+        - Simulated
+        - Retimer
+  LaneSplittingType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - Bridged
+        - Bifurcated
+  PCIeErrors:
+    description: >-
+      The PCIe errors associated with this device.
+    properties:
+      CorrectableErrorCount:
+        type: integer
+        description: >-
+          The total number of the PCIe correctable errors for this device.
+        required: false
+      FatalErrorCount:
+        type: integer
+        description: >-
+          The total number of the PCIe fatal errors for this device.
+        required: false
+      L0ToRecoveryCount:
+        type: integer
+        description: >-
+          The total number of times the PCIe link states transitioned from L0 to the
+          recovery state for this device.
+        required: false
+      NAKReceivedCount:
+        type: integer
+        description: >-
+          The total number of NAKs issued on the PCIe link by the receiver.
+        required: false
+      NAKSentCount:
+        type: integer
+        description: >-
+          The total number of NAKs issued on the PCIe link by this device.
+        required: false
+      NonFatalErrorCount:
+        type: integer
+        description: >-
+          The total number of the PCIe non-fatal errors for this device.
+        required: false
+      ReplayCount:
+        type: integer
+        description: >-
+          The total number of the PCIe replays issued by this device.
+        required: false
+      ReplayRolloverCount:
+        type: integer
+        description: >-
+          The total number of the PCIe replay rollovers issued by this device.
+        required: false
+  PCIeInterface:
+    description: >-
+      Properties that describe a PCIe interface.
+    properties:
+      LanesInUse:
+        type: integer
+        description: >-
+          The number of PCIe lanes in use by this device.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 32
+      MaxLanes:
+        type: integer
+        description: >-
+          The number of PCIe lanes supported by this device.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 32
+      MaxPCIeType:
+        type: pcdvc:PCIeTypes
+        description: >-
+          The highest version of the PCIe specification supported by this device.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeType:
+        type: pcdvc:PCIeTypes
+        description: >-
+          The version of the PCIe specification in use by this device.
+        required: false
+  Slot:
+    description: >-
+      The PCIe slot associated with a PCIe device.
+    properties:
+      HotPluggable:
+        type: boolean
+        description: >-
+          An indication of whether this PCIe slot supports hotplug.
+        required: false
+      LaneSplitting:
+        type: LaneSplittingType
+        description: >-
+          The lane splitting strategy used in the PCIe slot.
+        required: false
+      Lanes:
+        type: integer
+        description: >-
+          The number of PCIe lanes supported by this slot.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 32
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the PCIe slot.
+        required: false
+      PCIeType:
+        type: pcdvc:PCIeTypes
+        description: >-
+          The PCIe specification this slot supports.
+        required: false
+      SlotType:
+        type: SlotType
+        description: >-
+          The PCIe slot type.
+        required: false
+  SlotType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - FullLength
+        - HalfLength
+        - LowProfile
+        - Mini
+        - M2
+        - OEM
+        - OCP3Small
+        - OCP3Large
+        - U2
+relationship_types:
+  PCIeDeviceDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Processors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  PCIeDevice:
+    description: >-
+      The PCIeDevice schema describes the properties of a PCIe device that is attached
+      to a system.  It also describes the location, such as a slot, socket, or bay,
+      where a unit can be installed, by populating a resource instance with an absent
+      state if a unit is not present.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this PCIe device.
+        required: false
+      CXLDevice:
+        type: CXLDevice
+        description: >-
+          The CXL-specific properties of this PCIe device.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DeviceType:
+        type: DeviceType
+        description: >-
+          The device type for this PCIe device.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The version of firmware for this PCIe device.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this PCIe device.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for the PCIe device.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeInterface:
+        type: PCIeInterface
+        description: >-
+          The PCIe interface details for this PCIe device.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this PCIe device.
+        required: false
+      ReadyToRemove:
+        type: boolean
+        description: >-
+          An indication of whether the PCIe device is prepared by the system for removal.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this PCIe device.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this PCIe device.
+        required: false
+      Slot:
+        type: Slot
+        description: >-
+          Information about the slot for this PCIe device.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number of the PCIe device.
+        required: false
+      StagedVersion:
+        type: string
+        description: >-
+          The staged firmware version for this PCIe device, but is not yet active.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this PCIe device.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this PCIe device.
+    - CXLLogicalDevices:
+        node: cxldvccl:CXLLogicalDeviceCollection
+        capability: cxdvclcp:CXLLogicalDeviceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of CXL logical devices within this PCIe device.
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this PCIe device.
+    - PCIeFunctions:
+        node: pcfnccl:PCIeFunctionCollection
+        capability: pcfnclcp:PCIeFunctionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of PCIe functions associated with this PCIe device.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: PCIeDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis in which the PCIe device is contained.
+    - PCIeFunctions:
+        # node: pcfnctn:PCIeFunction
+        capability: core:Feature
+        relationship: PCIeDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to PCIe functions exposed by this device.
+    - Processors:
+        # node: prcssr:Processor
+        capability: core:Feature
+        relationship: PCIeDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the processors that are directly connected or directly
+          bridged to this PCIe device.
+    - Switch:
+        # node: switch:Switch
+        capability: swtchcps:SwitchFeature
+        relationship: PCIeDeviceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a switch that is associated with this PCIe device.
+    capabilities:
+      feature:
+        type: pcdvccps:PCIeDeviceFeature
+      containable:
+        type: pcdvccps:PCIeDeviceContainable

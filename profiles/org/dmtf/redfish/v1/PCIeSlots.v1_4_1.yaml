@@ -1,0 +1,149 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PCIeSlots_caps.yaml
+  namespace: pcsltcp
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+data_types:
+  PCIeSlot:
+    description: >-
+      This type defines information for a PCIe slot.
+    properties:
+      HotPluggable:
+        type: boolean
+        description: >-
+          An indication of whether this PCIe slot supports hotplug.
+        required: false
+      Lanes:
+        type: integer
+        description: >-
+          The number of PCIe lanes supported by this slot.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 32
+      Links:
+        type: PCIeLinks
+        description: >-
+          The links to other Resources that are related to this Resource.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the PCIe slot.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeType:
+        type: pcdvc:PCIeTypes
+        description: >-
+          The PCIe specification supported by this slot.
+        required: false
+      SlotType:
+        type: SlotTypes
+        description: >-
+          The PCIe slot type for this slot.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+  SlotTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - FullLength
+        - HalfLength
+        - LowProfile
+        - Mini
+        - M2
+        - OEM
+        - OCP3Small
+        - OCP3Large
+        - U2
+node_types:
+  PCIeSlots:
+    description: >-
+      The PCIeSlots schema describes PCIe slot properties.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Slots:
+        type: list
+        description: >-
+          An array of PCI Slot information.
+        required: false
+        entry_schema:
+          type: PCIeSlot
+    capabilities:
+      feature:
+        type: pcsltcp:PCIeSlotsFeature
+      containable:
+        type: pcsltcp:PCIeSlotsContainable
+  PCIeLinks:
+    description: >-
+      The links to other Resources that are related to this Resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeDevice@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - PCIeDevice:
+        node: pcdvc:PCIeDevice
+        capability: pcdvccps:PCIeDeviceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIe devices contained in this slot.
+    capabilities:
+      containable:
+        type: pcsltcp:PCIeLinksContainable

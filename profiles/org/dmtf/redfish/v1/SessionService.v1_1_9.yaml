@@ -1,0 +1,82 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: SessionCollection.yaml
+  namespace: sssncllc
+- url: Core.yaml
+  namespace: core
+- url: SessionCollection_caps.yaml
+  namespace: ssscllcp
+- url: SessionService_caps.yaml
+  namespace: ssssrvcp
+node_types:
+  SessionService:
+    description: >-
+      The `SessionService` schema describes the session service and its properties,
+      with links to the actual list of sessions.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.  If `true`, this service
+          is enabled.  If `false`, it is disabled, and new sessions cannot be created,
+          old sessions cannot be deleted, and established sessions can continue operating.
+        required: false
+      SessionTimeout:
+        type: integer
+        description: >-
+          The number of seconds of inactivity that a session can have before the session
+          service closes the session due to inactivity.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 30
+          - $less_or_equal:
+            - $value
+            - 86400
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Sessions:
+        node: sssncllc:SessionCollection
+        capability: ssscllcp:SessionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of sessions.
+    capabilities:
+      feature:
+        type: ssssrvcp:SessionServiceFeature
+      containable:
+        type: ssssrvcp:SessionServiceContainable

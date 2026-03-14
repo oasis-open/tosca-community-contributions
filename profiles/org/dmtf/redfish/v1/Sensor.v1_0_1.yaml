@@ -1,0 +1,453 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Core.yaml
+  namespace: core
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+- url: Sensor_caps.yaml
+  namespace: snsrcps
+data_types:
+  ElectricalContext:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Line1
+        - Line2
+        - Line3
+        - Neutral
+        - LineToLine
+        - Line1ToLine2
+        - Line2ToLine3
+        - Line3ToLine1
+        - LineToNeutral
+        - Line1ToNeutral
+        - Line2ToNeutral
+        - Line3ToNeutral
+        - Line1ToNeutralAndL1L2
+        - Line2ToNeutralAndL1L2
+        - Line2ToNeutralAndL2L3
+        - Line3ToNeutralAndL3L1
+        - Total
+  ReadingType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Temperature
+        - Humidity
+        - Power
+        - EnergykWh
+        - EnergyJoules
+        - Voltage
+        - Current
+        - Frequency
+        - Pressure
+        - LiquidLevel
+        - Rotational
+        - AirFlow
+        - LiquidFlow
+        - Barometric
+        - Altitude
+  Threshold:
+    description: >-
+      A threshold definition for a sensor.
+    properties:
+      Activation:
+        type: ThresholdActivation
+        description: >-
+          The direction of crossing that activates this threshold.
+        required: false
+      DwellTime:
+        type: string
+        description: >-
+          The time interval over which the sensor reading must have passed through
+          this Threshold value before the threshold is considered to be violated.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - -?P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?
+      Reading:
+        type: float
+        description: >-
+          The threshold value.
+        required: false
+  ThresholdActivation:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Increasing
+        - Decreasing
+        - Either
+  Thresholds:
+    description: >-
+      The set of thresholds defined for a sensor.
+    properties:
+      LowerCaution:
+        type: Threshold
+        description: >-
+          Below normal range.
+        required: false
+      LowerCritical:
+        type: Threshold
+        description: >-
+          Below normal range but not yet fatal.
+        required: false
+      LowerFatal:
+        type: Threshold
+        description: >-
+          Below normal range and fatal.
+        required: false
+      UpperCaution:
+        type: Threshold
+        description: >-
+          Above normal range.
+        required: false
+      UpperCritical:
+        type: Threshold
+        description: >-
+          Above normal range but not yet fatal.
+        required: false
+      UpperFatal:
+        type: Threshold
+        description: >-
+          Above normal range and fatal.
+        required: false
+  VoltageType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - AC
+        - DC
+interface_types:
+  SensorActions:
+    operations:
+      ResetStatistics:
+        description: >-
+          This action is used to reset statistics related to this sensor.
+node_types:
+  Sensor:
+    description: >-
+      This schema defines a Sensor to be used in conjunction with data center equipment.
+    properties:
+      Accuracy:
+        type: float
+        description: >-
+          Estimated percent error of measured vs. actual values.
+        required: false
+      AdjustedMaxAllowableOperatingValue:
+        type: float
+        description: >-
+          Adjusted maximum allowable operating value for this equipment based on the
+          current environmental conditions present.
+        required: false
+      AdjustedMinAllowableOperatingValue:
+        type: float
+        description: >-
+          Adjusted minimum allowable operating value for this equipment based on the
+          current environmental conditions present.
+        required: false
+      ApparentVA:
+        type: float
+        description: >-
+          The product of Voltage and Current for an AC circuit, in Volt-Amperes units.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ElectricalContext:
+        type: ElectricalContext
+        description: >-
+          The combination of current-carrying conductors.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LoadPercent:
+        type: float
+        description: >-
+          The power load utilization for this Sensor.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location information for this Sensor.
+        required: false
+      MaxAllowableOperatingValue:
+        type: float
+        description: >-
+          Maximum allowable operating value for this equipment.
+        required: false
+      MinAllowableOperatingValue:
+        type: float
+        description: >-
+          Minimum allowable operating value for this equipment.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      PeakReading:
+        type: float
+        description: >-
+          The peak reading value for this sensor.
+        required: false
+      PeakReadingTime:
+        type: string
+        description: >-
+          The time at which the Peak Reading value occurred.
+        required: false
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          Describes the usage or location within a device to which this sensor measurement
+          applies.
+        required: false
+      PowerFactor:
+        type: float
+        description: >-
+          The power factor for this Sensor.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 1
+      Precision:
+        type: float
+        description: >-
+          Number of significant digits in the Reading.
+        required: false
+      ReactiveVAR:
+        type: float
+        description: >-
+          The square root of the difference term of squared ApparentVA and squared
+          Power (Reading) for a circuit, expressed in VAR units.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The present value for this Sensor.
+        required: false
+      ReadingRangeMax:
+        type: float
+        description: >-
+          The maximum value of Reading possible for this Sensor.
+        required: false
+      ReadingRangeMin:
+        type: float
+        description: >-
+          The minimum value of Reading possible for this Sensor.
+        required: false
+      ReadingType:
+        type: ReadingType
+        description: >-
+          The kind of sensor being represented.
+        required: false
+      ReadingUnits:
+        type: string
+        description: >-
+          Units in which the reading and thresholds are measured.
+        required: false
+      SensingFrequency:
+        type: float
+        description: >-
+          The time interval between readings of the physical sensor.
+        required: false
+      SensorResetTime:
+        type: string
+        description: >-
+          The time at which the time-based properties were last reset.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+      Thresholds:
+        type: Thresholds
+        description: >-
+          The set of thresholds defined for this sensor.
+        required: false
+      VoltageType:
+        type: VoltageType
+        description: >-
+          The voltage type (AC or DC) for this sensor.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Describes the area or device to which this sensor measurement applies.
+    interfaces:
+      Actions:
+        type: SensorActions
+    capabilities:
+      feature:
+        type: snsrcps:SensorFeature
+      containable:
+        type: snsrcps:SensorContainable
+  SensorExcerpt:
+    description: >-
+      This schema defines a Sensor to be used in conjunction with data center equipment.
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          A link to the resource that provides the data for this object.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      PeakReading:
+        type: float
+        description: >-
+          The peak reading value for this sensor.
+        required: false
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          Describes the usage or location within a device to which this sensor measurement
+          applies.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The present value for this Sensor.
+        required: false
+      ReadingUnits:
+        type: string
+        description: >-
+          Units in which the reading and thresholds are measured.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Describes the area or device to which this sensor measurement applies.
+    capabilities:
+      containable:
+        type: snsrcps:SensorExcerptContainable
+  SensorPowerExcerpt:
+    description: >-
+      This schema defines a Sensor to be used in conjunction with data center equipment.
+    properties:
+      ApparentVA:
+        type: float
+        description: >-
+          The product of Voltage and Current for an AC circuit, in Volt-Amperes units.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          A link to the resource that provides the data for this object.
+        required: false
+      LoadPercent:
+        type: float
+        description: >-
+          The power load utilization for this Sensor.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      PeakReading:
+        type: float
+        description: >-
+          The peak reading value for this sensor.
+        required: false
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          Describes the usage or location within a device to which this sensor measurement
+          applies.
+        required: false
+      PowerFactor:
+        type: float
+        description: >-
+          The power factor for this Sensor.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 1
+      ReactiveVAR:
+        type: float
+        description: >-
+          The square root of the difference term of squared ApparentVA and squared
+          Power (Reading) for a circuit, expressed in VAR units.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The present value for this Sensor.
+        required: false
+      ReadingUnits:
+        type: string
+        description: >-
+          Units in which the reading and thresholds are measured.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Describes the area or device to which this sensor measurement applies.
+    capabilities:
+      containable:
+        type: snsrcps:SensorPowerExcerptContainable

@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: VolumeMetrics.v1_2_0.yaml
+  namespace: vlmmtrcs
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: VolumeMetrics_caps.yaml
+  namespace: vlmmtrcp
+node_types:
+  VolumeMetrics:
+    description: >-
+      The usage and health statistics for a volume.
+    derived_from: vlmmtrcs:VolumeMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: vlmmtrcp:VolumeMetricsFeature
+      containable:
+        type: vlmmtrcp:VolumeMetricsContainable

@@ -1,0 +1,147 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ManagerAccountCollection.yaml
+  namespace: mngacccl
+- url: Resource.yaml
+  namespace: resource
+- url: RoleCollection.yaml
+  namespace: rlcllctn
+- url: Core.yaml
+  namespace: core
+- url: ManagerAccountCollection_caps.yaml
+  namespace: mnacclcp
+- url: RoleCollection_caps.yaml
+  namespace: rlcllcp
+- url: AccountService_caps.yaml
+  namespace: accsrvcp
+node_types:
+  AccountService:
+    description: >-
+      The AccountService schema contains properties for managing user accounts. The
+      properties are common to all user accounts, such as password requirements, and
+      control features such as account lockout. The schema also contains links to
+      the collections of Manager Accounts and Roles.
+    properties:
+      AccountLockoutCounterResetAfter:
+        type: integer
+        description: >-
+          The interval of time in seconds between the last failed login attempt and
+          reset of the lockout threshold counter. This value must be less than or
+          equal to AccountLockoutDuration. Reset sets the counter to zero.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AccountLockoutDuration:
+        type: integer
+        description: >-
+          The time in seconds an account is locked out. The value must be greater
+          than or equal to the value of the AccountLockoutCounterResetAfter property.
+          If set to 0, no lockout occurs.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AccountLockoutThreshold:
+        type: integer
+        description: >-
+          The number of failed login attempts allowed before a user account is locked
+          for a specified duration. A value of 0 means it is never locked.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AuthFailureLoggingThreshold:
+        type: integer
+        description: >-
+          The number of authorization failures allowed before the failure attempt
+          is logged to the manager log.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaxPasswordLength:
+        type: integer
+        description: >-
+          The maximum password length for this service.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinPasswordLength:
+        type: integer
+        description: >-
+          The minimum password length for this service.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          Indicates whether this service is enabled.  If set to false, the AccountService
+          is disabled.  This means no users can be created, deleted or modified.  Any
+          service attempting to access the AccountService resource (for example, the
+          Session Service) will fail.  New sessions cannot be started when the service
+          is disabled. However, established sessions may still continue operating.
+          This does not affect Basic AUTH connections.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+    requirements:
+    - Accounts:
+        node: mngacccl:ManagerAccountCollection
+        capability: mnacclcp:ManagerAccountCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to a collection of Manager Accounts.
+    - Roles:
+        node: rlcllctn:RoleCollection
+        capability: rlcllcp:RoleCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to a collection of Roles.
+    capabilities:
+      feature:
+        type: accsrvcp:AccountServiceFeature
+      containable:
+        type: accsrvcp:AccountServiceContainable

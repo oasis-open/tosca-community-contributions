@@ -1,0 +1,58 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+node_types:
+  SoftwareInventory:
+    description: >-
+      The `SoftwareInventory` schema contains an inventory of software components.  This
+      can include software components such as BIOS, BMC firmware, firmware for other
+      devices, system drivers, or provider software.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Updateable:
+        type: boolean
+        description: >-
+          An indication of whether the update service can update this software.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The version of this software.
+        required: false
+    capabilities:
+      feature:
+        type: sftinvcp:SoftwareInventoryFeature
+      containable:
+        type: sftinvcp:SoftwareInventoryContainable

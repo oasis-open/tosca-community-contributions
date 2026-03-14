@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: LicenseService.v1_1_2.yaml
+  namespace: lcnssrvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: LicenseService_caps.yaml
+  namespace: lcnsrvcp
+node_types:
+  LicenseService:
+    description: >-
+      The `LicenseService` schema describes the license service and the properties
+      for the service itself with a link to the collection of licenses.  The license
+      service also provides methods for installing licenses in a Redfish service.
+    derived_from: lcnssrvc:LicenseService
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: lcnsrvcp:LicenseServiceFeature
+      containable:
+        type: lcnsrvcp:LicenseServiceContainable

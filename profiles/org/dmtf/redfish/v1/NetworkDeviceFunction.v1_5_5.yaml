@@ -1,0 +1,672 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: VLanNetworkInterface.yaml
+  namespace: vlnntwin
+- url: VLanNetworkInterfaceCollection.yaml
+  namespace: vlntincl
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: EthernetInterface.yaml
+  namespace: ethrintr
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+- url: NetworkDeviceFunction_caps.yaml
+  namespace: ntdvfncp
+- url: VLanNetworkInterfaceCollection_caps.yaml
+  namespace: vlntincc
+data_types:
+  AuthenticationMethod:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - CHAP
+        - MutualCHAP
+  BootMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Disabled
+        - PXE
+        - iSCSI
+        - FibreChannel
+        - FibreChannelOverEthernet
+  BootTargets:
+    description: >-
+      A Fibre Channel boot target configured for a network device function.
+    properties:
+      BootPriority:
+        type: integer
+        description: >-
+          The relative priority for this entry in the boot targets array.
+        required: false
+      LUNID:
+        type: string
+        description: >-
+          The logical unit number (LUN) ID from which to boot on the device to which
+          the corresponding WWPN refers.
+        required: false
+      WWPN:
+        type: string
+        description: >-
+          The World Wide Port Name (WWPN) from which to boot.
+        required: false
+  FibreChannel:
+    description: >-
+      This type describes Fibre Channel capabilities, status, and configuration for
+      a network device function.
+    properties:
+      AllowFIPVLANDiscovery:
+        type: boolean
+        description: >-
+          An indication of whether the FCoE Initialization Protocol (FIP) populates
+          the FCoE VLAN ID.
+        required: false
+      BootTargets:
+        type: list
+        description: >-
+          An array of Fibre Channel boot targets configured for this network device
+          function.
+        required: false
+        entry_schema:
+          type: BootTargets
+      FCoEActiveVLANId:
+        type: integer
+        description: >-
+          The active FCoE VLAN ID.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 4094
+      FCoELocalVLANId:
+        type: integer
+        description: >-
+          The locally configured FCoE VLAN ID.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 4094
+      FibreChannelId:
+        type: string
+        description: >-
+          The Fibre Channel ID that the switch assigns for this interface.
+        required: false
+      PermanentWWNN:
+        type: string
+        description: >-
+          The permanent World Wide Node Name (WWNN) address assigned to this function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){7}([0-9A-Fa-f]{2})$
+      PermanentWWPN:
+        type: string
+        description: >-
+          The permanent World Wide Port Name (WWPN) address assigned to this function.
+        required: false
+      WWNN:
+        type: string
+        description: >-
+          The currently configured World Wide Node Name (WWNN) address of this function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){7}([0-9A-Fa-f]{2})$
+      WWNSource:
+        type: WWNSource
+        description: >-
+          The configuration source of the World Wide Names (WWN) for this World Wide
+          Node Name (WWNN) and World Wide Port Name (WWPN) connection.
+        required: false
+      WWPN:
+        type: string
+        description: >-
+          The currently configured World Wide Port Name (WWPN) address of this function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){7}([0-9A-Fa-f]{2})$
+  IPAddressType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - IPv4
+        - IPv6
+  InfiniBand:
+    description: >-
+      This type describes InfiniBand capabilities, status, and configuration of a
+      network device function.
+    properties:
+      MTUSize:
+        type: integer
+        description: >-
+          The maximum transmission unit (MTU) configured for this network device function.
+        required: false
+      NodeGUID:
+        type: string
+        description: >-
+          This is the currently configured node GUID of the network device function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{4}[:-]){3}([0-9A-Fa-f]{4})$
+      PermanentNodeGUID:
+        type: string
+        description: >-
+          The permanent node GUID assigned to this network device function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{4}[:-]){3}([0-9A-Fa-f]{4})$
+      PermanentPortGUID:
+        type: string
+        description: >-
+          The permanent port GUID assigned to this network device function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{4}[:-]){3}([0-9A-Fa-f]{4})$
+      PermanentSystemGUID:
+        type: string
+        description: >-
+          The permanent system GUID assigned to this network device function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{4}[:-]){3}([0-9A-Fa-f]{4})$
+      PortGUID:
+        type: string
+        description: >-
+          The currently configured port GUID of the network device function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{4}[:-]){3}([0-9A-Fa-f]{4})$
+      SupportedMTUSizes:
+        type: list
+        description: >-
+          The maximum transmission unit (MTU) sizes supported for this network device
+          function.
+        required: false
+        entry_schema:
+          type: integer
+      SystemGUID:
+        type: string
+        description: >-
+          This is the currently configured system GUID of the network device function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{4}[:-]){3}([0-9A-Fa-f]{4})$
+  NetworkDeviceTechnology:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Disabled
+        - Ethernet
+        - FibreChannel
+        - iSCSI
+        - FibreChannelOverEthernet
+        - InfiniBand
+  WWNSource:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ConfiguredLocally
+        - ProvidedByFabric
+  iSCSIBoot:
+    description: >-
+      The iSCSI boot capabilities, status, and configuration for a network device
+      function.
+    properties:
+      AuthenticationMethod:
+        type: AuthenticationMethod
+        description: >-
+          The iSCSI boot authentication method for this network device function.
+        required: false
+      CHAPSecret:
+        type: string
+        description: >-
+          The shared secret for CHAP authentication.
+        required: false
+      CHAPUsername:
+        type: string
+        description: >-
+          The username for CHAP authentication.
+        required: false
+      IPAddressType:
+        type: IPAddressType
+        description: >-
+          The type of IP address being populated in the iSCSIBoot IP address fields.
+        required: false
+      IPMaskDNSViaDHCP:
+        type: boolean
+        description: >-
+          An indication of whether the iSCSI boot initiator uses DHCP to obtain the
+          initiator name, IP address, and netmask.
+        required: false
+      InitiatorDefaultGateway:
+        type: string
+        description: >-
+          The IPv6 or IPv4 iSCSI boot default gateway.
+        required: false
+      InitiatorIPAddress:
+        type: string
+        description: >-
+          The IPv6 or IPv4 address of the iSCSI initiator.
+        required: false
+      InitiatorName:
+        type: string
+        description: >-
+          The iSCSI initiator name.
+        required: false
+      InitiatorNetmask:
+        type: string
+        description: >-
+          The IPv6 or IPv4 netmask of the iSCSI boot initiator.
+        required: false
+      MutualCHAPSecret:
+        type: string
+        description: >-
+          The CHAP secret for two-way CHAP authentication.
+        required: false
+      MutualCHAPUsername:
+        type: string
+        description: >-
+          The CHAP username for two-way CHAP authentication.
+        required: false
+      PrimaryDNS:
+        type: string
+        description: >-
+          The IPv6 or IPv4 address of the primary DNS server for the iSCSI boot initiator.
+        required: false
+      PrimaryLUN:
+        type: integer
+        description: >-
+          The logical unit number (LUN) for the primary iSCSI boot target.
+        required: false
+      PrimaryTargetIPAddress:
+        type: string
+        description: >-
+          The IPv4 or IPv6 address for the primary iSCSI boot target.
+        required: false
+      PrimaryTargetName:
+        type: string
+        description: >-
+          The name of the iSCSI primary boot target.
+        required: false
+      PrimaryTargetTCPPort:
+        type: integer
+        description: >-
+          The TCP port for the primary iSCSI boot target.
+        required: false
+      PrimaryVLANEnable:
+        type: boolean
+        description: >-
+          An indication of whether the primary VLAN is enabled.
+        required: false
+      PrimaryVLANId:
+        type: integer
+        description: >-
+          The 802.1q VLAN ID to use for iSCSI boot from the primary target.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 4094
+      RouterAdvertisementEnabled:
+        type: boolean
+        description: >-
+          An indication of whether IPv6 router advertisement is enabled for the iSCSI
+          boot target.
+        required: false
+      SecondaryDNS:
+        type: string
+        description: >-
+          The IPv6 or IPv4 address of the secondary DNS server for the iSCSI boot
+          initiator.
+        required: false
+      SecondaryLUN:
+        type: integer
+        description: >-
+          The logical unit number (LUN) for the secondary iSCSI boot target.
+        required: false
+      SecondaryTargetIPAddress:
+        type: string
+        description: >-
+          The IPv4 or IPv6 address for the secondary iSCSI boot target.
+        required: false
+      SecondaryTargetName:
+        type: string
+        description: >-
+          The name of the iSCSI secondary boot target.
+        required: false
+      SecondaryTargetTCPPort:
+        type: integer
+        description: >-
+          The TCP port for the secondary iSCSI boot target.
+        required: false
+      SecondaryVLANEnable:
+        type: boolean
+        description: >-
+          An indication of whether the secondary VLAN is enabled.
+        required: false
+      SecondaryVLANId:
+        type: integer
+        description: >-
+          The 802.1q VLAN ID to use for iSCSI boot from the secondary target.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 4094
+      TargetInfoViaDHCP:
+        type: boolean
+        description: >-
+          An indication of whether the iSCSI boot target name, LUN, IP address, and
+          netmask should be obtained from DHCP.
+        required: false
+relationship_types:
+  NetworkDeviceFunctionDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  NetworkDeviceFunction:
+    description: >-
+      The `NetworkDeviceFunction` schema represents a logical interface that a network
+      adapter exposes.
+    properties:
+      AssignablePhysicalNetworkPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      AssignablePhysicalPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      BootMode:
+        type: BootMode
+        description: >-
+          The boot mode configured for this network device function.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DeviceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the network device function is enabled.
+        required: false
+      Ethernet:
+        type: Ethernet
+        description: >-
+          The Ethernet capabilities, status, and configuration values for this network
+          device function.
+        required: false
+      FibreChannel:
+        type: FibreChannel
+        description: >-
+          The Fibre Channel capabilities, status, and configuration values for this
+          network device function.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InfiniBand:
+        type: InfiniBand
+        description: >-
+          The InfiniBand capabilities, status, and configuration values for this network
+          device function.
+        required: false
+      MaxVirtualFunctions:
+        type: integer
+        description: >-
+          The number of virtual functions that are available for this network device
+          function.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NetDevFuncCapabilities:
+        type: list
+        description: >-
+          An array of capabilities for this network device function.
+        required: false
+        entry_schema:
+          type: NetworkDeviceTechnology
+      NetDevFuncType:
+        type: NetworkDeviceTechnology
+        description: >-
+          The configured capability of this network device function.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      VirtualFunctionsEnabled:
+        type: boolean
+        description: >-
+          An indication of whether single root input/output virtualization (SR-IOV)
+          virtual functions are enabled for this network device function.
+        required: false
+      iSCSIBoot:
+        type: iSCSIBoot
+        description: >-
+          The iSCSI boot capabilities, status, and configuration values for this network
+          device function.
+        required: false
+    requirements:
+    - AssignablePhysicalNetworkPorts:
+        # node: port:Port
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of physical ports or logical aggregated ports to which this network
+          device function can be assigned.
+    - AssignablePhysicalPorts:
+        # node: ntwrkprt:NetworkPort
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of physical ports to which this network device function can be
+          assigned.
+    - PhysicalNetworkPortAssignment:
+        # node: port:Port
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The physical port or logical aggregated port to which this network device
+          function is currently assigned.
+    - PhysicalPortAssignment:
+        # node: ntwrkprt:NetworkPort
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The physical port to which this network device function is currently assigned.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: NetworkDeviceFunctionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to endpoints associated with this network device function.
+    - EthernetInterface:
+        node: ethrintr:EthernetInterface
+        capability: ethintcp:EthernetInterfaceFeature
+        relationship: NetworkDeviceFunctionDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a virtual Ethernet interface that was created when one of the
+          network device function VLANs is represented as a virtual NIC for the purpose
+          of showing the IP address associated with that VLAN.
+    - PCIeFunction:
+        # node: pcfnctn:PCIeFunction
+        capability: core:Feature
+        relationship: NetworkDeviceFunctionDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the PCIe function associated with this network device function.
+    - PhysicalNetworkPortAssignment:
+        # node: port:Port
+        capability: core:Feature
+        relationship: NetworkDeviceFunctionDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The physical port or logical aggregated port to which this network device
+          function is currently assigned.
+    - PhysicalPortAssignment:
+        # node: ntwrkprt:NetworkPort
+        capability: core:Feature
+        relationship: NetworkDeviceFunctionDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The physical port to which this network device function is currently assigned.
+    capabilities:
+      feature:
+        type: ntdvfncp:NetworkDeviceFunctionFeature
+      containable:
+        type: ntdvfncp:NetworkDeviceFunctionContainable
+  Ethernet:
+    description: >-
+      This type describes Ethernet capabilities, status, and configuration for a network
+      device function.
+    properties:
+      MACAddress:
+        type: string
+        description: >-
+          The currently configured MAC address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+      MTUSize:
+        type: integer
+        description: >-
+          The hardware maximum transmission unit (MTU) configured for this network
+          device function.
+        required: false
+      MTUSizeMaximum:
+        type: integer
+        description: >-
+          The largest maximum transmission unit (MTU) size supported for this network
+          device function.
+        required: false
+      PermanentMACAddress:
+        type: string
+        description: >-
+          The permanent MAC address assigned to this function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+      VLAN:
+        type: vlnntwin:VLAN
+        description: >-
+          The VLAN information for this interface.  If this network interface supports
+          more than one VLAN, this property is not present.
+        required: false
+    requirements:
+    - VLANs:
+        node: vlntincl:VLanNetworkInterfaceCollection
+        capability: vlntincc:VLanNetworkInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of VLANs.  This property is used only if the interface
+          supports more than one VLAN.
+    capabilities:
+      containable:
+        type: ntdvfncp:EthernetContainable

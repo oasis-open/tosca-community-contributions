@@ -1,0 +1,284 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: SpareResourceSet.yaml
+  namespace: sprrsrst
+- url: Core.yaml
+  namespace: core
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: SpareResourceSet_caps.yaml
+  namespace: sprsstcp
+- url: DataStorageLoSCapabilities.yaml
+  namespace: dtstlsc
+- url: Capacity.yaml
+  namespace: capacity
+- url: FileShareCollection.yaml
+  namespace: flshrcl
+- url: IOStatistics.yaml
+  namespace: isttstcs
+- url: StorageReplicaInfo.yaml
+  namespace: strrplin
+- url: Capacity_caps.yaml
+  namespace: cpctycps
+- url: FileShareCollection_caps.yaml
+  namespace: flshclcp
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+- url: FileSystem_caps.yaml
+  namespace: flsyscp
+data_types:
+  CharacterCodeSet:
+    description: >-
+      Supported character code standards for different alphabets and languages.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ASCII
+        - Unicode
+        - ISO2022
+        - ISO8859_1
+        - ExtendedUNIXCode
+        - UTF_8
+        - UTF_16
+        - UCS_2
+relationship_types:
+  FileSystemDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ReplicaCollection@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SpareResourceSets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  FileSystem:
+    description: >-
+      An instance of a hierarchical namespace of files.
+    properties:
+      AccessCapabilities:
+        type: list
+        description: >-
+          An array of supported IO access capabilities.
+        required: false
+        entry_schema:
+          type: dtstlsc:StorageAccessCapability
+      BlockSizeBytes:
+        type: integer
+        description: >-
+          Block size of the file system in bytes.
+        required: false
+      CapacitySources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      CasePreserved:
+        type: boolean
+        description: >-
+          The case of file names is preserved by the file system.
+        required: false
+      CaseSensitive:
+        type: boolean
+        description: >-
+          Case sensitive file names are supported by the file system.
+        required: false
+      CharacterCodeSet:
+        type: list
+        description: >-
+          An array of the character sets or encodings supported by the file system.
+        required: false
+        entry_schema:
+          type: CharacterCodeSet
+      ClusterSizeBytes:
+        type: integer
+        description: >-
+          A value indicating the minimum file allocation size imposed by the file
+          system.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for this file system.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      ImportedShares:
+        type: list
+        description: >-
+          An array of imported file shares.
+        required: false
+        entry_schema:
+          type: string
+      LowSpaceWarningThresholdPercents:
+        type: list
+        description: >-
+          An array of low space warning threshold percentages for the file system.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+        entry_schema:
+          type: integer
+      MaxFileNameLengthBytes:
+        type: integer
+        description: >-
+          A value indicating the maximum length of a file name within the file system.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RecoverableCapacitySourceCount:
+        type: integer
+        description: >-
+          Current number of capacity source resources that are available as replacements.
+        required: false
+      RemainingCapacityPercent:
+        type: integer
+        description: >-
+          The percentage of the capacity remaining in the FileSystem.
+        required: false
+      ReplicaInfo:
+        type: strrplin:ReplicaInfo
+        description: >-
+          This value describes the replica attributes if this file system is a replica.
+        required: false
+      ReplicaTargets:
+        type: list
+        description: >-
+          The resources that are target replicas of this source.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      ReplicaTargets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - Capacity:
+        node: capacity:Capacity
+        capability: cpctycps:CapacityContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Capacity allocated to the file system.
+    - CapacitySources:
+        node: capacity:CapacitySource
+        capability: cpctycps:CapacitySourceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of capacity sources for the file system.
+    - ExportedShares:
+        node: flshrcl:FileShareCollection
+        capability: flshclcp:FileShareCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An array of exported file shares of this file system.
+    - IOStatistics:
+        node: isttstcs:IOStatistics
+        capability: isttcps:IOStatisticsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Statistics for this FileSystem.
+    - RemainingCapacity:
+        node: capacity:Capacity
+        capability: cpctycps:CapacityContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Remaining capacity allocated to the file system.
+    - ClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceFeature
+        relationship: FileSystemDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The ClassOfService of this file system.
+    - ReplicaCollection:
+        # node: flsystm:FileSystem
+        capability: core:Feature
+        relationship: FileSystemDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to replicas for this file system.
+    - SpareResourceSets:
+        node: sprrsrst:SpareResourceSet
+        capability: sprsstcp:SpareResourceSetFeature
+        relationship: FileSystemDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to SpareResourceSets.
+    capabilities:
+      feature:
+        type: flsyscp:FileSystemFeature
+      containable:
+        type: flsyscp:FileSystemContainable

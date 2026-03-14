@@ -1,0 +1,177 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Port.yaml
+  namespace: port
+- url: Switch.yaml
+  namespace: switch
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Port_caps.yaml
+  namespace: portcaps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+- url: Protocol.yaml
+  namespace: protocol
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+data_types:
+  PortType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - UpstreamPort
+        - DownstreamPort
+        - InterswitchPort
+        - ManagementPort
+        - BidirectionalPort
+        - UnconfiguredPort
+relationship_types:
+  PortDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AssociatedEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitchPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  PortActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets this port.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  Port:
+    description: >-
+      The Port schema contains properties that describe a port of a switch, controller,
+      chassis, or any other device that could be connected to another entity.
+    properties:
+      CurrentSpeedGbps:
+        type: float
+        description: >-
+          The current speed of this port.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaxSpeedGbps:
+        type: float
+        description: >-
+          The maximum speed of this port as currently configured.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PortId:
+        type: string
+        description: >-
+          The label of this port on the physical package for this port.
+        required: false
+      PortType:
+        type: PortType
+        description: >-
+          The type of this port.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Width:
+        type: integer
+        description: >-
+          The number of lanes, phys, or other physical transport links that this port
+          contains.
+        required: false
+    requirements:
+    - PortProtocol:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol being sent over this port.
+    - AssociatedEndpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints at the other end of the link.
+    - ConnectedSwitchPorts:
+        node: port:Port
+        capability: portcaps:PortFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switch ports at the other end of the link.
+    - ConnectedSwitches:
+        node: switch:Switch
+        capability: swtchcps:SwitchFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switches at the other end of the link.
+    interfaces:
+      Actions:
+        type: PortActions
+    capabilities:
+      feature:
+        type: portcaps:PortFeature
+      containable:
+        type: portcaps:PortContainable

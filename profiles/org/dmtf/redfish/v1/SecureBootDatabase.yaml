@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SecureBootDatabase.v1_0_3.yaml
+  namespace: scrbtdt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SecureBootDatabase_caps.yaml
+  namespace: scbtdtcp
+node_types:
+  SecureBootDatabase:
+    description: >-
+      The `SecureBootDatabase` schema describes a UEFI Secure Boot database used to
+      store certificates or hashes.
+    derived_from: scrbtdt:SecureBootDatabase
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: scbtdtcp:SecureBootDatabaseFeature
+      containable:
+        type: scbtdtcp:SecureBootDatabaseContainable

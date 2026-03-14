@@ -1,0 +1,160 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: KeyPolicy_caps.yaml
+  namespace: kyplccp
+data_types:
+  KeyPolicyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NVMeoF
+  NVMeoF:
+    description: >-
+      NVMe-oF specific properties.
+    properties:
+      CipherSuiteAllowList:
+        type: list
+        description: >-
+          The cipher suites that this key policy allows.
+        required: false
+        entry_schema:
+          type: NVMeoFCipherSuiteType
+      DHGroupAllowList:
+        type: list
+        description: >-
+          The Diffie-Hellman (DH) groups that this key policy allows.
+        required: false
+        entry_schema:
+          type: NVMeoFDHGroupType
+      OEMSecurityProtocolAllowList:
+        type: list
+        description: >-
+          The OEM security protocols that this key policy allows.
+        required: false
+        entry_schema:
+          type: string
+      SecureHashAllowList:
+        type: list
+        description: >-
+          The secure hash algorithms that this key policy allows.
+        required: false
+        entry_schema:
+          type: NVMeoFSecureHashType
+      SecurityProtocolAllowList:
+        type: list
+        description: >-
+          The security protocols that this key policy allows.
+        required: false
+        entry_schema:
+          type: NVMeoFSecurityProtocolType
+      SecurityTransportAllowList:
+        type: list
+        description: >-
+          The security transports that this key policy allows.
+        required: false
+        entry_schema:
+          type: NVMeoFSecurityTransportType
+  NVMeoFCipherSuiteType:
+    description: >-
+      The NVMe cipher suites that a key is allowed to use.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - TLS_AES_128_GCM_SHA256
+        - TLS_AES_256_GCM_SHA384
+  NVMeoFDHGroupType:
+    description: >-
+      The NVMe Diffie-Hellman (DH) groups that a key is allowed to use.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - FFDHE2048
+        - FFDHE3072
+        - FFDHE4096
+        - FFDHE6144
+        - FFDHE8192
+  NVMeoFSecureHashType:
+    description: >-
+      The NVMe secure hash algorithms that a key is allowed to use.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SHA256
+        - SHA384
+        - SHA512
+  NVMeoFSecurityProtocolType:
+    description: >-
+      The NVMe security protocols that a key is allowed to use.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - DHHC
+        - TLS_PSK
+        - OEM
+  NVMeoFSecurityTransportType:
+    description: >-
+      The NVMe security transports that a key is allowed to use.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - TLSv2
+        - TLSv3
+node_types:
+  KeyPolicy:
+    description: >-
+      The KeyPolicy schema describes settings for how keys are allowed to be used
+      for accessing devices or services.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IsDefault:
+        type: boolean
+        description: >-
+          Indicates if this is the default key policy.
+        required: false
+      KeyPolicyType:
+        type: KeyPolicyType
+        description: >-
+          The type of key policy.
+        required: false
+      NVMeoF:
+        type: NVMeoF
+        description: >-
+          NVMe-oF specific properties.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: kyplccp:KeyPolicyFeature
+      containable:
+        type: kyplccp:KeyPolicyContainable

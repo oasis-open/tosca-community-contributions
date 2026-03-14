@@ -1,0 +1,172 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Core.yaml
+  namespace: core
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+- url: LeakDetector_caps.yaml
+  namespace: lkdtccp
+data_types:
+  LeakDetectorExcerpt:
+    description: >-
+      The `LeakDetector` schema describes a state-based or digital-value leak detector
+      and its properties.
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this leak detector.
+        required: false
+      DetectorState:
+        type: resource:Health
+        description: >-
+          The state of the leak detector.
+        required: false
+  LeakDetectorType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Moisture
+        - FloatSwitch
+node_types:
+  LeakDetector:
+    description: >-
+      The `LeakDetector` schema describes a state-based or digital-value leak detector
+      and its properties.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DetectorState:
+        type: resource:Health
+        description: >-
+          The state of the leak detector.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LeakDetectorType:
+        type: LeakDetectorType
+        description: >-
+          The type of leak detection sensor.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location information for this leak detector.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this leak detector.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number of the leak detector.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number of the leak detector.
+        required: false
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          The usage or location within a device to which this leak detector applies.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU of the leak detector.
+        required: false
+      SensingFrequency:
+        type: float
+        description: >-
+          The time interval between readings of the physical leak detector.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number of the leak detector.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number of the leak detector.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this leak detector applies.
+    capabilities:
+      feature:
+        type: lkdtccp:LeakDetectorFeature
+      containable:
+        type: lkdtccp:LeakDetectorContainable
+  LeakDetectorArrayExcerpt:
+    description: >-
+      The `LeakDetector` schema describes a state-based or digital-value leak detector
+      and its properties.
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this leak detector.
+        required: false
+      DetectorState:
+        type: resource:Health
+        description: >-
+          The state of the leak detector.
+        required: false
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          The usage or location within a device to which this leak detector applies.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this leak detector applies.
+    capabilities:
+      containable:
+        type: lkdtccp:LeakDetectorArrayExcerptContainable

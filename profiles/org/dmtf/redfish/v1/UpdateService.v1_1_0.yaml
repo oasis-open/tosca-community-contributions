@@ -1,0 +1,128 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: SoftwareInventoryCollection.yaml
+  namespace: sftinvcl
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventoryCollection_caps.yaml
+  namespace: sfinclcp
+- url: UpdateService_caps.yaml
+  namespace: updsrvcp
+data_types:
+  SimpleUpdate:
+    description: >-
+      This action is used to update software components.
+    properties:
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+  TransferProtocolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CIFS
+        - FTP
+        - SFTP
+        - HTTP
+        - HTTPS
+        - NSF
+        - SCP
+        - TFTP
+        - OEM
+  Actions:
+    description: >-
+      The Actions object contains the available custom actions on this resource.
+    properties:
+      Oem:
+        type: map
+        required: false
+      '#UpdateService_SimpleUpdate':
+        type: SimpleUpdate
+        description: >-
+          This action is used to update software components.
+        required: false
+node_types:
+  UpdateService:
+    description: >-
+      This is the schema definition for the Update Service. It represents the properties
+      for the service itself and has links to collections of firmware and software
+      inventory.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this service is enabled.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The Actions object contains the available custom actions on this resource.
+        required: false
+      HttpPushUri:
+        type: string
+        description: >-
+          The URI used to perform an HTTP or HTTPS push update to the Update Service.
+        required: false
+    requirements:
+    - FirmwareInventory:
+        node: sftinvcl:SoftwareInventoryCollection
+        capability: sfinclcp:SoftwareInventoryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An inventory of firmware.
+    - SoftwareInventory:
+        node: sftinvcl:SoftwareInventoryCollection
+        capability: sfinclcp:SoftwareInventoryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An inventory of software.
+    capabilities:
+      feature:
+        type: updsrvcp:UpdateServiceFeature
+      containable:
+        type: updsrvcp:UpdateServiceContainable

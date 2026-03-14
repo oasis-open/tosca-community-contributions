@@ -1,0 +1,947 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Control.yaml
+  namespace: control
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Control_caps.yaml
+  namespace: cntrlcps
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+- url: Sensor_caps.yaml
+  namespace: snsrcps
+data_types:
+  ImplementationType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - PhysicalSensor
+        - Synthesized
+        - Reported
+  ReadingBasisType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Zero
+        - Delta
+        - Headroom
+  ReadingType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Temperature
+        - Humidity
+        - Power
+        - EnergykWh
+        - EnergyJoules
+        - EnergyWh
+        - ChargeAh
+        - Voltage
+        - Current
+        - Frequency
+        - Pressure
+        - PressurekPa
+        - PressurePa
+        - LiquidLevel
+        - Rotational
+        - AirFlow
+        - AirFlowCMM
+        - LiquidFlow
+        - LiquidFlowLPM
+        - Barometric
+        - Altitude
+        - Percent
+        - AbsoluteHumidity
+        - Heat
+        - LinearPosition
+        - LinearVelocity
+        - LinearAcceleration
+        - RotationalPosition
+        - RotationalVelocity
+        - RotationalAcceleration
+        - Valve
+  SensorCurrentExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      CrestFactor:
+        type: float
+        description: >-
+          The crest factor for this sensor.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      THDPercent:
+        type: float
+        description: >-
+          The total harmonic distortion percent (% THD).
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  SensorEnergykWhExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      ApparentkVAh:
+        type: float
+        description: >-
+          Apparent energy (kVAh).
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      LifetimeReading:
+        type: float
+        description: >-
+          The total accumulation value for this sensor.
+        required: false
+      ReactivekVARh:
+        type: float
+        description: >-
+          Reactive energy (kVARh).
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      SensorResetTime:
+        type: string
+        description: >-
+          The date and time when the time-based properties were last reset.
+        required: false
+  SensorExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+  SensorFanExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      SpeedRPM:
+        type: float
+        description: >-
+          The rotational speed.
+        required: false
+  SensorPowerExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      ApparentVA:
+        type: float
+        description: >-
+          The product of voltage and current for an AC circuit, in volt-ampere units.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      PhaseAngleDegrees:
+        type: float
+        description: >-
+          The phase angle (degrees) between the current and voltage waveforms.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -90
+          - $less_or_equal:
+            - $value
+            - 90
+      PowerFactor:
+        type: float
+        description: >-
+          The power factor for this sensor.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -1
+          - $less_or_equal:
+            - $value
+            - 1
+      ReactiveVAR:
+        type: float
+        description: >-
+          The square root of the difference term of squared apparent VA and squared
+          power (Reading) for a circuit, in VAR units.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+  SensorPumpExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      SpeedRPM:
+        type: float
+        description: >-
+          The rotational speed.
+        required: false
+  SensorVoltageExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      CrestFactor:
+        type: float
+        description: >-
+          The crest factor for this sensor.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      THDPercent:
+        type: float
+        description: >-
+          The total harmonic distortion percent (% THD).
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  Threshold:
+    description: >-
+      The threshold definition for a sensor.
+    properties:
+      Activation:
+        type: ThresholdActivation
+        description: >-
+          The direction of crossing that activates this threshold.
+        required: false
+      DwellTime:
+        type: string
+        description: >-
+          The duration the sensor value must violate the threshold before the threshold
+          is activated.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      HysteresisDuration:
+        type: string
+        description: >-
+          The duration the sensor value must not violate the threshold before the
+          threshold is deactivated.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      HysteresisReading:
+        type: float
+        description: >-
+          The reading offset from the threshold value required to clear the threshold.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The threshold value.
+        required: false
+  ThresholdActivation:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Increasing
+        - Decreasing
+        - Either
+        - Disabled
+  Thresholds:
+    description: >-
+      The set of thresholds defined for a sensor.
+    properties:
+      LowerCaution:
+        type: Threshold
+        description: >-
+          The value at which the reading is below normal range.
+        required: false
+      LowerCautionUser:
+        type: Threshold
+        description: >-
+          A user-defined value at which the reading is considered below normal range.
+        required: false
+      LowerCritical:
+        type: Threshold
+        description: >-
+          The value at which the reading is below normal range but not yet fatal.
+        required: false
+      LowerCriticalUser:
+        type: Threshold
+        description: >-
+          A user-defined value at which the reading is considered below normal range
+          but not yet fatal.
+        required: false
+      LowerFatal:
+        type: Threshold
+        description: >-
+          The value at which the reading is below normal range and fatal.
+        required: false
+      UpperCaution:
+        type: Threshold
+        description: >-
+          The value at which the reading is above normal range.
+        required: false
+      UpperCautionUser:
+        type: Threshold
+        description: >-
+          A user-defined value at which the reading is considered above normal range.
+        required: false
+      UpperCritical:
+        type: Threshold
+        description: >-
+          The value at which the reading is above normal range but not yet fatal.
+        required: false
+      UpperCriticalUser:
+        type: Threshold
+        description: >-
+          A user-defined value at which the reading is considered above normal range
+          but not yet fatal.
+        required: false
+      UpperFatal:
+        type: Threshold
+        description: >-
+          The value at which the reading is above normal range and fatal.
+        required: false
+relationship_types:
+  SensorDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AssociatedControls@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  SensorActions:
+    operations:
+      ResetMetrics:
+        description: >-
+          Resets metrics related to this sensor.
+      ResetToDefaults:
+        description: >-
+          The action resets the values of writable properties to factory defaults.
+node_types:
+  Sensor:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      Accuracy:
+        type: float
+        description: >-
+          The estimated percent error of measured versus actual values.
+        required: false
+      AdjustedMaxAllowableOperatingValue:
+        type: float
+        description: >-
+          The adjusted maximum allowable operating value for this equipment based
+          on the environmental conditions.
+        required: false
+      AdjustedMinAllowableOperatingValue:
+        type: float
+        description: >-
+          The adjusted minimum allowable operating value for this equipment based
+          on the environmental conditions.
+        required: false
+      ApparentVA:
+        type: float
+        description: >-
+          The product of voltage and current for an AC circuit, in volt-ampere units.
+        required: false
+      ApparentkVAh:
+        type: float
+        description: >-
+          Apparent energy (kVAh).
+        required: false
+      AverageReading:
+        type: float
+        description: >-
+          The average sensor value.
+        required: false
+      AveragingInterval:
+        type: string
+        description: >-
+          The interval over which the average sensor value is calculated.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      AveragingIntervalAchieved:
+        type: boolean
+        description: >-
+          Indicates that enough readings were collected to calculate the average sensor
+          reading over the averaging interval time.
+        required: false
+      Calibration:
+        type: float
+        description: >-
+          The calibration offset applied to the Reading.
+        required: false
+      CalibrationTime:
+        type: string
+        description: >-
+          The date and time that the sensor was last calibrated.
+        required: false
+      CrestFactor:
+        type: float
+        description: >-
+          The crest factor for this sensor.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ElectricalContext:
+        type: string
+        description: >-
+          The combination of current-carrying conductors.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Line1
+            - Line2
+            - Line3
+            - Neutral
+            - LineToLine
+            - Line1ToLine2
+            - Line2ToLine3
+            - Line3ToLine1
+            - LineToNeutral
+            - Line1ToNeutral
+            - Line2ToNeutral
+            - Line3ToNeutral
+            - Line1ToNeutralAndL1L2
+            - Line2ToNeutralAndL1L2
+            - Line2ToNeutralAndL2L3
+            - Line3ToNeutralAndL3L1
+            - Total
+      Enabled:
+        type: boolean
+        description: >-
+          Indicates whether the sensor is enabled and provides a reading.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Implementation:
+        type: ImplementationType
+        description: >-
+          The implementation of the sensor.
+        required: false
+      LifetimeReading:
+        type: float
+        description: >-
+          The total accumulation value for this sensor.
+        required: false
+      LifetimeStartDateTime:
+        type: string
+        description: >-
+          The date and time when the sensor started accumulating readings for the
+          `LifetimeReading` property.
+        required: false
+      LoadPercent:
+        type: float
+        description: >-
+          The power load utilization for this sensor.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location information for this sensor.
+        required: false
+      LowestIntervalReading:
+        type: float
+        description: >-
+          The lowest sensor value over a time interval.
+        required: false
+      LowestReading:
+        type: float
+        description: >-
+          The lowest sensor value.
+        required: false
+      LowestReadingTime:
+        type: string
+        description: >-
+          The time when the lowest sensor value occurred.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this sensor.
+        required: false
+      MaxAllowableOperatingValue:
+        type: float
+        description: >-
+          The maximum allowable operating value for this equipment.
+        required: false
+      MinAllowableOperatingValue:
+        type: float
+        description: >-
+          The minimum allowable operating value for this equipment.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number of the sensor.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number of the sensor.
+        required: false
+      PeakIntervalReading:
+        type: float
+        description: >-
+          The peak sensor value over a time interval.
+        required: false
+      PeakReading:
+        type: float
+        description: >-
+          The peak sensor value.
+        required: false
+      PeakReadingTime:
+        type: string
+        description: >-
+          The time when the peak sensor value occurred.
+        required: false
+      PhaseAngleDegrees:
+        type: float
+        description: >-
+          The phase angle (degrees) between the current and voltage waveforms.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -90
+          - $less_or_equal:
+            - $value
+            - 90
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          The usage or location within a device to which this sensor measurement applies.
+        required: false
+      PowerFactor:
+        type: float
+        description: >-
+          The power factor for this sensor.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -1
+          - $less_or_equal:
+            - $value
+            - 1
+      Precision:
+        type: float
+        description: >-
+          The number of significant digits in the reading.
+        required: false
+      ReactiveVAR:
+        type: float
+        description: >-
+          The square root of the difference term of squared apparent VA and squared
+          power (Reading) for a circuit, in VAR units.
+        required: false
+      ReactivekVARh:
+        type: float
+        description: >-
+          Reactive energy (kVARh).
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      ReadingAccuracy:
+        type: float
+        description: >-
+          Accuracy (+/-) of the reading.
+        required: false
+      ReadingBasis:
+        type: ReadingBasisType
+        description: >-
+          The basis for the reading of this sensor.
+        required: false
+      ReadingRangeMax:
+        type: float
+        description: >-
+          The maximum possible value for this sensor.
+        required: false
+      ReadingRangeMin:
+        type: float
+        description: >-
+          The minimum possible value for this sensor.
+        required: false
+      ReadingTime:
+        type: string
+        description: >-
+          The date and time that the reading was acquired from the sensor.
+        required: false
+      ReadingType:
+        type: ReadingType
+        description: >-
+          The type of sensor.
+        required: false
+      ReadingUnits:
+        type: string
+        description: >-
+          The units of the reading, thresholds, and other reading-related properties
+          in UCUM c/s format.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          An array of links to resources or objects that this sensor services.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU of the sensor.
+        required: false
+      SensingFrequency:
+        type: float
+        description: >-
+          The time interval between readings of the physical sensor.
+        required: false
+      SensingInterval:
+        type: string
+        description: >-
+          The time interval between readings of the sensor.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      SensorGroup:
+        type: rdndncy:RedundantGroup
+        description: >-
+          The group of sensors that provide readings for this sensor.
+        required: false
+      SensorResetTime:
+        type: string
+        description: >-
+          The date and time when the time-based properties were last reset.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number of the sensor.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number of the sensor.
+        required: false
+      SpeedRPM:
+        type: float
+        description: >-
+          The rotational speed.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      THDPercent:
+        type: float
+        description: >-
+          The total harmonic distortion percent (% THD).
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Thresholds:
+        type: Thresholds
+        description: >-
+          The set of thresholds defined for this sensor.
+        required: false
+      UserLabel:
+        type: string
+        description: >-
+          A user-assigned label.
+        required: false
+      VoltageType:
+        type: string
+        description: >-
+          The voltage type for this sensor.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - AC
+            - DC
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this sensor measurement applies.
+    - AssociatedControls:
+        node: control:Control
+        capability: cntrlcps:ControlFeature
+        relationship: SensorDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the controls that can affect this sensor.
+    interfaces:
+      Actions:
+        type: SensorActions
+    capabilities:
+      feature:
+        type: snsrcps:SensorFeature
+      containable:
+        type: snsrcps:SensorContainable
+  SensorArrayExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      DeviceName:
+        type: string
+        description: >-
+          The name of the device.
+        required: false
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          The usage or location within a device to which this sensor measurement applies.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this sensor measurement applies.
+    capabilities:
+      containable:
+        type: snsrcps:SensorArrayExcerptContainable
+  SensorFanArrayExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      DeviceName:
+        type: string
+        description: >-
+          The name of the device.
+        required: false
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          The usage or location within a device to which this sensor measurement applies.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      SpeedRPM:
+        type: float
+        description: >-
+          The rotational speed.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this sensor measurement applies.
+    capabilities:
+      containable:
+        type: snsrcps:SensorFanArrayExcerptContainable
+  SensorPowerArrayExcerpt:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    properties:
+      ApparentVA:
+        type: float
+        description: >-
+          The product of voltage and current for an AC circuit, in volt-ampere units.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      PhaseAngleDegrees:
+        type: float
+        description: >-
+          The phase angle (degrees) between the current and voltage waveforms.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -90
+          - $less_or_equal:
+            - $value
+            - 90
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          The usage or location within a device to which this sensor measurement applies.
+        required: false
+      PowerFactor:
+        type: float
+        description: >-
+          The power factor for this sensor.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -1
+          - $less_or_equal:
+            - $value
+            - 1
+      ReactiveVAR:
+        type: float
+        description: >-
+          The square root of the difference term of squared apparent VA and squared
+          power (Reading) for a circuit, in VAR units.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this sensor measurement applies.
+    capabilities:
+      containable:
+        type: snsrcps:SensorPowerArrayExcerptContainable

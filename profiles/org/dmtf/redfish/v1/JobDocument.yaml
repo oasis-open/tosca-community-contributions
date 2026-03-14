@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: JobDocument.v1_0_0.yaml
+  namespace: jbdcmnt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: JobDocument_caps.yaml
+  namespace: jbdcmcp
+node_types:
+  JobDocument:
+    description: >-
+      The `JobDocument` schema describes the template for a job with a set of parameters.
+    derived_from: jbdcmnt:JobDocument
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: jbdcmcp:JobDocumentFeature
+      containable:
+        type: jbdcmcp:JobDocumentContainable

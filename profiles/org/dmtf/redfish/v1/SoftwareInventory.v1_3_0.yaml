@@ -1,0 +1,105 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+node_types:
+  SoftwareInventory:
+    description: >-
+      The SoftwareInventory schema contains an inventory of software components.  This
+      can include software components such as BIOS, BMC firmware, firmware for other
+      devices, system drivers, or provider software.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LowestSupportedVersion:
+        type: string
+        description: >-
+          The lowest supported version of this software.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer or producer of this software.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          The IDs of the Resources associated with this software inventory item.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ReleaseDate:
+        type: string
+        description: >-
+          The release date of this software.
+        required: false
+      SoftwareId:
+        type: string
+        description: >-
+          The implementation-specific label that identifies this software.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+      UefiDevicePaths:
+        type: list
+        description: >-
+          The list of UEFI device paths of the components associated with this software
+          inventory item.
+        required: false
+        entry_schema:
+          type: string
+      Updateable:
+        type: boolean
+        description: >-
+          An indication of whether the Update Service can update this software.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The version of this software.
+        required: false
+      WriteProtected:
+        type: boolean
+        description: >-
+          Indicates if the software is write-protected.
+        required: false
+    capabilities:
+      feature:
+        type: sftinvcp:SoftwareInventoryFeature
+      containable:
+        type: sftinvcp:SoftwareInventoryContainable

@@ -1,0 +1,111 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PowerSupplyCollection.yaml
+  namespace: pwrsppcl
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: Core.yaml
+  namespace: core
+- url: PowerSupplyCollection_caps.yaml
+  namespace: pwspclcp
+- url: PowerSubsystem_caps.yaml
+  namespace: pwrsbscp
+data_types:
+  PowerAllocation:
+    description: >-
+      Power allocation for a subsystem.
+    properties:
+      AllocatedWatts:
+        type: float
+        description: >-
+          The total amount of power that has been allocated or budgeted to this subsystem.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RequestedWatts:
+        type: float
+        description: >-
+          The potential power, in watts, that the subsystem requests, which might
+          be higher than the current level being consumed because the requested power
+          includes a budget that the subsystem wants for future use.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+node_types:
+  PowerSubsystem:
+    description: >-
+      This PowerSubsystem schema contains the definition for the power subsystem of
+      a chassis.
+    properties:
+      Allocation:
+        type: PowerAllocation
+        description: >-
+          Power allocation for this subsystem.
+        required: false
+      CapacityWatts:
+        type: float
+        description: >-
+          The total amount of power that can be allocated to this subsystem.  This
+          value can be either the power supply capacity or the power budget that an
+          upstream chassis assigns to this subsystem.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerSupplyRedundancy:
+        type: list
+        description: >-
+          The redundancy information for the set of power supplies in this subsystem.
+        required: false
+        entry_schema:
+          type: rdndncy:RedundantGroup
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - PowerSupplies:
+        node: pwrsppcl:PowerSupplyCollection
+        capability: pwspclcp:PowerSupplyCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of power supplies within this subsystem.
+    capabilities:
+      feature:
+        type: pwrsbscp:PowerSubsystemFeature
+      containable:
+        type: pwrsbscp:PowerSubsystemContainable

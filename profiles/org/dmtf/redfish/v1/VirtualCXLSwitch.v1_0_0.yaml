@@ -1,0 +1,116 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Port.yaml
+  namespace: port
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Port_caps.yaml
+  namespace: portcaps
+- url: VirtualPCI2PCIBridgeCollection.yaml
+  namespace: vrtpc2cl
+- url: VirtualPCI2PCIBridgeCollection_caps.yaml
+  namespace: vrpcclcp
+- url: VirtualCXLSwitch_caps.yaml
+  namespace: vrtcxlcp
+relationship_types:
+  VirtualCXLSwitchDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  VirtualCXLSwitch:
+    description: >-
+      The Virtual CXL Switch describes the virtual component with the CXL switch that
+      is governed by a list of rules as prescribed in the CXL specification.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      HDMDecoders:
+        type: integer
+        description: >-
+          The number of HDM (Host Device Memory) decoders present in this Virtual
+          CXL Switch.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      VCSId:
+        type: string
+        description: >-
+          The Virtual CXL Switch identifier.
+        required: false
+    requirements:
+    - VPPBs:
+        node: vrtpc2cl:VirtualPCI2PCIBridgeCollection
+        capability: vrpcclcp:VirtualPCI2PCIBridgeCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of vPPBs (Virtual PCI-to-PCI Bridges) for this
+          Virtual CXL Switch.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: VirtualCXLSwitchDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The links to the endpoints designated for this Virtual CXL Switch.
+    - Port:
+        node: port:Port
+        capability: portcaps:PortFeature
+        relationship: VirtualCXLSwitchDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the local upstream port of the switch that is physically connected
+          to a host or another switch for this Virtual CXL Switch.
+    capabilities:
+      feature:
+        type: vrtcxlcp:VirtualCXLSwitchFeature
+      containable:
+        type: vrtcxlcp:VirtualCXLSwitchContainable

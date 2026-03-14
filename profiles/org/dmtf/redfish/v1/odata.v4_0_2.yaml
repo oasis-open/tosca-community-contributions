@@ -1,0 +1,27 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+data_types:
+  context:
+    description: >-
+      The OData description of a payload.
+    derived_from: string
+  id:
+    description: >-
+      The unique identifier for a resource.
+    derived_from: string
+  idRef:
+    description: >-
+      A reference to a resource.
+  type:
+    description: >-
+      The type of a resource.
+    derived_from: string
+  count:
+    description: >-
+      The number of items in a collection.
+    derived_from: float
+  etag:
+    description: >-
+      The current ETag of the resource.
+    derived_from: string

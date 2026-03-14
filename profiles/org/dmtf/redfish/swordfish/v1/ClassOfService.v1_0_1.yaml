@@ -1,0 +1,51 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+node_types:
+  ClassOfService:
+    description: >-
+      A service option composed of one or more service options.
+    properties:
+      ClassOfServiceVersion:
+        type: string
+        description: >-
+          The value identifies the current version of this class of service definition.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The value identifies this resource.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: clofsrcp:ClassOfServiceFeature
+      containable:
+        type: clofsrcp:ClassOfServiceContainable

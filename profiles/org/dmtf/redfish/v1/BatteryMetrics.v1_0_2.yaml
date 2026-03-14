@@ -1,0 +1,126 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Sensor.yaml
+  namespace: sensor
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: BatteryMetrics_caps.yaml
+  namespace: bttmtrcp
+node_types:
+  BatteryMetrics:
+    description: >-
+      The BatteryMetrics schema contains definitions for the metrics of a battery
+      unit.
+    properties:
+      CellVoltages:
+        type: list
+        description: >-
+          The cell voltages (V) for this battery.
+        required: false
+        entry_schema:
+          type: sensor:SensorVoltageExcerpt
+      CellVoltages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ChargePercent:
+        type: sensor:SensorExcerpt
+        description: >-
+          The amount of charge available (percent) in this battery.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DischargeCycles:
+        type: float
+        description: >-
+          The number of discharges this battery sustained.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InputCurrentAmps:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          The input current (A) for this battery.
+        required: false
+      InputVoltage:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The input voltage (V) for this battery.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OutputCurrentAmps:
+        type: list
+        description: >-
+          The output currents (A) for this battery.
+        required: false
+        entry_schema:
+          type: sensor:SensorCurrentExcerpt
+      OutputCurrentAmps@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      OutputVoltages:
+        type: list
+        description: >-
+          The output voltages (V) for this battery.
+        required: false
+        entry_schema:
+          type: sensor:SensorVoltageExcerpt
+      OutputVoltages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      StoredChargeAmpHours:
+        type: sensor:SensorExcerpt
+        description: >-
+          The charge (Ah) stored in this battery.
+        required: false
+      StoredEnergyWattHours:
+        type: sensor:SensorExcerpt
+        description: >-
+          The energy (Wh) stored in this battery.
+        required: false
+      TemperatureCelsius:
+        type: sensor:SensorExcerpt
+        description: >-
+          The temperature (C) for this battery.
+        required: false
+    capabilities:
+      feature:
+        type: bttmtrcp:BatteryMetricsFeature
+      containable:
+        type: bttmtrcp:BatteryMetricsContainable

@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: IOConnectivityLoSCapabilities.v1_2_0.yaml
+  namespace: icnlsc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: IOConnectivityLoSCapabilities_caps.yaml
+  namespace: iclsccp
+node_types:
+  IOConnectivityLoSCapabilities:
+    description: >-
+      Describe IO connectivity capabilities.
+    derived_from: icnlsc:IOConnectivityLoSCapabilities
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: iclsccp:IOConnectivityLoSCapabilitiesFeature
+      containable:
+        type: iclsccp:IOConnectivityLoSCapabilitiesContainable

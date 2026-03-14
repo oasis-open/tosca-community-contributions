@@ -1,0 +1,147 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Message.yaml
+  namespace: message
+- url: Core.yaml
+  namespace: core
+- url: Message_caps.yaml
+  namespace: mssgcps
+- url: Task_caps.yaml
+  namespace: taskcaps
+data_types:
+  Payload:
+    description: >-
+      The HTTP and JSON payload details for this Task.
+    properties:
+      HttpHeaders:
+        type: list
+        description: >-
+          An array of HTTP headers that this task includes.
+        required: false
+        entry_schema:
+          type: string
+      HttpOperation:
+        type: string
+        description: >-
+          The HTTP operation to perform to execute this task.
+        required: false
+      JsonBody:
+        type: string
+        description: >-
+          The JSON payload to use in the execution of this task.
+        required: false
+      TargetUri:
+        type: string
+        description: >-
+          The URI of the target for this task.
+        required: false
+  TaskState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - New
+        - Starting
+        - Running
+        - Suspended
+        - Interrupted
+        - Pending
+        - Stopping
+        - Completed
+        - Killed
+        - Exception
+        - Service
+        - Cancelling
+        - Cancelled
+node_types:
+  Task:
+    description: >-
+      The Task schema contains information about a task that the Redfish task service
+      schedules or executes.  Tasks represent operations that take more time than
+      a client typically wants to wait.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EndTime:
+        type: string
+        description: >-
+          The date and time when the task was completed.  This property will only
+          appear when the task is complete.
+        required: false
+      HidePayload:
+        type: boolean
+        description: >-
+          An indication of whether the contents of the payload are hidden from view
+          after the task has been created.  If `true`, responses do not return the
+          payload.  If `false`, responses return the payload.  If this property is
+          not present when the task is created, the default is `false`.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Payload:
+        type: Payload
+        description: >-
+          The HTTP and JSON request payload details for this task, unless they are
+          hidden from view by the service.
+        required: false
+      PercentComplete:
+        type: integer
+        description: >-
+          The completion percentage of this task.
+        required: false
+      StartTime:
+        type: string
+        description: >-
+          The date and time when the task was started.
+        required: false
+      TaskMonitor:
+        type: string
+        description: >-
+          The URI of the Task Monitor for this task.
+        required: false
+      TaskState:
+        type: TaskState
+        description: >-
+          The state of the task.
+        required: false
+      TaskStatus:
+        type: resource:Health
+        description: >-
+          The completion status of the task.
+        required: false
+    requirements:
+    - Messages:
+        node: message:Message
+        capability: mssgcps:MessageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of messages associated with the task.
+    capabilities:
+      feature:
+        type: taskcaps:TaskFeature
+      containable:
+        type: taskcaps:TaskContainable

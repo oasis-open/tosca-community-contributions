@@ -1,0 +1,97 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: SecureBoot_caps.yaml
+  namespace: scrbtcps
+data_types:
+  ResetKeysType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ResetAllKeysToDefault
+        - DeleteAllKeys
+        - DeletePK
+  SecureBootCurrentBootType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+  SecureBootModeType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SetupMode
+        - UserMode
+        - AuditMode
+        - DeployedMode
+interface_types:
+  SecureBootActions:
+    operations:
+      ResetKeys:
+        description: >-
+          This action resets the UEFI Secure Boot keys.
+        inputs:
+          ResetKeysType:
+            type: ResetKeysType
+            description: >-
+              The type of reset or delete to perform on the UEFI Secure Boot databases.
+            required: true
+node_types:
+  SecureBoot:
+    description: >-
+      The SecureBoot schema contains UEFI Secure Boot information and represents properties
+      for managing the UEFI Secure Boot functionality of a system.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SecureBootCurrentBoot:
+        type: SecureBootCurrentBootType
+        description: >-
+          The UEFI Secure Boot state during the current boot cycle.
+        required: false
+      SecureBootEnable:
+        type: boolean
+        description: >-
+          An indication of whether UEFI Secure Boot is enabled.
+        required: false
+      SecureBootMode:
+        type: SecureBootModeType
+        description: >-
+          The current UEFI Secure Boot Mode.
+        required: false
+    interfaces:
+      Actions:
+        type: SecureBootActions
+    capabilities:
+      feature:
+        type: scrbtcps:SecureBootFeature
+      containable:
+        type: scrbtcps:SecureBootContainable

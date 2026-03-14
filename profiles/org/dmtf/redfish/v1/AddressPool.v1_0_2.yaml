@@ -1,0 +1,129 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Zone_caps.yaml
+  namespace: zonecaps
+- url: AddressPool_caps.yaml
+  namespace: addplcp
+data_types:
+  GenZ:
+    description: >-
+      Gen-Z related properties for an address pool.
+    properties:
+      AccessKey:
+        type: string
+        description: >-
+          The Access Key required for this address pool.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([a-fA-F]|[0-9]){2}$
+      MaxCID:
+        type: integer
+        description: >-
+          The maximum value for the Component Identifier (CID).
+        required: false
+      MaxSID:
+        type: integer
+        description: >-
+          The maximum value for the Subnet Identifier (SID).
+        required: false
+      MinCID:
+        type: integer
+        description: >-
+          The minimum value for the Component Identifier (CID).
+        required: false
+      MinSID:
+        type: integer
+        description: >-
+          The minimum value for the Subnet Identifier (SID).
+        required: false
+relationship_types:
+  AddressPoolDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Zones@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  AddressPool:
+    description: >-
+      The schema definition of an address pool and its configuration.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      GenZ:
+        type: GenZ
+        description: >-
+          The Gen-Z related properties for this address pool.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Endpoints:
+        node: Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: AddressPoolDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that this address pool contains.
+    - Zones:
+        node: Zone
+        capability: zonecaps:ZoneFeature
+        relationship: AddressPoolDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the zones that this address pool contains.
+    capabilities:
+      feature:
+        type: addplcp:AddressPoolFeature
+      containable:
+        type: addplcp:AddressPoolContainable

@@ -1,0 +1,238 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Event.yaml
+  namespace: event
+- url: Resource.yaml
+  namespace: resource
+- url: EventDestination.yaml
+  namespace: evntdstn
+- url: EventDestinationCollection.yaml
+  namespace: evndstcl
+- url: Core.yaml
+  namespace: core
+- url: EventDestinationCollection_caps.yaml
+  namespace: evdsclcp
+- url: EventService_caps.yaml
+  namespace: evnsrvcp
+data_types:
+  EventFormatType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Event
+        - MetricReport
+  SSEFilterPropertiesSupported:
+    description: >-
+      Contains a set of properties that indicate which properties are supported in
+      the $filter query parameter for the ServerSentEventUri.
+    properties:
+      EventFormatType:
+        type: boolean
+        description: >-
+          This indicates if the EventFormatType property is supported.
+        required: false
+      EventType:
+        type: boolean
+        description: >-
+          This indicates if the EventType property is supported.
+        required: false
+      MessageId:
+        type: boolean
+        description: >-
+          This indicates if the MessageId property is supported.
+        required: false
+      MetricReportDefinition:
+        type: boolean
+        description: >-
+          This indicates if the MetricReportDefinition property is supported.
+        required: false
+      OriginResource:
+        type: boolean
+        description: >-
+          This indicates if the OriginResource property is supported.
+        required: false
+      RegistryPrefix:
+        type: boolean
+        description: >-
+          This indicates if the RegistryPrefix property is supported.
+        required: false
+      ResourceType:
+        type: boolean
+        description: >-
+          This indicates if the ResourceType property is supported.
+        required: false
+interface_types:
+  EventServiceActions:
+    operations:
+      SubmitTestEvent:
+        description: >-
+          This action is used to generate a test event.
+        inputs:
+          EventId:
+            type: string
+            description: >-
+              This is the ID of event to be added.
+            required: true
+          EventTimestamp:
+            type: string
+            description: >-
+              This is the time stamp of event to be added.
+            required: true
+          EventType:
+            type: event:EventType
+            description: >-
+              This is the type of event to be added.
+            required: false
+          Message:
+            type: string
+            description: >-
+              This is the human readable message of event to be added.
+            required: true
+          MessageArgs:
+            type: list
+            description: >-
+              This is the array of message arguments of the event to be added.
+            required: true
+          MessageId:
+            type: string
+            description: >-
+              This is the message ID of event to be added.
+            required: true
+          OriginOfCondition:
+            type: string
+            description: >-
+              This is the string of the URL within the OriginOfCondition property
+              of the event to be added.  It is not a reference object.
+            required: true
+          Severity:
+            type: string
+            description: >-
+              This is the Severity of event to be added.
+            required: true
+node_types:
+  EventService:
+    description: >-
+      The Event Service resource contains properties for managing event subcriptions
+      and generates the events sent to subscribers.  The resource has links to the
+      actual collection of subscriptions (called Event Destinations).
+    properties:
+      DeliveryRetryAttempts:
+        type: integer
+        description: >-
+          This is the number of attempts an event posting is retried before the subscription
+          is terminated.  This retry is at the service level, meaning the HTTP POST
+          to the Event Destination was returned by the HTTP operation as unsuccessful
+          (4xx or 5xx return code) or an HTTP timeout occurred this many times before
+          the Event Destination subscription is terminated.
+        required: false
+      DeliveryRetryIntervalSeconds:
+        type: integer
+        description: >-
+          This represents the number of seconds between retry attempts for sending
+          any given Event.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EventFormatTypes:
+        type: list
+        description: >-
+          Indicates the content types of the message that this service can send to
+          the event destination.
+        required: false
+        entry_schema:
+          type: evntdstn:EventFormatType
+      EventTypesForSubscription:
+        type: list
+        description: >-
+          This is the types of Events that can be subscribed to.
+        required: false
+        entry_schema:
+          type: event:EventType
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      RegistryPrefixes:
+        type: list
+        description: >-
+          A list of the Prefixes of the Message Registries that can be used for the
+          RegistryPrefix property on a subscription.  If this property is absent or
+          contains an empty array, the service does not support RegistryPrefix-based
+          subscriptions.
+        required: false
+        entry_schema:
+          type: string
+      ResourceTypes:
+        type: list
+        description: >-
+          A list of @odata.type values (Schema names) that can be specified in a ResourceType
+          on a subscription.  If this property is absent or contains an empty array,
+          the service does not support ResourceType-based subscriptions.
+        required: false
+        entry_schema:
+          type: string
+      SSEFilterPropertiesSupported:
+        type: SSEFilterPropertiesSupported
+        description: >-
+          Contains a set of properties that indicate which properties are supported
+          in the $filter query parameter for the ServerSentEventUri.
+        required: false
+      ServerSentEventUri:
+        type: string
+        description: >-
+          Link to a URI for receiving Sever Sent Event representations of the events
+          generated by this service.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+      SubordinateResourcesSupported:
+        type: boolean
+        description: >-
+          This indicates if the service supports the SubordinateResource property
+          on Event Subscriptions.
+        required: false
+    requirements:
+    - Subscriptions:
+        node: evndstcl:EventDestinationCollection
+        capability: evdsclcp:EventDestinationCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to a collection of Event Destination resources.
+    interfaces:
+      Actions:
+        type: EventServiceActions
+    capabilities:
+      feature:
+        type: evnsrvcp:EventServiceFeature
+      containable:
+        type: evnsrvcp:EventServiceContainable

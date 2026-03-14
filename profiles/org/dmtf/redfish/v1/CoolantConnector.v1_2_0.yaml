@@ -1,0 +1,245 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: CoolingLoop.yaml
+  namespace: clnglp
+- url: CoolingUnit.yaml
+  namespace: clngunt
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: CoolingLoop_caps.yaml
+  namespace: clnlpcp
+- url: CoolingUnit_caps.yaml
+  namespace: clnuntcp
+- url: Control.yaml
+  namespace: control
+- url: Sensor.yaml
+  namespace: sensor
+- url: CoolantConnector_caps.yaml
+  namespace: clncnncp
+data_types:
+  CoolantConnectorType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Pair
+        - Supply
+        - Return
+        - Inline
+        - Closed
+relationship_types:
+  CoolantConnectorDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ConnectedChassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  CoolantConnector:
+    description: >-
+      The `CoolantConnector` schema describes a liquid coolant connector, including
+      any associated instrumentation.
+    properties:
+      Coolant:
+        type: string
+        description: >-
+          Details about the coolant used in this unit.
+        required: false
+      CoolantConnectorType:
+        type: CoolantConnectorType
+        description: >-
+          The type of coolant connector.
+        required: false
+      CoolingLoopName:
+        type: string
+        description: >-
+          The name of the cooling loop attached to this interface.
+        required: false
+      CoolingManagerURI:
+        type: string
+        description: >-
+          The link to the application that manages the cooling loop.
+        required: false
+      DeltaPressureControlkPa:
+        type: control:ControlSingleLoopExcerpt
+        description: >-
+          The desired differential pressure (kPa).
+        required: false
+      DeltaPressurekPa:
+        type: sensor:SensorExcerpt
+        description: >-
+          The differential pressure (kPa).
+        required: false
+      DeltaTemperatureCelsius:
+        type: sensor:SensorExcerpt
+        description: >-
+          The differential temperature (C).
+        required: false
+      DeltaTemperatureControlCelsius:
+        type: control:ControlSingleLoopExcerpt
+        description: >-
+          The desired differential temperature (C).
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FlowControlLitersPerMinute:
+        type: control:ControlSingleLoopExcerpt
+        description: >-
+          The desired liquid flow rate (L/min).
+        required: false
+      FlowLitersPerMinute:
+        type: sensor:SensorExcerpt
+        description: >-
+          The liquid flow (L/min).
+        required: false
+      HeatRemovedkW:
+        type: sensor:SensorExcerpt
+        description: >-
+          The heat removed (kW) through this connector.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RatedFlowLitersPerMinute:
+        type: float
+        description: >-
+          The rated liquid flow (L/min) for this loop interface.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RatedFlowPressurekPa:
+        type: float
+        description: >-
+          The pressure (kPa) at which the rated liquid flow is valid.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RatedPressurekPa:
+        type: float
+        description: >-
+          The rated pressure (kPa) for this connector.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ReturnPressurekPa:
+        type: sensor:SensorExcerpt
+        description: >-
+          The return pressure (kPa).
+        required: false
+      ReturnTemperatureCelsius:
+        type: sensor:SensorExcerpt
+        description: >-
+          The return temperature (C).
+        required: false
+      ReturnTemperatureControlCelsius:
+        type: control:ControlSingleLoopExcerpt
+        description: >-
+          The desired return temperature (C).
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SupplyPressurekPa:
+        type: sensor:SensorExcerpt
+        description: >-
+          The supply pressure (kPa).
+        required: false
+      SupplyTemperatureCelsius:
+        type: sensor:SensorExcerpt
+        description: >-
+          The supply temperature (C).
+        required: false
+      SupplyTemperatureControlCelsius:
+        type: control:ControlSingleLoopExcerpt
+        description: >-
+          The desired supply temperature (C).
+        required: false
+      ValvePositionControlPercent:
+        type: control:ControlSingleLoopExcerpt
+        description: >-
+          The desired valve position (% open).
+        required: false
+      ValvePositionPercent:
+        type: sensor:SensorExcerpt
+        description: >-
+          The valve position (% open) of this connector.
+        required: false
+    requirements:
+    - ConnectedChassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: CoolantConnectorDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Any array of links to chassis at the other end of the connection.
+    - ConnectedCoolingLoop:
+        node: clnglp:CoolingLoop
+        capability: clnlpcp:CoolingLoopFeature
+        relationship: CoolantConnectorDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the cooling loop at the other end of the connection.
+    - ConnectedCoolingUnit:
+        node: clngunt:CoolingUnit
+        capability: clnuntcp:CoolingUnitFeature
+        relationship: CoolantConnectorDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the cooling unit at the other end of the connection.
+    capabilities:
+      feature:
+        type: clncnncp:CoolantConnectorFeature
+      containable:
+        type: clncnncp:CoolantConnectorContainable

@@ -1,0 +1,116 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Event.yaml
+  namespace: event
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: EventDestination_caps.yaml
+  namespace: evndstcp
+data_types:
+  EventDestinationProtocol:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Redfish
+  HttpHeaderProperty:
+    description: >-
+      The HTTP header value is the property value.  The header name is the property
+      name.
+interface_types:
+  EventDestinationActions:
+    operations:
+      ResumeSubscription:
+        description: >-
+          This action resumes a suspended event subscription.
+node_types:
+  EventDestination:
+    description: >-
+      The EventDestination schema defines the target of an event subscription, including
+      the event types and context to provide to the target in the event payload.
+    properties:
+      Context:
+        type: string
+        description: >-
+          A client-supplied string that is stored with the event destination subscription.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Destination:
+        type: string
+        description: >-
+          The URI of the destination event receiver.
+        required: false
+      EventTypes:
+        type: list
+        description: >-
+          The types of events that are sent to the destination.
+        required: false
+        entry_schema:
+          type: event:EventType
+      HttpHeaders:
+        type: list
+        description: >-
+          An array of settings for HTTP headers, such as authorization information.  This
+          array is `null` or an empty array in responses.  An empty array is the preferred
+          return value on read operations.
+        required: false
+        entry_schema:
+          type: HttpHeaderProperty
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MessageIds:
+        type: list
+        description: >-
+          The list of MessageIds that are sent to this event destination.
+        required: false
+        entry_schema:
+          type: string
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OriginResources:
+        type: list
+        description: >-
+          The array of resources for which the service sends only related events.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      OriginResources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Protocol:
+        type: EventDestinationProtocol
+        description: >-
+          The protocol type of the event connection.
+        required: false
+    interfaces:
+      Actions:
+        type: EventDestinationActions
+    capabilities:
+      feature:
+        type: evndstcp:EventDestinationFeature
+      containable:
+        type: evndstcp:EventDestinationContainable

@@ -1,0 +1,114 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: MemoryChunks_caps.yaml
+  namespace: mmrchncp
+data_types:
+  AddressRangeType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Volatile
+        - PMEM
+        - Block
+  InterleaveSet:
+    description: >-
+      This an interleave set for a memory chunk.
+    properties:
+      Memory:
+        type: odatav4:idRef
+        description: >-
+          Describes a memory device of the interleave set.
+        required: false
+      MemoryLevel:
+        type: integer
+        description: >-
+          Level of the interleave set for multi-level tiered memory.
+        required: false
+      OffsetMiB:
+        type: integer
+        description: >-
+          Offset within the DIMM that corresponds to the start of this memory region,
+          measured in mebibytes (MiB).
+        required: false
+      RegionId:
+        type: string
+        description: >-
+          DIMM region identifier.
+        required: false
+      SizeMiB:
+        type: integer
+        description: >-
+          Size of this memory region measured in mebibytes (MiB).
+        required: false
+node_types:
+  MemoryChunks:
+    description: >-
+      The schema definition of a memory chunk and its configuration.
+    properties:
+      AddressRangeType:
+        type: AddressRangeType
+        description: >-
+          Memory type of this memory chunk.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InterleaveSets:
+        type: list
+        description: >-
+          The interleave sets for the memory chunk.
+        required: false
+        entry_schema:
+          type: InterleaveSet
+      IsMirrorEnabled:
+        type: boolean
+        description: >-
+          An indication of whether memory mirroring is enabled for this memory chunk.
+        required: false
+      IsSpare:
+        type: boolean
+        description: >-
+          An indication of whether sparing is enabled for this memory chunk.
+        required: false
+      MemoryChunkSizeMiB:
+        type: integer
+        description: >-
+          Size of the memory chunk measured in mebibytes (MiB).
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    capabilities:
+      feature:
+        type: mmrchncp:MemoryChunksFeature
+      containable:
+        type: mmrchncp:MemoryChunksContainable

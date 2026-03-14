@@ -1,0 +1,99 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+- url: Manifest_caps.yaml
+  namespace: mnfstcps
+data_types:
+  Expand:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - All
+        - Relevant
+  Request:
+    description: >-
+      The content of the request for the stanza.
+  Response:
+    description: >-
+      The content of the response for the stanza.
+  Stanza:
+    description: >-
+      A stanza contains properties that describe a request to be fulfilled within
+      a manifest.
+    properties:
+      OEMStanzaType:
+        type: string
+        description: >-
+          The OEM-defined type of stanza.
+        required: false
+      Request:
+        type: Request
+        description: >-
+          The request details for the stanza.
+        required: false
+      Response:
+        type: Response
+        description: >-
+          The response details for the stanza.
+        required: false
+      StanzaId:
+        type: string
+        description: >-
+          The identifier of the stanza.  This is a unique identifier specified by
+          the client and is not used by the service.
+        required: false
+      StanzaType:
+        type: StanzaType
+        description: >-
+          The type of stanza.
+        required: false
+  StanzaType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ComposeSystem
+        - DecomposeSystem
+        - ComposeResource
+        - DecomposeResource
+        - OEM
+        - RegisterResourceBlock
+node_types:
+  Manifest:
+    description: >-
+      This type describes a manifest containing a set of requests to be fulfilled.  The
+      manifest contains a set of stanzas, where each stanza describes a single request.
+    properties:
+      Description:
+        type: string
+        description: >-
+          The description of this manifest.
+        required: false
+      Expand:
+        type: Expand
+        description: >-
+          The expansion control for references in manifest responses, similar to the
+          `$expand=.` query parameter.
+        required: false
+      Stanzas:
+        type: list
+        description: >-
+          An array of stanzas that describe the requests specified by this manifest.
+        required: false
+        entry_schema:
+          type: Stanza
+      Timestamp:
+        type: string
+        description: >-
+          The date and time when the manifest was created.
+        required: false
+    capabilities:
+      feature:
+        type: mnfstcps:ManifestFeature
+      containable:
+        type: mnfstcps:ManifestContainable

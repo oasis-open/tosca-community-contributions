@@ -1,0 +1,222 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: LogEntryCollection.yaml
+  namespace: lgentcl
+- url: Core.yaml
+  namespace: core
+- url: LogEntryCollection_caps.yaml
+  namespace: lgenclcp
+- url: LogService_caps.yaml
+  namespace: lgsrvcp
+data_types:
+  LogDiagnosticDataTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Manager
+        - PreOS
+        - OS
+        - OEM
+  LogEntryTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Event
+        - SEL
+        - Multiple
+        - OEM
+  OverWritePolicy:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unknown
+        - WrapsWhenFull
+        - NeverOverWrites
+  SyslogFacility:
+    description: >-
+      The syslog facility code is an enumeration of program types.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Kern
+        - User
+        - Mail
+        - Daemon
+        - Auth
+        - Syslog
+        - LPR
+        - News
+        - UUCP
+        - Cron
+        - Authpriv
+        - FTP
+        - NTP
+        - Security
+        - Console
+        - SolarisCron
+        - Local0
+        - Local1
+        - Local2
+        - Local3
+        - Local4
+        - Local5
+        - Local6
+        - Local7
+  SyslogFilter:
+    description: >-
+      A syslog filter.
+    properties:
+      LogFacilities:
+        type: list
+        description: >-
+          The types of programs that can log messages.
+        required: false
+        entry_schema:
+          type: SyslogFacility
+      LowestSeverity:
+        type: SyslogSeverity
+        description: >-
+          The lowest severity level message that will be logged.
+        required: false
+  SyslogSeverity:
+    description: >-
+      The syslog severity is an application-specific rating used to describe the urgency
+      of the message.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Emergency
+        - Alert
+        - Critical
+        - Error
+        - Warning
+        - Notice
+        - Informational
+        - Debug
+        - All
+interface_types:
+  LogServiceActions:
+    operations:
+      ClearLog:
+        description: >-
+          The action to clear the log for this Log Service.
+      CollectDiagnosticData:
+        description: >-
+          The action to collect the diagnostic data for the given type.
+        inputs:
+          DiagnosticDataType:
+            type: LogDiagnosticDataTypes
+            description: >-
+              The type of diagnostic data to collect.
+            required: true
+          OEMDiagnosticDataType:
+            type: string
+            description: >-
+              The OEM-defined type of diagnostic data to collect.
+            required: false
+node_types:
+  LogService:
+    description: >-
+      The LogService schema contains properties for monitoring and configuring a Log
+      Service.
+    properties:
+      DateTime:
+        type: string
+        description: >-
+          The current date and time, with UTC offset, that the Log Service uses to
+          set or read time.
+        required: false
+      DateTimeLocalOffset:
+        type: string
+        description: >-
+          The UTC offset that the current DateTime property value contains in the
+          `+HH:MM` format.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([-+][0-1][0-9]:[0-5][0-9])$
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LogEntryType:
+        type: LogEntryTypes
+        description: >-
+          The format of the log entries.
+        required: false
+      MaxNumberOfRecords:
+        type: integer
+        description: >-
+          The maximum number of log entries that this service can have.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OverWritePolicy:
+        type: OverWritePolicy
+        description: >-
+          The overwrite policy for this service that takes place when the log is full.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+      SyslogFilters:
+        type: list
+        description: >-
+          A list of syslog message filters to be logged locally.
+        required: false
+        entry_schema:
+          type: SyslogFilter
+    requirements:
+    - Entries:
+        node: lgentcl:LogEntryCollection
+        capability: lgenclcp:LogEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the log entry collection.
+    interfaces:
+      Actions:
+        type: LogServiceActions
+    capabilities:
+      feature:
+        type: lgsrvcp:LogServiceFeature
+      containable:
+        type: lgsrvcp:LogServiceContainable

@@ -1,0 +1,323 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata.4.0.0.yaml
+  namespace: odata400
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: Core.yaml
+  namespace: core
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: Thermal_caps.yaml
+  namespace: thrmlcps
+data_types:
+  Temperature:
+    description: >-
+      This is the base type for addressable members of an array.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          This is the identifier for the member within the collection.
+        required: false
+      Name:
+        type: string
+        description: >-
+          Temperature sensor name.
+        required: false
+      SensorNumber:
+        type: float
+        description: >-
+          A numerical identifier to represent the temperature sensor
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      ReadingCelsius:
+        type: float
+        description: >-
+          Temperature
+        required: false
+      UpperThresholdNonCritical:
+        type: float
+        description: >-
+          Above normal range
+        required: false
+      UpperThresholdCritical:
+        type: float
+        description: >-
+          Above normal range but not yet fatal.
+        required: false
+      UpperThresholdFatal:
+        type: float
+        description: >-
+          Above normal range and is fatal
+        required: false
+      LowerThresholdNonCritical:
+        type: float
+        description: >-
+          Below normal range
+        required: false
+      LowerThresholdCritical:
+        type: float
+        description: >-
+          Below normal range but not yet fatal.
+        required: false
+      LowerThresholdFatal:
+        type: float
+        description: >-
+          Below normal range and is fatal
+        required: false
+      MinReadingRangeTemp:
+        type: float
+        description: >-
+          Minimum value for ReadingCelsius
+        required: false
+      MaxReadingRangeTemp:
+        type: float
+        description: >-
+          Maximum value for ReadingCelsius
+        required: false
+      PhysicalContext:
+        type: string
+        description: >-
+          Describes the area or device to which this temperature measurement applies.
+        required: false
+      RelatedItem@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RelatedItem@odata_navigationLink:
+        type: string
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          Describes the areas or devices to which this temperature measurement applies.
+        required: false
+        entry_schema:
+          type: odata400:idRef
+  ReadingUnits:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RPM
+        - Percent
+node_types:
+  Thermal:
+    description: >-
+      This is the schema definition for the Thermal properties.  It represents the
+      properties for Temperature and Cooling.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      Temperatures@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Temperatures@odata_navigationLink:
+        type: string
+        required: false
+      Temperatures:
+        type: list
+        description: >-
+          This is the definition for temperature sensors.
+        required: false
+        entry_schema:
+          type: Temperature
+      Fans@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Fans@odata_navigationLink:
+        type: string
+        required: false
+      Fans:
+        type: list
+        description: >-
+          This is the definition for fans.
+        required: false
+        entry_schema:
+          type: Fan
+      Redundancy@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Redundancy@odata_navigationLink:
+        type: string
+        required: false
+    requirements:
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          This structure is used to show redundancy for fans.  The Component ids will
+          reference the members of the redundancy groups.
+    capabilities:
+      feature:
+        type: thrmlcps:ThermalFeature
+      containable:
+        type: thrmlcps:ThermalContainable
+  Fan:
+    description: >-
+      This is the base type for addressable members of an array.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          This is the identifier for the member within the collection.
+        required: false
+      FanName:
+        type: string
+        description: >-
+          Name of the fan
+        required: false
+      PhysicalContext:
+        type: string
+        description: >-
+          Describes the area or device associated with this fan.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          Current fan speed
+        required: false
+      UpperThresholdNonCritical:
+        type: float
+        description: >-
+          Above normal range
+        required: false
+      UpperThresholdCritical:
+        type: float
+        description: >-
+          Above normal range but not yet fatal
+        required: false
+      UpperThresholdFatal:
+        type: float
+        description: >-
+          Above normal range and is fatal
+        required: false
+      LowerThresholdNonCritical:
+        type: float
+        description: >-
+          Below normal range
+        required: false
+      LowerThresholdCritical:
+        type: float
+        description: >-
+          Below normal range but not yet fatal
+        required: false
+      LowerThresholdFatal:
+        type: float
+        description: >-
+          Below normal range and is fatal
+        required: false
+      MinReadingRange:
+        type: float
+        description: >-
+          Minimum value for Reading
+        required: false
+      MaxReadingRange:
+        type: float
+        description: >-
+          Maximum value for Reading
+        required: false
+      RelatedItem@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RelatedItem@odata_navigationLink:
+        type: string
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          The ID(s) of the resources serviced with this fan
+        required: false
+        entry_schema:
+          type: odata400:idRef
+      Redundancy@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Redundancy@odata_navigationLink:
+        type: string
+        required: false
+      ReadingUnits:
+        type: ReadingUnits
+        description: >-
+          Units in which the reading and thresholds are measured.
+        required: false
+    requirements:
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          This structure is used to show redundancy for fans.  The Component ids will
+          reference the members of the redundancy groups.
+    capabilities:
+      containable:
+        type: thrmlcps:FanContainable

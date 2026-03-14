@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Switch.v1_11_0.yaml
+  namespace: switch
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Switch_caps.yaml
+  namespace: swtchcps
+node_types:
+  Switch:
+    description: >-
+      The `Switch` schema contains properties that describe a fabric switch.
+    derived_from: switch:Switch
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: swtchcps:SwitchFeature
+      containable:
+        type: swtchcps:SwitchContainable

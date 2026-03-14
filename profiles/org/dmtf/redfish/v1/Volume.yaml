@@ -1,0 +1,1082 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: StorageReplicaInfo.v1_4_0.yaml
+  namespace: strrplin
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: Resource.yaml
+  namespace: resource
+- url: SpareResourceSet.yaml
+  namespace: sprrsrst
+- url: Core.yaml
+  namespace: core
+- url: Volume_caps.yaml
+  namespace: vlmcps
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: SpareResourceSet_caps.yaml
+  namespace: sprsstcp
+- url: FeaturesRegistry.yaml
+  namespace: ftrsrgst
+- url: IOStatistics.yaml
+  namespace: isttstcs
+- url: VolumeMetrics.yaml
+  namespace: vlmmtrcs
+- url: StorageReplicaInfo_caps.yaml
+  namespace: strpincp
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+- url: VolumeMetrics_caps.yaml
+  namespace: vlmmtrcp
+- url: FeaturesRegistry_caps.yaml
+  namespace: ftrrgscp
+data_types:
+  EncryptionTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NativeDriveEncryption
+        - ControllerAssisted
+        - SoftwareAssisted
+  InitializeMethod:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Skip
+        - Background
+        - Foreground
+  InitializeType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Fast
+        - Slow
+  LBAFormatType:
+    description: >-
+      LBAFormatType is defined in the NVMe specification set. This field indicates
+      the LBA data size supported; implementations may report up to 16 values. For
+      more details refer to the appropriate NVMe specification.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - LBAFormat0
+        - LBAFormat1
+        - LBAFormat2
+        - LBAFormat3
+        - LBAFormat4
+        - LBAFormat5
+        - LBAFormat6
+        - LBAFormat7
+        - LBAFormat8
+        - LBAFormat9
+        - LBAFormat10
+        - LBAFormat11
+        - LBAFormat12
+        - LBAFormat13
+        - LBAFormat14
+        - LBAFormat15
+  LBARelativePerformanceType:
+    description: >-
+      Indicate the relative performance of the LBA format relative to other LBA formats
+      supported by the controller.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Best
+        - Better
+        - Good
+        - Degraded
+  NamespaceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Block
+        - KeyValue
+        - ZNS
+        - Computational
+  OperationType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Deduplicate
+        - CheckConsistency
+        - Initialize
+        - Replicate
+        - Delete
+        - ChangeRAIDType
+        - Rebuild
+        - Encrypt
+        - Decrypt
+        - Resize
+        - Compress
+        - Sanitize
+        - Format
+        - ChangeStripSize
+  RAIDType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RAID0
+        - RAID1
+        - RAID3
+        - RAID4
+        - RAID5
+        - RAID6
+        - RAID10
+        - RAID01
+        - RAID6TP
+        - RAID1E
+        - RAID50
+        - RAID60
+        - RAID00
+        - RAID10E
+        - RAID1Triple
+        - RAID10Triple
+        - None
+  ReadCachePolicyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ReadAhead
+        - AdaptiveReadAhead
+        - 'Off'
+  NVMeNamespaceProperties:
+    description: >-
+      This property contains properties to use when Volume is used to describe an
+      NVMe Namespace.
+    properties:
+      FormattedLBASize:
+        type: string
+        description: >-
+          The LBA data size and metadata size combination that the namespace has been
+          formatted with.
+        required: false
+      IsShareable:
+        type: boolean
+        description: >-
+          Indicates the namespace is shareable.
+        required: false
+      LBAFormat:
+        type: LBAFormat
+        description: >-
+          Describes the current LBA format ID and detailed properties.
+        required: false
+      LBAFormats:
+        type: list
+        description: >-
+          Describes the LBA format IDs and detailed properties.
+        required: false
+        entry_schema:
+          type: string
+      LBAFormatsSupported:
+        type: list
+        description: >-
+          A list of the LBA format types supported for the namespace, or potential
+          namespaces.
+        required: false
+        entry_schema:
+          type: string
+      MetadataTransferredAtEndOfDataLBA:
+        type: boolean
+        description: >-
+          This property indicates whether or not the metadata is transferred at the
+          end of the LBA creating an extended data LBA.
+        required: false
+      NVMeVersion:
+        type: string
+        description: >-
+          The version of the NVMe Base Specification supported.
+        required: false
+      NamespaceFeatures:
+        type: NamespaceFeatures
+        description: >-
+          This property contains a set of Namespace Features.
+        required: false
+      NamespaceId:
+        type: string
+        description: >-
+          The NVMe Namespace Identifier for this namespace.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9])*)$
+      NamespaceType:
+        type: string
+        description: >-
+          Identifies the type of namespace.
+        required: false
+      NumberLBAFormats:
+        type: integer
+        description: >-
+          The number of LBA data size and metadata size combinations supported by
+          this namespace. The value of this property is between 0 and 16.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      SupportsIOPerformanceHints:
+        type: boolean
+        description: >-
+          Indicates whether the namespace supports IO performance hints.
+        required: false
+      SupportsMultipleNamespaceAttachments:
+        type: boolean
+        description: >-
+          Indicates whether the namespace may be attached to two or more controllers.
+        required: false
+      Type:
+        type: string
+        description: >-
+          Identifies the type of namespace.
+        required: false
+  LBAFormat:
+    description: >-
+      Describes the current LBA format ID and detailed properties.
+    properties:
+      LBADataSizeBytes:
+        type: integer
+        description: >-
+          The LBA data size in bytes.
+        required: false
+      LBAFormatType:
+        type: string
+        description: >-
+          The LBA format type.
+        required: false
+      LBAMetadataSizeBytes:
+        type: integer
+        description: >-
+          The LBA metadata size in bytes.
+        required: false
+      RelativePerformance:
+        type: string
+        description: >-
+          The LBA Relative Performance type.
+        required: false
+  NamespaceFeatures:
+    description: >-
+      This property contains a set of Namespace Features.
+    properties:
+      SupportsAtomicTransactionSize:
+        type: boolean
+        description: >-
+          Indicates that the NVM fields for Namespace preferred write granularity
+          (NPWG), write alignment (NPWA), deallocate granularity (NPDG), deallocate
+          alignment (NPDA) and optimal write size (NOWS)  are defined for this namespace
+          and should be used by the host for I/O optimization.
+        required: false
+      SupportsDeallocatedOrUnwrittenLBError:
+        type: boolean
+        description: >-
+          This property indicates that the controller supports deallocated or unwritten
+          logical block error for this namespace.
+        required: false
+      SupportsIOPerformanceHints:
+        type: boolean
+        description: >-
+          Indicates that the Namespace Atomic Write Unit Normal (NAWUN), Namespace
+          Atomic Write Unit Power Fail (NAWUPF), and Namespace Atomic Compare and
+          Write Unit (NACWU) fields are defined for this namespace and should be used
+          by the host for this namespace instead of the controller-level properties
+          AWUN, AWUPF, and ACWU.
+        required: false
+      SupportsNGUIDReuse:
+        type: boolean
+        description: >-
+          This property indicates that the namespace supports the use of an NGUID
+          (namespace globally unique identifier) value.
+        required: false
+      SupportsThinProvisioning:
+        type: boolean
+        description: >-
+          This property indicates whether or not the NVMe Namespace supports thin
+          provisioning.
+        required: false
+  ALUA:
+    description: >-
+      ALUA properties for this volume.
+    properties:
+      ANAGroupId:
+        type: float
+        description: >-
+          The ANA group id for this volume.
+        required: false
+  VolumeType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RawDevice
+        - NonRedundant
+        - Mirrored
+        - StripedWithParity
+        - SpannedMirrors
+        - SpannedStripesWithParity
+  VolumeUsageType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Data
+        - SystemData
+        - CacheOnly
+        - SystemReserve
+        - ReplicationReserve
+  WriteCachePolicyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - WriteThrough
+        - ProtectedWriteBack
+        - UnprotectedWriteBack
+        - 'Off'
+  WriteCacheStateType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unprotected
+        - Protected
+        - Degraded
+  WriteHoleProtectionPolicyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - 'Off'
+        - Journaling
+        - DistributedLog
+        - Oem
+relationship_types:
+  VolumeDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      CacheDataVolumes@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      CacheVolumeSource:
+        type: string
+        description: >-
+          A pointer to the cache volume source for this volume.
+        required: false
+      ClientEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConsistencyGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Controllers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      DedicatedSpareDrives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Drives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      JournalingMedia:
+        type: string
+        description: >-
+          A pointer to the Resource that serves as a journaling media for this volume.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ProvidingStoragePool:
+        type: string
+        description: >-
+          The StoragePool resource that provides this volume resource.
+        required: false
+      ServerEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SpareResourceSets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      StorageGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  VolumeActions:
+    operations:
+      AssignReplicaTarget:
+        description: >-
+          This action is used to establish a replication relationship by assigning
+          an existing volume to serve as a target replica for an existing source volume.
+        inputs:
+          ReplicaType:
+            type: strrplin:ReplicaType
+            description: >-
+              The type of replica relationship to be created.
+            required: true
+          ReplicaUpdateMode:
+            type: strrplin:ReplicaUpdateMode
+            description: >-
+              The replica update mode (synchronous vs asynchronous).
+            required: true
+          TargetVolume:
+            type: string
+            description: >-
+              The Uri to the existing target volume.
+            required: true
+      ChangeRAIDLayout:
+        description: >-
+          Request system change the RAID layout of the volume.
+        inputs:
+          Drives:
+            type: list
+            description: >-
+              An array of the drives to be used by the volume.
+            required: false
+          MediaSpanCount:
+            type: integer
+            description: >-
+              The requested number of media elements used per span in the secondary
+              RAID for a hierarchical RAID type.
+            required: false
+          RAIDType:
+            type: RAIDType
+            description: >-
+              The requested RAID type for the volume.
+            required: false
+          StripSizeBytes:
+            type: integer
+            description: >-
+              The number of blocks (bytes) requested for new strip size.
+            required: false
+      CheckConsistency:
+        description: >-
+          This action is used to force a check of the Volume's parity or redundant
+          data to ensure it matches calculated values.
+      CreateReplicaTarget:
+        description: >-
+          This action is used to create a new volume resource to provide expanded
+          data protection through a replica relationship with the specified source
+          volume.
+        inputs:
+          ReplicaType:
+            type: strrplin:ReplicaType
+            description: >-
+              The type of replica relationship to be created.
+            required: true
+          ReplicaUpdateMode:
+            type: strrplin:ReplicaUpdateMode
+            description: >-
+              The replica update mode (synchronous vs asynchronous).
+            required: true
+          TargetStoragePool:
+            type: string
+            description: >-
+              The Uri to the existing target Storage Pool.
+            required: true
+          VolumeName:
+            type: string
+            description: >-
+              The Name for the new target volume.
+            required: false
+      ForceEnable:
+        description: >-
+          Request system force the volume to an enabled state regardless of data loss.
+      Initialize:
+        description: >-
+          This action is used to prepare the contents of the volume for use by the
+          system. If InitializeMethod is not specified in the request body, but the
+          property InitializeMethod is specified, the property InitializeMethod value
+          should be used. If neither is specified, the InitializeMethod should be
+          Foreground.
+        inputs:
+          InitializeMethod:
+            type: InitializeMethod
+            description: >-
+              The type of initialization to be performed.
+            required: false
+          InitializeType:
+            type: InitializeType
+            description: >-
+              The type of initialization to be performed.
+            required: false
+      RemoveReplicaRelationship:
+        description: >-
+          This action is used to disable data synchronization between a source and
+          target volume, remove the replication relationship, and optionally delete
+          the target volume.
+        inputs:
+          DeleteTargetVolume:
+            type: boolean
+            description: >-
+              Indicate whether or not to delete the target volume as part of the operation.
+            required: false
+          TargetVolume:
+            type: string
+            description: >-
+              The Uri to the existing target volume.
+            required: true
+      ResumeReplication:
+        description: >-
+          This action is used to resume the active data synchronization between a
+          source and target volume, without otherwise altering the replication relationship.
+        inputs:
+          TargetVolume:
+            type: string
+            description: >-
+              The Uri to the existing target volume.
+            required: true
+      ReverseReplicationRelationship:
+        description: >-
+          This action is used to reverse the replication relationship between a source
+          and target volume.
+        inputs:
+          TargetVolume:
+            type: string
+            description: >-
+              The Uri to the existing target volume.
+            required: true
+      SplitReplication:
+        description: >-
+          This action is used to split the replication relationship and suspend data
+          synchronization between a source and target volume.
+        inputs:
+          TargetVolume:
+            type: string
+            description: >-
+              The Uri to the existing target volume.
+            required: true
+      SuspendReplication:
+        description: >-
+          This action is used to suspend active data synchronization between a source
+          and target volume, without otherwise altering the replication relationship.
+        inputs:
+          TargetVolume:
+            type: string
+            description: >-
+              The Uri to the existing target volume.
+            required: true
+node_types:
+  Volume:
+    description: >-
+      Volume contains properties used to describe a volume, virtual disk, LUN, or
+      other logical storage entity for any system.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      BlockSizeBytes:
+        type: integer
+        description: >-
+          The size of the smallest addressable unit (Block) of this volume in bytes.
+        required: false
+      CapacityBytes:
+        type: integer
+        description: >-
+          The size in bytes of this Volume.
+        required: false
+      Description:
+        type: string
+        required: false
+      Encrypted:
+        type: boolean
+        description: >-
+          Is this Volume encrypted.
+        required: false
+      EncryptionTypes:
+        type: list
+        description: >-
+          The types of encryption used by this Volume.
+        required: false
+        entry_schema:
+          type: string
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The Durable names for the volume.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Operations:
+        type: list
+        description: >-
+          The operations currently running on the Volume.
+        required: false
+        entry_schema:
+          type: Operation
+      OptimumIOSizeBytes:
+        type: integer
+        description: >-
+          The size in bytes of this Volume's optimum IO size.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The property contains the status of the Volume.
+        required: false
+      VolumeType:
+        type: string
+        description: >-
+          The type of this volume.
+        required: false
+      AccessCapabilities:
+        type: list
+        description: >-
+          Supported IO access capabilities.
+        required: false
+        entry_schema:
+          type: string
+      CapacitySources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      LowSpaceWarningThresholdPercents:
+        type: list
+        description: >-
+          Low space warning.
+        required: false
+        entry_schema:
+          type: integer
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer or OEM of this storage volume.
+        required: false
+      MaxBlockSizeBytes:
+        type: integer
+        description: >-
+          Max Block size in bytes.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for this storage volume.
+        required: false
+      RemainingCapacityPercent:
+        type: integer
+        description: >-
+          The percentage of the capacity remaining in the Volume.
+        required: false
+      RAIDType:
+        type: string
+        description: >-
+          The RAID type of this volume.
+        required: false
+      RecoverableCapacitySourceCount:
+        type: integer
+        description: >-
+          Current number of capacity source resources that are available as replacements.
+        required: false
+      ReplicaTargets:
+        type: list
+        description: >-
+          The resources that are target replicas of this source.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      ReplicaTargets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Compressed:
+        type: boolean
+        description: >-
+          Indicator of whether or not the Volume has compression enabled.
+        required: false
+      Deduplicated:
+        type: boolean
+        description: >-
+          Indicator of whether or not the Volume has deduplication enabled.
+        required: false
+      DisplayName:
+        type: string
+        description: >-
+          A user-configurable string to name the volume.
+        required: false
+      LogicalUnitNumber:
+        type: integer
+        description: >-
+          Indicates the host-visible LogicalUnitNumber assigned to this Volume.
+        required: false
+      MediaSpanCount:
+        type: integer
+        description: >-
+          Indicates the number of media elements used per span in the secondary RAID
+          for a hierarchical RAID type.
+        required: false
+      ProvisioningPolicy:
+        type: string
+        description: >-
+          This property specifies the volume's storage allocation, or provisioning
+          policy.
+        required: false
+      ReadCachePolicy:
+        type: string
+        description: >-
+          Indicates the read cache policy setting for the Volume.
+        required: false
+      StripSizeBytes:
+        type: integer
+        description: >-
+          The number of blocks (bytes) in a strip in a disk array that uses striped
+          data mapping.
+        required: false
+      VolumeUsage:
+        type: string
+        description: >-
+          Indicates the Volume usage type setting for the Volume.
+        required: false
+      WriteCachePolicy:
+        type: string
+        description: >-
+          Indicates the write cache policy setting for the Volume.
+        required: false
+      WriteCacheState:
+        type: string
+        description: >-
+          Indicates the WriteCacheState policy setting for the Volume.
+        required: false
+      WriteHoleProtectionPolicy:
+        type: string
+        description: >-
+          The policy that the RAID volume is using to address the write hole issue.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - 'Off'
+            - Journaling
+            - DistributedLog
+            - Oem
+      IOPerfModeEnabled:
+        type: boolean
+        description: >-
+          Indicates the IO performance mode setting for the volume.
+        required: false
+      NVMeNamespaceProperties:
+        type: NVMeNamespaceProperties
+        description: >-
+          This property contains properties to use when Volume is used to describe
+          an NVMe Namespace.
+        required: false
+      InitializeMethod:
+        type: string
+        description: >-
+          Indicates the Initialization Method used for this volume. If InitializeMethod
+          is not specified, the InitializeMethod should be Foreground.
+        required: false
+      IsBootCapable:
+        type: boolean
+        description: >-
+          This property indicates whether or not the Volume contains a boot image
+          and is capable of booting.
+        required: false
+      RemoteReplicaTargets:
+        type: list
+        description: >-
+          URIs to the resources that are remote target replicas of this source.
+        required: false
+        entry_schema:
+          type: string
+      Connections@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ReplicationEnabled:
+        type: boolean
+        description: >-
+          Indicates whether or not replication is enabled on the volume.
+        required: false
+      ALUA:
+        type: ALUA
+        description: >-
+          ALUA properties for this volume.
+        required: false
+    requirements:
+    - AllocatedPools:
+        # node: strplcl:StoragePoolCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An array of references to StoragePools allocated from this Volume.
+    - Capacity:
+        # node: capacity:Capacity
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Capacity utilization.
+    - CapacitySources:
+        # node: capacity:CapacitySource
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of space allocations to this volume.
+    - ReplicaInfo:
+        node: strrplin:ReplicaInfo
+        capability: strpincp:ReplicaInfoContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Describes this storage volume in its role as a target replica.
+    - StorageGroups:
+        # node: strgrpcl:StorageGroupCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An array of references to Storage Groups that includes this volume.
+    - IOStatistics:
+        node: isttstcs:IOStatistics
+        capability: isttcps:IOStatisticsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Statistics for this volume.
+    - Connections:
+        # node: cnnctn:Connection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to Connections that includes this volume.
+    - Metrics:
+        node: vlmmtrcs:VolumeMetrics
+        capability: vlmmtrcp:VolumeMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metrics for this volume.
+    - CacheDataVolumes:
+        node: Volume
+        capability: vlmcps:VolumeFeature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A pointer to the data volumes this volume serves as a cache volume.
+    - ClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceFeature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The ClassOfService that this storage volume conforms to.
+    - ClientEndpoints:
+        # node: endpoint:Endpoint
+        capability: core:Feature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the client Endpoints associated with this volume.
+    - ConsistencyGroups:
+        # node: cnssgrp:ConsistencyGroup
+        capability: core:Feature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the ConsistencyGroups associated with this volume.
+    - Controllers:
+        # node: strgcntr:StorageController
+        capability: core:Feature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of the Controllers associated with this volume.
+    - DedicatedSpareDrives:
+        # node: drive:Drive
+        capability: core:Feature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the drives which are dedicated spares for this
+          volume.
+    - Drives:
+        # node: drive:Drive
+        capability: core:Feature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the drives which contain this volume. This will
+          reference Drives that either wholly or only partly contain this volume.
+    - OwningStorageResource:
+        # node: storage:Storage
+        capability: core:Feature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A pointer to the Storage resource that owns or contains this volume.
+    - OwningStorageService:
+        # node: strgsrvc:StorageService
+        capability: core:Feature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A pointer to the StorageService that owns or contains this volume.
+    - ServerEndpoints:
+        # node: endpoint:Endpoint
+        capability: core:Feature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the server Endpoints associated with this volume.
+    - SpareResourceSets:
+        node: sprrsrst:SpareResourceSet
+        capability: sprsstcp:SpareResourceSetFeature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to SpareResourceSets.
+    - StorageGroups:
+        # node: strggrp:StorageGroup
+        capability: core:Feature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the StorageGroups associated with this volume.
+    interfaces:
+      Actions:
+        type: VolumeActions
+    capabilities:
+      feature:
+        type: vlmcps:VolumeFeature
+      containable:
+        type: vlmcps:VolumeContainable
+  Operation:
+    properties:
+      Operation:
+        type: string
+        description: >-
+          The type of the operation.
+        required: false
+      OperationName:
+        type: string
+        description: >-
+          The name of the operation.
+        required: false
+      PercentageComplete:
+        type: integer
+        description: >-
+          The percentage of the operation that has been completed.
+        required: false
+    requirements:
+    - AssociatedFeaturesRegistry:
+        node: ftrsrgst:FeaturesRegistry
+        capability: ftrrgscp:FeaturesRegistryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the task associated with the operation if any.
+    capabilities:
+      containable:
+        type: vlmcps:OperationContainable

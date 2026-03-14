@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: HeaterMetrics.v1_0_2.yaml
+  namespace: htrmtrcs
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: HeaterMetrics_caps.yaml
+  namespace: htrmtrcp
+node_types:
+  HeaterMetrics:
+    description: >-
+      The `HeaterMetrics` schema contains definitions for the metrics of a heater.
+    derived_from: htrmtrcs:HeaterMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: htrmtrcp:HeaterMetricsFeature
+      containable:
+        type: htrmtrcp:HeaterMetricsContainable

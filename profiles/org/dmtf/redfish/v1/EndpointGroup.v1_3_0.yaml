@@ -1,0 +1,141 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Connection.yaml
+  namespace: cnnctn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Connection_caps.yaml
+  namespace: cnnccps
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: EndpointGroup.yaml
+  namespace: endpgrp
+- url: EndpointGroup_caps.yaml
+  namespace: endgrpcp
+data_types:
+  GroupType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Client
+        - Server
+        - Initiator
+        - Target
+relationship_types:
+  EndpointGroupDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Connections@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  EndpointGroup:
+    description: >-
+      The EndpointGroup schema describes group of endpoints that are managed as a
+      unit.
+    properties:
+      AccessState:
+        type: endpgrp:AccessState
+        description: >-
+          The access state for this group.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      GroupType:
+        type: GroupType
+        description: >-
+          The endpoint group type.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The durable name for the endpoint group.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Preferred:
+        type: boolean
+        description: >-
+          An indication if access to the resources through the endpoint group is preferred.
+        required: false
+      TargetEndpointGroupIdentifier:
+        type: integer
+        description: >-
+          The SCSI-defined identifier for this group.
+        required: false
+    requirements:
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The endpoints in this endpoint group.
+    - Connections:
+        node: cnnctn:Connection
+        capability: cnnccps:ConnectionFeature
+        relationship: EndpointGroupDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The connections to which this endpoint group belongs.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: EndpointGroupDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The endpoints in this endpoint group.
+    capabilities:
+      feature:
+        type: endgrpcp:EndpointGroupFeature
+      containable:
+        type: endgrpcp:EndpointGroupContainable

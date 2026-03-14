@@ -1,0 +1,207 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Storage.v1_0_0.yaml
+  namespace: storage
+- url: odata.4.0.0.yaml
+  namespace: odata400
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: Switch.yaml
+  namespace: switch
+- url: Port.yaml
+  namespace: port
+- url: Core.yaml
+  namespace: core
+- url: Port_caps.yaml
+  namespace: portcaps
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+data_types:
+  Reset:
+    description: >-
+      This action is used to reset this switch.
+    properties:
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        required: false
+      '#Port_Reset':
+        type: Reset
+        description: >-
+          This action is used to reset this switch.
+        required: false
+  PortType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - UpstreamPort
+        - DownstreamPort
+        - InterswitchPort
+        - ManagementPort
+        - BidirectionalPort
+        - UnconfiguredPort
+node_types:
+  Port:
+    description: >-
+      Port contains properties describing a port of a switch.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      PortId:
+        type: string
+        description: >-
+          This is the label of this port on the physical switch package.
+        required: false
+      PortProtocol:
+        type: storage:Protocol
+        description: >-
+          The protocol being sent over this port.
+        required: false
+      PortType:
+        type: PortType
+        description: >-
+          This is the type of this port.
+        required: false
+      CurrentSpeedGbps:
+        type: float
+        description: >-
+          The current speed of this port.
+        required: false
+      MaxSpeedGbps:
+        type: float
+        description: >-
+          The maximum speed of this port as currently configured.
+        required: false
+      Width:
+        type: float
+        description: >-
+          The number of lanes, phys, or other physical transport links that this port
+          contains.
+        required: false
+      Links:
+        type: Links
+        description: >-
+          Contains references to other resources that are related to this resource.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    capabilities:
+      feature:
+        type: portcaps:PortFeature
+      containable:
+        type: portcaps:PortContainable
+  Links:
+    description: >-
+      Contains references to other resources that are related to this resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      AssociatedEndpoints@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      AssociatedEndpoints@odata_navigationLink:
+        type: string
+        required: false
+      ConnectedSwitches@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitches@odata_navigationLink:
+        type: string
+        required: false
+      ConnectedSwitchPorts@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitchPorts@odata_navigationLink:
+        type: string
+        required: false
+    requirements:
+    - AssociatedEndpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the endpoints that connect to the switch through
+          this port.
+    - ConnectedSwitches:
+        node: switch:Switch
+        capability: swtchcps:SwitchContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the switches that connect to the switch through
+          this port.
+    - ConnectedSwitchPorts:
+        node: port:Port
+        capability: portcaps:PortContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the ports that connect to the switch through this
+          port.
+    capabilities:
+      containable:
+        type: portcaps:LinksContainable

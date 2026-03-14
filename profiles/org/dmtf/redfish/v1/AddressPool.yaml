@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: AddressPool.v1_3_0.yaml
+  namespace: addrsspl
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: AddressPool_caps.yaml
+  namespace: addplcp
+node_types:
+  AddressPool:
+    description: >-
+      The `AddressPool` schema contains the definition of an address pool and its
+      configuration.
+    derived_from: addrsspl:AddressPool
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: addplcp:AddressPoolFeature
+      containable:
+        type: addplcp:AddressPoolContainable

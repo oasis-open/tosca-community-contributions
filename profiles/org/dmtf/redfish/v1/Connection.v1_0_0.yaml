@@ -1,0 +1,195 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: EndpointGroup_caps.yaml
+  namespace: endgrpcp
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Connection_caps.yaml
+  namespace: cnnccps
+- url: Volume.yaml
+  namespace: volume
+- url: Volume_caps.yaml
+  namespace: vlmcps
+data_types:
+  AccessCapability:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Read
+        - Write
+  AccessState:
+    description: >-
+      Describes the options for the access characteristics of a resource.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Optimized
+        - NonOptimized
+        - Standby
+        - Unavailable
+        - Transitioning
+  ConnectionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Storage
+        - Memory
+relationship_types:
+  ConnectionDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      InitiatorEndpointGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      InitiatorEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      TargetEndpointGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      TargetEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  Connection:
+    description: >-
+      The Connection schema describes the access permissions endpoints, or groups
+      of endpoints, have with other resources in the service.
+    properties:
+      ConnectionType:
+        type: ConnectionType
+        description: >-
+          The type of resources this connection specifies.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      VolumeInfo:
+        type: list
+        description: >-
+          The set of volumes and access capabilities specified for this connection.
+        required: false
+        entry_schema:
+          type: VolumeInfo
+    requirements:
+    - InitiatorEndpointGroups:
+        node: EndpointGroup
+        capability: endgrpcp:EndpointGroupFeature
+        relationship: ConnectionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the initiator endpoint groups that are associated with
+          this connection.
+    - InitiatorEndpoints:
+        node: Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: ConnectionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the initiator endpoints that are associated with this
+          connection.
+    - TargetEndpointGroups:
+        # node: endpgrp:EndpointGroup
+        capability: core:Feature
+        relationship: ConnectionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the target endpoint groups that are associated with
+          this connection.
+    - TargetEndpoints:
+        # node: endpoint:Endpoint
+        capability: core:Feature
+        relationship: ConnectionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the target endpoints that are associated with this
+          connection.
+    capabilities:
+      feature:
+        type: cnnccps:ConnectionFeature
+      containable:
+        type: cnnccps:ConnectionContainable
+  VolumeInfo:
+    description: >-
+      The combination of permissions and volume information.
+    properties:
+      AccessCapabilities:
+        type: list
+        description: >-
+          Supported IO access capabilities.
+        required: false
+        entry_schema:
+          type: AccessCapability
+      AccessState:
+        type: AccessState
+        description: >-
+          The access state for this connection.
+        required: false
+    requirements:
+    - Volume:
+        node: volume:Volume
+        capability: vlmcps:VolumeContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The specified volume.
+    capabilities:
+      containable:
+        type: cnnccps:VolumeInfoContainable

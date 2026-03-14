@@ -1,0 +1,756 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Resource_caps.yaml
+  namespace: rsrccps
+data_types:
+  ResolutionStep:
+    description: >-
+      This type describes a recommended step of the service-defined resolution.
+    properties:
+      ActionParameters:
+        type: list
+        description: >-
+          The parameters of the action URI for a resolution step.
+        required: false
+        entry_schema:
+          type: string
+      ActionURI:
+        type: string
+        description: >-
+          The action URI for a resolution step.
+        required: false
+      Oem:
+        type: Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Priority:
+        type: integer
+        description: >-
+          The priority in the set of resolution steps.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ResolutionType:
+        type: string
+        description: >-
+          The type of the resolution step.
+        required: true
+      RetryCount:
+        type: integer
+        description: >-
+          The number of retries for a resolution step.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RetryIntervalSeconds:
+        type: integer
+        description: >-
+          The interval between retries for a resolution step.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      TargetComponentURI:
+        type: string
+        description: >-
+          The target URI of the component for a resolution step.
+        required: false
+  Condition:
+    description: >-
+      A condition that requires attention.
+    properties:
+      ConditionType:
+        type: string
+        description: >-
+          The type of condition.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Alert
+            - Informational
+            - Subsystem
+      LogEntry:
+        type: string
+        description: >-
+          The link to the log entry created for this condition.
+        required: false
+      Message:
+        type: string
+        description: >-
+          The human-readable message for this condition.
+        required: false
+      MessageArgs:
+        type: list
+        description: >-
+          An array of message arguments that are substituted for the arguments in
+          the message when looked up in the message registry.
+        required: false
+        entry_schema:
+          type: string
+      MessageId:
+        type: string
+        description: >-
+          The identifier for the message.
+        required: true
+      Oem:
+        type: Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OriginOfCondition:
+        type: odatav4:idRef
+        description: >-
+          A link to the resource or object that originated the condition.
+        required: false
+      Resolution:
+        type: string
+        description: >-
+          Suggestions on how to resolve the condition.
+        required: false
+      ResolutionSteps:
+        type: list
+        description: >-
+          The list of recommended steps to resolve the condition.
+        required: false
+        entry_schema:
+          type: ResolutionStep
+      Severity:
+        type: Health
+        description: >-
+          The severity of the condition.
+        required: false
+      Timestamp:
+        type: string
+        description: >-
+          The time the condition occurred.
+        required: false
+      UserAuthenticationSource:
+        type: string
+        description: >-
+          The source of authentication for the username property associated with the
+          condition.
+        required: false
+      Username:
+        type: string
+        description: >-
+          The username of the account associated with the condition.
+        required: false
+  Description:
+    description: >-
+      The description of this resource.  Used for commonality in the schema definitions.
+    derived_from: string
+  Health:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OK
+        - Warning
+        - Critical
+  Id:
+    description: >-
+      The unique identifier for this resource within the collection of similar resources.
+    derived_from: string
+  Identifier:
+    description: >-
+      Any additional identifiers for a resource.
+    properties:
+      DurableName:
+        type: string
+        description: >-
+          The world-wide, persistent name of the resource.
+        required: false
+      DurableNameFormat:
+        type: string
+        description: >-
+          The format of the durable name property.
+        required: false
+  ImportParameters:
+    properties:
+      EncryptionPassphrase:
+        type: string
+        description: >-
+          The encryption passphrase for the import file.
+        required: false
+  IndicatorLED:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Lit
+        - Blinking
+        - 'Off'
+  Item:
+    description: >-
+      The base type for resources and members that can be linked to.
+    derived_from: ReferenceableMember
+  ItemOrCollection:
+    derived_from: Item
+  Links:
+    properties:
+      Oem:
+        type: Oem
+        description: >-
+          The OEM extension property.
+        required: false
+  Placement:
+    description: >-
+      A place within the addressed location.
+    properties:
+      AdditionalInfo:
+        type: string
+        description: >-
+          Area designation or other additional info.
+        required: false
+      FacilityName:
+        type: string
+        description: >-
+          The name of the facility.
+        required: false
+      Rack:
+        type: string
+        description: >-
+          The name of a rack location within a row.
+        required: false
+      RackOffset:
+        type: integer
+        description: >-
+          The vertical location of the item, in terms of RackOffsetUnits.
+        required: false
+      RackOffsetUnits:
+        type: string
+        description: >-
+          The type of rack units in use.
+        required: false
+      Room:
+        type: string
+        description: >-
+          The name or number of the room.
+        required: false
+      Row:
+        type: string
+        description: >-
+          The name of the row.
+        required: false
+  PostalAddress:
+    description: >-
+      The postal address of the addressed resource.
+    properties:
+      AdditionalCode:
+        type: string
+        description: >-
+          The additional code.
+        required: false
+      AdditionalInfo:
+        type: string
+        description: >-
+          The room designation or other additional information.
+        required: false
+      Building:
+        type: string
+        description: >-
+          The name of the building.
+        required: false
+      City:
+        type: string
+        description: >-
+          City, township, or shi (JP).
+        required: false
+      Community:
+        type: string
+        description: >-
+          The postal community name.
+        required: false
+      Country:
+        type: string
+        description: >-
+          The country.
+        required: false
+      District:
+        type: string
+        description: >-
+          A county, parish, gun (JP), or district (IN).
+        required: false
+      Division:
+        type: string
+        description: >-
+          City division, borough, city district, ward, or chou (JP).
+        required: false
+      Floor:
+        type: string
+        description: >-
+          The floor.
+        required: false
+      GPSCoords:
+        type: string
+        description: >-
+          The GPS coordinates of the part.
+        required: false
+      HouseNumber:
+        type: integer
+        description: >-
+          The numeric portion of house number.
+        required: false
+      HouseNumberSuffix:
+        type: string
+        description: >-
+          The house number suffix.
+        required: false
+      Landmark:
+        type: string
+        description: >-
+          The landmark.
+        required: false
+      LeadingStreetDirection:
+        type: string
+        description: >-
+          A leading street direction.
+        required: false
+      Location:
+        type: string
+        description: >-
+          The room designation or other additional information.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name.
+        required: false
+      Neighborhood:
+        type: string
+        description: >-
+          Neighborhood or block.
+        required: false
+      POBox:
+        type: string
+        description: >-
+          The post office box (PO box).
+        required: false
+      PlaceType:
+        type: string
+        description: >-
+          The description of the type of place that is addressed.
+        required: false
+      PostalCode:
+        type: string
+        description: >-
+          The postal code or zip code.
+        required: false
+      Road:
+        type: string
+        description: >-
+          The primary road or street.
+        required: false
+      RoadBranch:
+        type: string
+        description: >-
+          The road branch.
+        required: false
+      RoadPostModifier:
+        type: string
+        description: >-
+          The road post-modifier.
+        required: false
+      RoadPreModifier:
+        type: string
+        description: >-
+          The road pre-modifier.
+        required: false
+      RoadSection:
+        type: string
+        description: >-
+          The road section.
+        required: false
+      RoadSubBranch:
+        type: string
+        description: >-
+          The road sub branch.
+        required: false
+      Room:
+        type: string
+        description: >-
+          The name or number of the room.
+        required: false
+      Seat:
+        type: string
+        description: >-
+          The seat, such as the desk, cubicle, or workstation.
+        required: false
+      Street:
+        type: string
+        description: >-
+          Street name.
+        required: false
+      StreetSuffix:
+        type: string
+        description: >-
+          Avenue, Platz, Street, Circle.
+        required: false
+      Territory:
+        type: string
+        description: >-
+          A top-level subdivision within a country.
+        required: false
+      TrailingStreetSuffix:
+        type: string
+        description: >-
+          A trailing street suffix.
+        required: false
+      Unit:
+        type: string
+        description: >-
+          The name or number of the apartment unit or suite.
+        required: false
+  PartLocation:
+    description: >-
+      The part location for a resource within an enclosure.
+    properties:
+      LocationOrdinalValue:
+        type: integer
+        description: >-
+          The number that represents the location of the part.  For example, if `LocationType`
+          is `Slot` and this unit is in slot 2, the LocationOrdinalValue is `2`.
+        required: false
+      LocationType:
+        type: string
+        description: >-
+          The type of location of the part.
+        required: false
+      Orientation:
+        type: string
+        description: >-
+          The orientation for the ordering of the slot enumeration used by the `LocationOrdinalValue`
+          property.
+        required: false
+      Reference:
+        type: string
+        description: >-
+          The reference point for the part location.  Provides guidance about the
+          general location of the part.
+        required: false
+      ServiceLabel:
+        type: string
+        description: >-
+          The label of the part location, such as a silk-screened name or a printed
+          label.
+        required: false
+  PhysicalAddress:
+    description: >-
+      The physical address for a resource.
+    properties:
+      City:
+        type: string
+        description: >-
+          City, township, or shi (JP).
+        required: false
+      Country:
+        type: string
+        description: >-
+          The country.
+        required: false
+      ISOCountryCode:
+        type: string
+        description: >-
+          The ISO 3166-1 country code.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([A-Z]{2}|[A-Z]{3})$
+      ISOSubdivisionCode:
+        type: string
+        description: >-
+          ISO 3166-2 subdivision code.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[A-Z0-9]{1,3}$
+      PostalCode:
+        type: string
+        description: >-
+          The postal code.
+        required: false
+      StateOrProvince:
+        type: string
+        description: >-
+          State or province.
+        required: false
+      StreetAddress:
+        type: string
+        description: >-
+          The street-level address, including building, room, or other identifiers.
+        required: false
+  Location:
+    description: >-
+      The location of a resource.
+    properties:
+      Info:
+        type: string
+        description: >-
+          The location of the resource.
+        required: false
+      InfoFormat:
+        type: string
+        description: >-
+          The format of the `Info` property.
+        required: false
+      Oem:
+        type: Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Placement:
+        type: Placement
+        description: >-
+          A place within the addressed location.
+        required: false
+      PostalAddress:
+        type: PostalAddress
+        description: >-
+          The postal address of the addressed resource.
+        required: false
+      PartLocation:
+        type: PartLocation
+        description: >-
+          The part location for a resource within an enclosure.
+        required: false
+      AltitudeMeters:
+        type: float
+        description: >-
+          The altitude of the resource in meters.
+        required: false
+      Latitude:
+        type: float
+        description: >-
+          The latitude of the resource.
+        required: false
+      Longitude:
+        type: float
+        description: >-
+          The longitude of the resource in degree units.
+        required: false
+      Contacts:
+        type: list
+        description: >-
+          An array of contact information.
+        required: false
+        entry_schema:
+          type: string
+      PartLocationContext:
+        type: string
+        description: >-
+          Human-readable string to enable differentiation between `PartLocation` values
+          for parts in the same enclosure, which might include hierarchical information
+          of containing `PartLocation` values for the part.
+        required: false
+      PhysicalAddress:
+        type: PhysicalAddress
+        description: >-
+          The physical address for a resource.
+        required: false
+  Name:
+    description: >-
+      The name of the resource or array member.
+    derived_from: string
+  Oem:
+    description: >-
+      The OEM extension.
+  OemObject:
+    description: >-
+      The base type for an OEM extension.
+  PowerState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - 'On'
+        - 'Off'
+        - PoweringOn
+        - PoweringOff
+        - Paused
+  ReferenceableMember:
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      MemberId:
+        type: string
+        description: >-
+          The unique identifier for the member within an array.
+        required: true
+      Oem:
+        type: Oem
+        description: >-
+          The OEM extension property.
+        required: false
+  ResetType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - 'On'
+        - ForceOff
+        - GracefulShutdown
+        - GracefulRestart
+        - ForceRestart
+        - Nmi
+        - ForceOn
+        - PushPowerButton
+        - PowerCycle
+        - Suspend
+        - Pause
+        - Resume
+        - FullPowerCycle
+  ResourceCollection:
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      Description:
+        type: string
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: map
+        description: >-
+          The OEM extension property.
+        required: false
+  State:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+        - StandbyOffline
+        - StandbySpare
+        - InTest
+        - Starting
+        - Absent
+        - UnavailableOffline
+        - Deferring
+        - Quiesced
+        - Updating
+        - Qualified
+        - Degraded
+  Status:
+    description: >-
+      The status and health of a resource and its children.
+    properties:
+      Conditions:
+        type: list
+        description: >-
+          Conditions in this resource that require attention.
+        required: false
+        entry_schema:
+          type: Condition
+      Health:
+        type: Health
+        description: >-
+          The health state of this resource in the absence of its dependent resources.
+        required: false
+      HealthRollup:
+        type: Health
+        description: >-
+          The overall health state from the view of this resource.
+        required: false
+      Oem:
+        type: Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      State:
+        type: State
+        description: >-
+          The state of the resource.
+        required: false
+  UUID:
+    derived_from: string
+    validation:
+      $matches:
+      - $value
+      - ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+node_types:
+  Resource:
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      Description:
+        type: string
+        required: false
+      Id:
+        type: string
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: string
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: map
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: rsrccps:ResourceFeature
+      containable:
+        type: rsrccps:ResourceContainable

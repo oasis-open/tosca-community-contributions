@@ -1,0 +1,97 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Session_caps.yaml
+  namespace: sssncps
+data_types:
+  SessionTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - HostConsole
+        - ManagerConsole
+        - IPMI
+        - KVMIP
+        - OEM
+        - Redfish
+        - VirtualMedia
+        - WebUI
+node_types:
+  Session:
+    description: >-
+      The Session resource describes a single connection (session) between a client
+      and a Redfish service instance.
+    properties:
+      ClientOriginIPAddress:
+        type: string
+        description: >-
+          The IP address of the client that created the session.
+        required: false
+      Context:
+        type: string
+        description: >-
+          A client-supplied string that is stored with the session.
+        required: false
+      CreatedTime:
+        type: string
+        description: >-
+          The date and time when the session was created.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OemSessionType:
+        type: string
+        description: >-
+          The active OEM-defined session type.
+        required: false
+      Password:
+        type: string
+        description: >-
+          The password for this session.  The value is `null` in responses.
+        required: false
+      SessionType:
+        type: SessionTypes
+        description: >-
+          The active session type.
+        required: false
+      Token:
+        type: string
+        description: >-
+          The multi-factor authentication token for this session.  The value is `null`
+          in responses.
+        required: false
+      UserName:
+        type: string
+        description: >-
+          The username for the account for this session.
+        required: false
+    capabilities:
+      feature:
+        type: sssncps:SessionFeature
+      containable:
+        type: sssncps:SessionContainable

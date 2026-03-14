@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: FileSystemMetrics.v1_1_0.yaml
+  namespace: flsysmt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: FileSystemMetrics_caps.yaml
+  namespace: flsymtcp
+node_types:
+  FileSystemMetrics:
+    description: >-
+      The usage and health statistics for a file system.
+    derived_from: flsysmt:FileSystemMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: flsymtcp:FileSystemMetricsFeature
+      containable:
+        type: flsymtcp:FileSystemMetricsContainable

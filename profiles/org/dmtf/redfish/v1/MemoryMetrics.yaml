@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MemoryMetrics.v1_8_0.yaml
+  namespace: mmrymtrc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MemoryMetrics_caps.yaml
+  namespace: mmrmtrcp
+node_types:
+  MemoryMetrics:
+    description: >-
+      The `MemoryMetrics` schema contains usage and health statistics for a memory
+      device or system memory summary.
+    derived_from: mmrymtrc:MemoryMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: mmrmtrcp:MemoryMetricsFeature
+      containable:
+        type: mmrmtrcp:MemoryMetricsContainable

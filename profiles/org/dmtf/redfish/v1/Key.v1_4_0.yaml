@@ -1,0 +1,150 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Key_caps.yaml
+  namespace: keycaps
+data_types:
+  KeyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NVMeoF
+        - SSH
+  NVMeoF:
+    description: >-
+      NVMe-oF specific properties.
+    properties:
+      HostKeyId:
+        type: string
+        description: >-
+          The identifier of the host key paired with this target key.
+        required: false
+      NQN:
+        type: string
+        description: >-
+          The NVMe Qualified Name (NQN) of the host or target subsystem associated
+          with this key.
+        required: false
+      OEMSecurityProtocolType:
+        type: string
+        description: >-
+          The OEM security protocol that this key uses.
+        required: false
+      SecureHashAllowList:
+        type: list
+        description: >-
+          The secure hash algorithms allowed with the usage of this key.
+        required: false
+        entry_schema:
+          type: NVMeoFSecureHashType
+      SecurityProtocolType:
+        type: NVMeoFSecurityProtocolType
+        description: >-
+          The security protocol that this key uses.
+        required: false
+  NVMeoFSecureHashType:
+    description: >-
+      The NVMe secure hash algorithms that a key is allowed to use.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SHA256
+        - SHA384
+        - SHA512
+  NVMeoFSecurityProtocolType:
+    description: >-
+      The NVMe security protocols that a key protects.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - DHHC
+        - TLS_PSK
+        - OEM
+  SSHType:
+    description: >-
+      SSH specific properties.
+    properties:
+      Comment:
+        type: string
+        description: >-
+          The user-specified comment associated with this key, which typically contains
+          the client's username and host name.
+        required: false
+      Fingerprint:
+        type: string
+        description: >-
+          A fingerprint of the key.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^MD5(:[0-9a-f]{2})+$)|(^SHA256:[A-Za-z0-9+/=]+$)
+      RemoteServerHostName:
+        type: string
+        description: >-
+          The host name of the remote server associated with this key.
+        required: false
+node_types:
+  Key:
+    description: >-
+      The Key schema describes sensitive data for accessing devices or services.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      KeyString:
+        type: string
+        description: >-
+          The string for the key.
+        required: false
+      KeyType:
+        type: KeyType
+        description: >-
+          The format of the key.
+        required: false
+      NVMeoF:
+        type: NVMeoF
+        description: >-
+          NVMe-oF specific properties.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SSH:
+        type: SSHType
+        description: >-
+          SSH specific properties.
+        required: false
+      UserDescription:
+        type: string
+        description: >-
+          A user-defined string to describe this key.
+        required: false
+    capabilities:
+      feature:
+        type: keycaps:KeyFeature
+      containable:
+        type: keycaps:KeyContainable

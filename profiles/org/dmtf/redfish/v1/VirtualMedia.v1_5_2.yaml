@@ -1,0 +1,223 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: VirtualMedia_caps.yaml
+  namespace: vrtmdcp
+data_types:
+  ConnectedVia:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NotConnected
+        - URI
+        - Applet
+        - Oem
+  MediaType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CD
+        - Floppy
+        - USBStick
+        - DVD
+  TransferMethod:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Stream
+        - Upload
+  TransferProtocolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CIFS
+        - FTP
+        - SFTP
+        - HTTP
+        - HTTPS
+        - NFS
+        - SCP
+        - TFTP
+        - OEM
+interface_types:
+  VirtualMediaActions:
+    operations:
+      EjectMedia:
+        description: >-
+          This action detaches remote media from virtual media.
+      InsertMedia:
+        description: >-
+          This action attaches remote media to virtual media.
+        inputs:
+          Image:
+            type: string
+            description: >-
+              The URI of the media to attach to the virtual media.
+            required: true
+          Inserted:
+            type: boolean
+            description: >-
+              An indication of whether the image is treated as inserted upon completion
+              of the action.  The default is `true`.
+            required: false
+          Password:
+            type: string
+            description: >-
+              The password to access the URI specified by the Image parameter.
+            required: false
+          TransferMethod:
+            type: TransferMethod
+            description: >-
+              The transfer method to use with the image.
+            required: false
+          TransferProtocolType:
+            type: TransferProtocolType
+            description: >-
+              The network protocol to use with the image.
+            required: false
+          UserName:
+            type: string
+            description: >-
+              The username to access the URI specified by the Image parameter.
+            required: false
+          WriteProtected:
+            type: boolean
+            description: >-
+              An indication of whether the remote media is treated as write-protected.  The
+              default is `true`.
+            required: false
+node_types:
+  VirtualMedia:
+    description: >-
+      The VirtualMedia schema contains properties related to the monitor and control
+      of an instance of virtual media, such as a remote CD, DVD, or USB device.  A
+      manager for a system or device provides virtual media functionality.
+    properties:
+      ConnectedVia:
+        type: ConnectedVia
+        description: >-
+          The current virtual media connection method.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Image:
+        type: string
+        description: >-
+          The URI of the location of the selected image.
+        required: false
+      ImageName:
+        type: string
+        description: >-
+          The current image name.
+        required: false
+      Inserted:
+        type: boolean
+        description: >-
+          An indication of whether virtual media is inserted into the virtual device.
+        required: false
+      MediaTypes:
+        type: list
+        description: >-
+          The media types supported as virtual media.
+        required: false
+        entry_schema:
+          type: MediaType
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Password:
+        type: string
+        description: >-
+          The password to access the Image parameter-specified URI.  This property
+          is null in responses.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TransferMethod:
+        type: TransferMethod
+        description: >-
+          The transfer method to use with the Image.
+        required: false
+      TransferProtocolType:
+        type: TransferProtocolType
+        description: >-
+          The network protocol to use with the image.
+        required: false
+      UserName:
+        type: string
+        description: >-
+          The user name to access the Image parameter-specified URI.
+        required: false
+      VerifyCertificate:
+        type: boolean
+        description: >-
+          An indication of whether the service will verify the certificate of the
+          server referenced by the Image property prior to completing the remote media
+          connection.
+        required: false
+      WriteProtected:
+        type: boolean
+        description: >-
+          An indication of whether the media is write-protected.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of server certificates for the server referenced
+          by the Image property.
+    - ClientCertificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of client identity certificates provided to the
+          server referenced by the Image property.
+    interfaces:
+      Actions:
+        type: VirtualMediaActions
+    capabilities:
+      feature:
+        type: vrtmdcp:VirtualMediaFeature
+      containable:
+        type: vrtmdcp:VirtualMediaContainable

@@ -1,0 +1,67 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Signature.yaml
+  namespace: sgntr
+- url: Core.yaml
+  namespace: core
+- url: Signature_caps.yaml
+  namespace: sgntrcps
+node_types:
+  Signature:
+    description: >-
+      The Signature schema describes a signature or a hash.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SignatureString:
+        type: string
+        description: >-
+          The string for the signature.
+        required: false
+      SignatureType:
+        type: string
+        description: >-
+          The format of the signature.
+        required: false
+      SignatureTypeRegistry:
+        type: sgntr:SignatureTypeRegistry
+        description: >-
+          The type of the signature.
+        required: false
+      UefiSignatureOwner:
+        type: string
+        description: >-
+          The UEFI signature owner for this signature.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})
+    capabilities:
+      feature:
+        type: sgntrcps:SignatureFeature
+      containable:
+        type: sgntrcps:SignatureContainable

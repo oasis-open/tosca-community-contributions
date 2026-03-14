@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: VirtualCXLSwitch.v1_0_0.yaml
+  namespace: vrtlcxls
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: VirtualCXLSwitch_caps.yaml
+  namespace: vrtcxlcp
+node_types:
+  VirtualCXLSwitch:
+    description: >-
+      The Virtual CXL Switch describes the virtual component with the CXL switch that
+      is governed by a list of rules as prescribed in the CXL specification.
+    derived_from: vrtlcxls:VirtualCXLSwitch
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: vrtcxlcp:VirtualCXLSwitchFeature
+      containable:
+        type: vrtcxlcp:VirtualCXLSwitchContainable

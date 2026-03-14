@@ -1,0 +1,140 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Assembly.yaml
+  namespace: assembly
+- url: Resource.yaml
+  namespace: resource
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Core.yaml
+  namespace: core
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+- url: Filter_caps.yaml
+  namespace: fltrcps
+node_types:
+  Filter:
+    description: >-
+      The Filter schema describes a filter unit for a cooling system or similar device.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      HotPluggable:
+        type: boolean
+        description: >-
+          An indication of whether this device can be inserted or removed while the
+          equipment is in operation.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the filter.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this filter.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for this filter.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this filter.
+        required: false
+      RatedServiceHours:
+        type: float
+        description: >-
+          The rated hours of service life for this filter.
+        required: false
+      Replaceable:
+        type: boolean
+        description: >-
+          An indication of whether this component can be independently replaced as
+          allowed by the vendor's replacement policy.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this filter.
+        required: false
+      ServiceHours:
+        type: float
+        description: >-
+          The hours of service this filter has provided.
+        required: false
+      ServicedDate:
+        type: string
+        description: >-
+          The date this filter was put into service.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number for this filter.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UserLabel:
+        type: string
+        description: >-
+          A user-assigned label.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this filter.
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device associated with this filter.
+    capabilities:
+      feature:
+        type: fltrcps:FilterFeature
+      containable:
+        type: fltrcps:FilterContainable

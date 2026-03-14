@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: NetworkInterface.v1_2_3.yaml
+  namespace: ntwrintr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: NetworkInterface_caps.yaml
+  namespace: ntwintcp
+node_types:
+  NetworkInterface:
+    description: >-
+      The `NetworkInterface` schema describes links to the network adapters, network
+      ports, and network device functions, and represents the functionality available
+      to the containing system.
+    derived_from: ntwrintr:NetworkInterface
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: ntwintcp:NetworkInterfaceFeature
+      containable:
+        type: ntwintcp:NetworkInterfaceContainable

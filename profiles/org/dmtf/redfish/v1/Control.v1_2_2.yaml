@@ -1,0 +1,430 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Core.yaml
+  namespace: core
+- url: Sensor_caps.yaml
+  namespace: snsrcps
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+- url: Control_caps.yaml
+  namespace: cntrlcps
+data_types:
+  ControlExcerpt:
+    description: >-
+      The `Control` schema describes a control point and its properties.
+    properties:
+      AllowableMax:
+        type: float
+        description: >-
+          The maximum possible setting for this control.
+        required: false
+      AllowableMin:
+        type: float
+        description: >-
+          The minimum possible setting for this control.
+        required: false
+      ControlMode:
+        type: ControlMode
+        description: >-
+          The current operating mode of the control.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this control.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The reading of the sensor associated with this control.
+        required: false
+      ReadingUnits:
+        type: string
+        description: >-
+          The units of the sensor reading associated with this control.
+        required: false
+  ControlLoop:
+    description: >-
+      The details and coefficients used to operate a control loop.
+    properties:
+      CoefficientUpdateTime:
+        type: string
+        description: >-
+          The date and time that the control loop coefficients were changed.
+        required: false
+      Differential:
+        type: float
+        description: >-
+          The differential coefficient.
+        required: false
+      Integral:
+        type: float
+        description: >-
+          The integral coefficient.
+        required: false
+      Proportional:
+        type: float
+        description: >-
+          The proportional coefficient.
+        required: false
+  ControlMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Automatic
+        - Override
+        - Manual
+        - Disabled
+  ControlRangeExcerpt:
+    description: >-
+      The `Control` schema describes a control point and its properties.
+    properties:
+      AllowableMax:
+        type: float
+        description: >-
+          The maximum possible setting for this control.
+        required: false
+      AllowableMin:
+        type: float
+        description: >-
+          The minimum possible setting for this control.
+        required: false
+      AllowableNumericValues:
+        type: list
+        description: >-
+          The supported values for the set point.
+        required: false
+        entry_schema:
+          type: float
+      ControlMode:
+        type: ControlMode
+        description: >-
+          The current operating mode of the control.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this control.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The reading of the sensor associated with this control.
+        required: false
+      ReadingUnits:
+        type: string
+        description: >-
+          The units of the sensor reading associated with this control.
+        required: false
+      SettingMax:
+        type: float
+        description: >-
+          The maximum set point in the allowed range.
+        required: false
+      SettingMin:
+        type: float
+        description: >-
+          The minimum set point in the allowed range.
+        required: false
+  ControlSingleExcerpt:
+    description: >-
+      The `Control` schema describes a control point and its properties.
+    properties:
+      AllowableMax:
+        type: float
+        description: >-
+          The maximum possible setting for this control.
+        required: false
+      AllowableMin:
+        type: float
+        description: >-
+          The minimum possible setting for this control.
+        required: false
+      ControlMode:
+        type: ControlMode
+        description: >-
+          The current operating mode of the control.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this control.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The reading of the sensor associated with this control.
+        required: false
+      ReadingUnits:
+        type: string
+        description: >-
+          The units of the sensor reading associated with this control.
+        required: false
+      SetPoint:
+        type: float
+        description: >-
+          The desired set point of the control.
+        required: false
+  ControlSingleLoopExcerpt:
+    description: >-
+      The `Control` schema describes a control point and its properties.
+    properties:
+      AllowableMax:
+        type: float
+        description: >-
+          The maximum possible setting for this control.
+        required: false
+      AllowableMin:
+        type: float
+        description: >-
+          The minimum possible setting for this control.
+        required: false
+      ControlLoop:
+        type: ControlLoop
+        description: >-
+          The control loop details.
+        required: false
+      ControlMode:
+        type: ControlMode
+        description: >-
+          The current operating mode of the control.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this control.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The reading of the sensor associated with this control.
+        required: false
+      ReadingUnits:
+        type: string
+        description: >-
+          The units of the sensor reading associated with this control.
+        required: false
+      SetPoint:
+        type: float
+        description: >-
+          The desired set point of the control.
+        required: false
+  ControlType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Temperature
+        - Power
+        - Frequency
+        - FrequencyMHz
+        - Pressure
+  ImplementationType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Programmable
+        - Direct
+        - Monitored
+  SetPointType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Single
+        - Range
+interface_types:
+  ControlActions:
+    operations:
+      ResetToDefaults:
+        description: >-
+          The action resets the values of writable properties to factory defaults.
+node_types:
+  Control:
+    description: >-
+      The `Control` schema describes a control point and its properties.
+    properties:
+      Accuracy:
+        type: float
+        description: >-
+          The estimated percent error of measured versus actual values.
+        required: false
+      AllowableMax:
+        type: float
+        description: >-
+          The maximum possible setting for this control.
+        required: false
+      AllowableMin:
+        type: float
+        description: >-
+          The minimum possible setting for this control.
+        required: false
+      AllowableNumericValues:
+        type: list
+        description: >-
+          The supported values for the set point.
+        required: false
+        entry_schema:
+          type: float
+      AssociatedSensors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ControlDelaySeconds:
+        type: float
+        description: >-
+          The time delay in seconds before the control will activate once the value
+          has deviated from the set point.
+        required: false
+      ControlLoop:
+        type: ControlLoop
+        description: >-
+          The control loop details.
+        required: false
+      ControlMode:
+        type: ControlMode
+        description: >-
+          The current operating mode of the control.
+        required: false
+      ControlType:
+        type: ControlType
+        description: >-
+          The type of control.
+        required: false
+      DeadBand:
+        type: float
+        description: >-
+          The maximum deviation from the set point allowed before the control will
+          activate.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Implementation:
+        type: ImplementationType
+        description: >-
+          The implementation of the control.
+        required: false
+      Increment:
+        type: float
+        description: >-
+          The smallest increment supported for the set point.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location information for this control.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PhysicalSubContext:
+        type: physcntx:PhysicalSubContext
+        description: >-
+          The usage or location within a device to which this control applies.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          An array of links to resources that this control services.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Sensor:
+        type: string
+        description: >-
+          The sensor reading associated with this control.
+        required: false
+      SetPoint:
+        type: float
+        description: >-
+          The desired set point of the control.
+        required: false
+      SetPointType:
+        type: SetPointType
+        description: >-
+          The set point type used to operate the control.
+        required: false
+      SetPointUnits:
+        type: string
+        description: >-
+          The units of the set point.
+        required: false
+      SetPointUpdateTime:
+        type: string
+        description: >-
+          The date and time that the set point was changed.
+        required: false
+      SettingMax:
+        type: float
+        description: >-
+          The maximum set point in the allowed range.
+        required: false
+      SettingMin:
+        type: float
+        description: >-
+          The minimum set point in the allowed range.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - AssociatedSensors:
+        node: Sensor
+        capability: snsrcps:SensorContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the sensors associated with this control.
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this control applies.
+    interfaces:
+      Actions:
+        type: ControlActions
+    capabilities:
+      feature:
+        type: cntrlcps:ControlFeature
+      containable:
+        type: cntrlcps:ControlContainable

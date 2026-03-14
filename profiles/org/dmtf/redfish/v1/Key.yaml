@@ -1,0 +1,55 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Key.v1_4_1.yaml
+  namespace: key
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Key_caps.yaml
+  namespace: keycaps
+data_types:
+  ECDSACurveType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NISTP256
+        - NISTP384
+        - NISTP521
+        - NISTK163
+        - NISTP192
+        - NISTP224
+        - NISTK233
+        - NISTB233
+        - NISTK283
+        - NISTK409
+        - NISTB409
+        - NISTT571
+  SSHKeyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RSA
+        - DSA
+        - ECDSA
+        - Ed25519
+node_types:
+  Key:
+    description: >-
+      The `Key` schema describes sensitive data for accessing devices or services.
+    derived_from: key:Key
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: keycaps:KeyFeature
+      containable:
+        type: keycaps:KeyContainable

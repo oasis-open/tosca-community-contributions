@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ManagerDiagnosticData.v1_2_3.yaml
+  namespace: mngdgndt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ManagerDiagnosticData_caps.yaml
+  namespace: mndgdtcp
+node_types:
+  ManagerDiagnosticData:
+    description: >-
+      The `ManagerDiagnosticData` schema defines internal diagnostic data for a manager.  It
+      contains information that might be used by vendors to collect debug information
+      about the manager.  Clients should not make decisions for raising alerts, creating
+      service events, or other actions based on information in this resource.
+    derived_from: mngdgndt:ManagerDiagnosticData
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: mndgdtcp:ManagerDiagnosticDataFeature
+      containable:
+        type: mndgdtcp:ManagerDiagnosticDataContainable

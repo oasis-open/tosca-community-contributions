@@ -1,0 +1,564 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: AccelerationFunction.yaml
+  namespace: acclfnct
+- url: Chassis.yaml
+  namespace: chassis
+- url: Processor.yaml
+  namespace: prcssr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: PCIeFunction.yaml
+  namespace: pcfnctn
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Processor_caps.yaml
+  namespace: prcscps
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+- url: PCIeFunction_caps.yaml
+  namespace: pcfnccp
+- url: AccelerationFunctionCollection.yaml
+  namespace: accfnccl
+- url: Assembly.yaml
+  namespace: assembly
+- url: ProcessorMetrics.yaml
+  namespace: prcsmtrc
+- url: ProcessorCollection.yaml
+  namespace: prcscllc
+- url: AccelerationFunctionCollection_caps.yaml
+  namespace: acfnclcp
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: ProcessorMetrics_caps.yaml
+  namespace: prcmtrcp
+- url: ProcessorCollection_caps.yaml
+  namespace: prccllcp
+- url: AccelerationFunction_caps.yaml
+  namespace: accfnccp
+data_types:
+  EthernetInterface:
+    description: >-
+      This type defines an Ethernet interface.
+    properties:
+      MaxLanes:
+        type: integer
+        description: >-
+          The number of lanes supported by this interface.
+        required: false
+      MaxSpeedMbps:
+        type: integer
+        description: >-
+          The maximum speed supported by this interface.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+  FPGA:
+    description: >-
+      The properties of the FPGA device.
+    properties:
+      ExternalInterfaces:
+        type: list
+        description: >-
+          An array of the FPGA external interfaces.
+        required: false
+        entry_schema:
+          type: FpgaInterface
+      FirmwareId:
+        type: string
+        description: >-
+          The FPGA firmware identifier.
+        required: false
+      FirmwareManufacturer:
+        type: string
+        description: >-
+          The FPGA firmware manufacturer.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The FPGA firmware version.
+        required: false
+      FpgaType:
+        type: FpgaType
+        description: >-
+          The FPGA type.
+        required: false
+      HostInterface:
+        type: FpgaInterface
+        description: >-
+          The FPGA interface to the host.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The FPGA model.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeVirtualFunctions:
+        type: integer
+        description: >-
+          The number of the PCIe Virtual Functions.
+        required: false
+      ProgrammableFromHost:
+        type: boolean
+        description: >-
+          An indication of whether the FPGA firmware can be reprogrammed from the
+          host by using system software.
+        required: false
+      ReconfigurationSlots:
+        type: list
+        description: >-
+          An array of the FPGA reconfiguration slots.  An FPGA uses a reconfiguration
+          slot to contain an acceleration function that can change as the FPGA is
+          provisioned.
+        required: false
+        entry_schema:
+          type: FpgaReconfigurationSlot
+  FpgaInterface:
+    description: >-
+      This type describes an interface to the FPGA.
+    properties:
+      Ethernet:
+        type: EthernetInterface
+        description: >-
+          The Ethernet-related information for this FPGA interface.
+        required: false
+      InterfaceType:
+        type: FpgaInterfaceType
+        description: >-
+          The FPGA interface type.
+        required: false
+      PCIe:
+        type: pcdvc:PCIeInterface
+        description: >-
+          The PCIe-related information for this FPGA interface.
+        required: false
+  FpgaInterfaceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - QPI
+        - UPI
+        - PCIe
+        - Ethernet
+        - OEM
+  FpgaType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Integrated
+        - Discrete
+  InstructionSet:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - x86
+        - x86-64
+        - IA-64
+        - ARM-A32
+        - ARM-A64
+        - MIPS32
+        - MIPS64
+        - PowerISA
+        - OEM
+  ProcessorArchitecture:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - x86
+        - IA-64
+        - ARM
+        - MIPS
+        - Power
+        - OEM
+  ProcessorId:
+    description: >-
+      The identification information for a processor.
+    properties:
+      EffectiveFamily:
+        type: string
+        description: >-
+          The effective family for this processor.
+        required: false
+      EffectiveModel:
+        type: string
+        description: >-
+          The effective model for this processor.
+        required: false
+      IdentificationRegisters:
+        type: string
+        description: >-
+          The raw manufacturer-provided CPUID instruction output for this processor.
+        required: false
+      MicrocodeInfo:
+        type: string
+        description: >-
+          The microcode information for this processor.
+        required: false
+      Step:
+        type: string
+        description: >-
+          The step value for this processor.
+        required: false
+      VendorId:
+        type: string
+        description: >-
+          The vendor identification for this processor.
+        required: false
+  ProcessorMemory:
+    description: >-
+      This type describes the memory directly attached or integrated within a processor.
+    properties:
+      CapacityMiB:
+        type: integer
+        description: >-
+          The memory capacity in MiB.
+        required: false
+      IntegratedMemory:
+        type: boolean
+        description: >-
+          An indication of whether this memory is integrated within the processor.
+        required: false
+      MemoryType:
+        type: ProcessorMemoryType
+        description: >-
+          The type of memory used by this processor.
+        required: false
+      SpeedMHz:
+        type: integer
+        description: >-
+          The operating speed of the memory in MHz.
+        required: false
+  ProcessorMemoryType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - L1Cache
+        - L2Cache
+        - L3Cache
+        - L4Cache
+        - L5Cache
+        - L6Cache
+        - L7Cache
+        - HBM1
+        - HBM2
+        - HBM3
+        - SGRAM
+        - GDDR
+        - GDDR2
+        - GDDR3
+        - GDDR4
+        - GDDR5
+        - GDDR5X
+        - GDDR6
+        - DDR
+        - DDR2
+        - DDR3
+        - DDR4
+        - DDR5
+        - SDRAM
+        - SRAM
+        - Flash
+        - OEM
+  ProcessorType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CPU
+        - GPU
+        - FPGA
+        - DSP
+        - Accelerator
+        - Core
+        - Thread
+        - OEM
+relationship_types:
+  ProcessorDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ConnectedProcessors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  Processor:
+    description: >-
+      The Processor schema describes the information about a single processor that
+      a system contains.  A processor includes both performance characteristics, clock
+      speed, architecture, core count, and so on, and compatibility, such as the CPU
+      ID instruction results.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FPGA:
+        type: FPGA
+        description: >-
+          The properties for processors of the FPGA type.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InstructionSet:
+        type: InstructionSet
+        description: >-
+          The instruction set of the processor.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the processor.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The processor manufacturer.
+        required: false
+      MaxSpeedMHz:
+        type: integer
+        description: >-
+          The maximum clock speed of the processor.
+        required: false
+      MaxTDPWatts:
+        type: integer
+        description: >-
+          The maximum Thermal Design Power (TDP) in watts.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The product model number of this device.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ProcessorArchitecture:
+        type: ProcessorArchitecture
+        description: >-
+          The architecture of the processor.
+        required: false
+      ProcessorId:
+        type: ProcessorId
+        description: >-
+          The identification information for this processor.
+        required: false
+      ProcessorMemory:
+        type: list
+        description: >-
+          The memory directly attached or integrated witin this Procesor.
+        required: false
+        entry_schema:
+          type: ProcessorMemory
+      ProcessorType:
+        type: ProcessorType
+        description: >-
+          The type of processor.
+        required: false
+      Socket:
+        type: string
+        description: >-
+          The socket or location of the processor.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+      TDPWatts:
+        type: integer
+        description: >-
+          The nominal Thermal Design Power (TDP) in watts.
+        required: false
+      TotalCores:
+        type: integer
+        description: >-
+          The total number of cores that this processor contains.
+        required: false
+      TotalThreads:
+        type: integer
+        description: >-
+          The total number of execution threads that this processor supports.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this processor.
+        required: false
+    requirements:
+    - AccelerationFunctions:
+        node: accfnccl:AccelerationFunctionCollection
+        capability: acfnclcp:AccelerationFunctionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of acceleration functions associated with this
+          processor.
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to an assembly associated with this processor.
+    - Metrics:
+        node: prcsmtrc:ProcessorMetrics
+        capability: prcmtrcp:ProcessorMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metrics associated with this processor.
+    - SubProcessors:
+        node: prcscllc:ProcessorCollection
+        capability: prccllcp:ProcessorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of subprocessors associated with this system,
+          such as cores or threads, that are part of a processor.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: ProcessorDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the chassis that contains this processor.
+    - ConnectedProcessors:
+        node: prcssr:Processor
+        capability: prcscps:ProcessorFeature
+        relationship: ProcessorDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the processors directly connected to this processor.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: ProcessorDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect to this processor.
+    - PCIeDevice:
+        node: pcdvc:PCIeDevice
+        capability: pcdvccps:PCIeDeviceFeature
+        relationship: ProcessorDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the PCIe device associated with this processor.
+    - PCIeFunctions:
+        node: pcfnctn:PCIeFunction
+        capability: pcfnccp:PCIeFunctionFeature
+        relationship: ProcessorDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIeFunctions associated with this Processor.
+    capabilities:
+      feature:
+        type: prcscps:ProcessorFeature
+      containable:
+        type: prcscps:ProcessorContainable
+  FpgaReconfigurationSlot:
+    description: >-
+      This type describes the FPGA reconfiguration slot.  An FPGA uses a reconfiguration
+      slot to contain an acceleration function that can change as the FPGA is provisioned.
+    properties:
+      ProgrammableFromHost:
+        type: boolean
+        description: >-
+          An indication of whether the reconfiguration slot can be reprogrammed from
+          the host by using system software.
+        required: false
+      SlotId:
+        type: string
+        description: >-
+          The FPGA reconfiguration slot identifier.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this reconfiguration slot.
+        required: false
+    requirements:
+    - AccelerationFunction:
+        node: acclfnct:AccelerationFunction
+        capability: accfnccp:AccelerationFunctionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the acceleration function that the code programmed into a reconfiguration
+          slot provides.
+    capabilities:
+      containable:
+        type: prcscps:FpgaReconfigurationSlotContainable

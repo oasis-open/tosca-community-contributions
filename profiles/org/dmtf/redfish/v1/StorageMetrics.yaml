@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: StorageMetrics.v1_0_0.yaml
+  namespace: strgmtrc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: StorageMetrics_caps.yaml
+  namespace: strmtrcp
+node_types:
+  StorageMetrics:
+    description: >-
+      The usage and health statistics for a storage subsystem.
+    derived_from: strgmtrc:StorageMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: strmtrcp:StorageMetricsFeature
+      containable:
+        type: strmtrcp:StorageMetricsContainable

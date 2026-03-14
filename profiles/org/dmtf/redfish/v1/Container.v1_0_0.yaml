@@ -1,0 +1,150 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: ContainerImage.yaml
+  namespace: cntnrimg
+- url: Core.yaml
+  namespace: core
+- url: ContainerImage_caps.yaml
+  namespace: cntimgcp
+- url: EthernetInterfaceCollection.yaml
+  namespace: ethintcl
+- url: EthernetInterfaceCollection_caps.yaml
+  namespace: etinclcp
+- url: Container_caps.yaml
+  namespace: cntnrcps
+data_types:
+  Limits:
+    description: >-
+      The resource limits allocated to a container.
+    properties:
+      CPUCount:
+        type: float
+        description: >-
+          The number of processors available to this container.
+        required: false
+      MemoryBytes:
+        type: integer
+        description: >-
+          The amount of memory available to this container in bytes.
+        required: false
+  MountPoint:
+    description: >-
+      A file system mount point configured for a container.
+    properties:
+      Destination:
+        type: string
+        description: >-
+          The file system path in the container that is provided as the mount point
+          to access the files and folders contained in the source path.
+        required: false
+      Source:
+        type: string
+        description: >-
+          The file system path from the hosting system that is provided to this container.
+        required: false
+relationship_types:
+  ContainerDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  ContainerActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets the container.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  Container:
+    description: >-
+      The Container schema represents an instance of a container that is running on
+      a computer system.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Limits:
+        type: Limits
+        description: >-
+          The resource limits allocated to this container.
+        required: false
+      MountPoints:
+        type: list
+        description: >-
+          The file system mount points configured for this container.
+        required: false
+        entry_schema:
+          type: MountPoint
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ProgrammaticId:
+        type: string
+        description: >-
+          The programmatic identifier for this container.
+        required: false
+      StartTime:
+        type: string
+        description: >-
+          The date and time when the container started running.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - EthernetInterfaces:
+        node: ethintcl:EthernetInterfaceCollection
+        capability: etinclcp:EthernetInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of Ethernet interfaces associated with this container.
+    - ContainerImage:
+        node: cntnrimg:ContainerImage
+        capability: cntimgcp:ContainerImageFeature
+        relationship: ContainerDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the container image for this container.
+    interfaces:
+      Actions:
+        type: ContainerActions
+    capabilities:
+      feature:
+        type: cntnrcps:ContainerFeature
+      containable:
+        type: cntnrcps:ContainerContainable

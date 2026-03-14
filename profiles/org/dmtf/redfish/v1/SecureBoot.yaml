@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SecureBoot.v1_1_2.yaml
+  namespace: scrbt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SecureBoot_caps.yaml
+  namespace: scrbtcps
+node_types:
+  SecureBoot:
+    description: >-
+      The `SecureBoot` schema contains UEFI Secure Boot information and represents
+      properties for managing the UEFI Secure Boot functionality of a system.
+    derived_from: scrbt:SecureBoot
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: scrbtcps:SecureBootFeature
+      containable:
+        type: scrbtcps:SecureBootContainable

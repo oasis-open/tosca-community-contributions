@@ -1,0 +1,201 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: SoftwareInventoryCollection.yaml
+  namespace: sftinvcl
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventoryCollection_caps.yaml
+  namespace: sfinclcp
+- url: UpdateService_caps.yaml
+  namespace: updsrvcp
+data_types:
+  ApplyTime:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Immediate
+        - OnReset
+        - AtMaintenanceWindowStart
+        - InMaintenanceWindowOnReset
+  HttpPushUriApplyTime:
+    description: >-
+      The settings for when to apply `HttpPushUri`-provided software.
+    properties:
+      ApplyTime:
+        type: ApplyTime
+        description: >-
+          The time when to apply the `HttpPushUri`-provided software update.
+        required: false
+      MaintenanceWindowDurationInSeconds:
+        type: integer
+        description: >-
+          The expiry time, in seconds, of the maintenance window.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MaintenanceWindowStartTime:
+        type: string
+        description: >-
+          The start time of a maintenance window.
+        required: false
+  HttpPushUriOptions:
+    description: >-
+      The settings for `HttpPushUri`-provided software updates.
+    properties:
+      HttpPushUriApplyTime:
+        type: HttpPushUriApplyTime
+        description: >-
+          The settings for when to apply `HttpPushUri`-provided firmware.
+        required: false
+  TransferProtocolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CIFS
+        - FTP
+        - SFTP
+        - HTTP
+        - HTTPS
+        - NSF
+        - SCP
+        - TFTP
+        - OEM
+        - NFS
+interface_types:
+  UpdateServiceActions:
+    operations:
+      SimpleUpdate:
+        description: >-
+          This action updates software components.
+        inputs:
+          ImageURI:
+            type: string
+            description: >-
+              The URI of the software image to install.
+            required: true
+          Password:
+            type: string
+            description: >-
+              The password to access the URI specified by the `ImageURI` parameter.
+            required: false
+          Targets:
+            type: list
+            description: >-
+              An array of URIs that indicate where to apply the update image.
+            required: false
+          TransferProtocol:
+            type: TransferProtocolType
+            description: >-
+              The network protocol that the update service uses to retrieve the software
+              image file located at the URI specified by the `ImageURI` parameter.  This
+              parameter is ignored if the URI provided in `ImageURI` contains a scheme.
+            required: false
+          Username:
+            type: string
+            description: >-
+              The username to access the URI specified by the `ImageURI` parameter.
+            required: false
+node_types:
+  UpdateService:
+    description: >-
+      The `UpdateService` schema describes the update service and the properties for
+      the service itself with links to collections of firmware and software inventory.  The
+      update service also provides methods for updating software and firmware of the
+      resources in a Redfish service.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      HttpPushUri:
+        type: string
+        description: >-
+          The URI used to perform an HTTP or HTTPS push update to the update service.  The
+          format of the message is vendor-specific.
+        required: false
+      HttpPushUriOptions:
+        type: HttpPushUriOptions
+        description: >-
+          The options for `HttpPushUri`-provided software updates.
+        required: false
+      HttpPushUriOptionsBusy:
+        type: boolean
+        description: >-
+          An indication of whether a client has reserved the `HttpPushUriOptions`
+          properties for software updates.
+        required: false
+      HttpPushUriTargets:
+        type: list
+        description: >-
+          An array of URIs that indicate where to apply the update image.
+        required: false
+        entry_schema:
+          type: string
+      HttpPushUriTargetsBusy:
+        type: boolean
+        description: >-
+          An indication of whether any client has reserved the `HttpPushUriTargets`
+          property.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - FirmwareInventory:
+        node: sftinvcl:SoftwareInventoryCollection
+        capability: sfinclcp:SoftwareInventoryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An inventory of firmware.
+    - SoftwareInventory:
+        node: sftinvcl:SoftwareInventoryCollection
+        capability: sfinclcp:SoftwareInventoryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An inventory of software.
+    interfaces:
+      Actions:
+        type: UpdateServiceActions
+    capabilities:
+      feature:
+        type: updsrvcp:UpdateServiceFeature
+      containable:
+        type: updsrvcp:UpdateServiceContainable

@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Task.v1_7_4.yaml
+  namespace: task
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Task_caps.yaml
+  namespace: taskcaps
+node_types:
+  Task:
+    description: >-
+      The `Task` schema contains information about a task that the Redfish task service
+      schedules or executes.  Tasks represent operations that take more time than
+      a client typically wants to wait.
+    derived_from: task:Task
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: taskcaps:TaskFeature
+      containable:
+        type: taskcaps:TaskContainable

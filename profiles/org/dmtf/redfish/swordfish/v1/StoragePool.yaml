@@ -1,0 +1,45 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: StoragePool.v1_9_2.yaml
+  namespace: strgpl
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: StoragePool_caps.yaml
+  namespace: strplcp
+data_types:
+  NVMePoolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - EnduranceGroup
+        - NVMSet
+  PoolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Block
+        - File
+        - Object
+        - Pool
+node_types:
+  StoragePool:
+    description: >-
+      A container of data storage.
+    derived_from: strgpl:StoragePool
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: strplcp:StoragePoolFeature
+      containable:
+        type: strplcp:StoragePoolContainable

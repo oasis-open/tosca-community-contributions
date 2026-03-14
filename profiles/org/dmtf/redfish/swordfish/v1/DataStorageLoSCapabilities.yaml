@@ -1,0 +1,49 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: DataStorageLoSCapabilities_caps.yaml
+  namespace: dtstlsc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+data_types:
+  ProvisioningPolicy:
+    description: >-
+      Space provisioning policy.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Fixed
+        - Thin
+  StorageAccessCapability:
+    description: >-
+      Values of StorageAccessCapability describe abilities to read or write storage.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Read
+        - Write
+        - WriteOnce
+        - Append
+        - Streaming
+        - Execute
+node_types:
+  DataStorageLoSCapabilities:
+    description: >-
+      Describe data storage and provisioning capabilities.
+    derived_from: dtstlsc:DataStorageLoSCapabilities
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: dtstlsc:DataStorageLoSCapabilitiesFeature
+      containable:
+        type: dtstlsc:DataStorageLoSCapabilitiesContainable

@@ -1,0 +1,528 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: ComputerSystem.yaml
+  namespace: cmptsyst
+- url: ResourceBlock.yaml
+  namespace: rsrcblck
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: ComputerSystem_caps.yaml
+  namespace: cmpsyscp
+- url: ResourceBlock_caps.yaml
+  namespace: rsrblccp
+- url: Drive.yaml
+  namespace: drive
+- url: EthernetInterface.yaml
+  namespace: ethrintr
+- url: Memory.yaml
+  namespace: memory
+- url: NetworkInterface.yaml
+  namespace: ntwrintr
+- url: Processor.yaml
+  namespace: prcssr
+- url: SimpleStorage.yaml
+  namespace: smplstrg
+- url: Storage.yaml
+  namespace: storage
+- url: Drive_caps.yaml
+  namespace: drvcps
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+- url: Memory_caps.yaml
+  namespace: mmrycps
+- url: NetworkInterface_caps.yaml
+  namespace: ntwintcp
+- url: Processor_caps.yaml
+  namespace: prcscps
+- url: SimpleStorage_caps.yaml
+  namespace: smpstrcp
+- url: Storage_caps.yaml
+  namespace: strgcps
+- url: Zone_caps.yaml
+  namespace: zonecaps
+data_types:
+  CompositionState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Composing
+        - ComposedAndAvailable
+        - Composed
+        - Unused
+        - Failed
+        - Unavailable
+  CompositionStatus:
+    description: >-
+      Composition status of the resource block.
+    properties:
+      CompositionState:
+        type: CompositionState
+        description: >-
+          The current state of the resource block from a composition perspective.
+        required: true
+      MaxCompositions:
+        type: integer
+        description: >-
+          The maximum number of compositions in which this resource block can participate
+          simultaneously.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      NumberOfCompositions:
+        type: integer
+        description: >-
+          The number of compositions in which this resource block is currently participating.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Reserved:
+        type: boolean
+        description: >-
+          An indication of whether any client has reserved the resource block.
+        required: false
+      SharingCapable:
+        type: boolean
+        description: >-
+          An indication of whether this resource block can participate in multiple
+          compositions simultaneously.
+        required: false
+      SharingEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this resource block is allowed to participate in
+          multiple compositions simultaneously.
+        required: false
+  PoolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Free
+        - Active
+        - Unassigned
+  ResourceBlockLimits:
+    description: >-
+      This type specifies the allowable quantities of types of resource blocks for
+      a composition request.
+    properties:
+      MaxCompute:
+        type: integer
+        description: >-
+          The maximum number of resource blocks of type `Compute` allowed for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      MaxComputerSystem:
+        type: integer
+        description: >-
+          The maximum number of resource blocks of type `ComputerSystem` allowed for
+          the composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      MaxExpansion:
+        type: integer
+        description: >-
+          The maximum number of resource blocks of type `Expansion` allowed for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      MaxMemory:
+        type: integer
+        description: >-
+          The maximum number of resource blocks of type `Memory` allowed for the composition
+          request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      MaxNetwork:
+        type: integer
+        description: >-
+          The maximum number of resource blocks of type `Network` allowed for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      MaxProcessor:
+        type: integer
+        description: >-
+          The maximum number of resource blocks of type `Processor` allowed for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      MaxStorage:
+        type: integer
+        description: >-
+          The maximum number of resource blocks of type `Storage` allowed for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      MinCompute:
+        type: integer
+        description: >-
+          The minimum number of resource blocks of type `Compute` required for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinComputerSystem:
+        type: integer
+        description: >-
+          The minimum number of resource blocks of type `ComputerSystem` required
+          for the composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinExpansion:
+        type: integer
+        description: >-
+          The minimum number of resource blocks of type `Expansion` required for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinMemory:
+        type: integer
+        description: >-
+          The minimum number of resource blocks of type `Memory` required for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinNetwork:
+        type: integer
+        description: >-
+          The minimum number of resource blocks of type `Network` required for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinProcessor:
+        type: integer
+        description: >-
+          The minimum number of resource blocks of type `Processor` required for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinStorage:
+        type: integer
+        description: >-
+          The minimum number of resource blocks of type `Storage` required for the
+          composition request.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  ResourceBlockType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Compute
+        - Processor
+        - Memory
+        - Network
+        - Storage
+        - ComputerSystem
+        - Expansion
+        - IndependentResource
+relationship_types:
+  ResourceBlockDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ComputerSystems@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConsumingResourceBlocks@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SupplyingResourceBlocks@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Zones@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  ResourceBlock:
+    description: >-
+      The ResourceBlock schema contains definitions of a resource block, its components,
+      and affinity to composed devices.
+    properties:
+      Client:
+        type: string
+        description: >-
+          The client to which this resource block is assigned.
+        required: false
+      CompositionStatus:
+        type: CompositionStatus
+        description: >-
+          The composition status details for this resource block.
+        required: true
+      ComputerSystems@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Drives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      EthernetInterfaces@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Memory@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NetworkInterfaces@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Pool:
+        type: PoolType
+        description: >-
+          The pool to which this resource block belongs.
+        required: false
+      Processors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ResourceBlockType:
+        type: list
+        description: >-
+          The types of resources available on this resource block.
+        required: true
+        entry_schema:
+          type: ResourceBlockType
+      SimpleStorage@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Storage@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - ComputerSystems:
+        node: cmptsyst:ComputerSystem
+        capability: cmpsyscp:ComputerSystemContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the computer systems available in this resource block.
+    - Drives:
+        node: drive:Drive
+        capability: drvcps:DriveContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the drives available in this resource block.
+    - EthernetInterfaces:
+        node: ethrintr:EthernetInterface
+        capability: ethintcp:EthernetInterfaceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the Ethernet interfaces available in this resource
+          block.
+    - Memory:
+        node: memory:Memory
+        capability: mmrycps:MemoryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the memory available in this resource block.
+    - NetworkInterfaces:
+        node: ntwrintr:NetworkInterface
+        capability: ntwintcp:NetworkInterfaceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the Network Interfaces available in this resource block.
+    - Processors:
+        node: prcssr:Processor
+        capability: prcscps:ProcessorContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the processors available in this resource block.
+    - SimpleStorage:
+        node: smplstrg:SimpleStorage
+        capability: smpstrcp:SimpleStorageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the simple storage available in this resource block.
+    - Storage:
+        node: storage:Storage
+        capability: strgcps:StorageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the storage available in this resource block.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: ResourceBlockDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis in which this resource block is contained.
+    - ComputerSystems:
+        node: cmptsyst:ComputerSystem
+        capability: cmpsyscp:ComputerSystemFeature
+        relationship: ResourceBlockDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the computer systems that are composed from this resource
+          block.
+    - ConsumingResourceBlocks:
+        node: rsrcblck:ResourceBlock
+        capability: rsrblccp:ResourceBlockFeature
+        relationship: ResourceBlockDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to resource blocks that depend on this resource block.
+    - SupplyingResourceBlocks:
+        node: rsrcblck:ResourceBlock
+        capability: rsrblccp:ResourceBlockFeature
+        relationship: ResourceBlockDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to resource blocks that this resource block depends on.
+    - Zones:
+        # node: zone:Zone
+        capability: core:Feature
+        relationship: ResourceBlockDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the zones in which this resource block is bound.
+    capabilities:
+      feature:
+        type: rsrblccp:ResourceBlockFeature
+      containable:
+        type: rsrblccp:ResourceBlockContainable

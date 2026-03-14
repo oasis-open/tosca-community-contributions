@@ -1,0 +1,212 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: Certificate.yaml
+  namespace: crtfct
+- url: CertificateLocations.yaml
+  namespace: crtflctn
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: CertificateLocations_caps.yaml
+  namespace: crtlctcp
+- url: CertificateService_caps.yaml
+  namespace: crtsrvcp
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+interface_types:
+  CertificateServiceActions:
+    operations:
+      GenerateCSR:
+        description: >-
+          This action makes a certificate signing request.
+        inputs:
+          AlternativeNames:
+            type: list
+            description: >-
+              The additional host names of the component to secure.
+            required: false
+          CertificateCollection:
+            type: crtfcllc:CertificateCollection
+            description: >-
+              The link to the certificate collection where the certificate is installed
+              after the certificate authority (CA) signs the certificate.
+            required: true
+          ChallengePassword:
+            type: string
+            description: >-
+              The challenge password to apply to the certificate for revocation requests.
+            required: false
+          City:
+            type: string
+            description: >-
+              The city or locality of the organization making the request.
+            required: true
+          CommonName:
+            type: string
+            description: >-
+              The fully qualified domain name of the component to secure.
+            required: true
+          ContactPerson:
+            type: string
+            description: >-
+              The name of the user making the request.
+            required: false
+          Country:
+            type: string
+            description: >-
+              The two-letter country code of the organization making the request.
+            required: true
+          Email:
+            type: string
+            description: >-
+              The email address of the contact within the organization making the
+              request.
+            required: false
+          GivenName:
+            type: string
+            description: >-
+              The given name of the user making the request.
+            required: false
+          Initials:
+            type: string
+            description: >-
+              The initials of the user making the request.
+            required: false
+          KeyBitLength:
+            type: integer
+            description: >-
+              The length of the key, in bits, if needed based on the KeyPairAlgorithm
+              parameter value.
+            required: false
+          KeyCurveId:
+            type: string
+            description: >-
+              The curve ID to use with the key, if needed based on the KeyPairAlgorithm
+              parameter value.
+            required: false
+          KeyPairAlgorithm:
+            type: string
+            description: >-
+              The type of key-pair for use with signing algorithms.
+            required: false
+          KeyUsage:
+            type: list
+            description: >-
+              The usage of the key contained in the certificate.
+            required: false
+          Organization:
+            type: string
+            description: >-
+              The name of the organization making the request.
+            required: true
+          OrganizationalUnit:
+            type: string
+            description: >-
+              The name of the unit or division of the organization making the request.
+            required: true
+          State:
+            type: string
+            description: >-
+              The state, province, or region of the organization making the request.
+            required: true
+          Surname:
+            type: string
+            description: >-
+              The surname of the user making the request.
+            required: false
+          UnstructuredName:
+            type: string
+            description: >-
+              The unstructured name of the subject.
+            required: false
+      ReplaceCertificate:
+        description: >-
+          This action replaces a certificate.
+        inputs:
+          CertificateString:
+            type: string
+            description: >-
+              The string for the certificate.
+            required: true
+          CertificateType:
+            type: crtfct:CertificateType
+            description: >-
+              The format of the certificate.
+            required: true
+          CertificateUri:
+            type: crtfct:Certificate
+            description: >-
+              The link to the certificate that is being replaced.
+            required: true
+node_types:
+  CertificateService:
+    description: >-
+      The CertificateService schema describes a certificate service that represents
+      the actions available to manage certificates and links to the certificates.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - CertificateLocations:
+        node: crtflctn:CertificateLocations
+        capability: crtlctcp:CertificateLocationsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The information about the location of certificates.
+    interfaces:
+      Actions:
+        type: CertificateServiceActions
+    capabilities:
+      feature:
+        type: crtsrvcp:CertificateServiceFeature
+      containable:
+        type: crtsrvcp:CertificateServiceContainable
+  GenerateCSRResponse:
+    description: >-
+      The response body for the GenerateCSR action.
+    properties:
+      CSRString:
+        type: string
+        description: >-
+          The string for the certificate signing request.
+        required: true
+    requirements:
+    - CertificateCollection:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 1
+        - 1
+        description: >-
+          The link to the certificate collection where the certificate is installed.
+    capabilities:
+      containable:
+        type: crtsrvcp:GenerateCSRResponseContainable

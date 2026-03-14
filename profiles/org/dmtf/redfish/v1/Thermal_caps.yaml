@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Capability types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+capability_types:
+  ThermalFeature:
+    derived_from: core:Feature
+  ThermalContainable:
+    derived_from: core:Containable
+  FanContainable:
+    derived_from: core:Containable
+  TemperatureContainable:
+    derived_from: core:Containable

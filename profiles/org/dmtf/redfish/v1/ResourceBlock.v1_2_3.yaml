@@ -1,0 +1,316 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: ComputerSystem.yaml
+  namespace: cmptsyst
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: ComputerSystem_caps.yaml
+  namespace: cmpsyscp
+- url: EthernetInterface.yaml
+  namespace: ethrintr
+- url: Memory.yaml
+  namespace: memory
+- url: NetworkInterface.yaml
+  namespace: ntwrintr
+- url: Processor.yaml
+  namespace: prcssr
+- url: SimpleStorage.yaml
+  namespace: smplstrg
+- url: Storage.yaml
+  namespace: storage
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+- url: Memory_caps.yaml
+  namespace: mmrycps
+- url: NetworkInterface_caps.yaml
+  namespace: ntwintcp
+- url: Processor_caps.yaml
+  namespace: prcscps
+- url: SimpleStorage_caps.yaml
+  namespace: smpstrcp
+- url: Storage_caps.yaml
+  namespace: strgcps
+- url: ResourceBlock_caps.yaml
+  namespace: rsrblccp
+- url: Zone_caps.yaml
+  namespace: zonecaps
+data_types:
+  CompositionState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Composing
+        - ComposedAndAvailable
+        - Composed
+        - Unused
+        - Failed
+        - Unavailable
+  CompositionStatus:
+    description: >-
+      Composition status of the Resource Block.
+    properties:
+      CompositionState:
+        type: CompositionState
+        description: >-
+          The current state of the Resource Block from a composition perspective.
+        required: true
+      MaxCompositions:
+        type: integer
+        description: >-
+          The maximum number of compositions in which this Resource Block can participate
+          simultaneously.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      NumberOfCompositions:
+        type: integer
+        description: >-
+          The number of compositions in which this Resource Block is currently participating.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Reserved:
+        type: boolean
+        description: >-
+          An indication of whether any client has reserved the Resource Block.
+        required: false
+      SharingCapable:
+        type: boolean
+        description: >-
+          An indication of whether this Resource Block can participate in multiple
+          compositions simultaneously.
+        required: false
+      SharingEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this Resource Block is allowed to participate in
+          multiple compositions simultaneously.
+        required: false
+  ResourceBlockType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Compute
+        - Processor
+        - Memory
+        - Network
+        - Storage
+        - ComputerSystem
+        - Expansion
+relationship_types:
+  ResourceBlockDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ComputerSystems@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Zones@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  ResourceBlock:
+    description: >-
+      The schema definition of the Resource Block, its components, and affinity to
+      composed devices.
+    properties:
+      CompositionStatus:
+        type: CompositionStatus
+        description: >-
+          The composition status details for this Resource Block.
+        required: true
+      ComputerSystems@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EthernetInterfaces@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Memory@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NetworkInterfaces@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Processors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ResourceBlockType:
+        type: list
+        description: >-
+          The types of Resources available on this Resource Block.
+        required: true
+        entry_schema:
+          type: ResourceBlockType
+      SimpleStorage@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+      Storage@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - ComputerSystems:
+        node: cmptsyst:ComputerSystem
+        capability: cmpsyscp:ComputerSystemContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the computer systems available in this Resource Block.
+    - EthernetInterfaces:
+        node: ethrintr:EthernetInterface
+        capability: ethintcp:EthernetInterfaceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the Ethernet interfaces available in this Resource
+          Block.
+    - Memory:
+        node: memory:Memory
+        capability: mmrycps:MemoryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the memory available in this Resource Block.
+    - NetworkInterfaces:
+        node: ntwrintr:NetworkInterface
+        capability: ntwintcp:NetworkInterfaceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the Network Interfaces available in this Resource Block.
+    - Processors:
+        node: prcssr:Processor
+        capability: prcscps:ProcessorContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the processors available in this Resource Block.
+    - SimpleStorage:
+        node: smplstrg:SimpleStorage
+        capability: smpstrcp:SimpleStorageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the simple storage available in this Resource Block.
+    - Storage:
+        node: storage:Storage
+        capability: strgcps:StorageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the storage available in this Resource Block.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: ResourceBlockDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the Chassis in which this Resource Block is contained.
+    - ComputerSystems:
+        node: cmptsyst:ComputerSystem
+        capability: cmpsyscp:ComputerSystemFeature
+        relationship: ResourceBlockDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the computer systems that are composed from this Resource
+          Block.
+    - Zones:
+        # node: zone:Zone
+        capability: core:Feature
+        relationship: ResourceBlockDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the Zones in which this Resource Block is bound.
+    capabilities:
+      feature:
+        type: rsrblccp:ResourceBlockFeature
+      containable:
+        type: rsrblccp:ResourceBlockContainable

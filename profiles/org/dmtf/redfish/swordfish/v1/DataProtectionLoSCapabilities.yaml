@@ -1,0 +1,52 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: DataProtectionLoSCapabilities_caps.yaml
+  namespace: dtprlsc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+data_types:
+  FailureDomainScope:
+    description: >-
+      Values of this enumeration represent a geographic scope of a failure domain.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Server
+        - Rack
+        - RackGroup
+        - Row
+        - Datacenter
+        - Region
+  RecoveryAccessScope:
+    description: >-
+      An enumeration that represents the relative time required to make a replica
+      available as a source.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OnlineActive
+        - OnlinePassive
+        - Nearline
+        - Offline
+node_types:
+  DataProtectionLoSCapabilities:
+    description: >-
+      The capabilities to protect data from loss by the use of a replica.
+    derived_from: dtprlsc:DataProtectionLoSCapabilities
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: dtprlsc:DataProtectionLoSCapabilitiesFeature
+      containable:
+        type: dtprlsc:DataProtectionLoSCapabilitiesContainable

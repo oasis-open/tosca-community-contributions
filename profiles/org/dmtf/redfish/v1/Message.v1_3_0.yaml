@@ -1,0 +1,91 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: ResolutionStep.yaml
+  namespace: rsltnstp
+- url: Core.yaml
+  namespace: core
+- url: ResolutionStep_caps.yaml
+  namespace: rslstpcp
+- url: Message_caps.yaml
+  namespace: mssgcps
+node_types:
+  Message:
+    description: >-
+      The message that the Redfish service returns.
+    properties:
+      Message:
+        type: string
+        description: >-
+          The human-readable message.
+        required: false
+      MessageArgs:
+        type: list
+        description: >-
+          An array of message arguments that are substituted for the arguments in
+          the message when looked up in the message registry.
+        required: false
+        entry_schema:
+          type: string
+      MessageId:
+        type: string
+        description: >-
+          The identifier for the message.
+        required: true
+      MessageSeverity:
+        type: resource:Health
+        description: >-
+          The severity of the message.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RelatedProperties:
+        type: list
+        description: >-
+          A set of properties described by the message.
+        required: false
+        entry_schema:
+          type: string
+      Resolution:
+        type: string
+        description: >-
+          Used to provide suggestions on how to resolve the situation that caused
+          the message.
+        required: false
+      Severity:
+        type: string
+        description: >-
+          The severity of the message.
+        required: false
+      UserAuthenticationSource:
+        type: string
+        description: >-
+          The source of authentication for the username property associated with the
+          message.
+        required: false
+      Username:
+        type: string
+        description: >-
+          The username of the account associated with the message.
+        required: false
+    requirements:
+    - ResolutionSteps:
+        node: rsltnstp:ResolutionStep
+        capability: rslstpcp:ResolutionStepContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The list of recommended steps to resolve the situation that caused the message.
+    capabilities:
+      feature:
+        type: mssgcps:MessageFeature
+      containable:
+        type: mssgcps:MessageContainable

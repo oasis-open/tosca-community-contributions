@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: DriveMetrics.v1_3_0.yaml
+  namespace: drvmtrcs
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: DriveMetrics_caps.yaml
+  namespace: drvmtrcp
+node_types:
+  DriveMetrics:
+    description: >-
+      The usage and health statistics for a drive.
+    derived_from: drvmtrcs:DriveMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: drvmtrcp:DriveMetricsFeature
+      containable:
+        type: drvmtrcp:DriveMetricsContainable

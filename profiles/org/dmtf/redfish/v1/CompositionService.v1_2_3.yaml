@@ -1,0 +1,220 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Manifest.yaml
+  namespace: manifest
+- url: ResourceBlockCollection.yaml
+  namespace: rsrblccl
+- url: CompositionReservationCollection.yaml
+  namespace: cmprsrcl
+- url: Resource.yaml
+  namespace: resource
+- url: ZoneCollection.yaml
+  namespace: zncllctn
+- url: Core.yaml
+  namespace: core
+- url: ResourceBlockCollection_caps.yaml
+  namespace: rsblclcp
+- url: CompositionReservationCollection_caps.yaml
+  namespace: cmrsclcp
+- url: ZoneCollection_caps.yaml
+  namespace: zncllcp
+- url: CompositionService_caps.yaml
+  namespace: cmpsrvcp
+- url: Manifest_caps.yaml
+  namespace: mnfstcps
+data_types:
+  ComposeRequestFormat:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Manifest
+  ComposeRequestType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Preview
+        - PreviewReserve
+        - Apply
+interface_types:
+  CompositionServiceActions:
+    operations:
+      Compose:
+        description: >-
+          This action performs a set of operations specified by a manifest.
+        inputs:
+          Manifest:
+            type: manifest:Manifest
+            description: >-
+              The manifest containing the compose operation request.
+            required: false
+          RequestFormat:
+            type: ComposeRequestFormat
+            description: >-
+              The format of the request.
+            required: true
+          RequestType:
+            type: ComposeRequestType
+            description: >-
+              The type of request.
+            required: true
+          ReservationId:
+            type: string
+            description: >-
+              The identifier of the composition reservation if applying a reservation.  The
+              value for this parameter is obtained from the response of a `Compose`
+              action where the RequestType parameter contains the value `PreviewReserve`.
+            required: false
+node_types:
+  CompositionService:
+    description: >-
+      The `CompositionService` schema describes a composition service and its properties
+      and links to the resources available for composition.
+    properties:
+      AllowOverprovisioning:
+        type: boolean
+        description: >-
+          An indication of whether this service is allowed to overprovision a composition
+          relative to the composition request.
+        required: false
+      AllowZoneAffinity:
+        type: boolean
+        description: >-
+          An indication of whether a client can request that a specific resource zone
+          fulfill a composition request.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ReservationDuration:
+        type: string
+        description: >-
+          The length of time a composition reservation is held before the service
+          deletes the reservation and marks any related resource blocks as no longer
+          reserved.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - ActivePool:
+        node: rsrblccl:ResourceBlockCollection
+        capability: rsblclcp:ResourceBlockCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of resource blocks within the active pool.  Resource
+          blocks in the active pool are contributing to at least one composed resource
+          as a result of a composition request.
+    - CompositionReservations:
+        node: cmprsrcl:CompositionReservationCollection
+        capability: cmrsclcp:CompositionReservationCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of reservations with the composition reservation
+          collection.
+    - FreePool:
+        node: rsrblccl:ResourceBlockCollection
+        capability: rsblclcp:ResourceBlockCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of resource blocks within the free pool.  Resource
+          blocks in the free pool are not contributing to any composed resources.
+    - ResourceBlocks:
+        node: rsrblccl:ResourceBlockCollection
+        capability: rsblclcp:ResourceBlockCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The resource blocks available on the service.
+    - ResourceZones:
+        node: zncllctn:ZoneCollection
+        capability: zncllcp:ZoneCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The resource zones available on the service.
+    interfaces:
+      Actions:
+        type: CompositionServiceActions
+    capabilities:
+      feature:
+        type: cmpsrvcp:CompositionServiceFeature
+      containable:
+        type: cmpsrvcp:CompositionServiceContainable
+  ComposeResponse:
+    description: >-
+      The response body for the `Compose` action.
+    properties:
+      RequestFormat:
+        type: ComposeRequestFormat
+        description: >-
+          The format of the request.
+        required: true
+      RequestType:
+        type: ComposeRequestType
+        description: >-
+          The type of request.
+        required: true
+      ReservationId:
+        type: string
+        description: >-
+          The identifier of the composition reservation that was created.
+        required: false
+    requirements:
+    - Manifest:
+        node: manifest:Manifest
+        capability: mnfstcps:ManifestContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The manifest containing the compose operation response.
+    capabilities:
+      containable:
+        type: cmpsrvcp:ComposeResponseContainable

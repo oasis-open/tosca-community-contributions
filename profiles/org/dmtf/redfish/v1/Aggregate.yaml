@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Aggregate.v1_0_3.yaml
+  namespace: aggrgt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Aggregate_caps.yaml
+  namespace: aggrcps
+node_types:
+  Aggregate:
+    description: >-
+      The `Aggregate` schema describes a grouping method for an aggregation service.  Aggregates
+      are formal groups of resources that are more persistent than ad hoc groupings.
+    derived_from: aggrgt:Aggregate
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: aggrcps:AggregateFeature
+      containable:
+        type: aggrcps:AggregateContainable

@@ -1,0 +1,90 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Sensor.yaml
+  namespace: sensor
+- url: Resource.yaml
+  namespace: resource
+- url: Control.yaml
+  namespace: control
+- url: Core.yaml
+  namespace: core
+- url: AutomationInstrumentation_caps.yaml
+  namespace: atminscp
+node_types:
+  AutomationInstrumentation:
+    description: >-
+      The `AutomationInstrumentation` schema contains measurements and set points
+      for an automation node.
+    properties:
+      CurrentAmps:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          The current (A) for this node.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NodeControl:
+        type: control:ControlNodeExcerpt
+        description: >-
+          The control for this node.
+        required: false
+      NodeState:
+        type: string
+        description: >-
+          The current state of the node.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Idle
+            - Done
+            - Waiting
+            - ConditionStop
+            - ErrorStop
+            - Running
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PID:
+        type: control:ControlSingleLoopExcerpt
+        description: >-
+          A PID control loop.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      TemperatureCelsius:
+        type: sensor:SensorExcerpt
+        description: >-
+          Temperature (Celsius).
+        required: false
+      Voltage:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The voltage (V) for this node.
+        required: false
+    capabilities:
+      feature:
+        type: atminscp:AutomationInstrumentationFeature
+      containable:
+        type: atminscp:AutomationInstrumentationContainable

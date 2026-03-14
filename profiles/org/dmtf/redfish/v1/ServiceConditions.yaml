@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ServiceConditions.v1_0_1.yaml
+  namespace: srvccndt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ServiceConditions_caps.yaml
+  namespace: srvcndcp
+node_types:
+  ServiceConditions:
+    description: >-
+      The `ServiceConditions` schema contains definitions for reporting the conditions
+      present in the service that require attention.
+    derived_from: srvccndt:ServiceConditions
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: srvcndcp:ServiceConditionsFeature
+      containable:
+        type: srvcndcp:ServiceConditionsContainable

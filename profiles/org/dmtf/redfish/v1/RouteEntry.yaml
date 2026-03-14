@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: RouteEntry.v1_0_2.yaml
+  namespace: rtentry
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: RouteEntry_caps.yaml
+  namespace: rtentcp
+node_types:
+  RouteEntry:
+    description: >-
+      The `RouteEntry` schema describes the content of route entry rows.  Each route
+      entry contains route sets that list the possible routes for the route entry.
+    derived_from: rtentry:RouteEntry
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: rtentcp:RouteEntryFeature
+      containable:
+        type: rtentcp:RouteEntryContainable

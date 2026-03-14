@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: VirtualPCI2PCIBridge.v1_0_0.yaml
+  namespace: vrtlpc2p
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: VirtualPCI2PCIBridge_caps.yaml
+  namespace: vrtpc2cp
+node_types:
+  VirtualPCI2PCIBridge:
+    description: >-
+      The `VirtualPCI2PCIBridge` schema describes Virtual PCI-to-PCI Bridge (vPPB)
+      inside a CXL switch that is owned by the host.
+    derived_from: vrtlpc2p:VirtualPCI2PCIBridge
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: vrtpc2cp:VirtualPCI2PCIBridgeFeature
+      containable:
+        type: vrtpc2cp:VirtualPCI2PCIBridgeContainable

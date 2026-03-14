@@ -1,0 +1,172 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: FeaturesRegistry_caps.yaml
+  namespace: ftrrgscp
+- url: Resource_caps.yaml
+  namespace: rsrccps
+data_types:
+  FeaturesRegistryProperty:
+    description: >-
+      The pattern type indicates that a free-form string is the unique identifier
+      for the Feature within the registry.
+  SupportedFeature:
+    description: >-
+      This type shall describe how a supported feature is defined within the registry.
+    properties:
+      CorrespondingProfileDefinition:
+        type: string
+        description: >-
+          The profile definition that defines the feature.
+        required: true
+      Description:
+        type: string
+        description: >-
+          A description of the feature.
+        required: true
+      FeatureName:
+        type: string
+        description: >-
+          The Name of the feature.
+        required: true
+      Version:
+        type: string
+        description: >-
+          The Version of the feature.
+        required: true
+node_types:
+  FeaturesRegistry:
+    description: >-
+      This is the schema definition for all Features Registries.  It represents the
+      properties for the registries themselves.  The FeatureId is formed per the Redfish
+      specification.  It consists of the RegistryPrefix concatenated with the version
+      concatenated with the unique identifier for the feature registry entry.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FeatureMappings:
+        type: list
+        description: >-
+          The pattern property indicates that a free-form string is the unique identifier
+          for the feature within the registry.
+        required: true
+        entry_schema:
+          type: FeatureMap
+      Features:
+        type: list
+        description: >-
+          The pattern property indicates that a free-form string is the unique identifier
+          for the feature within the registry.
+        required: false
+        entry_schema:
+          type: SupportedFeature
+      FeaturesUsed:
+        type: list
+        description: >-
+          An array containing all the standard feature names defined in the registry.
+        required: true
+        entry_schema:
+          type: string
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Language:
+        type: string
+        description: >-
+          This is the RFC 5646 compliant language code for the registry.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      OEMFeaturesUsed:
+        type: list
+        description: >-
+          An array containing all the OEM feature names defined in the registry.
+        required: false
+        entry_schema:
+          type: string
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OwningEntity:
+        type: string
+        description: >-
+          This is the organization or company that publishes this registry.
+        required: true
+      RegistryPrefix:
+        type: string
+        description: >-
+          This is the single word prefix used to form a Feature ID structure.
+        required: true
+      RegistryVersion:
+        type: string
+        description: >-
+          This is the feature registry version which is used in the middle portion
+          of a Feature ID.
+        required: true
+    capabilities:
+      feature:
+        type: ftrrgscp:FeaturesRegistryFeature
+      containable:
+        type: ftrrgscp:FeaturesRegistryContainable
+  FeatureMap:
+    description: >-
+      This type shall describe how a feature and set of related resources are defined
+      within the registry.
+    properties:
+      CorrespondingProfileDefinition:
+        type: string
+        description: >-
+          The profile definition that defines the feature.
+        required: true
+      Description:
+        type: string
+        description: >-
+          A description of the feature.
+        required: true
+      FeatureName:
+        type: string
+        description: >-
+          The Name of the feature.
+        required: true
+      Resources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The Version of the feature.
+        required: true
+    requirements:
+    - Resources:
+        node: resource:Resource
+        capability: rsrccps:ResourceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of resources in the service containing the set that are related
+          to support for the specified feature.
+    capabilities:
+      containable:
+        type: ftrrgscp:FeatureMapContainable

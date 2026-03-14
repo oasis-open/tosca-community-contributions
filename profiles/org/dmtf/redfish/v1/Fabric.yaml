@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Fabric.v1_4_0.yaml
+  namespace: fabric
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Fabric_caps.yaml
+  namespace: fbrccps
+node_types:
+  Fabric:
+    description: >-
+      The `Fabric` schema represents a simple fabric consisting of one or more switches,
+      zero or more endpoints, and zero or more zones.
+    derived_from: fabric:Fabric
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: fbrccps:FabricFeature
+      containable:
+        type: fbrccps:FabricContainable

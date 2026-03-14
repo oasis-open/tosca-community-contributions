@@ -1,0 +1,209 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ComputerSystem.yaml
+  namespace: cmptsyst
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Role.yaml
+  namespace: role
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ComputerSystem_caps.yaml
+  namespace: cmpsyscp
+- url: Role_caps.yaml
+  namespace: rolecaps
+- url: EthernetInterfaceCollection.yaml
+  namespace: ethintcl
+- url: EthernetInterface.yaml
+  namespace: ethrintr
+- url: ManagerNetworkProtocol.yaml
+  namespace: mngntwpr
+- url: EthernetInterfaceCollection_caps.yaml
+  namespace: etinclcp
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+- url: ManagerNetworkProtocol_caps.yaml
+  namespace: mnntprcp
+- url: HostInterface_caps.yaml
+  namespace: hstintcp
+data_types:
+  AuthenticationMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - AuthNone
+        - BasicAuth
+        - RedfishSessionAuth
+        - OemAuth
+  HostInterfaceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NetworkHostInterface
+relationship_types:
+  HostInterfaceDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ComputerSystems@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  HostInterface:
+    description: >-
+      The `HostInterface` schema contains properties associated with a Redfish host
+      interface.  A Redfish host interface is a connection between host software and
+      a Redfish service.
+    properties:
+      AuthenticationModes:
+        type: list
+        description: >-
+          The authentication modes available on this interface.
+        required: false
+        entry_schema:
+          type: AuthenticationMode
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ExternallyAccessible:
+        type: boolean
+        description: >-
+          An indication of whether external entities can access this interface.  External
+          entities are non-host entities.  For example, if the host and manager are
+          connected through a switch and the switch also exposes an external port
+          on the system, external clients can also use the interface, and this property
+          value is `true`.
+        required: false
+      FirmwareAuthEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this firmware authentication is enabled for this
+          interface.
+        required: false
+      FirmwareAuthRoleId:
+        type: string
+        description: >-
+          The Redfish role used for firmware authentication on this interface.
+        required: false
+      HostInterfaceType:
+        type: HostInterfaceType
+        description: >-
+          The host interface type for this interface.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InterfaceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this interface is enabled.
+        required: false
+      KernelAuthEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this kernel authentication is enabled for this
+          interface.
+        required: false
+      KernelAuthRoleId:
+        type: string
+        description: >-
+          The Redfish role used for kernel authentication on this interface.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - HostEthernetInterfaces:
+        node: ethintcl:EthernetInterfaceCollection
+        capability: etinclcp:EthernetInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the collection of network interface controllers or cards (NICs)
+          that a computer system uses to communicate with this host interface.
+    - ManagerEthernetInterface:
+        node: ethrintr:EthernetInterface
+        capability: ethintcp:EthernetInterfaceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to a single network interface controllers or cards (NIC) that this
+          manager uses for network communication with this host interface.
+    - NetworkProtocol:
+        node: mngntwpr:ManagerNetworkProtocol
+        capability: mnntprcp:ManagerNetworkProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the network services and their settings that the manager controls.  In
+          this property, clients find configuration options for the network and network
+          services.
+    - ComputerSystems:
+        node: cmptsyst:ComputerSystem
+        capability: cmpsyscp:ComputerSystemFeature
+        relationship: HostInterfaceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the computer systems connected to this host interface.
+    - FirmwareAuthRole:
+        node: role:Role
+        capability: rolecaps:RoleFeature
+        relationship: HostInterfaceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the Redfish role that has firmware authentication privileges
+          on this host interface.
+    - KernelAuthRole:
+        node: role:Role
+        capability: rolecaps:RoleFeature
+        relationship: HostInterfaceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the Redfish role defining privileges for this host interface
+          when using kernel authentication.
+    capabilities:
+      feature:
+        type: hstintcp:HostInterfaceFeature
+      containable:
+        type: hstintcp:HostInterfaceContainable

@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: BootOption.v1_0_6.yaml
+  namespace: btoptn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: BootOption_caps.yaml
+  namespace: btoptcp
+node_types:
+  BootOption:
+    description: >-
+      The `BootOption` schema reports information about a single boot option in a
+      system.  It represents the properties of a bootable device available in the
+      system.
+    derived_from: btoptn:BootOption
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: btoptcp:BootOptionFeature
+      containable:
+        type: btoptcp:BootOptionContainable

@@ -1,0 +1,101 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: RegisteredClient_caps.yaml
+  namespace: rgsclncp
+data_types:
+  ClientType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Monitor
+        - Configure
+  ManagedResource:
+    description: >-
+      A resource managed by a client.
+    properties:
+      IncludesSubordinates:
+        type: boolean
+        description: >-
+          Indicates whether the subordinate resources of the managed resource are
+          also managed by the registered client.
+        required: false
+      ManagedResourceURI:
+        type: string
+        description: >-
+          The URI of the resource or resource collection managed by the registered
+          client.
+        required: false
+      PreferExclusive:
+        type: boolean
+        description: >-
+          Indicates whether the registered client expects to have exclusive access
+          to the managed resource.
+        required: false
+node_types:
+  RegisteredClient:
+    description: >-
+      The RegisteredClient schema defines the record format for a registered client.  It
+      is designed to allow well behaved clients to register with a Redfish service
+      such that other clients are aware the service might be configured or monitored
+      by the client.
+    properties:
+      ClientType:
+        type: ClientType
+        description: >-
+          The type of registered client.
+        required: true
+      ClientURI:
+        type: string
+        description: >-
+          The URI of the registered client.
+        required: false
+      CreatedDate:
+        type: string
+        description: >-
+          The date and time when the client entry was created.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ExpirationDate:
+        type: string
+        description: >-
+          The date and time when the client entry will expire.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      ManagedResources:
+        type: list
+        description: >-
+          An array of resources that the registered client monitors or configures.
+        required: false
+        entry_schema:
+          type: ManagedResource
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: rgsclncp:RegisteredClientFeature
+      containable:
+        type: rgsclncp:RegisteredClientContainable

@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CoolantConnector.v1_3_0.yaml
+  namespace: clntcnnc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CoolantConnector_caps.yaml
+  namespace: clncnncp
+node_types:
+  CoolantConnector:
+    description: >-
+      The `CoolantConnector` schema describes a liquid coolant connector, including
+      any associated instrumentation.
+    derived_from: clntcnnc:CoolantConnector
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: clncnncp:CoolantConnectorFeature
+      containable:
+        type: clncnncp:CoolantConnectorContainable

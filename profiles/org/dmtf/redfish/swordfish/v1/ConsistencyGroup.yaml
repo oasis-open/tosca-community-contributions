@@ -1,0 +1,47 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ConsistencyGroup.v1_1_1.yaml
+  namespace: cnssgrp
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ConsistencyGroup_caps.yaml
+  namespace: cnsgrpcp
+data_types:
+  ApplicationConsistencyMethod:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - HotStandby
+        - VASA
+        - VDI
+        - VSS
+        - Other
+  ConsistencyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CrashConsistent
+        - ApplicationConsistent
+node_types:
+  ConsistencyGroup:
+    description: >-
+      A collection of volumes grouped together to ensure write order consistency across
+      all those volumes.
+    derived_from: cnssgrp:ConsistencyGroup
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: cnsgrpcp:ConsistencyGroupFeature
+      containable:
+        type: cnsgrpcp:ConsistencyGroupContainable

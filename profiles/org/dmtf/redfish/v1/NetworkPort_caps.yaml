@@ -1,0 +1,15 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Capability types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+capability_types:
+  NetworkPortFeature:
+    derived_from: core:Feature
+  NetworkPortContainable:
+    derived_from: core:Containable
+  NetDevFuncMaxBWAllocContainable:
+    derived_from: core:Containable
+  NetDevFuncMinBWAllocContainable:
+    derived_from: core:Containable

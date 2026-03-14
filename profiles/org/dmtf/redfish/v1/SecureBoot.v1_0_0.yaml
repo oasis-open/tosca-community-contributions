@@ -1,0 +1,114 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: SecureBoot_caps.yaml
+  namespace: scrbtcps
+data_types:
+  ResetKeys:
+    description: >-
+      This action is used to reset the Secure Boot keys.
+    properties:
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+  ResetKeysType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ResetAllKeysToDefault
+        - DeleteAllKeys
+        - DeletePK
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        required: false
+      '#SecureBoot_ResetKeys':
+        type: ResetKeys
+        description: >-
+          This action is used to reset the Secure Boot keys.
+        required: false
+  SecureBootCurrentBootType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+  SecureBootModeType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SetupMode
+        - UserMode
+        - AuditMode
+        - DeployedMode
+node_types:
+  SecureBoot:
+    description: >-
+      This resource contains UEFI Secure Boot information. It represents properties
+      for managing the UEFI Secure Boot functionality of a system.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      SecureBootEnable:
+        type: boolean
+        description: >-
+          Enable or disable UEFI Secure Boot (takes effect on next boot).
+        required: false
+      SecureBootCurrentBoot:
+        type: SecureBootCurrentBootType
+        description: >-
+          Secure Boot state during the current boot cycle.
+        required: false
+      SecureBootMode:
+        type: SecureBootModeType
+        description: >-
+          Current Secure Boot Mode.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    capabilities:
+      feature:
+        type: scrbtcps:SecureBootFeature
+      containable:
+        type: scrbtcps:SecureBootContainable

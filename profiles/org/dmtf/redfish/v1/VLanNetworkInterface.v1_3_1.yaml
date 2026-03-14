@@ -1,0 +1,102 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: VLanNetworkInterface_caps.yaml
+  namespace: vlntincp
+data_types:
+  VLAN:
+    description: >-
+      The attributes of a VLAN.
+    properties:
+      Tagged:
+        type: boolean
+        description: >-
+          An indication of whether this VLAN is tagged or untagged for this interface.
+        required: false
+      VLANEnable:
+        type: boolean
+        description: >-
+          An indication of whether this VLAN is enabled for this VLAN network interface.
+        required: false
+      VLANId:
+        type: VLANId
+        description: >-
+          The ID for this VLAN.
+        required: false
+      VLANPriority:
+        type: VLANPriority
+        description: >-
+          The priority for this VLAN.
+        required: false
+  VLANId:
+    derived_from: integer
+    validation:
+      $and:
+      - $greater_or_equal:
+        - $value
+        - 0
+      - $less_or_equal:
+        - $value
+        - 4094
+  VLANPriority:
+    derived_from: integer
+    validation:
+      $and:
+      - $greater_or_equal:
+        - $value
+        - 0
+      - $less_or_equal:
+        - $value
+        - 7
+node_types:
+  VLanNetworkInterface:
+    description: >-
+      The `VLanNetworkInterface` schema describes a VLAN network instance that is
+      available on a manager, system, or other device.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      VLANEnable:
+        type: boolean
+        description: >-
+          An indication of whether this VLAN is enabled for this interface.
+        required: false
+      VLANId:
+        type: VLANId
+        description: >-
+          The ID for this VLAN.
+        required: false
+      VLANPriority:
+        type: VLANPriority
+        description: >-
+          The priority for this VLAN.
+        required: false
+    capabilities:
+      feature:
+        type: vlntincp:VLanNetworkInterfaceFeature
+      containable:
+        type: vlntincp:VLanNetworkInterfaceContainable

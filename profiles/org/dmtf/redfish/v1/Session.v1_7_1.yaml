@@ -1,0 +1,128 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: OutboundConnection.yaml
+  namespace: otbncnnc
+- url: Core.yaml
+  namespace: core
+- url: OutboundConnection_caps.yaml
+  namespace: otbcnncp
+- url: Session_caps.yaml
+  namespace: sssncps
+data_types:
+  SessionTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - HostConsole
+        - ManagerConsole
+        - IPMI
+        - KVMIP
+        - OEM
+        - Redfish
+        - VirtualMedia
+        - WebUI
+        - OutboundConnection
+relationship_types:
+  SessionDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  Session:
+    description: >-
+      The Session resource describes a single connection (session) between a client
+      and a Redfish service instance.
+    properties:
+      ClientOriginIPAddress:
+        type: string
+        description: >-
+          The IP address of the client that created the session.
+        required: false
+      Context:
+        type: string
+        description: >-
+          A client-supplied string that is stored with the session.
+        required: false
+      CreatedTime:
+        type: string
+        description: >-
+          The date and time when the session was created.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OemSessionType:
+        type: string
+        description: >-
+          The active OEM-defined session type.
+        required: false
+      Password:
+        type: string
+        description: >-
+          The password for this session.  The value is `null` in responses.
+        required: false
+      Roles:
+        type: list
+        description: >-
+          The Redfish roles that contain the privileges of this session.
+        required: false
+        entry_schema:
+          type: string
+      SessionType:
+        type: SessionTypes
+        description: >-
+          The active session type.
+        required: false
+      Token:
+        type: string
+        description: >-
+          The multi-factor authentication token for this session.  The value is `null`
+          in responses.
+        required: false
+      UserName:
+        type: string
+        description: >-
+          The username for the account for this session.
+        required: false
+    requirements:
+    - OutboundConnection:
+        node: otbncnnc:OutboundConnection
+        capability: otbcnncp:OutboundConnectionFeature
+        relationship: SessionDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The outbound connection associated with this session.
+    capabilities:
+      feature:
+        type: sssncps:SessionFeature
+      containable:
+        type: sssncps:SessionContainable

@@ -1,0 +1,185 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Session.yaml
+  namespace: session
+- url: Core.yaml
+  namespace: core
+- url: Session_caps.yaml
+  namespace: sssncps
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: OutboundConnection_caps.yaml
+  namespace: otbcnncp
+data_types:
+  AuthenticationType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - MTLS
+        - JWT
+        - None
+        - OEM
+  HTTPHeaderProperty:
+    description: >-
+      The HTTP header value is the property value.  The header name is the property
+      name.
+  OutboundConnectionRetryPolicyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - RetryForever
+        - RetryCount
+  RetryPolicyType:
+    description: >-
+      The retry policy for an outbound connection.
+    properties:
+      ConnectionRetryPolicy:
+        type: OutboundConnectionRetryPolicyType
+        description: >-
+          The type of retry policy for this outbound connection.
+        required: false
+      RetryCount:
+        type: integer
+        description: >-
+          The number of retries to attempt if the retry policy specifies a maximum
+          number of retries.
+        required: false
+      RetryIntervalMinutes:
+        type: integer
+        description: >-
+          The retry interval in minutes.
+        required: false
+relationship_types:
+  OutboundConnectionDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  OutboundConnection:
+    description: >-
+      The OutboundConnection schema defines how the Redfish service connects to a
+      remote client over a WebSocket connection.  This allows a service behind a firewall
+      to establish a connection to a remote client outside of the firewall.
+    properties:
+      Authentication:
+        type: AuthenticationType
+        description: >-
+          The authentication mechanism for the WebSocket connection.
+        required: false
+      ConnectionEnabled:
+        type: boolean
+        description: >-
+          Indicates if the outbound connection is enabled.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EndpointURI:
+        type: string
+        description: >-
+          The URI of the WebSocket connection to the remote client.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PreUpgradeHTTPHeaders:
+        type: HTTPHeaderProperty
+        description: >-
+          The HTTP headers to send to the remote client during the initial connection
+          prior to the WebSocket upgrade.  This property is an empty object in responses.
+        required: false
+      RetryPolicy:
+        type: RetryPolicyType
+        description: >-
+          The retry policy for this outbound connection.
+        required: false
+      Roles:
+        type: list
+        description: >-
+          The Redfish roles that contain the privileges of the remote client for the
+          outbound connection.
+        required: false
+        entry_schema:
+          type: string
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      WebSocketPingIntervalMinutes:
+        type: integer
+        description: >-
+          Interval for sending the WebSocket ping opcode in minutes.  The value `0`
+          indicates the ping opcode is not sent.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 65535
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of server certificates for the remote client referenced
+          by the EndpointURI property.
+    - ClientCertificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of client identity certificates provided to the
+          remote client referenced by the EndpointURI property.
+    - Session:
+        # node: session:Session
+        capability: sssncps:SessionFeature
+        relationship: OutboundConnectionDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the session for this outbound connection.
+    capabilities:
+      feature:
+        type: otbcnncp:OutboundConnectionFeature
+      containable:
+        type: otbcnncp:OutboundConnectionContainable

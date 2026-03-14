@@ -1,0 +1,167 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata.v4_0_2.yaml
+  namespace: odata
+- url: Settings.yaml
+  namespace: settings
+- url: Message.yaml
+  namespace: message
+- url: Core.yaml
+  namespace: core
+- url: Message_caps.yaml
+  namespace: mssgcps
+- url: Settings_caps.yaml
+  namespace: sttncps
+data_types:
+  ApplyTime:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Immediate
+        - OnReset
+        - AtMaintenanceWindowStart
+        - InMaintenanceWindowOnReset
+  MaintenanceWindow:
+    description: >-
+      This object indicates if a given resource has a maintenance window assignment
+      for applying settings or operations.
+    properties:
+      MaintenanceWindowDurationInSeconds:
+        type: float
+        description: >-
+          The value of this property as specified by client indicates the expiry time
+          of maintenance window in seconds.
+        required: true
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MaintenanceWindowStartTime:
+        type: string
+        description: >-
+          The value of this property as specified by client to indicate the start
+          time of a maintenance window.
+        required: true
+  OperationApplyTime:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Immediate
+        - OnReset
+        - AtMaintenanceWindowStart
+        - InMaintenanceWindowOnReset
+  OperationApplyTimeSupport:
+    description: >-
+      This object indicates if a client is allowed to request for a specific apply
+      time of a Create, Delete, or Action operation of a given resource.
+    properties:
+      MaintenanceWindowDurationInSeconds:
+        type: float
+        description: >-
+          The value of this property as specified by client indicates the expiry time
+          of maintenance window in seconds.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MaintenanceWindowResource:
+        type: odata:idRef
+        description: >-
+          The value of this property is used to indicate the location of the maintenance
+          window settings.
+        required: false
+      MaintenanceWindowStartTime:
+        type: string
+        description: >-
+          The value of this property as specified by client to indicate the start
+          time of a maintenance window.
+        required: false
+      SupportedValues:
+        type: list
+        description: >-
+          This property indicates the types of apply times the client is allowed request
+          when performing a Create, Delete, or Action operation.
+        required: true
+        entry_schema:
+          type: settings:OperationApplyTime
+  PreferredApplyTime:
+    description: >-
+      This object indicates when the future configuration (i.e. Settings resource)
+      should be applied.
+    properties:
+      ApplyTime:
+        type: ApplyTime
+        description: >-
+          This property indicates when the future configuration (i.e. Settings resource)
+          should be applied.
+        required: false
+      MaintenanceWindowDurationInSeconds:
+        type: float
+        description: >-
+          The value of this property as specified by client indicates the expiry time
+          of maintenance window in seconds.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MaintenanceWindowStartTime:
+        type: string
+        description: >-
+          The value of this property as specified by client to indicate the start
+          time of a maintenance window.
+        required: false
+node_types:
+  Settings:
+    description: >-
+      This type describes the settings of a resouce.
+    properties:
+      ETag:
+        type: string
+        description: >-
+          The ETag of the resource to which the settings were applied, after the application.
+        required: false
+      MaintenanceWindowResource:
+        type: odata:idRef
+        description: >-
+          The value of this property is used to indicate the location of the maintenance
+          window settings.
+        required: false
+      SettingsObject:
+        type: odata:idRef
+        description: >-
+          Reference to the resource the client may PUT/PATCH to in order to change
+          this resource.
+        required: false
+      SupportedApplyTimes:
+        type: list
+        description: >-
+          This property indicates when a Settings resource can be applied.
+        required: false
+        entry_schema:
+          type: ApplyTime
+      Time:
+        type: string
+        description: >-
+          Indicates the time the settings were applied.
+        required: false
+    requirements:
+    - Messages:
+        node: message:Message
+        capability: mssgcps:MessageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          This is an array of messages associated with the task.
+    capabilities:
+      feature:
+        type: sttncps:SettingsFeature
+      containable:
+        type: sttncps:SettingsContainable

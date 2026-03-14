@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Connection.v1_4_0.yaml
+  namespace: cnnctn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Connection_caps.yaml
+  namespace: cnnccps
+node_types:
+  Connection:
+    description: >-
+      The `Connection` schema describes the access permissions that endpoints, or
+      groups of endpoints, have with other resources in the service.
+    derived_from: cnnctn:Connection
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: cnnccps:ConnectionFeature
+      containable:
+        type: cnnccps:ConnectionContainable

@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Filter.v1_1_0.yaml
+  namespace: filter
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Filter_caps.yaml
+  namespace: fltrcps
+node_types:
+  Filter:
+    description: >-
+      The `Filter` schema describes a filter unit for a cooling system or similar
+      device.
+    derived_from: filter:Filter
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: fltrcps:FilterFeature
+      containable:
+        type: fltrcps:FilterContainable

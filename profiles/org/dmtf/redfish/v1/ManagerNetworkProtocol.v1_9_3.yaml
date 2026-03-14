@@ -1,0 +1,457 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ManagerNetworkProtocol_caps.yaml
+  namespace: mnntprcp
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+data_types:
+  EngineId:
+    description: >-
+      The engine ID.
+    properties:
+      ArchitectureId:
+        type: string
+        description: >-
+          The architecture identifier.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([A-Fa-f0-9]{2} ){0,27}[A-Fa-f0-9]{2}$
+      EnterpriseSpecificMethod:
+        type: string
+        description: >-
+          The enterprise-specific method.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([A-Fa-f0-9]{2} ){7}[A-Fa-f0-9]{2}$
+      PrivateEnterpriseId:
+        type: string
+        description: >-
+          The private enterprise ID.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([A-Fa-f0-9]{2} ){3}[A-Fa-f0-9]{2}$
+  NTPProtocol:
+    description: >-
+      The settings for a network protocol associated with a manager.
+    properties:
+      NTPServers:
+        type: list
+        description: >-
+          Indicates to which user-supplied NTP servers this manager is subscribed.
+        required: false
+        entry_schema:
+          type: string
+      NetworkSuppliedServers:
+        type: list
+        description: >-
+          The NTP servers supplied by other network protocols to this manager.
+        required: false
+        entry_schema:
+          type: string
+      Port:
+        type: integer
+        description: >-
+          The protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the protocol is enabled.
+        required: false
+  NotifyIPv6Scope:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Link
+        - Site
+        - Organization
+  Protocol:
+    description: >-
+      The settings for a network protocol associated with a manager.
+    properties:
+      Port:
+        type: integer
+        description: >-
+          The protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the protocol is enabled.
+        required: false
+  ProxyConfiguration:
+    description: >-
+      The HTTP/HTTPS proxy information for a manager.
+    properties:
+      Enabled:
+        type: boolean
+        description: >-
+          Indicates if the manager uses the proxy server.
+        required: false
+      ExcludeAddresses:
+        type: list
+        description: >-
+          Addresses that do not require the proxy server to access.
+        required: false
+        entry_schema:
+          type: string
+      Password:
+        type: string
+        description: >-
+          The password for the proxy.  The value is `null` in responses.
+        required: false
+      PasswordSet:
+        type: boolean
+        description: >-
+          Indicates if the `Password` property is set.
+        required: false
+      ProxyAutoConfigURI:
+        type: string
+        description: >-
+          The URI used to access a proxy auto-configuration (PAC) file.
+        required: false
+      ProxyServerURI:
+        type: string
+        description: >-
+          The URI of the proxy server, including the scheme and any non-default port
+          value.
+        required: false
+      Username:
+        type: string
+        description: >-
+          The username for the proxy.
+        required: false
+  SNMPAuthenticationProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Account
+        - CommunityString
+        - HMAC_MD5
+        - HMAC_SHA96
+        - HMAC128_SHA224
+        - HMAC192_SHA256
+        - HMAC256_SHA384
+        - HMAC384_SHA512
+  SNMPCommunity:
+    description: >-
+      An SNMP community strings.
+    properties:
+      AccessMode:
+        type: SNMPCommunityAccessMode
+        description: >-
+          The access level of the SNMP community.
+        required: false
+      CommunityString:
+        type: string
+        description: >-
+          The SNMP community string.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the SNMP community.
+        required: false
+  SNMPCommunityAccessMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Full
+        - Limited
+  SNMPEncryptionProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - Account
+        - CBC_DES
+        - CFB128_AES128
+  SNMPProtocol:
+    description: >-
+      The settings for a network protocol associated with a manager.
+    properties:
+      AuthenticationProtocol:
+        type: SNMPAuthenticationProtocols
+        description: >-
+          The authentication protocol used for SNMP access to this manager.
+        required: false
+      CommunityAccessMode:
+        type: SNMPCommunityAccessMode
+        description: >-
+          The access level of the SNMP community.
+        required: false
+      CommunityStrings:
+        type: list
+        description: >-
+          The SNMP community strings.
+        required: false
+        entry_schema:
+          type: SNMPCommunity
+      EnableSNMPv1:
+        type: boolean
+        description: >-
+          Indicates if access via SNMPv1 is enabled.
+        required: false
+      EnableSNMPv2c:
+        type: boolean
+        description: >-
+          Indicates if access via SNMPv2c is enabled.
+        required: false
+      EnableSNMPv3:
+        type: boolean
+        description: >-
+          Indicates if access via SNMPv3 is enabled.
+        required: false
+      EncryptionProtocol:
+        type: SNMPEncryptionProtocols
+        description: >-
+          The encryption protocol used for SNMPv3 access to this manager.
+        required: false
+      EngineId:
+        type: EngineId
+        description: >-
+          The engine ID.
+        required: false
+      HideCommunityStrings:
+        type: boolean
+        description: >-
+          Indicates if the community strings should be hidden.
+        required: false
+      Port:
+        type: integer
+        description: >-
+          The protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the protocol is enabled.
+        required: false
+  SSDProtocol:
+    description: >-
+      The settings for a network protocol associated with a manager.
+    properties:
+      NotifyIPv6Scope:
+        type: NotifyIPv6Scope
+        description: >-
+          The IPv6 scope for multicast NOTIFY messages for SSDP.
+        required: false
+      NotifyMulticastIntervalSeconds:
+        type: integer
+        description: >-
+          The time interval, in seconds, between transmissions of the multicast NOTIFY
+          ALIVE message from this service for SSDP.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      NotifyTTL:
+        type: integer
+        description: >-
+          The time-to-live hop count for SSDP multicast NOTIFY messages.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      Port:
+        type: integer
+        description: >-
+          The protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the protocol is enabled.
+        required: false
+node_types:
+  ManagerNetworkProtocol:
+    description: >-
+      The network service settings for the manager.
+    properties:
+      DHCP:
+        type: Protocol
+        description: >-
+          The settings for this manager's DHCPv4 protocol support.
+        required: false
+      DHCPv6:
+        type: Protocol
+        description: >-
+          The settings for this manager's DHCPv6 protocol support.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FQDN:
+        type: string
+        description: >-
+          The fully qualified domain name for the manager obtained by DNS including
+          the host name and top-level domain name.
+        required: false
+      HTTP:
+        type: Protocol
+        description: >-
+          The settings for this manager's HTTP protocol support.
+        required: false
+      HTTPS:
+        type: HTTPSProtocol
+        description: >-
+          The settings for this manager's HTTPS protocol support.
+        required: false
+      HostName:
+        type: string
+        description: >-
+          The DNS host name of this manager, without any domain information.
+        required: false
+      IPMI:
+        type: Protocol
+        description: >-
+          The settings for this manager's IPMI-over-LAN protocol support.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      KVMIP:
+        type: Protocol
+        description: >-
+          The settings for this manager's KVM-IP protocol support that apply to all
+          system instances controlled by this manager.
+        required: false
+      NTP:
+        type: NTPProtocol
+        description: >-
+          The settings for this manager's NTP protocol support.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Proxy:
+        type: ProxyConfiguration
+        description: >-
+          The HTTP/HTTPS proxy information for this manager.
+        required: false
+      RDP:
+        type: Protocol
+        description: >-
+          The settings for this manager's Remote Desktop Protocol support.
+        required: false
+      RFB:
+        type: Protocol
+        description: >-
+          The settings for this manager's Remote Frame Buffer protocol support, which
+          can support VNC.
+        required: false
+      SNMP:
+        type: SNMPProtocol
+        description: >-
+          The settings for this manager's SNMP support.
+        required: false
+      SSDP:
+        type: SSDProtocol
+        description: >-
+          The settings for this manager's SSDP support.
+        required: false
+      SSH:
+        type: Protocol
+        description: >-
+          The settings for this manager's Secure Shell (SSH) protocol support.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Telnet:
+        type: Protocol
+        description: >-
+          The settings for this manager's Telnet protocol support.
+        required: false
+      VirtualMedia:
+        type: Protocol
+        description: >-
+          The settings for this manager's virtual media support that apply to all
+          system instances controlled by this manager.
+        required: false
+    capabilities:
+      feature:
+        type: mnntprcp:ManagerNetworkProtocolFeature
+      containable:
+        type: mnntprcp:ManagerNetworkProtocolContainable
+  HTTPSProtocol:
+    description: >-
+      The settings for a network protocol associated with a manager.
+    properties:
+      Port:
+        type: integer
+        description: >-
+          The protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the protocol is enabled.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates used for HTTPS by this manager.
+    capabilities:
+      containable:
+        type: mnntprcp:HTTPSProtocolContainable

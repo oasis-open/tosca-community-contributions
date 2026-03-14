@@ -1,0 +1,111 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: JobCollection.yaml
+  namespace: jbcllctn
+- url: LogService.yaml
+  namespace: lgsrvc
+- url: Core.yaml
+  namespace: core
+- url: JobCollection_caps.yaml
+  namespace: jbcllcp
+- url: LogService_caps.yaml
+  namespace: lgsrvcp
+- url: JobService_caps.yaml
+  namespace: jbsrvcp
+data_types:
+  JobServiceCapabilities:
+    description: >-
+      This object describes the supported capabilities of this Job Service implementation.
+    properties:
+      MaxJobs:
+        type: integer
+        description: >-
+          Maximum number of Jobs supported.
+        required: false
+      MaxSteps:
+        type: integer
+        description: >-
+          Maximum number of Job Steps supported.
+        required: false
+      Scheduling:
+        type: boolean
+        description: >-
+          Indicates whether scheduling of Jobs is supported.
+        required: false
+node_types:
+  JobService:
+    description: >-
+      The Job Service of a Redfish service allows scheduling and execution of operations.  It
+      represents the properties for the Job Service itself and has links to the actual
+      collection of Job resources.
+    properties:
+      DateTime:
+        type: string
+        description: >-
+          The current DateTime (with offset) setting that the job service is using.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      ServiceCapabilities:
+        type: JobServiceCapabilities
+        description: >-
+          This object describes the supported capabilities of this Job Service implementation.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+    requirements:
+    - Jobs:
+        node: jbcllctn:JobCollection
+        capability: jbcllcp:JobCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          References to the Jobs collection.
+    - Log:
+        node: lgsrvc:LogService
+        capability: lgsrvcp:LogServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to a Log Service used by the Job Service.
+    capabilities:
+      feature:
+        type: jbsrvcp:JobServiceFeature
+      containable:
+        type: jbsrvcp:JobServiceContainable

@@ -1,0 +1,134 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Switch.yaml
+  namespace: switch
+- url: Resource.yaml
+  namespace: resource
+- url: ResourceBlock.yaml
+  namespace: rsrcblck
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+- url: ResourceBlock_caps.yaml
+  namespace: rsrblccp
+- url: Zone_caps.yaml
+  namespace: zonecaps
+data_types:
+  ExternalAccessibility:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - GloballyAccessible
+        - NonZonedAccessible
+        - ZoneOnly
+relationship_types:
+  ZoneDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      InvolvedSwitches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ResourceBlocks@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  Zone:
+    description: >-
+      The Zone schema describes a simple fabric zone for a Redfish implementation.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ExternalAccessibility:
+        type: ExternalAccessibility
+        description: >-
+          Indicates accessiblity of endpoints in this zone to endpoints outside of
+          this zone.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The identifiers for this zone.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+    requirements:
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: ZoneDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The links to the endpoints that this zone contains.
+    - InvolvedSwitches:
+        node: switch:Switch
+        capability: swtchcps:SwitchFeature
+        relationship: ZoneDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The links to the collection of switches in this zone.
+    - ResourceBlocks:
+        node: rsrcblck:ResourceBlock
+        capability: rsrblccp:ResourceBlockFeature
+        relationship: ZoneDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The links to the Resource Blocks with which this zone is associated.
+    capabilities:
+      feature:
+        type: zonecaps:ZoneFeature
+      containable:
+        type: zonecaps:ZoneContainable

@@ -1,0 +1,1196 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: NetworkDeviceFunction.yaml
+  namespace: ntwdvcfn
+- url: RouteEntryCollection.yaml
+  namespace: rtentcl
+- url: VCATEntryCollection.yaml
+  namespace: vctncllc
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Cable.yaml
+  namespace: cable
+- url: Port.yaml
+  namespace: port
+- url: Switch.yaml
+  namespace: switch
+- url: EthernetInterface.yaml
+  namespace: ethrintr
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Cable_caps.yaml
+  namespace: cblcps
+- url: Port_caps.yaml
+  namespace: portcaps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: PortMetrics.yaml
+  namespace: prtmtrcs
+- url: Protocol.yaml
+  namespace: protocol
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+- url: PortMetrics_caps.yaml
+  namespace: prtmtrcp
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: NetworkDeviceFunction_caps.yaml
+  namespace: ntdvfncp
+- url: RouteEntryCollection_caps.yaml
+  namespace: rtenclcp
+- url: VCATEntryCollection_caps.yaml
+  namespace: vctcllcp
+data_types:
+  CXL:
+    description: >-
+      CXL properties for a port.
+    properties:
+      Congestion:
+        type: Congestion
+        description: >-
+          The congestion properties for this CXL port.
+        required: false
+      ConnectedDeviceMode:
+        type: ConnectedDeviceMode
+        description: >-
+          The connected device mode.
+        required: false
+      ConnectedDeviceType:
+        type: ConnectedDeviceType
+        description: >-
+          The connected device type.
+        required: false
+      CurrentPortConfigurationState:
+        type: CurrentPortConfigurationState
+        description: >-
+          The current port configuration state.
+        required: false
+      MaxLogicalDeviceCount:
+        type: integer
+        description: >-
+          The maximum number of logical devices supported.
+        required: false
+      QoSTelemetryCapabilities:
+        type: QoSTelemetryCapabilities
+        description: >-
+          The quality of service telemetry capabilities for this CXL port.
+        required: false
+      SupportedCXLModes:
+        type: list
+        description: >-
+          The supported device modes.
+        required: false
+        entry_schema:
+          type: ConnectedDeviceMode
+      TemporaryThroughputReductionEnabled:
+        type: boolean
+        description: >-
+          Indicates whether temporary throughput reduction is enabled.
+        required: false
+  ConfiguredNetworkLink:
+    description: >-
+      A set of link settings that a port is configured to use for autonegotiation.
+    properties:
+      ConfiguredLinkSpeedGbps:
+        type: float
+        description: >-
+          The link speed per lane this port is configured to use for autonegotiation.
+        required: false
+      ConfiguredWidth:
+        type: integer
+        description: >-
+          The link width this port is configured to use for autonegotiation in conjunction
+          with the link speed.
+        required: false
+  Congestion:
+    description: >-
+      The congestion properties for a CXL port.
+    properties:
+      BackpressureSampleInterval:
+        type: integer
+        description: >-
+          The interval for the CXL Specification-defined 'Egress Port Congestion'
+          mechanism to take samples in nanoseconds.
+        required: false
+      CompletionCollectionInterval:
+        type: integer
+        description: >-
+          The interval for the CXL Specification-defined 'Completion Counting' mechanism
+          to collect the number of transmitted responses in a single counter in nanoseconds.
+        required: false
+      CongestionTelemetryEnabled:
+        type: boolean
+        description: >-
+          Indicates whether congestion telemetry collection is enabled for this port.
+        required: false
+      EgressModeratePercentage:
+        type: integer
+        description: >-
+          The threshold for moderate egress port congestion as a percentage.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      EgressSeverePercentage:
+        type: integer
+        description: >-
+          The threshold for severe egress port congestion as a percentage.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      MaxSustainedRequestCmpBias:
+        type: integer
+        description: >-
+          The estimated maximum sustained sum of requests and recent responses across
+          the entire device, serving as the basis for the CXL Specification-defined
+          'QoS Limit Fraction'.
+        required: false
+  ConnectedDeviceMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Disconnected
+        - RCD
+        - CXL68BFlitAndVH
+        - Standard256BFlit
+        - CXLLatencyOptimized256BFlit
+        - PBR
+  ConnectedDeviceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - PCIeDevice
+        - Type1
+        - Type2
+        - Type3SLD
+        - Type3MLD
+  CurrentPortConfigurationState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Disabled
+        - BindInProgress
+        - UnbindInProgress
+        - DSP
+        - USP
+        - Reserved
+        - FabricLink
+  EthernetProperties:
+    description: >-
+      Ethernet-specific properties for a port.
+    properties:
+      AssociatedMACAddresses:
+        type: list
+        description: >-
+          An array of configured MAC addresses that are associated with this network
+          port, including the programmed address of the lowest-numbered network device
+          function, the configured but not active address, if applicable, the address
+          for hardware port teaming, or other network addresses.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+        entry_schema:
+          type: string
+      EEEEnabled:
+        type: boolean
+        description: >-
+          Indicates whether IEEE 802.3az Energy-Efficient Ethernet (EEE) is enabled
+          on this port.
+        required: false
+      FlowControlConfiguration:
+        type: FlowControl
+        description: >-
+          The locally configured 802.3x flow control setting for this port.
+        required: false
+      FlowControlStatus:
+        type: FlowControl
+        description: >-
+          The 802.3x flow control behavior negotiated with the link partner for this
+          port.
+        required: false
+      LLDPEnabled:
+        type: boolean
+        description: >-
+          Enable/disable LLDP for this port.
+        required: false
+      LLDPReceive:
+        type: LLDPReceive
+        description: >-
+          LLDP data being received on this link.
+        required: false
+      LLDPTransmit:
+        type: LLDPTransmit
+        description: >-
+          LLDP data being transmitted on this link.
+        required: false
+      SupportedEthernetCapabilities:
+        type: list
+        description: >-
+          The set of Ethernet capabilities that this port supports.
+        required: false
+        entry_schema:
+          type: SupportedEthernetCapabilities
+      WakeOnLANEnabled:
+        type: boolean
+        description: >-
+          Indicates whether Wake on LAN (WoL) is enabled on this port.
+        required: false
+  FiberConnectionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SingleMode
+        - MultiMode
+  FibreChannelProperties:
+    description: >-
+      Fibre Channel-specific properties for a port.
+    properties:
+      AssociatedWorldWideNames:
+        type: list
+        description: >-
+          An array of configured World Wide Names (WWN) that are associated with this
+          network port, including the programmed address of the lowest-numbered network
+          device function, the configured but not active address, if applicable, the
+          address for hardware port teaming, or other network addresses.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){7}([0-9A-Fa-f]{2})$
+        entry_schema:
+          type: string
+      FabricName:
+        type: string
+        description: >-
+          The Fibre Channel Fabric Name provided by the switch.
+        required: false
+      NumberDiscoveredRemotePorts:
+        type: integer
+        description: >-
+          The number of ports not on the associated device that the associated device
+          has discovered through this port.
+        required: false
+      PortConnectionType:
+        type: PortConnectionType
+        description: >-
+          The connection type of this port.
+        required: false
+  FlowControl:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - TX
+        - RX
+        - TX_RX
+  IEEE802IdSubtype:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ChassisComp
+        - IfAlias
+        - PortComp
+        - MacAddr
+        - NetworkAddr
+        - IfName
+        - AgentId
+        - LocalAssign
+        - NotTransmitted
+  InfiniBandProperties:
+    description: >-
+      InfiniBand-specific properties for a port.
+    properties:
+      AssociatedNodeGUIDs:
+        type: list
+        description: >-
+          An array of configured node GUIDs that are associated with this network
+          port, including the programmed address of the lowest-numbered network device
+          function, the configured but not active address, if applicable, the address
+          for hardware port teaming, or other network addresses.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{4}[:-]){3}([0-9A-Fa-f]{4})$
+        entry_schema:
+          type: string
+      AssociatedPortGUIDs:
+        type: list
+        description: >-
+          An array of configured port GUIDs that are associated with this network
+          port, including the programmed address of the lowest-numbered network device
+          function, the configured but not active address, if applicable, the address
+          for hardware port teaming, or other network addresses.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{4}[:-]){3}([0-9A-Fa-f]{4})$
+        entry_schema:
+          type: string
+      AssociatedSystemGUIDs:
+        type: list
+        description: >-
+          An array of configured system GUIDs that are associated with this network
+          port, including the programmed address of the lowest-numbered network device
+          function, the configured but not active address, if applicable, the address
+          for hardware port teaming, or other network addresses.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{4}[:-]){3}([0-9A-Fa-f]{4})$
+        entry_schema:
+          type: string
+  LLDPReceive:
+    description: >-
+      Link Layer Data Protocol (LLDP) data received from the remote partner across
+      this link.
+    properties:
+      ChassisId:
+        type: string
+        description: >-
+          Link Layer Data Protocol (LLDP) chassis ID received from the remote partner
+          across this link.
+        required: false
+      ChassisIdSubtype:
+        type: IEEE802IdSubtype
+        description: >-
+          The type of identifier used for the chassis ID received from the remote
+          partner across this link.
+        required: false
+      ManagementAddressIPv4:
+        type: string
+        description: >-
+          The IPv4 management address received from the remote partner across this
+          link.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+      ManagementAddressIPv6:
+        type: string
+        description: >-
+          The IPv6 management address received from the remote partner across this
+          link.
+        required: false
+      ManagementAddressMAC:
+        type: string
+        description: >-
+          The management MAC address received from the remote partner across this
+          link.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+      ManagementVlanId:
+        type: integer
+        description: >-
+          The management VLAN ID received from the remote partner across this link.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 4095
+      PortId:
+        type: string
+        description: >-
+          A colon-delimited string of hexadecimal octets identifying a port.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-F]{2})([:]([0-9A-F]){2}){0,63}$
+      PortIdSubtype:
+        type: IEEE802IdSubtype
+        description: >-
+          The port ID subtype received from the remote partner across this link.
+        required: false
+      SystemCapabilities:
+        type: list
+        description: >-
+          The system capabilities received from the remote partner across this link.
+        required: false
+        entry_schema:
+          type: LLDPSystemCapabilities
+      SystemDescription:
+        type: string
+        description: >-
+          The system description received from the remote partner across this link.
+        required: false
+      SystemName:
+        type: string
+        description: >-
+          The system name received from the remote partner across this link.
+        required: false
+  LLDPSystemCapabilities:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - Bridge
+        - DOCSISCableDevice
+        - Other
+        - Repeater
+        - Router
+        - Station
+        - Telephone
+        - WLANAccessPoint
+  LLDPTransmit:
+    description: >-
+      Link Layer Data Protocol (LLDP) data being transmitted on this link.
+    properties:
+      ChassisId:
+        type: string
+        description: >-
+          Link Layer Data Protocol (LLDP) chassis ID.
+        required: false
+      ChassisIdSubtype:
+        type: IEEE802IdSubtype
+        description: >-
+          The type of identifier used for the chassis ID.
+        required: false
+      ManagementAddressIPv4:
+        type: string
+        description: >-
+          The IPv4 management address to be transmitted from this endpoint.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$)|(^$)
+      ManagementAddressIPv6:
+        type: string
+        description: >-
+          The IPv6 management address to be transmitted from this endpoint.
+        required: false
+      ManagementAddressMAC:
+        type: string
+        description: >-
+          The management MAC address to be transmitted from this endpoint.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$)|(^$)
+      ManagementVlanId:
+        type: integer
+        description: >-
+          The management VLAN ID to be transmitted from this endpoint.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 4095
+      PortId:
+        type: string
+        description: >-
+          A colon-delimited string of hexadecimal octets identifying a port to be
+          transmitted from this endpoint.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^([0-9A-F]{2})([:]([0-9A-F]){2}){0,63}$)|(^$)
+      PortIdSubtype:
+        type: IEEE802IdSubtype
+        description: >-
+          The port ID subtype to be transmitted from this endpoint.
+        required: false
+      SystemCapabilities:
+        type: list
+        description: >-
+          The system capabilities to be transmitted from this endpoint.
+        required: false
+        entry_schema:
+          type: LLDPSystemCapabilities
+      SystemDescription:
+        type: string
+        description: >-
+          The system description to be transmitted from this endpoint.
+        required: false
+      SystemName:
+        type: string
+        description: >-
+          The system name to be transmitted from this endpoint.
+        required: false
+  LinkConfiguration:
+    description: >-
+      Properties of the link for which this port is configured.
+    properties:
+      AutoSpeedNegotiationCapable:
+        type: boolean
+        description: >-
+          An indication of whether the port is capable of autonegotiating speed.
+        required: false
+      AutoSpeedNegotiationEnabled:
+        type: boolean
+        description: >-
+          Controls whether this port is configured to enable autonegotiating speed.
+        required: false
+      CapableLinkSpeedGbps:
+        type: list
+        description: >-
+          The set of link speed capabilities of this port.
+        required: false
+        entry_schema:
+          type: float
+      ConfiguredNetworkLinks:
+        type: list
+        description: >-
+          The set of link speed and width pairs this port is configured to use for
+          autonegotiation.
+        required: false
+        entry_schema:
+          type: ConfiguredNetworkLink
+  LinkNetworkTechnology:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Ethernet
+        - InfiniBand
+        - FibreChannel
+        - GenZ
+        - PCIe
+  LinkState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+  LinkStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - LinkUp
+        - Starting
+        - Training
+        - LinkDown
+        - NoLink
+  MediumType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Copper
+        - FiberOptic
+  PortConnectionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NotConnected
+        - NPort
+        - PointToPoint
+        - PrivateLoop
+        - PublicLoop
+        - Generic
+        - ExtenderFabric
+        - FPort
+        - EPort
+        - TEPort
+        - NPPort
+        - GPort
+        - NLPort
+        - FLPort
+        - EXPort
+        - UPort
+        - DPort
+  PortMedium:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Electrical
+        - Optical
+  PortType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - UpstreamPort
+        - DownstreamPort
+        - InterswitchPort
+        - ManagementPort
+        - BidirectionalPort
+        - UnconfiguredPort
+  QoSTelemetryCapabilities:
+    description: >-
+      The quality of service telemetry capabilities for a CXL port.
+    properties:
+      EgressPortBackpressureSupported:
+        type: boolean
+        description: >-
+          Indicates whether the port supports the CXL Specification-defined 'Egress
+          Port Backpressure' mechanism.
+        required: false
+      TemporaryThroughputReductionSupported:
+        type: boolean
+        description: >-
+          Indicates whether the port supports the CXL Specification-defined 'Temporary
+          Throughput Reduction' mechanism.
+        required: false
+  SFP:
+    description: >-
+      A small form-factor pluggable (SFP) device attached to a port.
+    properties:
+      FiberConnectionType:
+        type: FiberConnectionType
+        description: >-
+          The type of fiber connection currently used by this SFP.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this SFP.
+        required: false
+      MediumType:
+        type: MediumType
+        description: >-
+          The medium type connected to this SFP.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this SFP.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this SFP.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SupportedSFPTypes:
+        type: list
+        description: >-
+          The types of SFP devices that can be attached to this port.
+        required: false
+        entry_schema:
+          type: SFPType
+      Type:
+        type: SFPType
+        description: >-
+          The type of SFP device that is attached to this port.
+        required: false
+      VendorOUI:
+        type: string
+        description: >-
+          The IEEE OUI of the vendor of this SFP.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}-){2}([0-9A-Fa-f]{2})$
+      Version:
+        type: string
+        description: >-
+          The hardware version of this SFP.
+        required: false
+  SFPType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SFP
+        - SFPPlus
+        - SFP28
+        - cSFP
+        - SFPDD
+        - QSFP
+        - QSFPPlus
+        - QSFP14
+        - QSFP28
+        - QSFP56
+        - MiniSASHD
+        - QSFPDD
+        - OSFP
+  SupportedEthernetCapabilities:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - WakeOnLAN
+        - EEE
+relationship_types:
+  PortDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AssociatedEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Cables@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitchPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      EthernetInterfaces@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  PortActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets this port.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+      ResetPPB:
+        description: >-
+          This action resets the PCI-to-PCI bridge (PPB) for this port.
+node_types:
+  Port:
+    description: >-
+      The `Port` schema contains properties that describe a port of a switch, controller,
+      chassis, or any other device that could be connected to another entity.
+    properties:
+      ActiveWidth:
+        type: integer
+        description: >-
+          The number of active lanes for this interface.
+        required: false
+      CXL:
+        type: CXL
+        description: >-
+          CXL properties for this port.
+        required: false
+      CapableProtocolVersions:
+        type: list
+        description: >-
+          The protocol versions capable of being sent over this port.
+        required: false
+        entry_schema:
+          type: string
+      CurrentProtocolVersion:
+        type: string
+        description: >-
+          The protocol version being sent over this port.
+        required: false
+      CurrentSpeedGbps:
+        type: float
+        description: >-
+          The current speed of this port.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Enabled:
+        type: boolean
+        description: >-
+          An indication of whether this port is enabled.
+        required: false
+      Ethernet:
+        type: EthernetProperties
+        description: >-
+          Ethernet properties for this port.
+        required: false
+      FibreChannel:
+        type: FibreChannelProperties
+        description: >-
+          Fibre Channel properties for this port.
+        required: false
+      FunctionMaxBandwidth:
+        type: list
+        description: >-
+          An array of maximum bandwidth allocation percentages for the functions associated
+          with this port.
+        required: false
+        entry_schema:
+          type: FunctionMaxBandwidth
+      FunctionMinBandwidth:
+        type: list
+        description: >-
+          An array of minimum bandwidth allocation percentages for the functions associated
+          with this port.
+        required: false
+        entry_schema:
+          type: FunctionMinBandwidth
+      GenZ:
+        type: GenZ
+        description: >-
+          Gen-Z specific properties.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InfiniBand:
+        type: InfiniBandProperties
+        description: >-
+          InfiniBand properties for this port.
+        required: false
+      InterfaceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the port is enabled.
+        required: false
+      LinkConfiguration:
+        type: list
+        description: >-
+          The link configuration of this port.
+        required: false
+        entry_schema:
+          type: LinkConfiguration
+      LinkNetworkTechnology:
+        type: LinkNetworkTechnology
+        description: >-
+          The link network technology capabilities of this port.
+        required: false
+      LinkState:
+        type: LinkState
+        description: >-
+          The desired link state for this interface.
+        required: false
+      LinkStatus:
+        type: LinkStatus
+        description: >-
+          The link status for this interface.
+        required: false
+      LinkTransitionIndicator:
+        type: integer
+        description: >-
+          The number of link state transitions for this interface.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the port.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      MaxFrameSize:
+        type: integer
+        description: >-
+          The maximum frame size supported by the port.
+        required: false
+      MaxSpeedGbps:
+        type: float
+        description: >-
+          The maximum speed of this port as currently configured.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PortId:
+        type: string
+        description: >-
+          The hardware-defined identifier of this port.
+        required: false
+      PortMedium:
+        type: PortMedium
+        description: >-
+          The physical connection medium for this port.
+        required: false
+      PortType:
+        type: PortType
+        description: >-
+          The type of this port.
+        required: false
+      RemotePortId:
+        type: string
+        description: >-
+          The identifier of the remote port to which this port is connected.
+        required: false
+      SFP:
+        type: SFP
+        description: >-
+          The small form-factor pluggable (SFP) device associated with this port.
+        required: false
+      SignalDetected:
+        type: boolean
+        description: >-
+          An indication of whether a signal is detected on this interface.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Width:
+        type: integer
+        description: >-
+          The number of lanes, phys, or other physical transport links that this port
+          contains.
+        required: false
+    requirements:
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this port or any attached small
+          form-factor pluggable (SFP) device.
+    - Metrics:
+        node: prtmtrcs:PortMetrics
+        capability: prtmtrcp:PortMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metrics associated with this port.
+    - PortProtocol:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol being sent over this port.
+    - AssociatedEndpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints at the other end of the link.
+    - Cables:
+        node: cable:Cable
+        capability: cblcps:CableFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the cables connected to this port.
+    - ConnectedPorts:
+        node: port:Port
+        capability: portcaps:PortFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the remote device ports at the other end of the link.
+    - ConnectedSwitchPorts:
+        node: port:Port
+        capability: portcaps:PortFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switch ports at the other end of the link.
+    - ConnectedSwitches:
+        node: switch:Switch
+        capability: swtchcps:SwitchFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switches at the other end of the link.
+    - EthernetInterfaces:
+        node: ethrintr:EthernetInterface
+        capability: ethintcp:EthernetInterfaceFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The links to the Ethernet interfaces this port provides.
+    interfaces:
+      Actions:
+        type: PortActions
+    capabilities:
+      feature:
+        type: portcaps:PortFeature
+      containable:
+        type: portcaps:PortContainable
+  FunctionMaxBandwidth:
+    description: >-
+      A maximum bandwidth allocation percentage for a network device functions associated
+      with a port.
+    properties:
+      AllocationPercent:
+        type: integer
+        description: >-
+          The maximum bandwidth allocation percentage allocated to the corresponding
+          network device function instance.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+    requirements:
+    - NetworkDeviceFunction:
+        node: ntwdvcfn:NetworkDeviceFunction
+        capability: ntdvfncp:NetworkDeviceFunctionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the network device function associated with this bandwidth setting
+          of this network port.
+    capabilities:
+      containable:
+        type: portcaps:FunctionMaxBandwidthContainable
+  FunctionMinBandwidth:
+    description: >-
+      A minimum bandwidth allocation percentage for a network device functions associated
+      with a port.
+    properties:
+      AllocationPercent:
+        type: integer
+        description: >-
+          The minimum bandwidth allocation percentage allocated to the corresponding
+          network device function instance.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+    requirements:
+    - NetworkDeviceFunction:
+        node: ntwdvcfn:NetworkDeviceFunction
+        capability: ntdvfncp:NetworkDeviceFunctionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the network device function associated with this bandwidth setting
+          of this network port.
+    capabilities:
+      containable:
+        type: portcaps:FunctionMinBandwidthContainable
+  GenZ:
+    description: >-
+      This type defines Gen-Z specific port properties.
+    requirements:
+    - LPRT:
+        node: rtentcl:RouteEntryCollection
+        capability: rtenclcp:RouteEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The Linear Packet Relay Table for the port.
+    - MPRT:
+        node: rtentcl:RouteEntryCollection
+        capability: rtenclcp:RouteEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The Multi-subnet Packet Relay Table for the port.
+    - VCAT:
+        node: vctncllc:VCATEntryCollection
+        capability: vctcllcp:VCATEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The Virtual Channel Action Table for the port.
+    capabilities:
+      containable:
+        type: portcaps:GenZContainable

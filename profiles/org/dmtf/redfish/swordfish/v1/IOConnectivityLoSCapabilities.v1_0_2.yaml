@@ -1,0 +1,85 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Protocol.yaml
+  namespace: protocol
+- url: IOConnectivityLineOfService.yaml
+  namespace: iclnofsr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: IOConnectivityLineOfService_caps.yaml
+  namespace: iclnofsc
+- url: IOConnectivityLoSCapabilities_caps.yaml
+  namespace: iclsccp
+node_types:
+  IOConnectivityLoSCapabilities:
+    description: >-
+      Describe IO Connectivity capabilities.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The value identifies this resource.
+        required: false
+      MaxSupportedBytesPerSecond:
+        type: integer
+        description: >-
+          The maximum Bandwidth in bytes per second that a connection can support.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SupportedLinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - SupportedAccessProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          SupportedAccessProtocols.
+    - SupportedLinesOfService:
+        node: iclnofsr:IOConnectivityLineOfService
+        capability: iclnofsc:IOConnectivityLineOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Collection of known and supported IOConnectivityLinesOfService.
+    capabilities:
+      feature:
+        type: iclsccp:IOConnectivityLoSCapabilitiesFeature
+      containable:
+        type: iclsccp:IOConnectivityLoSCapabilitiesContainable

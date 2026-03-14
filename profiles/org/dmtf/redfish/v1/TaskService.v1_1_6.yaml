@@ -1,0 +1,92 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: TaskCollection.yaml
+  namespace: tskcllc
+- url: Core.yaml
+  namespace: core
+- url: TaskCollection_caps.yaml
+  namespace: tskcllcp
+- url: TaskService_caps.yaml
+  namespace: tsksrvcp
+data_types:
+  OverWritePolicy:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Manual
+        - Oldest
+node_types:
+  TaskService:
+    description: >-
+      The TaskService schema describes a task service that enables management of long-duration
+      operations, includes the properties for the task service itself, and has links
+      to the resource collection of tasks.
+    properties:
+      CompletedTaskOverWritePolicy:
+        type: OverWritePolicy
+        description: >-
+          The overwrite policy for completed tasks.  This property indicates if the
+          task service overwrites completed task information.
+        required: false
+      DateTime:
+        type: string
+        description: >-
+          The current date and time, with UTC offset, setting that the task service
+          uses.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LifeCycleEventOnTaskStateChange:
+        type: boolean
+        description: >-
+          An indication of whether a task state change sends an event.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Tasks:
+        node: tskcllc:TaskCollection
+        capability: tskcllcp:TaskCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The links to the collection of tasks.
+    capabilities:
+      feature:
+        type: tsksrvcp:TaskServiceFeature
+      containable:
+        type: tsksrvcp:TaskServiceContainable

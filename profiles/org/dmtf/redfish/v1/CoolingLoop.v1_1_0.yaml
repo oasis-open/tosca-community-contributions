@@ -1,0 +1,269 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: Manager.yaml
+  namespace: manager
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: Sensor.yaml
+  namespace: sensor
+- url: CoolantConnectorCollection.yaml
+  namespace: clncnncl
+- url: CoolantConnectorCollection_caps.yaml
+  namespace: clcnclcp
+- url: CoolingLoop_caps.yaml
+  namespace: clnlpcp
+data_types:
+  Coolant:
+    description: >-
+      This type describes coolant.
+    properties:
+      AdditiveName:
+        type: string
+        description: >-
+          The name of the additive.
+        required: false
+      AdditivePercent:
+        type: float
+        description: >-
+          The percent additives contained in the coolant.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      CoolantType:
+        type: CoolantType
+        description: >-
+          The type of coolant.
+        required: false
+      DensityKgPerCubicMeter:
+        type: float
+        description: >-
+          The density (kg/m^3) of the coolant.
+        required: false
+      RatedServiceHours:
+        type: float
+        description: >-
+          The rated hours of service life for this coolant.
+        required: false
+      ServiceHours:
+        type: float
+        description: >-
+          The hours of service this coolant has provided.
+        required: false
+      ServicedDate:
+        type: string
+        description: >-
+          The date the coolant was last serviced.
+        required: false
+      SpecificHeatkJoulesPerKgK:
+        type: float
+        description: >-
+          The specific heat capacity (kJ/(kg*K)) of the coolant.
+        required: false
+  CoolantType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Water
+        - Hydrocarbon
+        - Fluorocarbon
+        - Dielectric
+  CoolingLoopType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - FWS
+        - TCS
+        - RowTCS
+relationship_types:
+  CoolingLoopDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  CoolingLoop:
+    description: >-
+      The `CoolingLoop` schema describes a cooling loop.  A cooling loop might be
+      any coolant-carrying vessel, such as facility-level pipework, an immersion cooling
+      tank, or a manifold.  A loop might describe its connectors and instrumentation
+      but does not generally include active cooling components or subsystems.
+    properties:
+      ConsumingEquipmentNames:
+        type: list
+        description: >-
+          An array of names of downstream devices that receive coolant from this cooling
+          loop.
+        required: false
+        entry_schema:
+          type: string
+      Coolant:
+        type: Coolant
+        description: >-
+          The coolant details for this cooling loop.
+        required: false
+      CoolantLevelPercent:
+        type: sensor:SensorExcerpt
+        description: >-
+          The coolant capacity filled (percent).
+        required: false
+      CoolantLevelStatus:
+        type: resource:Health
+        description: >-
+          The status of the coolant level in this cooling loop.
+        required: false
+      CoolantQuality:
+        type: resource:Health
+        description: >-
+          The quality of the coolant.
+        required: false
+      CoolingLoopType:
+        type: CoolingLoopType
+        description: >-
+          The type of cooling loop.
+        required: false
+      CoolingManagerURI:
+        type: string
+        description: >-
+          The link to the application that manages the cooling loop.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RatedFlowLitersPerMinute:
+        type: float
+        description: >-
+          The rated liquid flow (L/min) for this cooling loop.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RatedPressurekPa:
+        type: float
+        description: >-
+          The rated pressure (kPa) for this cooling loop.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SupplyEquipmentNames:
+        type: list
+        description: >-
+          An array of names of upstream devices that supply coolant to this cooling
+          loop.
+        required: false
+        entry_schema:
+          type: string
+      UserLabel:
+        type: string
+        description: >-
+          A user-assigned label.
+        required: false
+    requirements:
+    - PrimaryCoolantConnectors:
+        node: clncnncl:CoolantConnectorCollection
+        capability: clcnclcp:CoolantConnectorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the primary coolant connectors for this equipment.
+    - SecondaryCoolantConnectors:
+        node: clncnncl:CoolantConnectorCollection
+        capability: clcnclcp:CoolantConnectorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the secondary coolant connectors for this equipment.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: CoolingLoopDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the chassis that contains this equipment.
+    - Facility:
+        # node: facility:Facility
+        capability: core:Feature
+        relationship: CoolingLoopDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the facility that contains this equipment.
+    - ManagedBy:
+        node: manager:Manager
+        capability: mngrcps:ManagerFeature
+        relationship: CoolingLoopDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers responsible for managing this equipment.
+    capabilities:
+      feature:
+        type: clnlpcp:CoolingLoopFeature
+      containable:
+        type: clnlpcp:CoolingLoopContainable

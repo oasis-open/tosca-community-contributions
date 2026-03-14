@@ -1,0 +1,548 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ManagerAccountCollection.yaml
+  namespace: mngacccl
+- url: ExternalAccountProviderCollection.yaml
+  namespace: exacprcl
+- url: Resource.yaml
+  namespace: resource
+- url: PrivilegeRegistry.yaml
+  namespace: prvlrgst
+- url: Privileges.yaml
+  namespace: prvlgs
+- url: RoleCollection.yaml
+  namespace: rlcllctn
+- url: Core.yaml
+  namespace: core
+- url: ManagerAccountCollection_caps.yaml
+  namespace: mnacclcp
+- url: ExternalAccountProviderCollection_caps.yaml
+  namespace: exacprcc
+- url: PrivilegeRegistry_caps.yaml
+  namespace: prvrgscp
+- url: RoleCollection_caps.yaml
+  namespace: rlcllcp
+- url: AccountService_caps.yaml
+  namespace: accsrvcp
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+data_types:
+  AccountProviderTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RedfishService
+        - ActiveDirectoryService
+        - LDAPService
+        - OEM
+        - TACACSplus
+        - OAuth2
+  Authentication:
+    description: >-
+      The information required to authenticate to the external service.
+    properties:
+      AuthenticationType:
+        type: AuthenticationTypes
+        description: >-
+          The type of authentication used to connect to the external account provider.
+        required: false
+      EncryptionKey:
+        type: string
+        description: >-
+          Specifies the encryption key.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[0-9a-fA-F]+$
+      EncryptionKeySet:
+        type: boolean
+        description: >-
+          Indicates if the EncryptionKey property is set.
+        required: false
+      KerberosKeytab:
+        type: string
+        description: >-
+          The Base64-encoded version of the Kerberos keytab for this service.  A PATCH
+          or PUT operation writes the keytab.  This property is `null` in responses.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Password:
+        type: string
+        description: >-
+          The password for this service.  A PATCH or PUT request writes the password.  This
+          property is `null` in responses.
+        required: false
+      Token:
+        type: string
+        description: >-
+          The token for this service.  A PATCH or PUT operation writes the token.  This
+          property is `null` in responses.
+        required: false
+      Username:
+        type: string
+        description: >-
+          The user name for the service.
+        required: false
+  AuthenticationTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Token
+        - KerberosKeytab
+        - UsernameAndPassword
+        - OEM
+  LDAPSearchSettings:
+    description: >-
+      The settings to search a generic LDAP service.
+    properties:
+      BaseDistinguishedNames:
+        type: list
+        description: >-
+          The base distinguished names to use to search an external LDAP service.
+        required: false
+        entry_schema:
+          type: string
+      GroupNameAttribute:
+        type: string
+        description: >-
+          The attribute name that contains the LDAP group name entry.
+        required: false
+      GroupsAttribute:
+        type: string
+        description: >-
+          The attribute name that contains the groups for a user on the LDAP user
+          entry.
+        required: false
+      UsernameAttribute:
+        type: string
+        description: >-
+          The attribute name that contains the LDAP user name entry.
+        required: false
+  LDAPService:
+    description: >-
+      The settings required to parse a generic LDAP service.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SearchSettings:
+        type: LDAPSearchSettings
+        description: >-
+          The required settings to search an external LDAP service.
+        required: false
+  LocalAccountAuth:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+        - Fallback
+        - LocalFirst
+  OAuth2Mode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Discovery
+        - Offline
+  OAuth2Service:
+    description: >-
+      Various settings to parse an OAuth 2.0 service.
+    properties:
+      Audience:
+        type: list
+        description: >-
+          The allowable audience strings of the Redfish service.
+        required: false
+        entry_schema:
+          type: string
+      Issuer:
+        type: string
+        description: >-
+          The issuer string of the OAuth 2.0 service.  Clients should configure this
+          property if Mode contains `Offline`.
+        required: false
+      Mode:
+        type: OAuth2Mode
+        description: >-
+          The mode of operation for token validation.
+        required: false
+      OAuthServiceSigningKeys:
+        type: string
+        description: >-
+          The Base64-encoded signing keys of the issuer of the OAuth 2.0 service.  Clients
+          should configure this property if Mode contains `Offline`.
+        required: false
+  RoleMapping:
+    description: >-
+      The mapping rules that are used to convert the external account providers account
+      information to the local Redfish role.
+    properties:
+      LocalRole:
+        type: string
+        description: >-
+          The name of the local Redfish role to which to map the remote user or group.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RemoteGroup:
+        type: string
+        description: >-
+          The name of the remote group, or the remote role in the case of a Redfish
+          service, that maps to the local Redfish role to which this entity links.
+        required: false
+      RemoteUser:
+        type: string
+        description: >-
+          The name of the remote user that maps to the local Redfish role to which
+          this entity links.
+        required: false
+  TACACSplusPasswordExchangeProtocol:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ASCII
+        - PAP
+        - CHAP
+        - MSCHAPv1
+        - MSCHAPv2
+  TACACSplusService:
+    description: >-
+      Various settings to parse a TACACS+ service.
+    properties:
+      PasswordExchangeProtocols:
+        type: list
+        description: >-
+          Indicates the allowed TACACS+ password exchange protocols.
+        required: false
+        entry_schema:
+          type: TACACSplusPasswordExchangeProtocol
+      PrivilegeLevelArgument:
+        type: string
+        description: >-
+          Indicates the name of the TACACS+ argument name in an authorization request.
+        required: false
+node_types:
+  AccountService:
+    description: >-
+      The AccountService schema defines an account service.  The properties are common
+      to, and enable management of, all user accounts.  The properties include the
+      password requirements and control features, such as account lockout.  Properties
+      and actions in this service specify general behavior that should be followed
+      for typical accounts, however implementations may override these behaviors for
+      special accounts or situations to avoid denial of service or other deadlock
+      situations.
+    properties:
+      AccountLockoutCounterResetAfter:
+        type: integer
+        description: >-
+          The period of time, in seconds, between the last failed login attempt and
+          the reset of the lockout threshold counter.  This value must be less than
+          or equal to the AccountLockoutDuration value.  A reset sets the counter
+          to `0`.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AccountLockoutCounterResetEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the threshold counter is reset after AccountLockoutCounterResetAfter
+          expires.  If `true`, it is reset.  If `false`, only a successful login resets
+          the threshold counter and if the user reaches the AccountLockoutThreshold
+          limit, the account will be locked out indefinitely and only an administrator-issued
+          reset clears the threshold counter.  If this property is absent, the default
+          is `true`.
+        required: false
+      AccountLockoutDuration:
+        type: integer
+        description: >-
+          The period of time, in seconds, that an account is locked after the number
+          of failed login attempts reaches the account lockout threshold, within the
+          period between the last failed login attempt and the reset of the lockout
+          threshold counter.  If this value is `0`, no lockout will occur.  If the
+          AccountLockoutCounterResetEnabled value is `false`, this property is ignored.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AccountLockoutThreshold:
+        type: integer
+        description: >-
+          The number of allowed failed login attempts before a user account is locked
+          for a specified duration.  If `0`, the account is never locked.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ActiveDirectory:
+        type: ExternalAccountProvider
+        description: >-
+          The first Active Directory external account provider that this account service
+          supports.
+        required: false
+      AuthFailureLoggingThreshold:
+        type: integer
+        description: >-
+          The number of authorization failures per account that are allowed before
+          the failed attempt is logged to the manager log.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LDAP:
+        type: ExternalAccountProvider
+        description: >-
+          The first LDAP external account provider that this account service supports.
+        required: false
+      LocalAccountAuth:
+        type: LocalAccountAuth
+        description: >-
+          An indication of how the service uses the accounts collection within this
+          account service as part of authentication.  The enumerated values describe
+          the details for each mode.
+        required: false
+      MaxPasswordLength:
+        type: integer
+        description: >-
+          The maximum password length for this account service.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinPasswordLength:
+        type: integer
+        description: >-
+          The minimum password length for this account service.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      OAuth2:
+        type: ExternalAccountProvider
+        description: >-
+          The first OAuth 2.0 external account provider that this account service
+          supports.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PasswordExpirationDays:
+        type: integer
+        description: >-
+          The number of days before account passwords in this account service will
+          expire.
+        required: false
+      RestrictedOemPrivileges:
+        type: list
+        description: >-
+          The set of restricted OEM privileges.
+        required: false
+        entry_schema:
+          type: string
+      RestrictedPrivileges:
+        type: list
+        description: >-
+          The set of restricted Redfish privileges.
+        required: false
+        entry_schema:
+          type: prvlgs:PrivilegeType
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the account service is enabled.  If `true`, it
+          is enabled.  If `false`, it is disabled and users cannot be created, deleted,
+          or modified, and new sessions cannot be started.  However, established sessions
+          might still continue to run.  Any service, such as the session service,
+          that attempts to access the disabled account service fails.  However, this
+          does not affect HTTP Basic Authentication connections.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SupportedAccountTypes:
+        type: list
+        description: >-
+          The account types supported by the service.
+        required: false
+        entry_schema:
+          type: AccountTypes
+      SupportedOEMAccountTypes:
+        type: list
+        description: >-
+          The OEM account types supported by the service.
+        required: false
+        entry_schema:
+          type: string
+      TACACSplus:
+        type: ExternalAccountProvider
+        description: >-
+          The first TACACS+ external account provider that this account service supports.
+        required: false
+    requirements:
+    - Accounts:
+        node: mngacccl:ManagerAccountCollection
+        capability: mnacclcp:ManagerAccountCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The collection of manager accounts.
+    - AdditionalExternalAccountProviders:
+        node: exacprcl:ExternalAccountProviderCollection
+        capability: exacprcc:ExternalAccountProviderCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The additional external account providers that this account service uses.
+    - PrivilegeMap:
+        node: prvlrgst:PrivilegeRegistry
+        capability: prvrgscp:PrivilegeRegistryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the mapping of the privileges required to complete a requested
+          operation on a URI associated with this service.
+    - Roles:
+        node: rlcllctn:RoleCollection
+        capability: rlcllcp:RoleCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The collection of Redfish roles.
+    capabilities:
+      feature:
+        type: accsrvcp:AccountServiceFeature
+      containable:
+        type: accsrvcp:AccountServiceContainable
+  ExternalAccountProvider:
+    description: >-
+      The external account provider services that can provide accounts for this manager
+      to use for authentication.
+    properties:
+      AccountProviderType:
+        type: AccountProviderTypes
+        description: >-
+          The type of external account provider to which this service connects.
+        required: false
+      Authentication:
+        type: Authentication
+        description: >-
+          The authentication information for the external account provider.
+        required: false
+      LDAPService:
+        type: LDAPService
+        description: >-
+          The additional mapping information needed to parse a generic LDAP service.
+        required: false
+      OAuth2Service:
+        type: OAuth2Service
+        description: >-
+          The additional information needed to parse an OAuth 2.0 service.
+        required: false
+      PasswordSet:
+        type: boolean
+        description: >-
+          Indicates if the Password property is set.
+        required: false
+      Priority:
+        type: integer
+        description: >-
+          The authentication priority for the external account provider.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RemoteRoleMapping:
+        type: list
+        description: >-
+          The mapping rules to convert the external account providers account information
+          to the local Redfish role.
+        required: false
+        entry_schema:
+          type: RoleMapping
+      ServiceAddresses:
+        type: list
+        description: >-
+          The addresses of the user account providers to which this external account
+          provider links.  The format of this field depends on the type of external
+          account provider.
+        required: false
+        entry_schema:
+          type: string
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+      TACACSplusService:
+        type: TACACSplusService
+        description: >-
+          The additional information needed to parse a TACACS+ services.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates that the external account provider
+          uses.
+    capabilities:
+      containable:
+        type: accsrvcp:ExternalAccountProviderContainable

@@ -1,0 +1,78 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: TelemetryData_caps.yaml
+  namespace: tlmdtcp
+node_types:
+  TelemetryData:
+    description: >-
+      The `TelemetryData` schema represents bulk telemetry data from a device or service.
+    properties:
+      AdditionalData:
+        type: string
+        description: >-
+          A Base64-encoded string of the associated telemetry data.
+        required: false
+      AdditionalDataSizeBytes:
+        type: integer
+        description: >-
+          The size of the data available at location specified by `AdditionalDataURI`.
+        required: false
+      AdditionalDataURI:
+        type: string
+        description: >-
+          The URI at which to access the associated telemetry data.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      OEMTelemetryDataType:
+        type: string
+        description: >-
+          The OEM-defined type of telemetry data available in the `AdditionalData`
+          property or retrieved from the URI specified by the `AdditionalDataURI`
+          property.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      TelemetryDataType:
+        type: string
+        description: >-
+          The type of telemetry data available in the `AdditionalData` property or
+          retrieved from the URI specified by the `AdditionalDataURI` property.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - OEM
+      Timestamp:
+        type: string
+        description: >-
+          The date and time when the telemetry data was generated.
+        required: false
+    capabilities:
+      feature:
+        type: tlmdtcp:TelemetryDataFeature
+      containable:
+        type: tlmdtcp:TelemetryDataContainable

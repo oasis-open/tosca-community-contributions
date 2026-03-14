@@ -1,0 +1,107 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Capacity.yaml
+  namespace: capacity
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: DriveCollection.yaml
+  namespace: drvcllc
+- url: StoragePoolCollection.yaml
+  namespace: strplcl
+- url: VolumeCollection.yaml
+  namespace: vlmcllc
+- url: Core.yaml
+  namespace: core
+- url: Capacity_caps.yaml
+  namespace: cpctycps
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: DriveCollection_caps.yaml
+  namespace: drvcllcp
+- url: StoragePoolCollection_caps.yaml
+  namespace: stplclcp
+- url: VolumeCollection_caps.yaml
+  namespace: vlmcllcp
+node_types:
+  CapacitySource:
+    description: >-
+      A description of the type and source of storage.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - ProvidedCapacity:
+        node: capacity:Capacity
+        capability: cpctycps:CapacityContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The amount of space that has been provided from the ProvidingDrives, ProvidingVolumes,
+          ProvidingMemory or ProvidingPools.
+    - ProvidedClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The ClassOfService provided from the ProvidingDrives, ProvidingVolumes,
+          ProvidingMemoryChunks, ProvidingMemory or ProvidingPools.
+    - ProvidingDrives:
+        node: drvcllc:DriveCollection
+        capability: drvcllcp:DriveCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The drive or drives that provide this space.
+    - ProvidingPools:
+        node: strplcl:StoragePoolCollection
+        capability: stplclcp:StoragePoolCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The pool or pools that provide this space.
+    - ProvidingVolumes:
+        node: vlmcllc:VolumeCollection
+        capability: vlmcllcp:VolumeCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The volume or volumes that provide this space.
+    capabilities:
+      feature:
+        type: cpctycps:CapacitySourceFeature
+      containable:
+        type: cpctycps:CapacitySourceContainable

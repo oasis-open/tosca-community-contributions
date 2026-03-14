@@ -1,0 +1,130 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Storage.v1_0_0.yaml
+  namespace: storage
+- url: ZoneCollection.yaml
+  namespace: zncllctn
+- url: EndpointCollection.yaml
+  namespace: endpcllc
+- url: SwitchCollection.yaml
+  namespace: swtccllc
+- url: Core.yaml
+  namespace: core
+- url: ZoneCollection_caps.yaml
+  namespace: zncllcp
+- url: EndpointCollection_caps.yaml
+  namespace: endcllcp
+- url: SwitchCollection_caps.yaml
+  namespace: swtcllcp
+- url: Fabric_caps.yaml
+  namespace: fbrccps
+data_types:
+  Links:
+    description: >-
+      Contains references to other resources that are related to this resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        description: >-
+          The available OEM specific actions for this resource.
+        required: false
+node_types:
+  Fabric:
+    description: >-
+      Fabric contains properties describing a simple fabric consisting of one or more
+      switches, zero or more endpoints, and zero or more zones.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      FabricType:
+        type: storage:Protocol
+        description: >-
+          The protocol being sent over this fabric.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      MaxZones:
+        type: float
+        description: >-
+          The value of this property shall contain the maximum number of zones the
+          switch can currently configure.
+        required: false
+      Links:
+        type: Links
+        description: >-
+          Contains references to other resources that are related to this resource.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    requirements:
+    - Zones:
+        node: zncllctn:ZoneCollection
+        capability: zncllcp:ZoneCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A collection of references to the zones contained in this fabric.
+    - Endpoints:
+        node: endpcllc:EndpointCollection
+        capability: endcllcp:EndpointCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A collection of references to the endpoints contained in this fabric.
+    - Switches:
+        node: swtccllc:SwitchCollection
+        capability: swtcllcp:SwitchCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A collection of references to the switches contained in this fabric.
+    capabilities:
+      feature:
+        type: fbrccps:FabricFeature
+      containable:
+        type: fbrccps:FabricContainable

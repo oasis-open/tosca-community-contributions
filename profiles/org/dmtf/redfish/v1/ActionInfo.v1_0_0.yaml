@@ -1,0 +1,94 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ActionInfo_caps.yaml
+  namespace: actinfcp
+data_types:
+  ParameterTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Boolean
+        - Number
+        - NumberArray
+        - String
+        - StringArray
+        - Object
+        - ObjectArray
+  Parameters:
+    properties:
+      Name:
+        type: string
+        description: >-
+          The name of the parameter for this Action.
+        required: true
+      Required:
+        type: boolean
+        description: >-
+          Indicates whether the parameter is required to perform this Action.
+        required: false
+      DataType:
+        type: ParameterTypes
+        description: >-
+          The JSON property type used for this parameter
+        required: false
+      ObjectDataType:
+        type: string
+        description: >-
+          The OData Type of an object-based parameter
+        required: false
+      AllowableValues:
+        type: list
+        description: >-
+          A list of values for this parameter supported by this Action target
+        required: false
+        entry_schema:
+          type: string
+node_types:
+  ActionInfo:
+    description: >-
+      ActionInfo describes the parameters and other information necessary to perform
+      a Redfish Action to a particular Action target.  As parameter support may differ
+      between implementations and even among instances of a resource, this data can
+      be used to ensure Action requests from applications contain supported parameters.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Parameters:
+        type: list
+        description: >-
+          The parameters associated with the specified Redfish Action
+        required: false
+        entry_schema:
+          type: Parameters
+    capabilities:
+      feature:
+        type: actinfcp:ActionInfoFeature
+      containable:
+        type: actinfcp:ActionInfoContainable

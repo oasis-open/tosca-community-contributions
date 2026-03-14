@@ -1,0 +1,265 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ManagerDiagnosticData_caps.yaml
+  namespace: mndgdtcp
+data_types:
+  BootTimeStatistics:
+    description: >-
+      The boot time statistics of a manager.
+    properties:
+      FirmwareTimeSeconds:
+        type: float
+        description: >-
+          The number of seconds the manager spent in the firmware stage.
+        required: false
+      InitrdTimeSeconds:
+        type: float
+        description: >-
+          The number of seconds the manager spent in the initrd boot stage.
+        required: false
+      KernelTimeSeconds:
+        type: float
+        description: >-
+          The number of seconds the manager spent in the kernel stage.
+        required: false
+      LoaderTimeSeconds:
+        type: float
+        description: >-
+          The number of seconds the manager spent in the loader stage.
+        required: false
+      UserSpaceTimeSeconds:
+        type: float
+        description: >-
+          The number of seconds the manager spent in the user space boot stage.
+        required: false
+  I2CBusStatistics:
+    description: >-
+      The statistics of an I2C bus.
+    properties:
+      BusErrorCount:
+        type: integer
+        description: >-
+          The number of bus errors on this I2C bus.
+        required: false
+      I2CBusName:
+        type: string
+        description: >-
+          The name of the I2C bus.
+        required: false
+      NACKCount:
+        type: integer
+        description: >-
+          The number of NACKs on this I2C bus.
+        required: false
+      TotalTransactionCount:
+        type: integer
+        description: >-
+          The total number of transactions on this I2C bus.
+        required: false
+  MemoryECCStatistics:
+    description: >-
+      The memory ECC statistics of a manager.
+    properties:
+      CorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of the correctable errors since reset.
+        required: false
+      UncorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of the uncorrectable errors since reset.
+        required: false
+  MemoryStatistics:
+    description: >-
+      The memory statistics of a manager.
+    properties:
+      AvailableBytes:
+        type: integer
+        description: >-
+          The amount of memory available in bytes for starting new processes without
+          swapping.
+        required: false
+      BuffersAndCacheBytes:
+        type: integer
+        description: >-
+          The amount of memory used in bytes by kernel buffers, page caches, and slabs.
+        required: false
+      FreeBytes:
+        type: integer
+        description: >-
+          The amount of free memory in bytes.
+        required: false
+      SharedBytes:
+        type: integer
+        description: >-
+          The amount of shared memory in bytes.
+        required: false
+      TotalBytes:
+        type: integer
+        description: >-
+          The total amount of memory in bytes.
+        required: false
+      UsedBytes:
+        type: integer
+        description: >-
+          The amount of used memory in bytes.
+        required: false
+  ProcessStatistics:
+    description: >-
+      The statistics of a process running on a manager.
+    properties:
+      CommandLine:
+        type: string
+        description: >-
+          The command line of this process.
+        required: false
+      KernelTimeSeconds:
+        type: float
+        description: >-
+          The number of seconds this process executed in kernel space.
+        required: false
+      ResidentSetSizeBytes:
+        type: integer
+        description: >-
+          The resident set size of this process in bytes.
+        required: false
+      RestartAfterFailureCount:
+        type: integer
+        description: >-
+          The number of times this process has restarted unexpectedly.
+        required: false
+      RestartCount:
+        type: integer
+        description: >-
+          The number of times this process has restarted.
+        required: false
+      UptimeSeconds:
+        type: float
+        description: >-
+          The wall-clock time this process has been running in seconds.
+        required: false
+      UserTimeSeconds:
+        type: float
+        description: >-
+          The number of seconds this process executed in user space.
+        required: false
+  ProcessorStatistics:
+    description: >-
+      The processor statistics of a manager.
+    properties:
+      KernelPercent:
+        type: float
+        description: >-
+          The percentage of CPU time spent in kernel mode.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      UserPercent:
+        type: float
+        description: >-
+          The percentage of CPU time spent in user mode.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+interface_types:
+  ManagerDiagnosticDataActions:
+    operations:
+      ResetMetrics:
+        description: >-
+          Resets time intervals or counted values of the diagnostic data for this
+          manager.
+node_types:
+  ManagerDiagnosticData:
+    description: >-
+      The ManagerDiagnosticData schema defines internal diagnostic data for a manager.  It
+      contains information that might be used by vendors to collect debug information
+      about the manager.  Clients should not make decisions for raising alerts, creating
+      service events, or other actions based on information in this resource.
+    properties:
+      BootTimeStatistics:
+        type: BootTimeStatistics
+        description: >-
+          The boot time statistics of the manager.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FreeStorageSpaceKiB:
+        type: integer
+        description: >-
+          The available storage space on this manager in kibibytes (KiB).
+        required: false
+      I2CBuses:
+        type: list
+        description: >-
+          The statistics of the I2C buses.
+        required: false
+        entry_schema:
+          type: I2CBusStatistics
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MemoryECCStatistics:
+        type: MemoryECCStatistics
+        description: >-
+          The memory ECC statistics of the manager.
+        required: false
+      MemoryStatistics:
+        type: MemoryStatistics
+        description: >-
+          The memory statistics of the manager.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ProcessorStatistics:
+        type: ProcessorStatistics
+        description: >-
+          The processor statistics of the manager.
+        required: false
+      TopProcesses:
+        type: list
+        description: >-
+          The statistics of the top processes of this manager.
+        required: false
+        entry_schema:
+          type: ProcessStatistics
+    interfaces:
+      Actions:
+        type: ManagerDiagnosticDataActions
+    capabilities:
+      feature:
+        type: mndgdtcp:ManagerDiagnosticDataFeature
+      containable:
+        type: mndgdtcp:ManagerDiagnosticDataContainable

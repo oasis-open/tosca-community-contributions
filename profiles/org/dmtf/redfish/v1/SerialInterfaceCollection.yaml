@@ -1,0 +1,79 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: SerialInterface.yaml
+  namespace: srlintr
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: SerialInterface_caps.yaml
+  namespace: srlintcp
+- url: SerialInterfaceCollection_caps.yaml
+  namespace: srinclcp
+node_types:
+  SerialInterfaceCollection:
+    description: >-
+      The collection of `SerialInterface` resource instances.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      Description:
+        type: string
+        required: false
+      Members@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: true
+      Members@odata_nextLink:
+        type: odatav4:nextLink
+        description: >-
+          The URI to the resource containing the next set of partial members.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - Members:
+        node: srlintr:SerialInterface
+        capability: srlintcp:SerialInterfaceContainable
+        relationship: core:Contains
+        count_range:
+        - 1
+        - UNBOUNDED
+        description: >-
+          The members of this collection.
+    capabilities:
+      feature:
+        type: srinclcp:SerialInterfaceCollectionFeature
+      containable:
+        type: srinclcp:SerialInterfaceCollectionContainable

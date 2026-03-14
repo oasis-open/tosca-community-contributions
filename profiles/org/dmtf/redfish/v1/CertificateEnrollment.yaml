@@ -1,0 +1,38 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CertificateEnrollment.v1_0_1.yaml
+  namespace: crtfenrl
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CertificateEnrollment_caps.yaml
+  namespace: crtenrcp
+data_types:
+  EnrollmentProtocolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ACME
+        - SCEP
+        - OEM
+node_types:
+  CertificateEnrollment:
+    description: >-
+      This resource shall represent an automatic certificate enrollment for a Redfish
+      implementation.
+    derived_from: crtfenrl:CertificateEnrollment
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: crtenrcp:CertificateEnrollmentFeature
+      containable:
+        type: crtenrcp:CertificateEnrollmentContainable

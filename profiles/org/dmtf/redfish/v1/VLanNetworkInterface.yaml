@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: VLanNetworkInterface.v1_3_1.yaml
+  namespace: vlnntwin
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: VLanNetworkInterface_caps.yaml
+  namespace: vlntincp
+data_types:
+  VLAN:
+    description: >-
+      The attributes of a VLAN.
+    derived_from: vlnntwin:VLAN
+node_types:
+  VLanNetworkInterface:
+    description: >-
+      The `VLanNetworkInterface` schema describes a VLAN network instance that is
+      available on a manager, system, or other device.
+    derived_from: vlnntwin:VLanNetworkInterface
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: vlntincp:VLanNetworkInterfaceFeature
+      containable:
+        type: vlntincp:VLanNetworkInterfaceContainable

@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: NetworkAdapter.v1_14_0.yaml
+  namespace: ntwradpt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: NetworkAdapter_caps.yaml
+  namespace: ntwadpcp
+node_types:
+  NetworkAdapter:
+    description: >-
+      The `NetworkAdapter` schema represents a physical network adapter capable of
+      connecting to a computer network.  Examples include but are not limited to Ethernet,
+      Fibre Channel, and converged network adapters.
+    derived_from: ntwradpt:NetworkAdapter
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: ntwadpcp:NetworkAdapterFeature
+      containable:
+        type: ntwadpcp:NetworkAdapterContainable

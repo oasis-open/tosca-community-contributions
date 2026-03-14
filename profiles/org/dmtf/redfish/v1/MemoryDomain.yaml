@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MemoryDomain.v1_5_1.yaml
+  namespace: mmrydmn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MemoryDomain_caps.yaml
+  namespace: mmrdmncp
+node_types:
+  MemoryDomain:
+    description: >-
+      The `MemoryDomain` schema describes a memory domain and its configuration.  Memory
+      domains indicate to the client which memory, or DIMMs, can be grouped together
+      in memory chunks to represent addressable memory.
+    derived_from: mmrydmn:MemoryDomain
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: mmrdmncp:MemoryDomainFeature
+      containable:
+        type: mmrdmncp:MemoryDomainContainable

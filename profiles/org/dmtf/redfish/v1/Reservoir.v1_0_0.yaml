@@ -1,0 +1,171 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Assembly.yaml
+  namespace: assembly
+- url: CoolingLoop.yaml
+  namespace: clnglp
+- url: Resource.yaml
+  namespace: resource
+- url: FilterCollection.yaml
+  namespace: fltrcllc
+- url: Sensor.yaml
+  namespace: sensor
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Core.yaml
+  namespace: core
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: FilterCollection_caps.yaml
+  namespace: fltcllcp
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+- url: Reservoir_caps.yaml
+  namespace: rsrvrcps
+data_types:
+  ReservoirType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Reserve
+        - Overflow
+        - Inline
+        - Immersion
+node_types:
+  Reservoir:
+    description: >-
+      The Reservoir schema describes a reservoir unit for a cooling system or similar
+      device.
+    properties:
+      CapacityLiters:
+        type: float
+        description: >-
+          The capacity of the reservoir (l).
+        required: false
+      Coolant:
+        type: clnglp:Coolant
+        description: >-
+          Details about the coolant used in this unit.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FluidLevelPercent:
+        type: sensor:SensorExcerpt
+        description: >-
+          The fluid capacity filled (percent).
+        required: false
+      FluidLevelStatus:
+        type: resource:Health
+        description: >-
+          The status of the fluid level in this reservoir.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InternalPressurekPa:
+        type: sensor:SensorExcerpt
+        description: >-
+          The internal pressure (kPa) reading.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the reservoir.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this reservoir.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for this reservoir.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this reservoir.
+        required: false
+      ReservoirType:
+        type: ReservoirType
+        description: >-
+          The type of reservoir.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this reservoir.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number for this reservoir.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UserLabel:
+        type: string
+        description: >-
+          A user-assigned label.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this reservoir.
+    - Filters:
+        node: fltrcllc:FilterCollection
+        capability: fltcllcp:FilterCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to a collection of filters.
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device associated with this reservoir.
+    capabilities:
+      feature:
+        type: rsrvrcps:ReservoirFeature
+      containable:
+        type: rsrvrcps:ReservoirContainable

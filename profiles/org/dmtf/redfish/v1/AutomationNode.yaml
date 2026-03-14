@@ -1,0 +1,220 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Control.yaml
+  namespace: control
+- url: Sensor.yaml
+  namespace: sensor
+- url: Core.yaml
+  namespace: core
+- url: AutomationNode_caps.yaml
+  namespace: atmndcp
+- url: Control_caps.yaml
+  namespace: cntrlcps
+- url: Sensor_caps.yaml
+  namespace: snsrcps
+data_types:
+  NodeState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Idle
+        - Done
+        - Waiting
+        - ConditionStop
+        - ErrorStop
+        - Running
+relationship_types:
+  AutomationNodeDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AutomationNodeGroup@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  AutomationNodeActions:
+    operations:
+      Reset:
+        description: >-
+          Resets the node.
+      SendTrigger:
+        description: >-
+          Sends a trigger to the node.
+      Start:
+        description: >-
+          Starts the node.
+      Stop:
+        description: >-
+          Stops the node.
+      Wait:
+        description: >-
+          Signals the node to wait for the next instruction.
+node_types:
+  AutomationNode:
+    description: >-
+      The `AutomationNode` schema describes a node that carries out instructions in
+      industrial automation environments.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      Description:
+        type: string
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MotionAxis:
+        type: string
+        description: >-
+          The primary axis of motion for this motion-related node.
+        required: false
+      MotionProfile:
+        type: string
+        description: >-
+          The motion profile type used for this node.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NodeState:
+        type: NodeState
+        description: >-
+          The current state of the node.
+        required: false
+      NodeType:
+        type: string
+        description: >-
+          The type of automation node.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - MotionPosition
+            - MotionVelocity
+            - MotionPositionGroup
+            - PID
+            - Simple
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+    requirements:
+    - Instrumentation:
+        # node: atmtinst:AutomationInstrumentation
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the instrumentation for this node.
+    - AutomationNodeGroup:
+        node: AutomationNode
+        capability: atmndcp:AutomationNodeFeature
+        relationship: AutomationNodeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the automation nodes that are included in an automation
+          node group.
+    - Chassis:
+        # node: chassis:Chassis
+        capability: core:Feature
+        relationship: AutomationNodeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis that contain this equipment.
+    - OutputControl:
+        node: control:Control
+        capability: cntrlcps:ControlFeature
+        relationship: AutomationNodeDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the output control.
+    - PidFeedbackSensor:
+        node: sensor:Sensor
+        capability: snsrcps:SensorFeature
+        relationship: AutomationNodeDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the PID feedback sensor.
+    - PositionSensor:
+        node: sensor:Sensor
+        capability: snsrcps:SensorFeature
+        relationship: AutomationNodeDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the position sensor.
+    - VelocitySensor:
+        node: sensor:Sensor
+        capability: snsrcps:SensorFeature
+        relationship: AutomationNodeDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the velocity sensor.
+    interfaces:
+      Actions:
+        type: AutomationNodeActions
+    capabilities:
+      feature:
+        type: atmndcp:AutomationNodeFeature
+      containable:
+        type: atmndcp:AutomationNodeContainable

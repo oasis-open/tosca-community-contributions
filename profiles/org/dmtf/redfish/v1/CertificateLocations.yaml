@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CertificateLocations.v1_0_4.yaml
+  namespace: crtflctn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CertificateLocations_caps.yaml
+  namespace: crtlctcp
+node_types:
+  CertificateLocations:
+    description: >-
+      The `CertificateLocations` schema describes a resource that an administrator
+      can use in order to locate all certificates installed on a given service.
+    derived_from: crtflctn:CertificateLocations
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: crtlctcp:CertificateLocationsFeature
+      containable:
+        type: crtlctcp:CertificateLocationsContainable

@@ -1,0 +1,340 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Manager.yaml
+  namespace: manager
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: LogServiceCollection.yaml
+  namespace: lgsrvcl
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: SwitchMetrics.yaml
+  namespace: swtcmtrc
+- url: PortCollection.yaml
+  namespace: prtcllc
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: Protocol.yaml
+  namespace: protocol
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+- url: LogServiceCollection_caps.yaml
+  namespace: lgsrclcp
+- url: SwitchMetrics_caps.yaml
+  namespace: swtmtrcp
+- url: PortCollection_caps.yaml
+  namespace: prtcllcp
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+relationship_types:
+  SwitchDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  SwitchActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets this switch.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  Switch:
+    description: >-
+      The Switch schema contains properties that describe a fabric switch.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this switch.
+        required: false
+      CurrentBandwidthGbps:
+        type: float
+        description: >-
+          The current internal bandwidth of this switch.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DomainID:
+        type: integer
+        description: >-
+          The domain ID for this switch.
+        required: false
+      Enabled:
+        type: boolean
+        description: >-
+          An indication of whether this switch is enabled.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version of this switch.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IndicatorLED:
+        type: resource:IndicatorLED
+        description: >-
+          The state of the indicator LED, which identifies the switch.
+        required: false
+      IsManaged:
+        type: boolean
+        description: >-
+          An indication of whether the switch is in a managed or unmanaged state.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the switch.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this switch.
+        required: false
+      MaxBandwidthGbps:
+        type: float
+        description: >-
+          The maximum internal bandwidth of this switch as currently configured.
+        required: false
+      Measurements:
+        type: list
+        description: >-
+          An array of DSP0274-defined measurement blocks.
+        required: false
+        entry_schema:
+          type: sftwinvn:MeasurementBlock
+      Model:
+        type: string
+        description: >-
+          The product model number of this switch.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this switch.
+        required: false
+      PowerState:
+        type: resource:PowerState
+        description: >-
+          The current power state of the switch.
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this switch.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this switch.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TotalSwitchWidth:
+        type: integer
+        description: >-
+          The total number of lanes, phys, or other physical transport links that
+          this switch contains.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this switch.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates for device identity and attestation.
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this switch.
+    - LogServices:
+        node: lgsrvcl:LogServiceCollection
+        capability: lgsrclcp:LogServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of log services associated with this switch.
+    - Metrics:
+        node: swtcmtrc:SwitchMetrics
+        capability: swtmtrcp:SwitchMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metrics associated with this switch.
+    - Ports:
+        node: prtcllc:PortCollection
+        capability: prtcllcp:PortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection ports for this switch.
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Redundancy information for the switches.
+    - SupportedProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The protocols this switch supports.
+    - SwitchType:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol being sent over this switch.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: SwitchDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the chassis that contains this switch.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: SwitchDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect to this switch.
+    - ManagedBy:
+        node: manager:Manager
+        capability: mngrcps:ManagerFeature
+        relationship: SwitchDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers that manage this switch.
+    - PCIeDevice:
+        node: pcdvc:PCIeDevice
+        capability: pcdvccps:PCIeDeviceFeature
+        relationship: SwitchDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the PCIe device providing this switch.
+    interfaces:
+      Actions:
+        type: SwitchActions
+    capabilities:
+      feature:
+        type: swtchcps:SwitchFeature
+      containable:
+        type: swtchcps:SwitchContainable

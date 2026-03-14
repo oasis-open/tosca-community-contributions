@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Pump.v1_2_0.yaml
+  namespace: pump
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Pump_caps.yaml
+  namespace: pumpcaps
+node_types:
+  Pump:
+    description: >-
+      The `Pump` schema describes a pump unit for a cooling system or similar device.
+    derived_from: pump:Pump
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: pumpcaps:PumpFeature
+      containable:
+        type: pumpcaps:PumpContainable

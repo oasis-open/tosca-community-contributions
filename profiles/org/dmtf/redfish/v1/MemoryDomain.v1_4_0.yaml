@@ -1,0 +1,162 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: FabricAdapter.yaml
+  namespace: fbrcadpt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: MediaController.yaml
+  namespace: mdcntr
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: FabricAdapter_caps.yaml
+  namespace: fbradpcp
+- url: MediaController_caps.yaml
+  namespace: mdcntcp
+- url: MemoryChunksCollection.yaml
+  namespace: mmrchncl
+- url: MemoryChunksCollection_caps.yaml
+  namespace: mmchclcp
+- url: MemoryDomain_caps.yaml
+  namespace: mmrdmncp
+- url: Memory.yaml
+  namespace: memory
+- url: Memory_caps.yaml
+  namespace: mmrycps
+relationship_types:
+  MemoryDomainDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      FabricAdapters@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      MediaControllers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  MemoryDomain:
+    description: >-
+      The MemoryDomain schema describes a memory domain and its configuration.  Memory
+      domains indicate to the client which memory, or DIMMs, can be grouped together
+      in memory chunks to represent addressable memory.
+    properties:
+      AllowsBlockProvisioning:
+        type: boolean
+        description: >-
+          An indication of whether this memory domain supports the provisioning of
+          blocks of memory.
+        required: false
+      AllowsMemoryChunkCreation:
+        type: boolean
+        description: >-
+          An indication of whether this memory domain supports the creation of memory
+          chunks.
+        required: false
+      AllowsMirroring:
+        type: boolean
+        description: >-
+          An indication of whether this memory domain supports the creation of memory
+          chunks with mirroring enabled.
+        required: false
+      AllowsSparing:
+        type: boolean
+        description: >-
+          An indication of whether this memory domain supports the creation of memory
+          chunks with sparing enabled.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InterleavableMemorySets:
+        type: list
+        description: >-
+          The interleave sets for the memory chunk.
+        required: false
+        entry_schema:
+          type: MemorySet
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - MemoryChunks:
+        node: mmrchncl:MemoryChunksCollection
+        capability: mmchclcp:MemoryChunksCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of memory chunks associated with this memory
+          domain.
+    - FabricAdapters:
+        node: fbrcadpt:FabricAdapter
+        capability: fbradpcp:FabricAdapterFeature
+        relationship: MemoryDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the fabric adapters providing this memory domain.
+    - MediaControllers:
+        node: mdcntr:MediaController
+        capability: mdcntcp:MediaControllerFeature
+        relationship: MemoryDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the media controllers for this memory domain.
+    capabilities:
+      feature:
+        type: mmrdmncp:MemoryDomainFeature
+      containable:
+        type: mmrdmncp:MemoryDomainContainable
+  MemorySet:
+    description: >-
+      The interleave sets for a memory chunk.
+    properties:
+      MemorySet@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - MemorySet:
+        node: memory:Memory
+        capability: mmrycps:MemoryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of memory for a particular interleave set.
+    capabilities:
+      containable:
+        type: mmrdmncp:MemorySetContainable

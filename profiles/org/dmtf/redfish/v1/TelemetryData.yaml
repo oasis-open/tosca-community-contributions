@@ -1,0 +1,35 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: TelemetryData.v1_0_0.yaml
+  namespace: tlmtrydt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: TelemetryData_caps.yaml
+  namespace: tlmdtcp
+data_types:
+  TelemetryDataTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OEM
+node_types:
+  TelemetryData:
+    description: >-
+      The `TelemetryData` schema represents bulk telemetry data from a device or service.
+    derived_from: tlmtrydt:TelemetryData
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: tlmdtcp:TelemetryDataFeature
+      containable:
+        type: tlmdtcp:TelemetryDataContainable

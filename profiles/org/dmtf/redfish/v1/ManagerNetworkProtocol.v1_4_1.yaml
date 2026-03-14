@@ -1,0 +1,259 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ManagerNetworkProtocol_caps.yaml
+  namespace: mnntprcp
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+data_types:
+  NTPProtocol:
+    description: >-
+      Settings for a network protocol associated with a manager.
+    properties:
+      NTPServers:
+        type: list
+        description: >-
+          Indicates to which NTP servers this manager is subscribed.
+        required: false
+        entry_schema:
+          type: string
+      Port:
+        type: integer
+        description: >-
+          Indicates the protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          Indicates if the protocol is enabled or disabled.
+        required: false
+  NotifyIPv6Scope:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Link
+        - Site
+        - Organization
+  Protocol:
+    description: >-
+      Settings for a network protocol associated with a manager.
+    properties:
+      Port:
+        type: integer
+        description: >-
+          Indicates the protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          Indicates if the protocol is enabled or disabled.
+        required: false
+  SSDProtocol:
+    description: >-
+      Settings for a network protocol associated with a manager.
+    properties:
+      NotifyIPv6Scope:
+        type: NotifyIPv6Scope
+        description: >-
+          Indicates the scope for the IPv6 Notify messages for SSDP.
+        required: false
+      NotifyMulticastIntervalSeconds:
+        type: integer
+        description: >-
+          Indicates how often the Multicast is done from this service for SSDP.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      NotifyTTL:
+        type: integer
+        description: >-
+          Indicates the time to live hop count for SSDPs Notify messages.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      Port:
+        type: integer
+        description: >-
+          Indicates the protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          Indicates if the protocol is enabled or disabled.
+        required: false
+node_types:
+  ManagerNetworkProtocol:
+    description: >-
+      This resource is used to obtain or modify the network services managed by a
+      given manager.
+    properties:
+      DHCP:
+        type: Protocol
+        description: >-
+          Settings for this Manager's DHCPv4 protocol support.
+        required: false
+      DHCPv6:
+        type: Protocol
+        description: >-
+          Settings for this Manager's DHCPv6 protocol support.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FQDN:
+        type: string
+        description: >-
+          This is the fully qualified domain name for the manager obtained by DNS
+          including the host name and top-level domain name.
+        required: false
+      HTTP:
+        type: Protocol
+        description: >-
+          Settings for this Manager's HTTP protocol support.
+        required: false
+      HTTPS:
+        type: HTTPSProtocol
+        description: >-
+          Settings for this Manager's HTTPS protocol support.
+        required: false
+      HostName:
+        type: string
+        description: >-
+          The DNS Host Name of this manager, without any domain information.
+        required: false
+      IPMI:
+        type: Protocol
+        description: >-
+          Settings for this Manager's IPMI-over-LAN protocol support.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      KVMIP:
+        type: Protocol
+        description: >-
+          Settings for this Manager's KVM-IP protocol support.
+        required: false
+      NTP:
+        type: NTPProtocol
+        description: >-
+          Settings for this Manager's NTP protocol support.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      RDP:
+        type: Protocol
+        description: >-
+          Settings for this Manager's Remote Desktop Protocol support.
+        required: false
+      RFB:
+        type: Protocol
+        description: >-
+          Settings for this Manager's Remote Frame Buffer protocol support, which
+          can be used to support VNC.
+        required: false
+      SNMP:
+        type: Protocol
+        description: >-
+          Settings for this Manager's SNMP support.
+        required: false
+      SSDP:
+        type: SSDProtocol
+        description: >-
+          Settings for this Manager's SSDP support.
+        required: false
+      SSH:
+        type: Protocol
+        description: >-
+          Settings for this Manager's SSH (Secure Shell) protocol support.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+      Telnet:
+        type: Protocol
+        description: >-
+          Settings for this Manager's Telnet protocol support.
+        required: false
+      VirtualMedia:
+        type: Protocol
+        description: >-
+          Settings for this Manager's Virtual Media support.
+        required: false
+    capabilities:
+      feature:
+        type: mnntprcp:ManagerNetworkProtocolFeature
+      containable:
+        type: mnntprcp:ManagerNetworkProtocolContainable
+  HTTPSProtocol:
+    description: >-
+      Settings for a network protocol associated with a manager.
+    properties:
+      Port:
+        type: integer
+        description: >-
+          Indicates the protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          Indicates if the protocol is enabled or disabled.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to a collection of certificates used for HTTPS by this
+          manager.
+    capabilities:
+      containable:
+        type: mnntprcp:HTTPSProtocolContainable

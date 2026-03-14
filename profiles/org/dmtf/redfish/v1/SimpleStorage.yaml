@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SimpleStorage.v1_3_2.yaml
+  namespace: smplstrg
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SimpleStorage_caps.yaml
+  namespace: smpstrcp
+node_types:
+  SimpleStorage:
+    description: >-
+      The `SimpleStorage` schema represents the properties of a storage controller
+      and its directly-attached devices.
+    derived_from: smplstrg:SimpleStorage
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: smpstrcp:SimpleStorageFeature
+      containable:
+        type: smpstrcp:SimpleStorageContainable

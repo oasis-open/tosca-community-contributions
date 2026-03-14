@@ -1,0 +1,284 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: MetricReportDefinition.yaml
+  namespace: mtrrprdf
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MetricReportDefinition_caps.yaml
+  namespace: mtrpdfcp
+- url: Triggers_caps.yaml
+  namespace: trggcps
+data_types:
+  DirectionOfCrossingEnum:
+    description: >-
+      The direction of crossing that corresponds to a trigger.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Increasing
+        - Decreasing
+  DiscreteTrigger:
+    description: >-
+      The characteristics of the discrete trigger.
+    properties:
+      DwellTime:
+        type: string
+        description: >-
+          The amount of time that a trigger event persists before the metric action
+          is performed.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      Name:
+        type: string
+        description: >-
+          The name of trigger.
+        required: false
+      Severity:
+        type: resource:Health
+        description: >-
+          The severity of the event message.
+        required: false
+      Value:
+        type: string
+        description: >-
+          The discrete metric value that constitutes a trigger event.
+        required: false
+  DiscreteTriggerConditionEnum:
+    description: >-
+      The condition, in relationship to the discrete trigger values, which constitutes
+      a trigger.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Specified
+        - Changed
+  MetricTypeEnum:
+    description: >-
+      The type of metric for which the trigger is configured.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Numeric
+        - Discrete
+  Threshold:
+    description: >-
+      A threshold definition for a sensor.
+    properties:
+      Activation:
+        type: ThresholdActivation
+        description: >-
+          The direction of crossing that activates this threshold.
+        required: false
+      DwellTime:
+        type: string
+        description: >-
+          The duration the sensor value must violate the threshold before the threshold
+          is activated.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      Reading:
+        type: float
+        description: >-
+          The threshold value.
+        required: false
+  ThresholdActivation:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Increasing
+        - Decreasing
+        - Either
+  Thresholds:
+    description: >-
+      The set of thresholds for a sensor.
+    properties:
+      LowerCritical:
+        type: Threshold
+        description: >-
+          The value at which the reading is below normal range and requires attention.
+        required: false
+      LowerWarning:
+        type: Threshold
+        description: >-
+          The value at which the reading is below normal range.
+        required: false
+      UpperCritical:
+        type: Threshold
+        description: >-
+          The value at which the reading is above normal range and requires attention.
+        required: false
+      UpperWarning:
+        type: Threshold
+        description: >-
+          The value at which the reading is above normal range.
+        required: false
+  TriggerActionEnum:
+    description: >-
+      The actions to perform when a trigger condition is met.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - LogToLogService
+        - RedfishEvent
+        - RedfishMetricReport
+  Wildcard:
+    description: >-
+      The wildcard and its substitution values.
+    properties:
+      Name:
+        type: string
+        description: >-
+          The wildcard.
+        required: false
+      Values:
+        type: list
+        description: >-
+          An array of values to substitute for the wildcard.
+        required: false
+        entry_schema:
+          type: string
+relationship_types:
+  TriggersDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      MetricReportDefinitions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  Triggers:
+    description: >-
+      The Triggers schema describes a trigger that applies to metrics.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DiscreteTriggerCondition:
+        type: DiscreteTriggerConditionEnum
+        description: >-
+          The conditions when a discrete metric triggers.
+        required: false
+      DiscreteTriggers:
+        type: list
+        description: >-
+          The list of discrete triggers.
+        required: false
+        entry_schema:
+          type: DiscreteTrigger
+      EventTriggers:
+        type: list
+        description: >-
+          The array of MessageIds that specify when a trigger condition is met based
+          on an event.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z0-9]+\.\d+\.\d+\.[A-Za-z0-9.]+$
+        entry_schema:
+          type: string
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MetricIds:
+        type: list
+        description: >-
+          The label for the metric definitions that contain the property identifiers
+          for this trigger.  It matches the Id property of the corresponding metric
+          definition.
+        required: false
+        entry_schema:
+          type: string
+      MetricProperties:
+        type: list
+        description: >-
+          An array of URIs with wildcards and property identifiers for this trigger.  Each
+          wildcard is replaced with its corresponding entry in the Wildcard array
+          property.
+        required: false
+        entry_schema:
+          type: string
+      MetricType:
+        type: MetricTypeEnum
+        description: >-
+          The metric type of the trigger.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NumericThresholds:
+        type: Thresholds
+        description: >-
+          The thresholds when a numeric metric triggers.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TriggerActions:
+        type: list
+        description: >-
+          The actions that the trigger initiates.
+        required: false
+        entry_schema:
+          type: TriggerActionEnum
+      Wildcards:
+        type: list
+        description: >-
+          The wildcards and their substitution values for the entries in the MetricProperties
+          array property.
+        required: false
+        entry_schema:
+          type: Wildcard
+    requirements:
+    - MetricReportDefinitions:
+        node: mtrrprdf:MetricReportDefinition
+        capability: mtrpdfcp:MetricReportDefinitionFeature
+        relationship: TriggersDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The metric report definitions that generate new metric reports when a trigger
+          condition is met and when the TriggerActions property contains `RedfishMetricReport`.
+    capabilities:
+      feature:
+        type: trggcps:TriggersFeature
+      containable:
+        type: trggcps:TriggersContainable

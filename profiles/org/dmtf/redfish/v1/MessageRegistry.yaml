@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MessageRegistry.v1_7_0.yaml
+  namespace: mssgrgst
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MessageRegistry_caps.yaml
+  namespace: mssrgscp
+node_types:
+  MessageRegistry:
+    description: >-
+      The `MessageRegistry` schema describes all message registries.  It represents
+      the properties for the message registries themselves.
+    derived_from: mssgrgst:MessageRegistry
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: mssrgscp:MessageRegistryFeature
+      containable:
+        type: mssrgscp:MessageRegistryContainable

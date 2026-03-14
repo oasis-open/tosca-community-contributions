@@ -1,0 +1,131 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+- url: Bios_caps.yaml
+  namespace: bioscaps
+data_types:
+  Attributes:
+    description: >-
+      The list of BIOS attributes and their values as determined by the manufacturer
+      or provider.
+relationship_types:
+  BiosDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SoftwareImages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  BiosActions:
+    operations:
+      ChangePassword:
+        description: >-
+          This action changes a BIOS password.
+        inputs:
+          NewPassword:
+            type: string
+            description: >-
+              The new BIOS password.
+            required: true
+          OldPassword:
+            type: string
+            description: >-
+              The existing BIOS password.
+            required: true
+          PasswordName:
+            type: string
+            description: >-
+              The name of the BIOS password to change.
+            required: true
+      ResetBios:
+        description: >-
+          This action resets the BIOS attributes to default.
+node_types:
+  Bios:
+    description: >-
+      The Bios schema contains properties related to the BIOS Attribute Registry.  The
+      Attribute Registry describes the system-specific BIOS attributes and actions
+      for changing to BIOS settings.  Changes to the BIOS typically require a system
+      reset before they take effect.  It is likely that a client finds the `@Redfish.Settings`
+      term in this Resource, and if it is found, the client makes requests to change
+      BIOS settings by modifying the Resource identified by the `@Redfish.Settings`
+      term.
+    properties:
+      AttributeRegistry:
+        type: string
+        description: >-
+          The Resource ID of the Attribute Registry that has the system-specific information
+          about a BIOS Resource.
+        required: false
+      Attributes:
+        type: Attributes
+        description: >-
+          The list of BIOS attributes specific to the manufacturer or provider.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - ActiveSoftwareImage:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: BiosDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the SoftwareInventory that represents the active BIOS firmware
+          image.
+    - SoftwareImages:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: BiosDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The images that are associated with this BIOS.
+    interfaces:
+      Actions:
+        type: BiosActions
+    capabilities:
+      feature:
+        type: bioscaps:BiosFeature
+      containable:
+        type: bioscaps:BiosContainable

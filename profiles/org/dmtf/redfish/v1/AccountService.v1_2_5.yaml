@@ -1,0 +1,163 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ManagerAccountCollection.yaml
+  namespace: mngacccl
+- url: Resource.yaml
+  namespace: resource
+- url: PrivilegeRegistry.yaml
+  namespace: prvlrgst
+- url: RoleCollection.yaml
+  namespace: rlcllctn
+- url: Core.yaml
+  namespace: core
+- url: ManagerAccountCollection_caps.yaml
+  namespace: mnacclcp
+- url: PrivilegeRegistry_caps.yaml
+  namespace: prvrgscp
+- url: RoleCollection_caps.yaml
+  namespace: rlcllcp
+- url: AccountService_caps.yaml
+  namespace: accsrvcp
+node_types:
+  AccountService:
+    description: >-
+      The AccountService schema defines an Account Service.  The properties are common
+      to, and enable management of, all user accounts.  The properties include the
+      password requirements and control features, such as account lockout.  The schema
+      also contains links to the manager accounts and roles.
+    properties:
+      AccountLockoutCounterResetAfter:
+        type: integer
+        description: >-
+          The period of time, in seconds, between the last failed login attempt and
+          the reset of the lockout threshold counter.  This value must be less than
+          or equal to the AccountLockoutDuration value.  A reset sets the counter
+          to `0`.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AccountLockoutDuration:
+        type: integer
+        description: >-
+          The period of time, in seconds, that an account is locked after the number
+          of failed login attempts reaches the account lockout threshold, within the
+          period between the last failed login attempt and the reset of the lockout
+          threshold counter.  If this value is `0`, no lockout will occur.  If the
+          AccountLockoutCounterResetEnabled value is `false`, this property is ignored.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AccountLockoutThreshold:
+        type: integer
+        description: >-
+          The number of allowed failed login attempts before a user account is locked
+          for a specified duration.  If `0`, the account is never locked.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AuthFailureLoggingThreshold:
+        type: integer
+        description: >-
+          The number of authorization failures that are allowed before the failed
+          attempt is logged to the manager log.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaxPasswordLength:
+        type: integer
+        description: >-
+          The maximum password length for this Account Service.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinPasswordLength:
+        type: integer
+        description: >-
+          The minimum password length for this Account Service.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the Account Service is enabled.  If `true`, it
+          is enabled.  If `false`, it is disabled and users cannot be created, deleted,
+          or modified, and new sessions cannot be started.  However, established sessions
+          may still continue to run.  Any service, such as the Session Service, that
+          attempts to access the disabled Account Service fails.  However, this does
+          not affect HTTP Basic Authentication connections.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+    requirements:
+    - Accounts:
+        node: mngacccl:ManagerAccountCollection
+        capability: mnacclcp:ManagerAccountCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The collection of manager accounts.
+    - PrivilegeMap:
+        node: prvlrgst:PrivilegeRegistry
+        capability: prvrgscp:PrivilegeRegistryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the mapping of the privileges required to complete a requested
+          operation on a URI associated with this Service.
+    - Roles:
+        node: rlcllctn:RoleCollection
+        capability: rlcllcp:RoleCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The collection of Redfish Roles.
+    capabilities:
+      feature:
+        type: accsrvcp:AccountServiceFeature
+      containable:
+        type: accsrvcp:AccountServiceContainable

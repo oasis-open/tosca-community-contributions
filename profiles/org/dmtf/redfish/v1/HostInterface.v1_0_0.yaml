@@ -1,0 +1,215 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata.4.0.0.yaml
+  namespace: odata400
+- url: ComputerSystem.yaml
+  namespace: cmptsyst
+- url: Role.yaml
+  namespace: role
+- url: EthernetInterfaceCollection.yaml
+  namespace: ethintcl
+- url: EthernetInterface.yaml
+  namespace: ethrintr
+- url: ManagerNetworkProtocol.yaml
+  namespace: mngntwpr
+- url: Core.yaml
+  namespace: core
+- url: EthernetInterfaceCollection_caps.yaml
+  namespace: etinclcp
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+- url: ManagerNetworkProtocol_caps.yaml
+  namespace: mnntprcp
+- url: HostInterface_caps.yaml
+  namespace: hstintcp
+- url: ComputerSystem_caps.yaml
+  namespace: cmpsyscp
+- url: Role_caps.yaml
+  namespace: rolecaps
+data_types:
+  AuthenticationMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - AuthNone
+        - BasicAuth
+        - RedfishSessionAuth
+        - OemAuth
+  HostInterfaceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NetworkHostInterface
+node_types:
+  HostInterface:
+    description: >-
+      This schema defines a Host Interface resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      HostInterfaceType:
+        type: HostInterfaceType
+        description: >-
+          This indicates the Host Interface type for this interface.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      InterfaceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this interface is enabled.
+        required: false
+      ExternallyAccessible:
+        type: boolean
+        description: >-
+          This indicates whether this interface is accessible by external entities.
+        required: false
+      AuthenticationModes:
+        type: list
+        description: >-
+          This indicates the authentication modes available on this interface.
+        required: false
+        entry_schema:
+          type: AuthenticationMode
+      KernelAuthRoleId:
+        type: string
+        description: >-
+          This property contains the Role for kernel authentication on this interface.
+        required: false
+      KernelAuthEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this kernel authentication is enabled for this interface.
+        required: false
+      FirmwareAuthRoleId:
+        type: string
+        description: >-
+          This property contains the Role for firmware authentication on this interface.
+        required: false
+      FirmwareAuthEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this firmware authentication is enabled for this
+          interface.
+        required: false
+      Links:
+        type: Links
+        description: >-
+          Contains references to other resources that are related to this resource.
+        required: false
+    requirements:
+    - HostEthernetInterfaces:
+        node: ethintcl:EthernetInterfaceCollection
+        capability: etinclcp:EthernetInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to a collection of NICs that Computer Systems use for
+          network communication with this Host Interface.
+    - ManagerEthernetInterface:
+        node: ethrintr:EthernetInterface
+        capability: ethintcp:EthernetInterfaceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to a single NIC that this Manager uses for network communication
+          with this Host Interface.
+    - NetworkProtocol:
+        node: mngntwpr:ManagerNetworkProtocol
+        capability: mnntprcp:ManagerNetworkProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to the network services and their settings that the
+          Manager controls.  It is here that clients will find network configuration
+          options as well as network services.
+    capabilities:
+      feature:
+        type: hstintcp:HostInterfaceFeature
+      containable:
+        type: hstintcp:HostInterfaceContainable
+  Links:
+    description: >-
+      Contains references to other resources that are related to this resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      ComputerSystems@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ComputerSystems@odata_navigationLink:
+        type: string
+        required: false
+    requirements:
+    - ComputerSystems:
+        node: cmptsyst:ComputerSystem
+        capability: cmpsyscp:ComputerSystemContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the Computer Systems connected to this Host Interface.
+    - KernelAuthRole:
+        node: role:Role
+        capability: rolecaps:RoleContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the Role object defining Privileges for this Host Interface
+          when using kernel authentication.
+    - FirmwareAuthRole:
+        node: role:Role
+        capability: rolecaps:RoleContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the Role object defining Privileges for this Host Interface
+          when using firmware authentication.
+    capabilities:
+      containable:
+        type: hstintcp:LinksContainable

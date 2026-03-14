@@ -1,0 +1,84 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: DataSecurityLoSCapabilities_caps.yaml
+  namespace: dtsclsc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+data_types:
+  AntiVirusScanTrigger:
+    description: >-
+      Types of antivirus scan triggers.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - OnFirstRead
+        - OnPatternUpdate
+        - OnUpdate
+        - OnRename
+  AuthenticationType:
+    description: >-
+      Enumeration of authentication algorithms.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - PKI
+        - Ticket
+        - Password
+  DataSanitizationPolicy:
+    description: >-
+      Types of data sanitization policies.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - Clear
+        - CryptographicErase
+  KeySize:
+    description: >-
+      Enumeration of Key sizes in a symmetric encryption algorithm, (see NIST SP 800-57
+      part 1 (http:/csrc.nist.gov/publications/nistpubs/800-57/sp800-57_part1_rev3_general.pdf).
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Bits_0
+        - Bits_112
+        - Bits_128
+        - Bits_192
+        - Bits_256
+  SecureChannelProtocol:
+    description: >-
+      Types of Secure channel protocols.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - TLS
+        - IPsec
+        - RPCSEC_GSS
+node_types:
+  DataSecurityLoSCapabilities:
+    description: >-
+      Describe data security capabilities.
+    derived_from: dtsclsc:DataSecurityLoSCapabilities
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: dtsclsc:DataSecurityLoSCapabilitiesFeature
+      containable:
+        type: dtsclsc:DataSecurityLoSCapabilitiesContainable

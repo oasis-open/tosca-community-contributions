@@ -1,0 +1,218 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: Manager.yaml
+  namespace: manager
+- url: odata.v4_0_1.yaml
+  namespace: odata
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: LogServiceCollection.yaml
+  namespace: lgsrvcl
+- url: PortCollection.yaml
+  namespace: prtcllc
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: Protocol.yaml
+  namespace: protocol
+- url: LogServiceCollection_caps.yaml
+  namespace: lgsrclcp
+- url: PortCollection_caps.yaml
+  namespace: prtcllcp
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+relationship_types:
+  SwitchDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ManagedBy@odata_count:
+        type: odata:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+interface_types:
+  SwitchActions:
+    operations:
+      Reset:
+        description: >-
+          This action is used to reset this switch.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset to be performed.
+            required: false
+node_types:
+  Switch:
+    description: >-
+      Switch contains properties describing a simple fabric switch.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user assigned asset tag for this switch.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DomainID:
+        type: float
+        description: >-
+          The Domain ID for this switch.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IndicatorLED:
+        type: resource:IndicatorLED
+        description: >-
+          The state of the indicator LED, used to identify the switch.
+        required: false
+      IsManaged:
+        type: boolean
+        description: >-
+          This indicates whether the switch is in a managed or unmanaged state.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          This is the manufacturer of this switch.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The product model number of this switch.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this switch.
+        required: false
+      PowerState:
+        type: resource:PowerState
+        description: >-
+          This is the current power state of the switch.
+        required: false
+      Redundancy@odata_count:
+        type: odata:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          This is the SKU for this switch.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this switch.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      TotalSwitchWidth:
+        type: float
+        description: >-
+          The total number of lanes, phys, or other physical transport links that
+          this switch contains.
+        required: false
+    requirements:
+    - LogServices:
+        node: lgsrvcl:LogServiceCollection
+        capability: lgsrclcp:LogServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the collection of Log Services associated with this system.
+    - Ports:
+        node: prtcllc:PortCollection
+        capability: prtcllcp:PortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A collection of references to the ports for this switch.
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Redundancy information for the switches.
+    - SwitchType:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol being sent over this switch.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: SwitchDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the chassis which contains this switch.
+    - ManagedBy:
+        node: manager:Manager
+        capability: mngrcps:ManagerFeature
+        relationship: SwitchDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the managers that manage this switch.
+    interfaces:
+      Actions:
+        type: SwitchActions
+    capabilities:
+      feature:
+        type: swtchcps:SwitchFeature
+      containable:
+        type: swtchcps:SwitchContainable

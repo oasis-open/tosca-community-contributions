@@ -1,0 +1,267 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata.v4_0_3.yaml
+  namespace: odata
+- url: Core.yaml
+  namespace: core
+- url: Volume_caps.yaml
+  namespace: vlmcps
+- url: Protocol.yaml
+  namespace: protocol
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: Drive_caps.yaml
+  namespace: drvcps
+data_types:
+  EncryptionAbility:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - SelfEncryptingDrive
+        - Other
+  EncryptionStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unecrypted
+        - Unlocked
+        - Locked
+        - Foreign
+        - Unencrypted
+  HotspareType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - Global
+        - Chassis
+        - Dedicated
+  MediaType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - HDD
+        - SSD
+        - SMR
+  StatusIndicator:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OK
+        - Fail
+        - Rebuild
+        - PredictiveFailureAnalysis
+        - Hotspare
+        - InACriticalArray
+        - InAFailedArray
+relationship_types:
+  DriveDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      Volumes@odata_count:
+        type: odata:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  DriveActions:
+    operations:
+      SecureErase:
+        description: >-
+          This action is used to securely erase the contents of the drive.
+node_types:
+  Drive:
+    description: >-
+      The Drive schema represents a single physical disk drive for a system, including
+      links to associated Volumes.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user assigned asset tag for this drive.
+        required: false
+      BlockSizeBytes:
+        type: integer
+        description: >-
+          The size of the smallest addressible unit (Block) of this drive in bytes.
+        required: false
+      CapableSpeedGbs:
+        type: float
+        description: >-
+          The speed which this drive can communicate to a storage controller in ideal
+          conditions in Gigabits per second.
+        required: false
+      CapacityBytes:
+        type: integer
+        description: >-
+          The size in bytes of this Drive.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EncryptionAbility:
+        type: EncryptionAbility
+        description: >-
+          The encryption abilities of this drive.
+        required: false
+      EncryptionStatus:
+        type: EncryptionStatus
+        description: >-
+          The status of the encrytion of this drive.
+        required: false
+      FailurePredicted:
+        type: boolean
+        description: >-
+          Is this drive currently predicting a failure in the near future.
+        required: false
+      HotspareType:
+        type: HotspareType
+        description: >-
+          The type of hotspare this drive is currently serving as.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The Durable names for the drive.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      IndicatorLED:
+        type: resource:IndicatorLED
+        description: >-
+          The state of the indicator LED, used to identify the drive.
+        required: false
+      Location:
+        type: list
+        description: >-
+          The Location of the drive.
+        required: false
+        entry_schema:
+          type: resource:Location
+      Manufacturer:
+        type: string
+        description: >-
+          This is the manufacturer of this drive.
+        required: false
+      MediaType:
+        type: MediaType
+        description: >-
+          The type of media contained in this drive.
+        required: false
+      Model:
+        type: string
+        description: >-
+          This is the model number for the drive.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NegotiatedSpeedGbs:
+        type: float
+        description: >-
+          The speed which this drive is currently communicating to the storage controller
+          in Gigabits per second.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this drive.
+        required: false
+      PredictedMediaLifeLeftPercent:
+        type: float
+        description: >-
+          The percentage of reads and writes that are predicted to still be available
+          for the media.
+        required: false
+      Revision:
+        type: string
+        description: >-
+          The revision of this Drive. This is typically the firmware/hardware version
+          of the drive.
+        required: false
+      RotationSpeedRPM:
+        type: float
+        description: >-
+          The rotation speed of this Drive in Revolutions per Minute (RPM).
+        required: false
+      SKU:
+        type: string
+        description: >-
+          This is the SKU for this drive.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this drive.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+      StatusIndicator:
+        type: StatusIndicator
+        description: >-
+          The state of the status indicator, used to communicate status information
+          about this drive.
+        required: false
+    requirements:
+    - Protocol:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol this drive is using to communicate to the storage controller.
+    - Volumes:
+        node: Volume
+        capability: vlmcps:VolumeFeature
+        relationship: DriveDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the volumes contained in this drive. This will
+          reference Volumes that are either wholly or only partly contained by this
+          drive.
+    interfaces:
+      Actions:
+        type: DriveActions
+    capabilities:
+      feature:
+        type: drvcps:DriveFeature
+      containable:
+        type: drvcps:DriveContainable

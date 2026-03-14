@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: NetworkDeviceFunction.v1_11_1.yaml
+  namespace: ntwdvcfn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: NetworkDeviceFunction_caps.yaml
+  namespace: ntdvfncp
+node_types:
+  NetworkDeviceFunction:
+    description: >-
+      The `NetworkDeviceFunction` schema represents a logical interface that a network
+      adapter exposes.
+    derived_from: ntwdvcfn:NetworkDeviceFunction
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: ntdvfncp:NetworkDeviceFunctionFeature
+      containable:
+        type: ntdvfncp:NetworkDeviceFunctionContainable

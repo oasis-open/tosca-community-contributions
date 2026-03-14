@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MetricDefinition.v1_3_5.yaml
+  namespace: mtrcdfnt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MetricDefinition_caps.yaml
+  namespace: mtrdfncp
+node_types:
+  MetricDefinition:
+    description: >-
+      The `MetricDefinition` schema describes the metadata information for a metric.
+    derived_from: mtrcdfnt:MetricDefinition
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: mtrdfncp:MetricDefinitionFeature
+      containable:
+        type: mtrdfncp:MetricDefinitionContainable

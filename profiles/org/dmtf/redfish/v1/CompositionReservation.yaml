@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CompositionReservation.v1_0_2.yaml
+  namespace: cmpsrsrv
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CompositionReservation_caps.yaml
+  namespace: cmprsrcp
+node_types:
+  CompositionReservation:
+    description: >-
+      The `CompositionReservation` schema contains reservation information related
+      to the `Compose` action defined in the `CompositionService` resource when the
+      `RequestType` parameter contains the value `PreviewReserve`.
+    derived_from: cmpsrsrv:CompositionReservation
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: cmprsrcp:CompositionReservationFeature
+      containable:
+        type: cmprsrcp:CompositionReservationContainable

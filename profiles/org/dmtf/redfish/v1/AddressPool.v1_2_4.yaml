@@ -1,0 +1,997 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Zone_caps.yaml
+  namespace: zonecaps
+- url: AddressPool_caps.yaml
+  namespace: addplcp
+data_types:
+  ASNumberRange:
+    description: >-
+      Autonomous System (AS) number range.
+    properties:
+      Lower:
+        type: integer
+        description: >-
+          Lower Autonomous System (AS) number.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 65535
+      Upper:
+        type: integer
+        description: >-
+          Upper Autonomous System (AS) number.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 65535
+  BFDSingleHopOnly:
+    description: >-
+      Bidirectional Forwarding Detection (BFD) related properties for an Ethernet
+      fabric.
+    properties:
+      DemandModeEnabled:
+        type: boolean
+        description: >-
+          Bidirectional Forwarding Detection (BFD) Demand Mode status.
+        required: false
+      DesiredMinTxIntervalMilliseconds:
+        type: integer
+        description: >-
+          Desired Bidirectional Forwarding Detection (BFD) minimal transmit interval.
+        required: false
+      KeyChain:
+        type: string
+        description: >-
+          Bidirectional Forwarding Detection (BFD) Key Chain name.
+        required: false
+      LocalMultiplier:
+        type: integer
+        description: >-
+          Bidirectional Forwarding Detection (BFD) multiplier value.
+        required: false
+      MeticulousModeEnabled:
+        type: boolean
+        description: >-
+          Meticulous MD5 authentication of the Bidirectional Forwarding Detection
+          (BFD) session.
+        required: false
+      RequiredMinRxIntervalMilliseconds:
+        type: integer
+        description: >-
+          Bidirectional Forwarding Detection (BFD) receive value.
+        required: false
+      SourcePort:
+        type: integer
+        description: >-
+          Bidirectional Forwarding Detection (BFD) source port.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 49152
+          - $less_or_equal:
+            - $value
+            - 65535
+  BGPEvpn:
+    description: >-
+      BGP Ethernet Virtual Private Network (BGP EVPN) related properties for an Ethernet
+      fabric.
+    properties:
+      ARPProxyEnabled:
+        type: boolean
+        description: >-
+          Address Resolution Protocol (ARP) proxy status.
+        required: false
+      ARPSupressionEnabled:
+        type: boolean
+        description: >-
+          Address Resolution Protocol (ARP) suppression status.
+        required: false
+      AnycastGatewayIPAddress:
+        type: string
+        description: >-
+          The anycast gateway IPv4 address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+      AnycastGatewayMACAddress:
+        type: string
+        description: >-
+          The anycast gateway MAC address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+      ESINumberRange:
+        type: ESINumberRange
+        description: >-
+          The Ethernet Segment Identifier (ESI) number range for the fabric.
+        required: false
+      EVINumberRange:
+        type: EVINumberRange
+        description: >-
+          The Ethernet Virtual Private Network (EVPN) Instance number (EVI) number
+          range for the fabric.
+        required: false
+      GatewayIPAddress:
+        type: string
+        description: >-
+          The gateway IPv4 address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+      GatewayIPAddressRange:
+        type: GatewayIPAddressRange
+        description: >-
+          The IPv4 address range for gateways.
+        required: false
+      NDPProxyEnabled:
+        type: boolean
+        description: >-
+          Network Discovery Protocol (NDP) proxy status.
+        required: false
+      NDPSupressionEnabled:
+        type: boolean
+        description: >-
+          Network Discovery Protocol (NDP) suppression status.
+        required: false
+      RouteDistinguisherAdministratorSubfield:
+        type: string
+        description: >-
+          The Route Distinguisher (RD) Administrator subfield.
+        required: false
+      RouteDistinguisherRange:
+        type: RouteDistinguisherRange
+        description: >-
+          The Route Distinguisher (RD) number range for the fabric.
+        required: false
+      RouteTargetAdministratorSubfield:
+        type: string
+        description: >-
+          The Route Target (RT) Administrator Subfield.
+        required: false
+      RouteTargetRange:
+        type: RouteTargetRange
+        description: >-
+          The Route Target (RT) number range for the fabric.
+        required: false
+      UnderlayMulticastEnabled:
+        type: boolean
+        description: >-
+          Underlay multicast status.
+        required: false
+      UnknownUnicastSuppressionEnabled:
+        type: boolean
+        description: >-
+          Suppression of unknown unicast packets.
+        required: false
+      VLANIdentifierAddressRange:
+        type: VLANIdentifierAddressRange
+        description: >-
+          Virtual LAN (VLAN) tag related address range applicable to this Ethernet
+          fabric or for end-host subnets.
+        required: false
+  BGPNeighbor:
+    description: >-
+      Border Gateway Protocol (BGP) neighbor related properties.
+    properties:
+      Address:
+        type: string
+        description: >-
+          Border Gateway Protocol (BGP) neighbor address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+      AllowOwnASEnabled:
+        type: boolean
+        description: >-
+          Allow own Autonomous System (AS) status.
+        required: false
+      CIDR:
+        type: integer
+        description: >-
+          The Classless Inter-Domain Routing (CIDR) value used for neighbor communication.  This
+          is the number of ones before the first zero in the subnet mask.
+        required: false
+      ConnectRetrySeconds:
+        type: integer
+        description: >-
+          Border Gateway Protocol (BGP) retry timer in seconds.
+        required: false
+      Enabled:
+        type: boolean
+        description: >-
+          An indication of whether BGP neighbor communication is enabled.
+        required: false
+      HoldTimeSeconds:
+        type: integer
+        description: >-
+          Border Gateway Protocol (BGP) hold timer in seconds.
+        required: false
+      KeepaliveIntervalSeconds:
+        type: integer
+        description: >-
+          Border Gateway Protocol (BGP) Keepalive timer in seconds.
+        required: false
+      LocalAS:
+        type: integer
+        description: >-
+          Local Autonomous System (AS) number.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 65535
+      LogStateChangesEnabled:
+        type: boolean
+        description: >-
+          Border Gateway Protocol (BGP) neighbor log state change status.
+        required: false
+      MaxPrefix:
+        type: MaxPrefix
+        description: >-
+          Border Gateway Protocol (BGP) max prefix properties.
+        required: false
+      MinimumAdvertisementIntervalSeconds:
+        type: integer
+        description: >-
+          Minimum Border Gateway Protocol (BGP) advertisement interval in seconds.
+        required: false
+      PassiveModeEnabled:
+        type: boolean
+        description: >-
+          Border Gateway Protocol (BGP) passive mode status.
+        required: false
+      PathMTUDiscoveryEnabled:
+        type: boolean
+        description: >-
+          Path MTU discovery status.
+        required: false
+      PeerAS:
+        type: integer
+        description: >-
+          Peer Autonomous System (AS) number.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 65535
+      ReplacePeerASEnabled:
+        type: boolean
+        description: >-
+          Replace Border Gateway Protocol (BGP) peer Autonomous System (AS) status.
+        required: false
+      TCPMaxSegmentSizeBytes:
+        type: integer
+        description: >-
+          TCP max segment size in bytes.
+        required: false
+      TreatAsWithdrawEnabled:
+        type: boolean
+        description: >-
+          Border Gateway Protocol (BGP) treat as withdraw status.
+        required: false
+  BGPRoute:
+    description: >-
+      Border Gateway Protocol (BGP) route properties.
+    properties:
+      AdvertiseInactiveRoutesEnabled:
+        type: boolean
+        description: >-
+          Advertise inactive route status.
+        required: false
+      DistanceExternal:
+        type: integer
+        description: >-
+          Route distance for external routes.
+        required: false
+      DistanceInternal:
+        type: integer
+        description: >-
+          Route distance for internal routes.
+        required: false
+      DistanceLocal:
+        type: integer
+        description: >-
+          Route distance for local routes.
+        required: false
+      ExternalCompareRouterIdEnabled:
+        type: boolean
+        description: >-
+          Compare router identifier status.
+        required: false
+      FlapDampingEnabled:
+        type: boolean
+        description: >-
+          Route flap dampening status.
+        required: false
+      SendDefaultRouteEnabled:
+        type: boolean
+        description: >-
+          Send default route status.
+        required: false
+  CommonBGPProperties:
+    description: >-
+      Common BGP properties.
+    properties:
+      ASNumberRange:
+        type: ASNumberRange
+        description: >-
+          Autonomous System (AS) number range.
+        required: false
+      BGPNeighbor:
+        type: BGPNeighbor
+        description: >-
+          Border Gateway Protocol (BGP) neighbor related properties.
+        required: false
+      BGPRoute:
+        type: BGPRoute
+        description: >-
+          Border Gateway Protocol (BGP) route-related properties.
+        required: false
+      GracefulRestart:
+        type: GracefulRestart
+        description: >-
+          Graceful restart related properties.
+        required: false
+      MultiplePaths:
+        type: MultiplePaths
+        description: >-
+          Multiple path related properties.
+        required: false
+      SendCommunityEnabled:
+        type: boolean
+        description: >-
+          Indicates whether community attributes are sent.
+        required: false
+  DHCP:
+    description: >-
+      DHCP-related properties for an Ethernet fabric.
+    properties:
+      DHCPInterfaceMTUBytes:
+        type: integer
+        description: >-
+          Dynamic Host Configuration Protocol (DHCP) interface Maximum Transmission
+          Unit (MTU).
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 68
+          - $less_or_equal:
+            - $value
+            - 9194
+      DHCPRelayEnabled:
+        type: boolean
+        description: >-
+          Dynamic Host Configuration Protocol (DHCP) relay status.
+        required: false
+      DHCPServer:
+        type: list
+        description: >-
+          The Dynamic Host Configuration Protocol (DHCP) IPv4 addresses for this Ethernet
+          fabric.
+        required: false
+        entry_schema:
+          type: string
+  EBGP:
+    description: >-
+      External BGP (eBGP) related properties for an Ethernet fabric.
+    properties:
+      ASNumberRange:
+        type: ASNumberRange
+        description: >-
+          Autonomous System (AS) number range.
+        required: false
+      AllowDuplicateASEnabled:
+        type: boolean
+        description: >-
+          Allow duplicate Autonomous System (AS) path.
+        required: false
+      AllowOverrideASEnabled:
+        type: boolean
+        description: >-
+          Option to override an Autonomous System (AS) number with the AS number of
+          the sending peer.
+        required: false
+      AlwaysCompareMEDEnabled:
+        type: boolean
+        description: >-
+          Compare Multi Exit Discriminator (MED) status.
+        required: false
+      BGPLocalPreference:
+        type: integer
+        description: >-
+          Local preference value.
+        required: false
+      BGPNeighbor:
+        type: BGPNeighbor
+        description: >-
+          Border Gateway Protocol (BGP) neighbor related properties.
+        required: false
+      BGPRoute:
+        type: BGPRoute
+        description: >-
+          Border Gateway Protocol (BGP) route-related properties.
+        required: false
+      BGPWeight:
+        type: integer
+        description: >-
+          BGP weight attribute.
+        required: false
+      GracefulRestart:
+        type: GracefulRestart
+        description: >-
+          Graceful restart related properties.
+        required: false
+      MED:
+        type: integer
+        description: >-
+          BGP Multi Exit Discriminator (MED) value.
+        required: false
+      MultihopEnabled:
+        type: boolean
+        description: >-
+          External BGP (eBGP) multihop status.
+        required: false
+      MultihopTTL:
+        type: integer
+        description: >-
+          External BGP (eBGP) multihop Time to Live (TTL) value.
+        required: false
+      MultiplePaths:
+        type: MultiplePaths
+        description: >-
+          Multiple path related properties.
+        required: false
+      SendCommunityEnabled:
+        type: boolean
+        description: >-
+          Indicates whether community attributes are sent.
+        required: false
+  ESINumberRange:
+    description: >-
+      The Ethernet Segment Identifier (ESI) number range for an Ethernet fabric.
+    properties:
+      Lower:
+        type: integer
+        description: >-
+          Lower Ethernet Segment Identifier (ESI) number.
+        required: false
+      Upper:
+        type: integer
+        description: >-
+          Upper Ethernet Segment Identifier (ESI) number.
+        required: false
+  EVINumberRange:
+    description: >-
+      The Ethernet Virtual Private Network (EVPN) Instance (EVI) number range for
+      an Ethernet fabric.
+    properties:
+      Lower:
+        type: integer
+        description: >-
+          Lower Ethernet Virtual Private Network (EVPN) Instance (EVI) number.
+        required: false
+      Upper:
+        type: integer
+        description: >-
+          Upper Ethernet Virtual Private Network (EVPN) Instance (EVI) number.
+        required: false
+  Ethernet:
+    description: >-
+      Ethernet-related properties for an address pool.
+    properties:
+      BFDSingleHopOnly:
+        type: BFDSingleHopOnly
+        description: >-
+          Bidirectional Forwarding Detection (BFD) related properties for this Ethernet
+          fabric.
+        required: false
+      BGPEvpn:
+        type: BGPEvpn
+        description: >-
+          BGP Ethernet Virtual Private Network (EVPN) related properties for this
+          Ethernet fabric.
+        required: false
+      EBGP:
+        type: EBGP
+        description: >-
+          External BGP (eBGP) related properties for this Ethernet fabric.
+        required: false
+      IPv4:
+        type: IPv4
+        description: >-
+          IPv4 and Virtual LAN (VLAN) related addressing for this Ethernet fabric.
+        required: false
+      MultiProtocolEBGP:
+        type: EBGP
+        description: >-
+          Multi Protocol eBGP (MP eBGP) related properties for this Ethernet fabric.
+        required: false
+      MultiProtocolIBGP:
+        type: CommonBGPProperties
+        description: >-
+          Multi Protocol iBGP (MP iBGP) related properties for this Ethernet fabric.
+        required: false
+  GatewayIPAddressRange:
+    description: >-
+      The IPv4 address range for gateway nodes for Ethernet Virtual Private Network
+      (EVPN) based fabrics.
+    properties:
+      Lower:
+        type: string
+        description: >-
+          The lower IPv4 address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+      Upper:
+        type: string
+        description: >-
+          The upper IPv4 address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+  GenZ:
+    description: >-
+      Gen-Z related properties for an address pool.
+    properties:
+      AccessKey:
+        type: string
+        description: >-
+          The Access Key required for this address pool.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([a-fA-F]|[0-9]){2}$
+      MaxCID:
+        type: integer
+        description: >-
+          The maximum value for the Component Identifier (CID).
+        required: false
+      MaxSID:
+        type: integer
+        description: >-
+          The maximum value for the Subnet Identifier (SID).
+        required: false
+      MinCID:
+        type: integer
+        description: >-
+          The minimum value for the Component Identifier (CID).
+        required: false
+      MinSID:
+        type: integer
+        description: >-
+          The minimum value for the Subnet Identifier (SID).
+        required: false
+  GracefulRestart:
+    description: >-
+      Border Gateway Protocol (BGP) graceful restart properties.
+    properties:
+      GracefulRestartEnabled:
+        type: boolean
+        description: >-
+          Border Gateway Protocol (BGP) graceful restart status.
+        required: false
+      HelperModeEnabled:
+        type: boolean
+        description: >-
+          Graceful restart helper mode status.
+        required: false
+      StaleRoutesTimeSeconds:
+        type: integer
+        description: >-
+          Stale route timer in seconds.
+        required: false
+      TimeSeconds:
+        type: integer
+        description: >-
+          Graceful restart timer in seconds.
+        required: false
+  IPv4:
+    description: >-
+      IPv4 and Virtual LAN (VLAN) related addressing for an Ethernet fabric.
+    properties:
+      AnycastGatewayIPAddress:
+        type: string
+        description: >-
+          The anycast gateway IPv4 address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+      AnycastGatewayMACAddress:
+        type: string
+        description: >-
+          The anycast gateway MAC address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+      DHCP:
+        type: DHCP
+        description: >-
+          The Dynamic Host Configuration Protocol (DHCP) related addressing for this
+          Ethernet fabric.
+        required: false
+      DNSDomainName:
+        type: string
+        description: >-
+          The Domain Name Service (DNS) domain name for this Ethernet fabric.
+        required: false
+      DNSServer:
+        type: list
+        description: >-
+          The Domain Name Service (DNS) servers for this Ethernet fabric.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+        entry_schema:
+          type: string
+      DistributeIntoUnderlayEnabled:
+        type: boolean
+        description: >-
+          Indicates if host subnets should be distributed into the fabric underlay.
+        required: false
+      EBGPAddressRange:
+        type: IPv4AddressRange
+        description: >-
+          External BGP (eBGP) related addressing for this Ethernet fabric.
+        required: false
+      FabricLinkAddressRange:
+        type: IPv4AddressRange
+        description: >-
+          Link-related IPv4 addressing for this Ethernet fabric typically applied
+          to connections between spine and leaf Ethernet switches.
+        required: false
+      GatewayIPAddress:
+        type: string
+        description: >-
+          The gateway IPv4 address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+      HostAddressRange:
+        type: IPv4AddressRange
+        description: >-
+          IPv4-related host subnet addressing for physical device endpoints that connect
+          to this Ethernet fabric.
+        required: false
+      IBGPAddressRange:
+        type: IPv4AddressRange
+        description: >-
+          Internal BGP (iBGP) related addressing for this Ethernet fabric.
+        required: false
+      LoopbackAddressRange:
+        type: IPv4AddressRange
+        description: >-
+          Loopback-related IPv4 addressing for this Ethernet fabric.
+        required: false
+      ManagementAddressRange:
+        type: IPv4AddressRange
+        description: >-
+          Management-related addressing for this Ethernet fabric.
+        required: false
+      NTPOffsetHoursMinutes:
+        type: integer
+        description: >-
+          The Network Time Protocol (NTP) offset configuration.
+        required: false
+      NTPServer:
+        type: list
+        description: >-
+          The Network Time Protocol (NTP) servers for this Ethernet fabric.
+        required: false
+        entry_schema:
+          type: string
+      NTPTimezone:
+        type: string
+        description: >-
+          The Network Time Protocol (NTP) time zone for this Ethernet fabric.
+        required: false
+      NativeVLAN:
+        type: integer
+        description: >-
+          The untagged Virtual LAN (VLAN) ID value.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 4094
+      SystemMACRange:
+        type: SystemMACRange
+        description: >-
+          The MAC address range for systems in this subnet.
+        required: false
+      VLANIdentifierAddressRange:
+        type: VLANIdentifierAddressRange
+        description: >-
+          Virtual LAN (VLAN) tag related addressing for this Ethernet fabric or for
+          end-host networks.
+        required: false
+  IPv4AddressRange:
+    description: >-
+      IPv4-related address range for an Ethernet fabric.
+    properties:
+      Lower:
+        type: string
+        description: >-
+          Lower IPv4 network address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+      Upper:
+        type: string
+        description: >-
+          Upper IPv4 network address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+  MaxPrefix:
+    description: >-
+      Border Gateway Protocol (BGP) max prefix properties.
+    properties:
+      MaxPrefixNumber:
+        type: integer
+        description: >-
+          Maximum prefix number.
+        required: false
+      RestartTimerSeconds:
+        type: integer
+        description: >-
+          Border Gateway Protocol (BGP) restart timer in seconds.
+        required: false
+      ShutdownThresholdPercentage:
+        type: float
+        description: >-
+          Shutdown threshold status.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 100
+      ThresholdWarningOnlyEnabled:
+        type: boolean
+        description: >-
+          Threshold warning only status.
+        required: false
+  MultiplePaths:
+    description: >-
+      Border Gateway Protocol (BGP) multiple path properties.
+    properties:
+      MaximumPaths:
+        type: integer
+        description: >-
+          Maximum paths number.
+        required: false
+      UseMultiplePathsEnabled:
+        type: boolean
+        description: >-
+          Border Gateway Protocol (BGP) multiple paths status.
+        required: false
+  RouteDistinguisherRange:
+    description: >-
+      The Route Distinguisher (RD) number range for an Ethernet fabric.
+    properties:
+      Lower:
+        type: integer
+        description: >-
+          Lower Route Distinguisher (RD) number.
+        required: false
+      Upper:
+        type: integer
+        description: >-
+          Upper Route Distinguisher (RD) number.
+        required: false
+  RouteTargetRange:
+    description: >-
+      The Route Target (RT) number range for the fabric.
+    properties:
+      Lower:
+        type: integer
+        description: >-
+          Lower Route Target (RT) number.
+        required: false
+      Upper:
+        type: integer
+        description: >-
+          Upper Route Target (RT) number.
+        required: false
+  SystemMACRange:
+    description: >-
+      The Media Access Control (MAC) address range for the EVPN-based fabrics.
+    properties:
+      Lower:
+        type: string
+        description: >-
+          The lower system MAC address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+      Upper:
+        type: string
+        description: >-
+          The upper system MAC address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+  VLANIdentifierAddressRange:
+    description: >-
+      VLAN tag related addressing for an Ethernet fabric or for end-host networks.
+    properties:
+      Lower:
+        type: integer
+        description: >-
+          Virtual LAN (VLAN) tag lower value.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 4094
+      Upper:
+        type: integer
+        description: >-
+          Virtual LAN (VLAN) tag upper value.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 4094
+relationship_types:
+  AddressPoolDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Zones@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  AddressPool:
+    description: >-
+      The schema definition of an address pool and its configuration.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Ethernet:
+        type: Ethernet
+        description: >-
+          The Ethernet-related properties for this address pool.
+        required: false
+      GenZ:
+        type: GenZ
+        description: >-
+          The Gen-Z related properties for this address pool.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Endpoints:
+        node: Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: AddressPoolDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that this address pool contains.
+    - Zones:
+        node: Zone
+        capability: zonecaps:ZoneFeature
+        relationship: AddressPoolDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the zones that this address pool contains.
+    capabilities:
+      feature:
+        type: addplcp:AddressPoolFeature
+      containable:
+        type: addplcp:AddressPoolContainable

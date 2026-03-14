@@ -1,0 +1,141 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: ManagerAccountCollection.yaml
+  namespace: mngacccl
+- url: RoleCollection.yaml
+  namespace: rlcllctn
+- url: Core.yaml
+  namespace: core
+- url: ManagerAccountCollection_caps.yaml
+  namespace: mnacclcp
+- url: RoleCollection_caps.yaml
+  namespace: rlcllcp
+- url: AccountService_caps.yaml
+  namespace: accsrvcp
+node_types:
+  AccountService:
+    description: >-
+      Account Service contains properties common to all user accounts, such as password
+      requirements, and control features such as account lockout.  It also contains
+      links to the collections of Manager Accounts and Roles.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this service is enabled.
+        required: false
+      AuthFailureLoggingThreshold:
+        type: float
+        description: >-
+          This is the number of authorization failures that need to occur before the
+          failure attempt is logged to the manager log.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinPasswordLength:
+        type: float
+        description: >-
+          This is the minimum password length for this service.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MaxPasswordLength:
+        type: float
+        description: >-
+          This is the maximum password length for this service.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AccountLockoutThreshold:
+        type: float
+        description: >-
+          The number of failed login attempts before a user account is locked for
+          a specified duration. (0=never locked)
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AccountLockoutDuration:
+        type: float
+        description: >-
+          The time in seconds an account is locked after the account lockout threshold
+          is met. Must be >= AccountLockoutResetAfter. If set to 0, no lockout will
+          occur.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      AccountLockoutCounterResetAfter:
+        type: float
+        description: >-
+          The interval of time in seconds since the last failed login attempt at which
+          point the lockout threshold counter for the account is reset to zero. Must
+          be less than or equal to AccountLockoutDuration
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+    requirements:
+    - Accounts:
+        node: mngacccl:ManagerAccountCollection
+        capability: mnacclcp:ManagerAccountCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Link to a collection of Manager Accounts
+    - Roles:
+        node: rlcllctn:RoleCollection
+        capability: rlcllcp:RoleCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Link to a collection of Roles
+    capabilities:
+      feature:
+        type: accsrvcp:AccountServiceFeature
+      containable:
+        type: accsrvcp:AccountServiceContainable

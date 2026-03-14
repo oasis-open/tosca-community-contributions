@@ -1,0 +1,217 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: OutletGroup_caps.yaml
+  namespace: otlgrpcp
+data_types:
+  PowerState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - 'On'
+        - 'Off'
+        - PowerCycle
+relationship_types:
+  OutletGroupDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OutletGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Outlets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  OutletGroupActions:
+    operations:
+      PowerControl:
+        description: >-
+          This action turns the outlet group on or off.
+        inputs:
+          PowerState:
+            type: PowerState
+            description: >-
+              The desired power state of the outlet group.
+            required: false
+      ResetMetrics:
+        description: >-
+          This action resets metrics related to this outlet group.
+node_types:
+  OutletGroup:
+    description: >-
+      The `OutletGroup` schema contains definitions for an electrical outlet group.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      CreatedBy:
+        type: string
+        description: >-
+          The creator of this outlet group.
+        required: false
+      Description:
+        type: string
+        required: false
+      EnergykWh:
+        type: string
+        description: >-
+          The energy (kWh) for this outlet group.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerCycleDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power on after a `PowerControl` action to
+          cycle power.  Zero seconds indicates no delay.
+        required: false
+      PowerEnabled:
+        type: boolean
+        description: >-
+          Indicates if the outlet group can be powered.
+        required: false
+      PowerOffDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power off after a `PowerControl` action.  Zero
+          seconds indicates no delay to power off.
+        required: false
+      PowerOnDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power up after a power cycle or a `PowerControl`
+          action.  Zero seconds indicates no delay to power up.
+        required: false
+      PowerRestoreDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power on after power has been restored.  Zero
+          seconds indicates no delay.
+        required: false
+      PowerRestorePolicy:
+        type: string
+        description: >-
+          The desired power state of the outlet group when power is restored after
+          a power loss.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - AlwaysOn
+            - AlwaysOff
+            - LastState
+      PowerState:
+        type: string
+        description: >-
+          The power state of the outlet group.
+        required: false
+      PowerWatts:
+        type: string
+        description: >-
+          The power (W) for this outlet group.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      ConfigurationLocked:
+        type: boolean
+        description: >-
+          Indicates whether the configuration is locked.
+        required: false
+      PowerControlLocked:
+        type: boolean
+        description: >-
+          Indicates whether power control requests are locked.
+        required: false
+      PowerStateInTransition:
+        type: boolean
+        description: >-
+          Indicates whether the power state is undergoing a delayed transition.
+        required: false
+      OutletGroupType:
+        type: string
+        description: >-
+          The type of outlet group that this resource represents.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - HardwareDefined
+            - UserDefined
+    requirements:
+    - OutletGroups:
+        node: OutletGroup
+        capability: otlgrpcp:OutletGroupFeature
+        relationship: OutletGroupDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of outlet groups in this outlet group.
+    - Outlets:
+        # node: outlet:Outlet
+        capability: core:Feature
+        relationship: OutletGroupDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of outlets in this outlet group.
+    interfaces:
+      Actions:
+        type: OutletGroupActions
+    capabilities:
+      feature:
+        type: otlgrpcp:OutletGroupFeature
+      containable:
+        type: otlgrpcp:OutletGroupContainable

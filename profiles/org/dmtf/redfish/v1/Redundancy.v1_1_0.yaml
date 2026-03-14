@@ -1,0 +1,89 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata.4.0.0.yaml
+  namespace: odata400
+- url: Core.yaml
+  namespace: core
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+data_types:
+  RedundancyMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Failover
+        - N+m
+        - Sharing
+        - Sparing
+node_types:
+  Redundancy:
+    description: >-
+      This is the redundancy definition to be used in other resource schemas.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          This is the identifier for the member within the collection.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the resource or array element.
+        required: true
+      Mode:
+        type: RedundancyMode
+        description: >-
+          This is the redundancy mode of the group.
+        required: true
+      MaxNumSupported:
+        type: float
+        description: >-
+          This is the maximum number of members allowable for this particular redundancy
+          group.
+        required: true
+      MinNumNeeded:
+        type: float
+        description: >-
+          This is the minumum number of members needed for this group to be redundant.
+        required: true
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: true
+      RedundancySet@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RedundancySet@odata_navigationLink:
+        type: string
+        required: false
+      RedundancySet:
+        type: list
+        description: >-
+          Contains any ids that represent components of this redundancy set.
+        required: true
+        entry_schema:
+          type: odata400:idRef
+      RedundancyEnabled:
+        type: boolean
+        description: >-
+          This indicates whether redundancy is enabled.
+        required: false
+    capabilities:
+      feature:
+        type: rdndcps:RedundancyFeature
+      containable:
+        type: rdndcps:RedundancyContainable

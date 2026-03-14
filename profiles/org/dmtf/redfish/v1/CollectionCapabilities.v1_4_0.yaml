@@ -1,0 +1,96 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CollectionCapabilities_caps.yaml
+  namespace: cllcpbcp
+- url: Resource.yaml
+  namespace: resource
+data_types:
+  Capability:
+    description: >-
+      This type describes a capability of a collection for a specific use case.
+    properties:
+      CapabilitiesObject:
+        type: odatav4:idRef
+        description: >-
+          The link to the resource the client can issue a GET request against to understand
+          how to form a POST request for a collection.
+        required: true
+      Links:
+        type: Links
+        description: >-
+          The links to other resources that are related to this resource.
+        required: true
+      UseCase:
+        type: UseCase
+        description: >-
+          The use case in which a client can issue a POST request to the collection.
+        required: true
+  Links:
+    description: >-
+      The links to other resources that are related to this resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          An array of links to resources associated with this capability.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      TargetCollection:
+        type: resource:ResourceCollection
+        description: >-
+          The link to the collection that this capabilities structure is describing.
+        required: true
+  UseCase:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ComputerSystemComposition
+        - ComputerSystemConstrainedComposition
+        - VolumeCreation
+        - ResourceBlockComposition
+        - ResourceBlockConstrainedComposition
+        - RegisterResourceBlock
+node_types:
+  CollectionCapabilities:
+    description: >-
+      This type describes the capabilities of a collection.
+    properties:
+      Capabilities:
+        type: list
+        description: >-
+          The list of capabilities supported by this resource.
+        required: false
+        entry_schema:
+          type: Capability
+      MaxMembers:
+        type: integer
+        description: >-
+          The maximum number of members allowed in this collection.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+    capabilities:
+      feature:
+        type: cllcpbcp:CollectionCapabilitiesFeature
+      containable:
+        type: cllcpbcp:CollectionCapabilitiesContainable

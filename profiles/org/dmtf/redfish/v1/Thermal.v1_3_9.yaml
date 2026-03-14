@@ -1,0 +1,400 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: Thermal_caps.yaml
+  namespace: thrmlcps
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+data_types:
+  FanActions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: FanOemActions
+        description: >-
+          The available OEM-specific actions for this resource.
+        required: false
+  FanOemActions:
+    description: >-
+      The available OEM-specific actions for this resource.
+  ReadingUnits:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RPM
+        - Percent
+  TemperatureActions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: TemperatureOemActions
+        description: >-
+          The available OEM-specific actions for this resource.
+        required: false
+  TemperatureOemActions:
+    description: >-
+      The available OEM-specific actions for this resource.
+  ThermalActions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: ThermalOemActions
+        description: >-
+          The available OEM-specific actions for this resource.
+        required: false
+  ThermalOemActions:
+    description: >-
+      The available OEM-specific actions for this resource.
+node_types:
+  Thermal:
+    description: >-
+      The Thermal schema describes temperature monitoring and thermal management subsystems,
+      such as cooling fans, for a computer system or similar devices contained within
+      a chassis.
+    properties:
+      Actions:
+        type: ThermalActions
+        description: >-
+          The available actions for this resource.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Fans:
+        type: list
+        description: >-
+          The set of fans for this chassis.
+        required: false
+        entry_schema:
+          type: Fan
+      Fans@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Temperatures:
+        type: list
+        description: >-
+          The set of temperature sensors for this chassis.
+        required: false
+        entry_schema:
+          type: Temperature
+      Temperatures@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The redundancy information for the set of fans in this chassis.
+    capabilities:
+      feature:
+        type: thrmlcps:ThermalFeature
+      containable:
+        type: thrmlcps:ThermalContainable
+  Fan:
+    properties:
+      Actions:
+        type: FanActions
+        description: >-
+          The available actions for this resource.
+        required: false
+      FanName:
+        type: string
+        description: >-
+          The name of the fan.
+        required: false
+      IndicatorLED:
+        type: resource:IndicatorLED
+        description: >-
+          The state of the indicator LED, which identifies this fan.
+        required: false
+      LowerThresholdCritical:
+        type: integer
+        description: >-
+          The value at which the reading is below normal range but not yet fatal.
+        required: false
+      LowerThresholdFatal:
+        type: integer
+        description: >-
+          The value at which the reading is below normal range and fatal.
+        required: false
+      LowerThresholdNonCritical:
+        type: integer
+        description: >-
+          The value at which the reading is below normal range.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this fan.
+        required: false
+      MaxReadingRange:
+        type: integer
+        description: >-
+          Maximum value for this sensor.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          The unique identifier for the member within an array.
+        required: true
+      MinReadingRange:
+        type: integer
+        description: >-
+          Minimum value for this sensor.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for this fan.
+        required: false
+      Name:
+        type: string
+        description: >-
+          Name of the fan.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this fan.
+        required: false
+      Reading:
+        type: integer
+        description: >-
+          The fan speed.
+        required: false
+      ReadingUnits:
+        type: ReadingUnits
+        description: >-
+          The units in which the fan reading and thresholds are measured.
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          An array of links to resources or objects that this fan services.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this fan.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number for this fan.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UpperThresholdCritical:
+        type: integer
+        description: >-
+          The value at which the reading is above normal range but not yet fatal.
+        required: false
+      UpperThresholdFatal:
+        type: integer
+        description: >-
+          The value at which the reading is above normal range and fatal.
+        required: false
+      UpperThresholdNonCritical:
+        type: integer
+        description: >-
+          The value at which the reading is above normal range.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device associated with this fan.
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of redundancy groups for this fan.
+    capabilities:
+      containable:
+        type: thrmlcps:FanContainable
+  Temperature:
+    properties:
+      Actions:
+        type: TemperatureActions
+        description: >-
+          The available actions for this resource.
+        required: false
+      LowerThresholdCritical:
+        type: float
+        description: >-
+          The value at which the reading is below normal range but not yet fatal.
+        required: false
+      LowerThresholdFatal:
+        type: float
+        description: >-
+          The value at which the reading is below normal range and fatal.
+        required: false
+      LowerThresholdNonCritical:
+        type: float
+        description: >-
+          The value at which the reading is below normal range.
+        required: false
+      MaxReadingRangeTemp:
+        type: float
+        description: >-
+          Maximum value for this sensor.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          The unique identifier for the member within an array.
+        required: true
+      MinReadingRangeTemp:
+        type: float
+        description: >-
+          Minimum value for this sensor.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The temperature sensor name.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ReadingCelsius:
+        type: float
+        description: >-
+          The temperature (C).
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          An array of links to resources or objects that represent areas or devices
+          to which this temperature applies.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SensorNumber:
+        type: integer
+        description: >-
+          The numerical identifier of the temperature sensor.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UpperThresholdCritical:
+        type: float
+        description: >-
+          The value at which the reading is above normal range but not yet fatal.
+        required: false
+      UpperThresholdFatal:
+        type: float
+        description: >-
+          The value at which the reading is above normal range and fatal.
+        required: false
+      UpperThresholdNonCritical:
+        type: float
+        description: >-
+          The value at which the reading is above normal range.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this temperature measurement applies.
+    capabilities:
+      containable:
+        type: thrmlcps:TemperatureContainable

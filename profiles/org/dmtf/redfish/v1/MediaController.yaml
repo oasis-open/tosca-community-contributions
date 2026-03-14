@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MediaController.v1_3_2.yaml
+  namespace: mdcntr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MediaController_caps.yaml
+  namespace: mdcntcp
+node_types:
+  MediaController:
+    description: >-
+      The `MediaController` schema contains the definition of a media controller and
+      its configuration.
+    derived_from: mdcntr:MediaController
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: mdcntcp:MediaControllerFeature
+      containable:
+        type: mdcntcp:MediaControllerContainable

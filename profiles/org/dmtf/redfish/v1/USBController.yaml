@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: USBController.v1_0_1.yaml
+  namespace: usbcntrl
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: USBController_caps.yaml
+  namespace: usbccps
+node_types:
+  USBController:
+    description: >-
+      The `USBController` schema defines a Universal Serial Bus controller.
+    derived_from: usbcntrl:USBController
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: usbccps:USBControllerFeature
+      containable:
+        type: usbccps:USBControllerContainable
