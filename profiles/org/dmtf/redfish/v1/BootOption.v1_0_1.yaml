@@ -1,0 +1,84 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ComputerSystem.yaml
+  namespace: cmptsyst
+- url: Resource.yaml
+  namespace: resource
+- url: odata.v4_0_3.yaml
+  namespace: odata
+- url: Core.yaml
+  namespace: core
+- url: BootOption_caps.yaml
+  namespace: btoptcp
+node_types:
+  BootOption:
+    description: >-
+      This is the schema definition for the BootOption resource. It represents the
+      properties of a bootable device available in the System.
+    properties:
+      Alias:
+        type: cmptsyst:BootSource
+        description: >-
+          The alias of this Boot Source.
+        required: false
+      BootOptionEnabled:
+        type: boolean
+        description: >-
+          A flag that shows if the Boot Option is enabled.
+        required: false
+      BootOptionReference:
+        type: string
+        description: >-
+          The unique boot option string that is referenced in the BootOrder.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DisplayName:
+        type: string
+        description: >-
+          The user-readable display string of the Boot Option.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          The ID(s) of the resources associated with this Boot Option.
+        required: false
+        entry_schema:
+          type: odata:idRef
+      RelatedItem@odata_count:
+        type: odata:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      UefiDevicePath:
+        type: string
+        description: >-
+          The UEFI device path used to access this UEFI Boot Option.
+        required: false
+    capabilities:
+      feature:
+        type: btoptcp:BootOptionFeature
+      containable:
+        type: btoptcp:BootOptionContainable

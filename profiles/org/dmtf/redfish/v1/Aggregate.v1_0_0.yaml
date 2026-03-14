@@ -1,0 +1,118 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Resource_caps.yaml
+  namespace: rsrccps
+- url: Aggregate_caps.yaml
+  namespace: aggrcps
+interface_types:
+  AggregateActions:
+    operations:
+      AddElements:
+        description: >-
+          This action is used to add one or more resources to the aggregate.
+        inputs:
+          Elements:
+            type: list
+            description: >-
+              An array of resource links to add to the Elements array.
+            required: true
+      RemoveElements:
+        description: >-
+          This action is used to remove one or more resources from the aggregate.
+        inputs:
+          Elements:
+            type: list
+            description: >-
+              An array of resource links to remove from the Elements array.
+            required: true
+      Reset:
+        description: >-
+          This action is used to reset a collection of resources.  For example, this
+          could be an aggregate or a list of computer systems.
+        inputs:
+          BatchSize:
+            type: integer
+            description: >-
+              The number of elements in each batch being reset.
+            required: false
+          DelayBetweenBatchesInSeconds:
+            type: integer
+            description: >-
+              The delay of the batches of elements being reset in seconds.
+            required: false
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+      SetDefaultBootOrder:
+        description: >-
+          This action is used to restore the boot order to the default state for the
+          computer systems that are members of this aggregate.
+node_types:
+  Aggregate:
+    description: >-
+      The Aggregate schema describes a grouping method for an aggregation service.  Aggregates
+      are formal groups of resources that are more persistent than ad hoc groupings.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Elements@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ElementsCount:
+        type: integer
+        description: >-
+          The number of entries in the Elements array.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - Elements:
+        node: resource:Resource
+        capability: rsrccps:ResourceContainable
+        relationship: core:Contains
+        count_range:
+        - 1
+        - UNBOUNDED
+        description: >-
+          The elements of this aggregate.
+    interfaces:
+      Actions:
+        type: AggregateActions
+    capabilities:
+      feature:
+        type: aggrcps:AggregateFeature
+      containable:
+        type: aggrcps:AggregateContainable

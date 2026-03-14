@@ -1,0 +1,116 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Manager.yaml
+  namespace: manager
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: PowerDistributionCollection.yaml
+  namespace: pwrdstcl
+- url: PowerDistributionCollection_caps.yaml
+  namespace: pwdsclcp
+- url: PowerEquipment_caps.yaml
+  namespace: pwreqpcp
+relationship_types:
+  PowerEquipmentDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  PowerEquipment:
+    description: >-
+      This is the schema definition for the set of power equipment.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - FloorPDUs:
+        node: pwrdstcl:PowerDistributionCollection
+        capability: pwdsclcp:PowerDistributionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to a collection of floor power distribution units.
+    - RackPDUs:
+        node: pwrdstcl:PowerDistributionCollection
+        capability: pwdsclcp:PowerDistributionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to a collection of rack-level power distribution units.
+    - Switchgear:
+        node: pwrdstcl:PowerDistributionCollection
+        capability: pwdsclcp:PowerDistributionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to a collection of switchgear.
+    - TransferSwitches:
+        node: pwrdstcl:PowerDistributionCollection
+        capability: pwdsclcp:PowerDistributionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to a collection of transfer switches.
+    - ManagedBy:
+        node: manager:Manager
+        capability: mngrcps:ManagerFeature
+        relationship: PowerEquipmentDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers responsible for managing this power equipment.
+    capabilities:
+      feature:
+        type: pwreqpcp:PowerEquipmentFeature
+      containable:
+        type: pwreqpcp:PowerEquipmentContainable

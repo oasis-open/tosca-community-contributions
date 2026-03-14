@@ -1,0 +1,178 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Assembly.yaml
+  namespace: assembly
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Sensor.yaml
+  namespace: sensor
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+- url: Fan_caps.yaml
+  namespace: fancaps
+relationship_types:
+  FanDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      CoolingChassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  Fan:
+    description: >-
+      The `Fan` schema describes a cooling fan unit for a computer system or similar
+      devices contained within a chassis.  It also describes the location, such as
+      a slot, socket, or bay, where a unit can be installed, by populating a resource
+      instance with an absent state if a unit is not present.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FanDiameterMm:
+        type: integer
+        description: >-
+          The diameter of the fan assembly in millimeter units.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      HotPluggable:
+        type: boolean
+        description: >-
+          An indication of whether this device can be inserted or removed while the
+          equipment is in operation.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the fan.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this fan.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for this fan.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this fan.
+        required: false
+      PowerWatts:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          Power consumption (W).
+        required: false
+      Replaceable:
+        type: boolean
+        description: >-
+          An indication of whether this component can be independently replaced as
+          allowed by the vendor's replacement policy.
+        required: false
+      SecondarySpeedPercent:
+        type: sensor:SensorFanExcerpt
+        description: >-
+          The fan speed (percent) of the second rotor in a multi-rotor fan.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this fan.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number for this fan.
+        required: false
+      SpeedPercent:
+        type: sensor:SensorFanExcerpt
+        description: >-
+          The fan speed (percent).
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this fan.
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device associated with this fan.
+    - CoolingChassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: FanDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis that are directly cooled by this fan.
+    capabilities:
+      feature:
+        type: fancaps:FanFeature
+      containable:
+        type: fancaps:FanContainable

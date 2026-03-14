@@ -1,0 +1,448 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: DataProtectionLoSCapabilities_caps.yaml
+  namespace: dtprlsc
+- url: DataSecurityLoSCapabilities_caps.yaml
+  namespace: dtsclsc
+- url: DataStorageLoSCapabilities_caps.yaml
+  namespace: dtstlsc
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: Resource.yaml
+  namespace: resource
+- url: IOConnectivityLoSCapabilities.yaml
+  namespace: icnlsc
+- url: IOPerformanceLoSCapabilities.yaml
+  namespace: iprlsc
+- url: Core.yaml
+  namespace: core
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: Resource_caps.yaml
+  namespace: rsrccps
+- url: IOConnectivityLoSCapabilities_caps.yaml
+  namespace: iclsccp
+- url: IOPerformanceLoSCapabilities_caps.yaml
+  namespace: iplsccp
+- url: ClassOfServiceCollection.yaml
+  namespace: clofsrcl
+- url: EndpointGroupCollection.yaml
+  namespace: endgrpcl
+- url: ConnectionCollection.yaml
+  namespace: cnnccllc
+- url: ConsistencyGroupCollection.yaml
+  namespace: cnsgrpcl
+- url: DriveCollection.yaml
+  namespace: drvcllc
+- url: EndpointCollection.yaml
+  namespace: endpcllc
+- url: FileSystemCollection.yaml
+  namespace: flsyscl
+- url: IOStatistics.yaml
+  namespace: isttstcs
+- url: LineOfServiceCollection.yaml
+  namespace: lnofsrcl
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: SpareResourceSet.yaml
+  namespace: sprrsrst
+- url: StorageGroupCollection.yaml
+  namespace: strgrpcl
+- url: StoragePoolCollection.yaml
+  namespace: strplcl
+- url: Storage.yaml
+  namespace: storage
+- url: VolumeCollection.yaml
+  namespace: vlmcllc
+- url: ClassOfServiceCollection_caps.yaml
+  namespace: clofsrcc
+- url: EndpointGroupCollection_caps.yaml
+  namespace: engrclcp
+- url: ConnectionCollection_caps.yaml
+  namespace: cnncllcp
+- url: ConsistencyGroupCollection_caps.yaml
+  namespace: cngrclcp
+- url: DriveCollection_caps.yaml
+  namespace: drvcllcp
+- url: EndpointCollection_caps.yaml
+  namespace: endcllcp
+- url: FileSystemCollection_caps.yaml
+  namespace: flsyclcp
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+- url: LineOfServiceCollection_caps.yaml
+  namespace: lnofsrcc
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: SpareResourceSet_caps.yaml
+  namespace: sprsstcp
+- url: StorageGroupCollection_caps.yaml
+  namespace: stgrclcp
+- url: StoragePoolCollection_caps.yaml
+  namespace: stplclcp
+- url: Storage_caps.yaml
+  namespace: strgcps
+- url: VolumeCollection_caps.yaml
+  namespace: vlmcllcp
+- url: StorageService_caps.yaml
+  namespace: strsrvcp
+relationship_types:
+  StorageServiceDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  StorageServiceActions:
+    operations:
+      SetEncryptionKey:
+        description: >-
+          This action is used to set the encryption key for the storage subsystem.
+        inputs:
+          EncryptionKey:
+            type: string
+            description: >-
+              The encryption key to set on the storage subsystem.
+            required: false
+node_types:
+  StorageService:
+    description: >-
+      Collection of resources that are managed and exposed to hosts as a group.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The value identifies this resource.
+        required: false
+      LinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SpareResourceSets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The property contains the status of the StorageService.
+        required: false
+      StorageSubsystems@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - ClassesOfService:
+        node: clofsrcl:ClassOfServiceCollection
+        capability: clofsrcc:ClassOfServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The ClassesOfService that all storage in this StorageService can support.
+    - ClientEndpointGroups:
+        node: endgrpcl:EndpointGroupCollection
+        capability: engrclcp:EndpointGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Client endpoint groups.
+    - Connections:
+        node: cnnccllc:ConnectionCollection
+        capability: cnncllcp:ConnectionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An array of references to Connections that includes this volume.
+    - ConsistencyGroups:
+        node: cnsgrpcl:ConsistencyGroupCollection
+        capability: cngrclcp:ConsistencyGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          ConsistencyGroups.
+    - DataProtectionLoSCapabilities:
+        node: dtprlsc:DataProtectionLoSCapabilities
+        capability: dtprlsc:DataProtectionLoSCapabilitiesContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The data protection capabilities of this service.
+    - DataSecurityLoSCapabilities:
+        node: dtsclsc:DataSecurityLoSCapabilities
+        capability: dtsclsc:DataSecurityLoSCapabilitiesContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The data security capabilities of this service.
+    - DataStorageLoSCapabilities:
+        node: dtstlsc:DataStorageLoSCapabilities
+        capability: dtstlsc:DataStorageLoSCapabilitiesContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The data storage capabilities of this service.
+    - DefaultClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The default class of service for entities allocated by this storage service.
+    - Drives:
+        node: drvcllc:DriveCollection
+        capability: drvcllcp:DriveCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The set of drives managed by this storage service.
+    - EndpointGroups:
+        node: endgrpcl:EndpointGroupCollection
+        capability: engrclcp:EndpointGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Client and Server endpoint groups.
+    - Endpoints:
+        node: endpcllc:EndpointCollection
+        capability: endcllcp:EndpointCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Endpoints.
+    - FileSystems:
+        node: flsyscl:FileSystemCollection
+        capability: flsyclcp:FileSystemCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          FileSystems.
+    - IOConnectivityLoSCapabilities:
+        node: icnlsc:IOConnectivityLoSCapabilities
+        capability: iclsccp:IOConnectivityLoSCapabilitiesContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The IO connectivity capabilities of this service.
+    - IOPerformanceLoSCapabilities:
+        node: iprlsc:IOPerformanceLoSCapabilities
+        capability: iplsccp:IOPerformanceLoSCapabilitiesContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The IO performance capabilities of this service.
+    - IOStatistics:
+        node: isttstcs:IOStatistics
+        capability: isttcps:IOStatisticsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Statistics for this StorageService.
+    - LinesOfService:
+        node: lnofsrcl:LineOfServiceCollection
+        capability: lnofsrcc:LineOfServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The LinesOService defined for this StorageService.
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Redundancy information for the storage subsystem.
+    - ServerEndpointGroups:
+        node: endgrpcl:EndpointGroupCollection
+        capability: engrclcp:EndpointGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Server endpoint groups.
+    - SpareResourceSets:
+        node: sprrsrst:SpareResourceSet
+        capability: sprsstcp:SpareResourceSetContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of SpareResourceSets.
+    - StorageGroups:
+        node: strgrpcl:StorageGroupCollection
+        capability: stgrclcp:StorageGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          StorageGroups.
+    - StoragePools:
+        node: strplcl:StoragePoolCollection
+        capability: stplclcp:StoragePoolCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          StoragePools.
+    - StorageSubsystems:
+        node: storage:Storage
+        capability: strgcps:StorageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A reference to storage subsystems managed by this storage service.
+    - Volumes:
+        node: vlmcllc:VolumeCollection
+        capability: vlmcllcp:VolumeCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Volumes.
+    - DataProtectionLoSCapabilities:
+        node: dtprlsc:DataProtectionLoSCapabilities
+        capability: dtprlsc:DataProtectionLoSCapabilitiesFeature
+        relationship: StorageServiceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The data protection capabilities of this service.
+    - DataSecurityLoSCapabilities:
+        node: dtsclsc:DataSecurityLoSCapabilities
+        capability: dtsclsc:DataSecurityLoSCapabilitiesFeature
+        relationship: StorageServiceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The data security capabilities of this service.
+    - DataStorageLoSCapabilities:
+        node: dtstlsc:DataStorageLoSCapabilities
+        capability: dtstlsc:DataStorageLoSCapabilitiesFeature
+        relationship: StorageServiceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The data storage capabilities of this service.
+    - DefaultClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceFeature
+        relationship: StorageServiceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The default class of service for entities allocated by this storage service.
+    - HostingSystem:
+        node: resource:Resource
+        capability: rsrccps:ResourceFeature
+        relationship: StorageServiceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The hosting system or storage controller hosting this storage service.
+    - IOConnectivityLoSCapabilities:
+        node: icnlsc:IOConnectivityLoSCapabilities
+        capability: iclsccp:IOConnectivityLoSCapabilitiesFeature
+        relationship: StorageServiceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The IO connectivity capabilities of this service.
+    - IOPerformanceLoSCapabilities:
+        node: iprlsc:IOPerformanceLoSCapabilities
+        capability: iplsccp:IOPerformanceLoSCapabilitiesFeature
+        relationship: StorageServiceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The IO performance capabilities of this service.
+    interfaces:
+      Actions:
+        type: StorageServiceActions
+    capabilities:
+      feature:
+        type: strsrvcp:StorageServiceFeature
+      containable:
+        type: strsrvcp:StorageServiceContainable

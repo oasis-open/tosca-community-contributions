@@ -1,0 +1,233 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Facility.yaml
+  namespace: facility
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Manager.yaml
+  namespace: manager
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Facility_caps.yaml
+  namespace: fcltycps
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: PowerDistribution_caps.yaml
+  namespace: pwrdstcp
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: PowerDomainCollection.yaml
+  namespace: pwrdmncl
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+- url: PowerDomainCollection_caps.yaml
+  namespace: pwdmclcp
+data_types:
+  FacilityType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Room
+        - Floor
+        - Building
+        - Site
+relationship_types:
+  FacilityDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ContainsChassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ContainsFacilities@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      FloorPDUs@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RackPDUs@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Switchgear@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      TransferSwitches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  Facility:
+    description: >-
+      The Facility schema represents the physical location containing equipment, such
+      as a room, building, or campus.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FacilityType:
+        type: FacilityType
+        description: >-
+          The type of location this resource represents.
+        required: true
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the facility.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - AmbientMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the ambient environment metrics for this facility.
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this facility.
+    - PowerDomains:
+        node: pwrdmncl:PowerDomainCollection
+        capability: pwdmclcp:PowerDomainCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Link to the power domains in this facility.
+    - ContainedByFacility:
+        node: facility:Facility
+        capability: fcltycps:FacilityFeature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the facility that contains this facility.
+    - ContainsChassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the outermost chassis contained within this facility.
+    - ContainsFacilities:
+        node: facility:Facility
+        capability: fcltycps:FacilityFeature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to other facilities contained within this facility.
+    - FloorPDUs:
+        node: PowerDistribution
+        capability: pwrdstcp:PowerDistributionFeature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the floor power distribution units in this facility.
+    - ManagedBy:
+        node: manager:Manager
+        capability: mngrcps:ManagerFeature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers responsible for managing this facility.
+    - RackPDUs:
+        # node: pwrdstr:PowerDistribution
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the rack-level power distribution units in this facility.
+    - Switchgear:
+        # node: pwrdstr:PowerDistribution
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switchgear in this facility.
+    - TransferSwitches:
+        # node: pwrdstr:PowerDistribution
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the transfer switches in this facility.
+    capabilities:
+      feature:
+        type: fcltycps:FacilityFeature
+      containable:
+        type: fcltycps:FacilityContainable

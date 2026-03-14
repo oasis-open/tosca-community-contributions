@@ -1,0 +1,109 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: IOStatistics.yaml
+  namespace: isttstcs
+- url: Core.yaml
+  namespace: core
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+- url: StoragePoolMetrics_caps.yaml
+  namespace: stplmtcp
+node_types:
+  StoragePoolMetrics:
+    description: >-
+      The usage and health statistics for a storage pool.
+    properties:
+      CompressionSavingsBytes:
+        type: integer
+        description: >-
+          Current compression savings on the storage pool in Bytes.
+        required: false
+      ConsistencyCheckErrorCount:
+        type: float
+        description: >-
+          The number of consistency check errors of the volume.
+        required: false
+      CorrectableIOReadErrorCount:
+        type: integer
+        description: >-
+          The number of the correctable read errors for the lifetime of the storage
+          pool.
+        required: false
+      CorrectableIOWriteErrorCount:
+        type: integer
+        description: >-
+          The number of the correctable write errors for the lifetime of the storage
+          pool.
+        required: false
+      DeduplicationSavingsBytes:
+        type: integer
+        description: >-
+          Current deduplication savings on the storage pool in Bytes.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RebuildErrorCount:
+        type: float
+        description: >-
+          The number of rebuild errors over the lifetime of the storage pool.
+        required: false
+      StateChangeCount:
+        type: float
+        description: >-
+          The number of state changes (changes in Status.State) for this storage pool.
+        required: false
+      ThinProvisioningSavingsBytes:
+        type: integer
+        description: >-
+          Current thin provisioning savings on the storage pool in Bytes.
+        required: false
+      UncorrectableIOReadErrorCount:
+        type: integer
+        description: >-
+          The number of the uncorrectable read errors for the lifetime of the storage
+          pool.
+        required: false
+      UncorrectableIOWriteErrorCount:
+        type: integer
+        description: >-
+          The number of the uncorrectable write errors for the lifetime of the storage
+          pool.
+        required: false
+    requirements:
+    - IOStatistics:
+        node: isttstcs:IOStatistics
+        capability: isttcps:IOStatisticsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Statistics for this storage pool.
+    capabilities:
+      feature:
+        type: stplmtcp:StoragePoolMetricsFeature
+      containable:
+        type: stplmtcp:StoragePoolMetricsContainable

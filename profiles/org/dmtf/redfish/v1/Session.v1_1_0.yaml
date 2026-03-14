@@ -1,0 +1,69 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Session_caps.yaml
+  namespace: sssncps
+data_types:
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        description: >-
+          The available OEM specific actions for this resource.
+        required: false
+node_types:
+  Session:
+    description: >-
+      The Session resource describes a single connection (session) between a client
+      and a Redfish service instance.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      UserName:
+        type: string
+        description: >-
+          The UserName for the account for this session.
+        required: false
+      Password:
+        type: string
+        description: >-
+          This property is used in a POST to specify a password when creating a new
+          session.  This property is null on a GET.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    capabilities:
+      feature:
+        type: sssncps:SessionFeature
+      containable:
+        type: sssncps:SessionContainable

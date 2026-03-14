@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: VCATEntry.v1_0_3.yaml
+  namespace: vctntry
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: VCATEntry_caps.yaml
+  namespace: vctncps
+node_types:
+  VCATEntry:
+    description: >-
+      The `VCATEntry` schema defines an entry in a Virtual Channel Action Table.  A
+      Virtual Channel is a mechanism used to create multiple, logical communication
+      streams across a physical link.
+    derived_from: vctntry:VCATEntry
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: vctncps:VCATEntryFeature
+      containable:
+        type: vctncps:VCATEntryContainable

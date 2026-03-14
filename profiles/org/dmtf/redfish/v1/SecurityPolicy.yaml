@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SecurityPolicy.v1_0_3.yaml
+  namespace: scrtplcy
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SecurityPolicy_caps.yaml
+  namespace: scrplccp
+node_types:
+  SecurityPolicy:
+    description: >-
+      The `SecurityPolicy` resource provides a central point to configure the security
+      policy of a manager.
+    derived_from: scrtplcy:SecurityPolicy
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: scrplccp:SecurityPolicyFeature
+      containable:
+        type: scrplccp:SecurityPolicyContainable

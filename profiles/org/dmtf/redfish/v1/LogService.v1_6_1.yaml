@@ -1,0 +1,336 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: LogEntryCollection.yaml
+  namespace: lgentcl
+- url: Core.yaml
+  namespace: core
+- url: LogEntryCollection_caps.yaml
+  namespace: lgenclcp
+- url: LogService_caps.yaml
+  namespace: lgsrvcp
+data_types:
+  LogDiagnosticDataTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Manager
+        - PreOS
+        - OS
+        - OEM
+  LogEntryTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Event
+        - SEL
+        - Multiple
+        - OEM
+        - CXL
+  LogPurpose:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Diagnostic
+        - Operations
+        - Security
+        - Telemetry
+        - ExternalEntity
+        - OEM
+  OverWritePolicy:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unknown
+        - WrapsWhenFull
+        - NeverOverWrites
+  SyslogFacility:
+    description: >-
+      The syslog facility code is an enumeration of program types.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Kern
+        - User
+        - Mail
+        - Daemon
+        - Auth
+        - Syslog
+        - LPR
+        - News
+        - UUCP
+        - Cron
+        - Authpriv
+        - FTP
+        - NTP
+        - Security
+        - Console
+        - SolarisCron
+        - Local0
+        - Local1
+        - Local2
+        - Local3
+        - Local4
+        - Local5
+        - Local6
+        - Local7
+  SyslogFilter:
+    description: >-
+      A syslog filter.
+    properties:
+      LogFacilities:
+        type: list
+        description: >-
+          The types of programs that can log messages.
+        required: false
+        entry_schema:
+          type: SyslogFacility
+      LowestSeverity:
+        type: SyslogSeverity
+        description: >-
+          The lowest severity level message that will be logged.
+        required: false
+  SyslogSeverity:
+    description: >-
+      The syslog severity is an application-specific rating used to describe the urgency
+      of the message.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Emergency
+        - Alert
+        - Critical
+        - Error
+        - Warning
+        - Notice
+        - Informational
+        - Debug
+        - All
+  TransferProtocolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CIFS
+        - FTP
+        - SFTP
+        - HTTP
+        - HTTPS
+        - NFS
+        - SCP
+        - TFTP
+        - OEM
+interface_types:
+  LogServiceActions:
+    operations:
+      ClearLog:
+        description: >-
+          The action to clear the log for this log service.
+        inputs:
+          LogEntriesETag:
+            type: string
+            description: >-
+              The ETag of the log entry collection within this log service.  If the
+              provided ETag does not match the current ETag of the log entry collection,
+              the request is rejected.
+            required: false
+      CollectDiagnosticData:
+        description: >-
+          The action to collect the diagnostic data for the given type.  When the
+          diagnostic data is collected, a new log entry will be created and the additional
+          data referenced by the new log entry will contain the diagnostic data.
+        inputs:
+          DiagnosticDataType:
+            type: LogDiagnosticDataTypes
+            description: >-
+              The type of diagnostic data to collect.
+            required: true
+          OEMDiagnosticDataType:
+            type: string
+            description: >-
+              The OEM-defined type of diagnostic data to collect.
+            required: false
+          Password:
+            type: string
+            description: >-
+              The password to access the URI specified by the `TargetURI` parameter.
+            required: false
+          TargetURI:
+            type: string
+            description: >-
+              The URI to access when sending the diagnostic data.
+            required: false
+          TransferProtocol:
+            type: TransferProtocolType
+            description: >-
+              The network protocol that the service uses to send the diagnostic data.
+            required: false
+          UserName:
+            type: string
+            description: >-
+              The username to access the URI specified by the `TargetURI` parameter.
+            required: false
+      PushDiagnosticData:
+        description: >-
+          The action to push an existing diagnostic data to a target URI.
+        inputs:
+          AdditionalDataURI:
+            type: string
+            description: >-
+              The URI of the diagnostic data to transfer to the URI specified by the
+              `TargetURI` parameter.
+            required: true
+          Password:
+            type: string
+            description: >-
+              The password to access the URI specified by the `TargetURI` parameter.
+            required: false
+          TargetURI:
+            type: string
+            description: >-
+              The URI to access when sending the diagnostic data.
+            required: true
+          TransferProtocol:
+            type: TransferProtocolType
+            description: >-
+              The network protocol that the service uses to send the diagnostic data.
+            required: false
+          UserName:
+            type: string
+            description: >-
+              The username to access the URI specified by the `TargetURI` parameter.
+            required: false
+node_types:
+  LogService:
+    description: >-
+      The `LogService` schema contains properties for monitoring and configuring a
+      log service.  When the `Id` property contains `DeviceLog`, the log contains
+      device-resident log entries that follow the physical device when moved from
+      system-to-system, and not a replication or subset of a system event log.
+    properties:
+      AutoDSTEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the log service is configured for automatic Daylight
+          Saving Time (DST) adjustment.
+        required: false
+      DateTime:
+        type: string
+        description: >-
+          The current date and time with UTC offset of the log service.
+        required: false
+      DateTimeLocalOffset:
+        type: string
+        description: >-
+          The time offset from UTC that the `DateTime` property is in `+HH:MM` format.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([-+][0-1][0-9]:[0-5][0-9])$
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LogEntryType:
+        type: LogEntryTypes
+        description: >-
+          The format of the log entries.
+        required: false
+      LogPurposes:
+        type: list
+        description: >-
+          The purposes of the log.
+        required: false
+        entry_schema:
+          type: LogPurpose
+      MaxNumberOfRecords:
+        type: integer
+        description: >-
+          The maximum number of log entries that this service can have.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      OEMLogPurpose:
+        type: string
+        description: >-
+          The OEM-specified purpose of the log if `LogPurposes` contains `OEM`.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OverWritePolicy:
+        type: OverWritePolicy
+        description: >-
+          The overwrite policy for this service that takes place when the log is full.
+        required: false
+      Overflow:
+        type: boolean
+        description: >-
+          Indicates whether the log service has overflowed.
+        required: false
+      Persistency:
+        type: boolean
+        description: >-
+          Indicates whether the log service is persistent across a cold reset.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SyslogFilters:
+        type: list
+        description: >-
+          A list of syslog message filters to be logged locally.
+        required: false
+        entry_schema:
+          type: SyslogFilter
+    requirements:
+    - Entries:
+        node: lgentcl:LogEntryCollection
+        capability: lgenclcp:LogEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the log entry collection.
+    interfaces:
+      Actions:
+        type: LogServiceActions
+    capabilities:
+      feature:
+        type: lgsrvcp:LogServiceFeature
+      containable:
+        type: lgsrvcp:LogServiceContainable

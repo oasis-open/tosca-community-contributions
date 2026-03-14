@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CompositionService.v1_2_3.yaml
+  namespace: cmpssrvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CompositionService_caps.yaml
+  namespace: cmpsrvcp
+node_types:
+  CompositionService:
+    description: >-
+      The `CompositionService` schema describes a composition service and its properties
+      and links to the resources available for composition.
+    derived_from: cmpssrvc:CompositionService
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: cmpsrvcp:CompositionServiceFeature
+      containable:
+        type: cmpsrvcp:CompositionServiceContainable

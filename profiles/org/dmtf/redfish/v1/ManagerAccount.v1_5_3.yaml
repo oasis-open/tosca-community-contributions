@@ -1,0 +1,203 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Role.yaml
+  namespace: role
+- url: Core.yaml
+  namespace: core
+- url: Role_caps.yaml
+  namespace: rolecaps
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: ManagerAccount_caps.yaml
+  namespace: mngacccp
+data_types:
+  AccountTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Redfish
+        - SNMP
+        - OEM
+  SNMPAuthenticationProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - HMAC_MD5
+        - HMAC_SHA96
+  SNMPEncryptionProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - CBC_DES
+        - CFB128_AES128
+  SNMPUserInfo:
+    description: >-
+      The SNMP settings for an account.
+    properties:
+      AuthenticationKey:
+        type: string
+        description: >-
+          The secret authentication key for SNMPv3.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^[ !#-~]+$)|(^Passphrase:[ ^[ !#-~]+$)|(^Hex:[0-9A-Fa-f]{24})|(^\*+$)
+      AuthenticationKeySet:
+        type: boolean
+        description: >-
+          Indicates if the AuthenticationKey property is set.
+        required: false
+      AuthenticationProtocol:
+        type: SNMPAuthenticationProtocols
+        description: >-
+          The authentication protocol for SNMPv3.
+        required: false
+      EncryptionKey:
+        type: string
+        description: >-
+          The secret encryption key used in SNMPv3.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^[ !#-~]+$)|(^Passphrase:[ ^[ !#-~]+$)|(^Hex:[0-9A-Fa-f]{32})|(^\*+$)
+      EncryptionKeySet:
+        type: boolean
+        description: >-
+          Indicates if the EncryptionKey property is set.
+        required: false
+      EncryptionProtocol:
+        type: SNMPEncryptionProtocols
+        description: >-
+          The encryption protocol for SNMPv3.
+        required: false
+relationship_types:
+  ManagerAccountDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  ManagerAccount:
+    description: >-
+      The ManagerAccount schema defines the user accounts that are owned by a manager.  Changes
+      to a manager account might affect the current Redfish service connection if
+      this manager is responsible for the Redfish service.
+    properties:
+      AccountTypes:
+        type: list
+        description: >-
+          The account types.
+        required: true
+        entry_schema:
+          type: AccountTypes
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Enabled:
+        type: boolean
+        description: >-
+          An indication of whether an account is enabled.  An administrator can disable
+          it without deleting the user information.  If `true`, the account is enabled
+          and the user can log in.  If `false`, the account is disabled and, in the
+          future, the user cannot log in.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Locked:
+        type: boolean
+        description: >-
+          An indication of whether the account service automatically locked the account
+          because the lockout threshold was exceeded.  To manually unlock the account
+          before the lockout duration period, an administrator can change the property
+          to `false` to clear the lockout condition.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      OEMAccountTypes:
+        type: list
+        description: >-
+          The OEM account types.
+        required: false
+        entry_schema:
+          type: string
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Password:
+        type: string
+        description: >-
+          The password.  Use this property with a PATCH or PUT to write the password
+          for the account.  This property is `null` in responses.
+        required: false
+      PasswordChangeRequired:
+        type: boolean
+        description: >-
+          An indication of whether the service requires that the password for this
+          account be changed before further access to the account is allowed.
+        required: false
+      RoleId:
+        type: string
+        description: >-
+          The role for this account.
+        required: false
+      SNMP:
+        type: SNMPUserInfo
+        description: >-
+          The SNMP settings for this account.
+        required: false
+      UserName:
+        type: string
+        description: >-
+          The user name for the account.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates used for this account.
+    - Role:
+        node: role:Role
+        capability: rolecaps:RoleFeature
+        relationship: ManagerAccountDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the Redfish role that defines the privileges for this account.
+    capabilities:
+      feature:
+        type: mngacccp:ManagerAccountFeature
+      containable:
+        type: mngacccp:ManagerAccountContainable

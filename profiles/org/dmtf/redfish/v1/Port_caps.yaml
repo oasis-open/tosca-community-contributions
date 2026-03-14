@@ -1,0 +1,17 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Capability types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+capability_types:
+  PortFeature:
+    derived_from: core:Feature
+  PortContainable:
+    derived_from: core:Containable
+  FunctionMaxBandwidthContainable:
+    derived_from: core:Containable
+  FunctionMinBandwidthContainable:
+    derived_from: core:Containable
+  GenZContainable:
+    derived_from: core:Containable

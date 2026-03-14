@@ -1,0 +1,67 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+- url: Resource_caps.yaml
+  namespace: rsrccps
+- url: Resource.yaml
+  namespace: resource
+data_types:
+  ResourceCollection: {}
+  DurableNameFormat:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NAA
+        - iQN
+        - FC_WWN
+        - UUID
+        - EUI
+  Identifier:
+    properties:
+      DurableName:
+        type: string
+        description: >-
+          This indicates the world wide, persistent name of the resource.
+        required: false
+      DurableNameFormat:
+        type: DurableNameFormat
+        description: >-
+          This represents the format of the DurableName property.
+        required: false
+  IndicatorLED:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Lit
+        - Blinking
+        - 'Off'
+  Location:
+    properties:
+      Info:
+        type: string
+        description: >-
+          This indicates the location of the resource.
+        required: false
+      InfoFormat:
+        type: string
+        description: >-
+          This represents the format of the Info property.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension.
+        required: false
+  ReferenceableMember: {}
+node_types:
+  Resource:
+    capabilities:
+      feature:
+        type: rsrccps:ResourceFeature
+      containable:
+        type: rsrccps:ResourceContainable

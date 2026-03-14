@@ -1,0 +1,315 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: Drive.yaml
+  namespace: drive
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: FeaturesRegistry.yaml
+  namespace: ftrsrgst
+- url: Core.yaml
+  namespace: core
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: Drive_caps.yaml
+  namespace: drvcps
+- url: DataStorageLoSCapabilities.yaml
+  namespace: dtstlsc
+- url: StoragePoolCollection.yaml
+  namespace: strplcl
+- url: Capacity.yaml
+  namespace: capacity
+- url: IOStatistics.yaml
+  namespace: isttstcs
+- url: StorageReplicaInfo.v1_4_0.yaml
+  namespace: strrplin
+- url: StorageGroupCollection.yaml
+  namespace: strgrpcl
+- url: StoragePoolCollection_caps.yaml
+  namespace: stplclcp
+- url: Capacity_caps.yaml
+  namespace: cpctycps
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+- url: StorageReplicaInfo_caps.yaml
+  namespace: strpincp
+- url: StorageGroupCollection_caps.yaml
+  namespace: stgrclcp
+- url: Volume_caps.yaml
+  namespace: vlmcps
+- url: FeaturesRegistry_caps.yaml
+  namespace: ftrrgscp
+relationship_types:
+  VolumeDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      DedicatedSpareDrives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Drives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  VolumeActions:
+    operations:
+      CheckConsistency:
+        description: >-
+          This action is used to force a check of the Volume's parity or redundant
+          data to ensure it matches calculated values.
+node_types:
+  Volume:
+    description: >-
+      Volume contains properties used to describe a volume, virtual disk, LUN, or
+      other logical storage entity for any system.
+    properties:
+      AccessCapabilities:
+        type: list
+        description: >-
+          Supported IO access capabilities.
+        required: false
+        entry_schema:
+          type: dtstlsc:StorageAccessCapability
+      BlockSizeBytes:
+        type: integer
+        description: >-
+          The size of the smallest addressable unit (Block) of this volume in bytes.
+        required: false
+      CapacityBytes:
+        type: integer
+        description: >-
+          The size in bytes of this Volume.
+        required: false
+      CapacitySources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Encrypted:
+        type: boolean
+        description: >-
+          Is this Volume encrypted.
+        required: false
+      EncryptionTypes:
+        type: list
+        description: >-
+          The types of encryption used by this Volume.
+        required: false
+        entry_schema:
+          type: string
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The Durable names for the volume.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      LowSpaceWarningThresholdPercents:
+        type: list
+        description: >-
+          Low space warning.
+        required: false
+        entry_schema:
+          type: integer
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer or OEM of this storage volume.
+        required: false
+      MaxBlockSizeBytes:
+        type: integer
+        description: >-
+          Max Block size in bytes.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for this storage volume.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Operations:
+        type: list
+        description: >-
+          The operations currently running on the Volume.
+        required: false
+        entry_schema:
+          type: Operation
+      OptimumIOSizeBytes:
+        type: integer
+        description: >-
+          The size in bytes of this Volume's optimum IO size.
+        required: false
+      RemainingCapacityPercent:
+        type: integer
+        description: >-
+          The percentage of the capacity remaining in the Volume.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The property contains the status of the Volume.
+        required: false
+      VolumeType:
+        type: string
+        description: >-
+          The type of this volume.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - RawDevice
+            - NonRedundant
+            - Mirrored
+            - StripedWithParity
+            - SpannedMirrors
+            - SpannedStripesWithParity
+    requirements:
+    - AllocatedPools:
+        node: strplcl:StoragePoolCollection
+        capability: stplclcp:StoragePoolCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An array of references to StoragePools allocated from this Volume.
+    - Capacity:
+        node: capacity:Capacity
+        capability: cpctycps:CapacityContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Capacity utilization.
+    - CapacitySources:
+        node: capacity:CapacitySource
+        capability: cpctycps:CapacitySourceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of space allocations to this volume.
+    - IOStatistics:
+        node: isttstcs:IOStatistics
+        capability: isttcps:IOStatisticsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Statistics for this volume.
+    - ReplicaInfo:
+        node: strrplin:ReplicaInfo
+        capability: strpincp:ReplicaInfoContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Describes this storage volume in its role as a target replica.
+    - StorageGroups:
+        node: strgrpcl:StorageGroupCollection
+        capability: stgrclcp:StorageGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An array of references to Storage Groups that includes this volume.
+    - ClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceFeature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The ClassOfService that this storage volume conforms to.
+    - DedicatedSpareDrives:
+        node: drive:Drive
+        capability: drvcps:DriveFeature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the drives which are dedicated spares for this
+          volume.
+    - Drives:
+        node: drive:Drive
+        capability: drvcps:DriveFeature
+        relationship: VolumeDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the drives which contain this volume. This will
+          reference Drives that either wholly or only partly contain this volume.
+    interfaces:
+      Actions:
+        type: VolumeActions
+    capabilities:
+      feature:
+        type: vlmcps:VolumeFeature
+      containable:
+        type: vlmcps:VolumeContainable
+  Operation:
+    properties:
+      OperationName:
+        type: string
+        description: >-
+          The name of the operation.
+        required: false
+      PercentageComplete:
+        type: integer
+        description: >-
+          The percentage of the operation that has been completed.
+        required: false
+    requirements:
+    - AssociatedFeaturesRegistry:
+        node: ftrsrgst:FeaturesRegistry
+        capability: ftrrgscp:FeaturesRegistryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the task associated with the operation if any.
+    capabilities:
+      containable:
+        type: vlmcps:OperationContainable

@@ -1,0 +1,268 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+- url: ApplicationCollection.yaml
+  namespace: applcllc
+- url: ContainerImageCollection.yaml
+  namespace: cntimgcl
+- url: ContainerCollection.yaml
+  namespace: cntncllc
+- url: ApplicationCollection_caps.yaml
+  namespace: appcllcp
+- url: ContainerImageCollection_caps.yaml
+  namespace: cnimclcp
+- url: ContainerCollection_caps.yaml
+  namespace: cntcllcp
+- url: OperatingSystem_caps.yaml
+  namespace: oprsyscp
+data_types:
+  ContainerEngine:
+    description: >-
+      A container engine running in an operating system.
+    properties:
+      ManagementURIs:
+        type: list
+        description: >-
+          The URIs to manage this container engine.
+        required: false
+        entry_schema:
+          type: string
+      SupportedImageTypes:
+        type: list
+        description: >-
+          The supported image types for this container engine.
+        required: false
+        entry_schema:
+          type: string
+      Type:
+        type: ContainerEngineTypes
+        description: >-
+          The type of container engine.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The version of this container engine.
+        required: false
+  ContainerEngineTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Docker
+        - containerd
+        - CRIO
+  Kernel:
+    description: >-
+      The kernel information for an operating system.
+    properties:
+      Machine:
+        type: string
+        description: >-
+          The machine hardware name of the kernel.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the kernel.
+        required: false
+      Release:
+        type: string
+        description: >-
+          The release of the kernel.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The version of the kernel.
+        required: false
+  OperatingSystemTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Linux
+        - Windows
+        - Solaris
+        - HPUX
+        - AIX
+        - BSD
+        - macOS
+        - IBMi
+        - Hypervisor
+  VirtualMachineEngine:
+    description: >-
+      A virtual machine engine running in an operating system.
+    properties:
+      ManagementURIs:
+        type: list
+        description: >-
+          The URIs to manage this virtual machine engine.
+        required: false
+        entry_schema:
+          type: string
+      SupportedImageTypes:
+        type: list
+        description: >-
+          The supported image types for this container engine.
+        required: false
+        entry_schema:
+          type: VirtualMachineImageTypes
+      Type:
+        type: VirtualMachineEngineTypes
+        description: >-
+          The type of virtual machine engine.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The version of this virtual machine engine.
+        required: false
+  VirtualMachineEngineTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - VMwareESX
+        - HyperV
+        - Xen
+        - KVM
+        - QEMU
+        - VirtualBox
+        - PowerVM
+  VirtualMachineImageTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Raw
+        - OVF
+        - OVA
+        - VHD
+        - VMDK
+        - VDI
+        - QCOW
+        - QCOW2
+relationship_types:
+  OperatingSystemDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  OperatingSystem:
+    description: >-
+      The `OperatingSystem` schema represents the operating system and software running
+      on a computer system.
+    properties:
+      ContainerEngines:
+        type: list
+        description: >-
+          The container engines running in this operating system.
+        required: false
+        entry_schema:
+          type: ContainerEngine
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Kernel:
+        type: Kernel
+        description: >-
+          The kernel information for this operating system.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Type:
+        type: OperatingSystemTypes
+        description: >-
+          The type of operating system.
+        required: false
+      UptimeSeconds:
+        type: integer
+        description: >-
+          The wall-clock time this operating system has been running in seconds.
+        required: false
+      VirtualMachineEngines:
+        type: list
+        description: >-
+          The virtual machine engines running in this operating system.
+        required: false
+        entry_schema:
+          type: VirtualMachineEngine
+    requirements:
+    - Applications:
+        node: applcllc:ApplicationCollection
+        capability: appcllcp:ApplicationCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of applications running under this operating
+          system.
+    - ContainerImages:
+        node: cntimgcl:ContainerImageCollection
+        capability: cnimclcp:ContainerImageCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of container images available to container engines
+          on this operating system.
+    - Containers:
+        node: cntncllc:ContainerCollection
+        capability: cntcllcp:ContainerCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of containers running under this operating system.
+    - SoftwareImage:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: OperatingSystemDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the software image for this operating system.
+    capabilities:
+      feature:
+        type: oprsyscp:OperatingSystemFeature
+      containable:
+        type: oprsyscp:OperatingSystemContainable

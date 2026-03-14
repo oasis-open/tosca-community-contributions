@@ -1,0 +1,123 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: AllowDeny_caps.yaml
+  namespace: alldnycp
+data_types:
+  AllowType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Allow
+        - Deny
+  DataDirection:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Ingress
+        - Egress
+  IPAddressType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - IPv4
+        - IPv6
+node_types:
+  AllowDeny:
+    description: >-
+      The `AllowDeny` schema represents a set of allow or deny configurations.
+    properties:
+      AllowType:
+        type: AllowType
+        description: >-
+          Indicates the type of permission.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DestinationPortLower:
+        type: integer
+        description: >-
+          The TCP, UDP, or other destination port to which this rule begins application,
+          inclusive.
+        required: false
+      DestinationPortUpper:
+        type: integer
+        description: >-
+          The TCP, UDP, or other destination port to which this rule ends application,
+          inclusive.
+        required: false
+      Direction:
+        type: DataDirection
+        description: >-
+          Indicates the direction of the data to which this permission applies.
+        required: false
+      IANAProtocolNumber:
+        type: integer
+        description: >-
+          The IANA protocol number to which this permission applies.  For TCP, this
+          is `6`.  For UDP, this is `17`.
+        required: false
+      IPAddressLower:
+        type: string
+        description: >-
+          The lower IP address to which this permission applies.
+        required: false
+      IPAddressType:
+        type: IPAddressType
+        description: >-
+          The type of IP address populated in the `IPAddressLower` and `IPAddressUpper`
+          properties.
+        required: false
+      IPAddressUpper:
+        type: string
+        description: >-
+          The upper IP address to which this permission applies.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SourcePortLower:
+        type: integer
+        description: >-
+          The TCP, UDP, or other source port to which this rule begins application,
+          inclusive.
+        required: false
+      SourcePortUpper:
+        type: integer
+        description: >-
+          The TCP, UDP or other source port to which this rule ends application, inclusive.
+        required: false
+      StatefulSession:
+        type: boolean
+        description: >-
+          Indicates if this is a permission that only applies to stateful connections.
+        required: false
+    capabilities:
+      feature:
+        type: alldnycp:AllowDenyFeature
+      containable:
+        type: alldnycp:AllowDenyContainable

@@ -1,0 +1,249 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: NetworkDeviceFunction.yaml
+  namespace: ntwdvcfn
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: NetworkPort_caps.yaml
+  namespace: ntwprtcp
+- url: NetworkDeviceFunction_caps.yaml
+  namespace: ntdvfncp
+data_types:
+  FlowControl:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - TX
+        - RX
+        - TX_RX
+  LinkNetworkTechnology:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Ethernet
+        - InfiniBand
+        - FibreChannel
+  LinkStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Down
+        - Up
+  SupportedEthernetCapabilities:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - WakeOnLAN
+        - EEE
+  SupportedLinkCapabilities:
+    description: >-
+      The self-described link capabilities of an assocaited port.
+    properties:
+      LinkNetworkTechnology:
+        type: LinkNetworkTechnology
+        description: >-
+          The self-described link network technology capabilities of this port.
+        required: false
+      LinkSpeedMbps:
+        type: float
+        description: >-
+          The speed of the link in Mbps when this link network technology is active.
+        required: false
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        description: >-
+          The available OEM specific actions for this resource.
+        required: false
+node_types:
+  NetworkPort:
+    description: >-
+      A Network Port represents a discrete physical port capable of connecting to
+      a network.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      PhysicalPortNumber:
+        type: string
+        description: >-
+          The physical port number label for this port.
+        required: false
+      LinkStatus:
+        type: LinkStatus
+        description: >-
+          The status of the link between this port and its link partner.
+        required: false
+      SupportedLinkCapabilities:
+        type: list
+        description: >-
+          The self-described link capabilities of this port.
+        required: false
+        entry_schema:
+          type: SupportedLinkCapabilities
+      ActiveLinkTechnology:
+        type: LinkNetworkTechnology
+        description: >-
+          Network Port Active Link Technology.
+        required: false
+      SupportedEthernetCapabilities:
+        type: list
+        description: >-
+          The set of Ethernet capabilities that this port supports.
+        required: false
+        entry_schema:
+          type: SupportedEthernetCapabilities
+      NetDevFuncMinBWAlloc:
+        type: list
+        description: >-
+          The array of minimum bandwidth allocation percentages for the Network Device
+          Functions associated with this port.
+        required: false
+        entry_schema:
+          type: NetDevFuncMinBWAlloc
+      NetDevFuncMaxBWAlloc:
+        type: list
+        description: >-
+          The array of maximum bandwidth allocation percentages for the Network Device
+          Functions associated with this port.
+        required: false
+        entry_schema:
+          type: NetDevFuncMaxBWAlloc
+      AssociatedNetworkAddresses:
+        type: list
+        description: >-
+          The array of configured network addresses (MAC or WWN) that are associated
+          with this Network Port, including the programmed address of the lowest numbered
+          Network Device Function, the configured but not active address if applicable,
+          the address for hardware port teaming, or other network addresses.
+        required: false
+        entry_schema:
+          type: string
+      EEEEnabled:
+        type: boolean
+        description: >-
+          Whether IEEE 802.3az Energy Efficient Ethernet (EEE) is enabled for this
+          network port.
+        required: false
+      WakeOnLANEnabled:
+        type: boolean
+        description: >-
+          Whether Wake on LAN (WoL) is enabled for this network port.
+        required: false
+      PortMaximumMTU:
+        type: float
+        description: >-
+          The largest maximum transmission unit (MTU) that can be configured for this
+          network port.
+        required: false
+      FlowControlStatus:
+        type: FlowControl
+        description: >-
+          The 802.3x flow control behavior negotiated with the link partner for this
+          network port (Ethernet-only).
+        required: false
+      FlowControlConfiguration:
+        type: FlowControl
+        description: >-
+          The locally configured 802.3x flow control setting for this network port.
+        required: false
+      SignalDetected:
+        type: boolean
+        description: >-
+          Whether or not the port has detected enough signal on enough lanes to establish
+          link.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    capabilities:
+      feature:
+        type: ntwprtcp:NetworkPortFeature
+      containable:
+        type: ntwprtcp:NetworkPortContainable
+  NetDevFuncMaxBWAlloc:
+    description: >-
+      A maximum bandwidth allocation percentage for a Network Device Functions associated
+      a port.
+    properties:
+      MaxBWAllocPercent:
+        type: float
+        description: >-
+          The maximum bandwidth allocation percentage allocated to the corresponding
+          network device function instance.
+        required: false
+    requirements:
+    - NetworkDeviceFunction:
+        node: ntwdvcfn:NetworkDeviceFunction
+        capability: ntdvfncp:NetworkDeviceFunctionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Contains the members of this collection.
+    capabilities:
+      containable:
+        type: ntwprtcp:NetDevFuncMaxBWAllocContainable
+  NetDevFuncMinBWAlloc:
+    description: >-
+      A minimum bandwidth allocation percentage for a Network Device Functions associated
+      a port.
+    properties:
+      MinBWAllocPercent:
+        type: float
+        description: >-
+          The minimum bandwidth allocation percentage allocated to the corresponding
+          network device function instance.
+        required: false
+    requirements:
+    - NetworkDeviceFunction:
+        node: ntwdvcfn:NetworkDeviceFunction
+        capability: ntdvfncp:NetworkDeviceFunctionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Contains the members of this collection.
+    capabilities:
+      containable:
+        type: ntwprtcp:NetDevFuncMinBWAllocContainable

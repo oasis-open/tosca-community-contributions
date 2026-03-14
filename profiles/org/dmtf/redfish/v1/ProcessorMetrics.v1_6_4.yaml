@@ -1,0 +1,355 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Sensor.yaml
+  namespace: sensor
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ProcessorMetrics_caps.yaml
+  namespace: prcmtrcp
+data_types:
+  CStateResidency:
+    description: >-
+      The C-state residency of the processor.
+    properties:
+      Level:
+        type: string
+        description: >-
+          The C-state level, such as C0, C1, or C2.
+        required: false
+      ResidencyPercent:
+        type: float
+        description: >-
+          The percentage of time that the processor or core has spent in this particular
+          level of C-state.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  CacheMetrics:
+    description: >-
+      The processor core metrics.
+    properties:
+      CacheMiss:
+        type: float
+        description: >-
+          The number of cache line misses in millions.
+        required: false
+      CacheMissesPerInstruction:
+        type: float
+        description: >-
+          The number of cache misses per instruction.
+        required: false
+      HitRatio:
+        type: float
+        description: >-
+          The cache line hit ratio.
+        required: false
+      Level:
+        type: string
+        description: >-
+          The cache level.
+        required: false
+      OccupancyBytes:
+        type: integer
+        description: >-
+          The total cache level occupancy in bytes.
+        required: false
+      OccupancyPercent:
+        type: float
+        description: >-
+          The total cache occupancy percentage.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  CacheMetricsTotal:
+    description: >-
+      The total cache metrics for a processor.
+    properties:
+      CurrentPeriod:
+        type: CurrentPeriod
+        description: >-
+          The cache metrics since the last reset or `ClearCurrentPeriod` action for
+          this processor.
+        required: false
+      LifeTime:
+        type: LifeTime
+        description: >-
+          The cache metrics for the lifetime of this processor.
+        required: false
+  CoreMetrics:
+    description: >-
+      The processor core metrics.
+    properties:
+      CStateResidency:
+        type: list
+        description: >-
+          The C-state residency of this core in the processor.
+        required: false
+        entry_schema:
+          type: CStateResidency
+      CoreCache:
+        type: list
+        description: >-
+          The cache metrics of this core in the processor.
+        required: false
+        entry_schema:
+          type: CacheMetrics
+      CoreId:
+        type: string
+        description: >-
+          The processor core identifier.
+        required: false
+      CorrectableCoreErrorCount:
+        type: integer
+        description: >-
+          The number of correctable core errors.
+        required: false
+      CorrectableOtherErrorCount:
+        type: integer
+        description: >-
+          The number of correctable errors of all other components.
+        required: false
+      IOStallCount:
+        type: float
+        description: >-
+          The number of stalled cycles due to I/O operations.
+        required: false
+      InstructionsPerCycle:
+        type: float
+        description: >-
+          The number of instructions per clock cycle of this core.
+        required: false
+      MemoryStallCount:
+        type: float
+        description: >-
+          The number of stalled cycles due to memory operations.
+        required: false
+      UncorrectableCoreErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable core errors.
+        required: false
+      UncorrectableOtherErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable errors of all other components.
+        required: false
+      UnhaltedCycles:
+        type: float
+        description: >-
+          The unhalted cycles count of this core.
+        required: false
+  CurrentPeriod:
+    description: >-
+      The cache memory metrics since the last system reset or `ClearCurrentPeriod`
+      action for a processor.
+    properties:
+      CorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of correctable errors of cache memory since reset or `ClearCurrentPeriod`
+          action for this processor.
+        required: false
+      UncorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable errors of cache memory since reset or `ClearCurrentPeriod`
+          action for this processor.
+        required: false
+  LifeTime:
+    description: >-
+      The cache memory metrics for the lifetime for a processor.
+    properties:
+      CorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of correctable errors for the lifetime of the cache memory.
+        required: false
+      UncorrectableECCErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable errors for the lifetime of the cache memory.
+        required: false
+interface_types:
+  ProcessorMetricsActions:
+    operations:
+      ClearCurrentPeriod:
+        description: >-
+          This action sets the `CurrentPeriod` property's values to 0.
+node_types:
+  ProcessorMetrics:
+    description: >-
+      The `ProcessorMetrics` schema contains usage and health statistics for a processor.
+    properties:
+      AverageFrequencyMHz:
+        type: float
+        description: >-
+          The average frequency of the processor.
+        required: false
+      BandwidthPercent:
+        type: float
+        description: >-
+          The bandwidth usage of this processor as a percentage.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Cache:
+        type: list
+        description: >-
+          The processor cache metrics.
+        required: false
+        entry_schema:
+          type: CacheMetrics
+      CacheMetricsTotal:
+        type: CacheMetricsTotal
+        description: >-
+          The total cache metrics for this processor.
+        required: false
+      ConsumedPowerWatt:
+        type: float
+        description: >-
+          The power, in watt units, that the processor has consumed.
+        required: false
+      CoreMetrics:
+        type: list
+        description: >-
+          The processor core metrics.
+        required: false
+        entry_schema:
+          type: CoreMetrics
+      CoreVoltage:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The core voltage (V) of this processor.
+        required: false
+      CorrectableCoreErrorCount:
+        type: integer
+        description: >-
+          The number of correctable core errors.
+        required: false
+      CorrectableOtherErrorCount:
+        type: integer
+        description: >-
+          The number of correctable errors of all other components.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FrequencyRatio:
+        type: float
+        description: >-
+          The frequency relative to the nominal processor frequency ratio.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      KernelPercent:
+        type: float
+        description: >-
+          The percentage of time spent in kernel mode.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      LocalMemoryBandwidthBytes:
+        type: integer
+        description: >-
+          The local memory bandwidth usage in bytes.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OperatingSpeedMHz:
+        type: integer
+        description: >-
+          Operating speed of the processor in MHz.
+        required: false
+      PCIeErrors:
+        type: string
+        description: >-
+          The PCIe errors associated with this processor.
+        required: false
+      PowerLimitThrottleDuration:
+        type: string
+        description: >-
+          The total duration of throttling caused by a power limit of the processor
+          since reset.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      RemoteMemoryBandwidthBytes:
+        type: integer
+        description: >-
+          The remote memory bandwidth usage in bytes.
+        required: false
+      TemperatureCelsius:
+        type: float
+        description: >-
+          The temperature of the processor.
+        required: false
+      ThermalLimitThrottleDuration:
+        type: string
+        description: >-
+          The total duration of throttling caused by a thermal limit of the processor
+          since reset.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      ThrottlingCelsius:
+        type: float
+        description: >-
+          The CPU margin to throttle (temperature offset in degree Celsius units).
+        required: false
+      UncorrectableCoreErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable core errors.
+        required: false
+      UncorrectableOtherErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable errors of all other components.
+        required: false
+      UserPercent:
+        type: float
+        description: >-
+          The percentage of time spent in user mode.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+    interfaces:
+      Actions:
+        type: ProcessorMetricsActions
+    capabilities:
+      feature:
+        type: prcmtrcp:ProcessorMetricsFeature
+      containable:
+        type: prcmtrcp:ProcessorMetricsContainable

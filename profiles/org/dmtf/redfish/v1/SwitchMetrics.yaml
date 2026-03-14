@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SwitchMetrics.v1_1_0.yaml
+  namespace: swtcmtrc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SwitchMetrics_caps.yaml
+  namespace: swtmtrcp
+node_types:
+  SwitchMetrics:
+    description: >-
+      The `SwitchMetrics` schema contains usage and health statistics for a switch
+      device.
+    derived_from: swtcmtrc:SwitchMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: swtmtrcp:SwitchMetricsFeature
+      containable:
+        type: swtmtrcp:SwitchMetricsContainable

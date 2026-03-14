@@ -1,0 +1,114 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Role.yaml
+  namespace: role
+- url: Core.yaml
+  namespace: core
+- url: Role_caps.yaml
+  namespace: rolecaps
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: ManagerAccount_caps.yaml
+  namespace: mngacccp
+relationship_types:
+  ManagerAccountDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+node_types:
+  ManagerAccount:
+    description: >-
+      The user accounts, owned by a Manager, are defined in this resource.  Changes
+      to a Manager Account may affect the current Redfish service connection if this
+      manager is responsible for the Redfish service.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Enabled:
+        type: boolean
+        description: >-
+          This property is used by a User Administrator to disable an account w/o
+          having to delet the user information.  When set to true, the user can login.  When
+          set to false, the account is administratively disabled and the user cannot
+          login.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Locked:
+        type: boolean
+        description: >-
+          This property indicates that the account has been auto-locked by the account
+          service because the lockout threshold has been exceeded.  When set to true,
+          the account is locked. A user admin can write the property to false to manually
+          unlock, or the account service will unlock it once the lockout duration
+          period has passed.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Password:
+        type: string
+        description: >-
+          This property is used with a PATCH or PUT to write the password for the
+          account.  This property is null on a GET.
+        required: false
+      RoleId:
+        type: string
+        description: >-
+          This property contains the Role for this account.
+        required: false
+      UserName:
+        type: string
+        description: >-
+          This property contains the user name for the account.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to a collection of certificates used for this account.
+    - Role:
+        node: role:Role
+        capability: rolecaps:RoleFeature
+        relationship: ManagerAccountDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the Role object defining Privileges for this account--returned
+          when the resource is read. The ID of the role is the same as property RoleId.
+    capabilities:
+      feature:
+        type: mngacccp:ManagerAccountFeature
+      containable:
+        type: mngacccp:ManagerAccountContainable

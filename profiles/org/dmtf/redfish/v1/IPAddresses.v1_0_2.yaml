@@ -1,0 +1,128 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+data_types:
+  AddressState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Preferred
+        - Deprecated
+        - Tentative
+        - Failed
+  IPv4Address:
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension.
+        required: false
+      Address:
+        type: string
+        description: >-
+          This is the IPv4 Address.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$
+      SubnetMask:
+        type: SubnetMask
+        description: >-
+          This is the IPv4 Subnet mask.
+        required: false
+      AddressOrigin:
+        type: IPv4AddressOrigin
+        description: >-
+          This indicates how the address was determined.
+        required: false
+      Gateway:
+        type: string
+        description: >-
+          This is the IPv4 gateway for this address.
+        required: false
+  IPv4AddressOrigin:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Static
+        - DHCP
+        - BOOTP
+        - IPv4LinkLocal
+  IPv6Address:
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension.
+        required: false
+      Address:
+        type: string
+        description: >-
+          This is the IPv6 Address.
+        required: false
+      PrefixLength:
+        type: PrefixLength
+        description: >-
+          This is the IPv6 Address Prefix Length.
+        required: false
+      AddressOrigin:
+        type: IPv6AddressOrigin
+        description: >-
+          This indicates how the address was determined.
+        required: false
+      AddressState:
+        type: AddressState
+        description: >-
+          The current state of this address as defined in RFC 4862.
+        required: false
+  IPv6AddressOrigin:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Static
+        - DHCPv6
+        - LinkLocal
+        - SLAAC
+  IPv6StaticAddress:
+    description: >-
+      This object represents a single IPv6 static address to be assigned on a network
+      interface.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension.
+        required: false
+      Address:
+        type: string
+        description: >-
+          A valid IPv6 address.
+        required: true
+      PrefixLength:
+        type: PrefixLength
+        description: >-
+          The Prefix Length of this IPv6 address.
+        required: true
+  PrefixLength:
+    derived_from: float
+    validation:
+      $and:
+      - $greater_or_equal:
+        - $value
+        - 1
+      - $less_or_equal:
+        - $value
+        - 128
+  SubnetMask:
+    derived_from: string
+    validation:
+      $matches:
+      - $value
+      - ^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$

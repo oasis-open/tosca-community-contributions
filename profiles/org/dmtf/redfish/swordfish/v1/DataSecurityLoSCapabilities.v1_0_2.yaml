@@ -1,0 +1,123 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: DataSecurityLineOfService.yaml
+  namespace: dtsclnos
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: DataSecurityLineOfService_caps.yaml
+  namespace: dtsclosc
+- url: DataSecurityLoSCapabilities_caps.yaml
+  namespace: dtsclsc
+node_types:
+  DataSecurityLoSCapabilities:
+    description: >-
+      Describe data security capabilities.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The value identifies this resource.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SupportedAntivirusEngineProviders:
+        type: list
+        description: >-
+          Supported AntiVirus providers.
+        required: false
+        entry_schema:
+          type: string
+      SupportedAntivirusScanPolicies:
+        type: list
+        description: >-
+          Supported policies that trigger an AntiVirus scan.
+        required: false
+        entry_schema:
+          type: string
+      SupportedChannelEncryptionStrengths:
+        type: list
+        description: >-
+          Supported key sizes for transport channel encryption.
+        required: false
+        entry_schema:
+          type: string
+      SupportedDataSanitizationPolicies:
+        type: list
+        description: >-
+          Supported data sanitization policies.
+        required: false
+        entry_schema:
+          type: string
+      SupportedHostAuthenticationTypes:
+        type: list
+        description: >-
+          Supported authentication types for hosts (servers) or initiator endpoints.
+        required: false
+        entry_schema:
+          type: string
+      SupportedLinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SupportedMediaEncryptionStrengths:
+        type: list
+        description: >-
+          Supported key sizes for media encryption.
+        required: false
+        entry_schema:
+          type: string
+      SupportedSecureChannelProtocols:
+        type: list
+        description: >-
+          Supported protocols that provide encrypted communication.
+        required: false
+        entry_schema:
+          type: string
+      SupportedUserAuthenticationTypes:
+        type: list
+        description: >-
+          Supported authentication types for users (or programs).
+        required: false
+        entry_schema:
+          type: string
+    requirements:
+    - SupportedLinesOfService:
+        node: dtsclnos:DataSecurityLineOfService
+        capability: dtsclosc:DataSecurityLineOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Collection of known and supported DataSecurityLinesOfService.
+    capabilities:
+      feature:
+        type: dtsclsc:DataSecurityLoSCapabilitiesFeature
+      containable:
+        type: dtsclsc:DataSecurityLoSCapabilitiesContainable

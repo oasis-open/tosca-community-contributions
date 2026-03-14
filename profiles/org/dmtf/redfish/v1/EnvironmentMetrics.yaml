@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: EnvironmentMetrics.v1_5_0.yaml
+  namespace: envrmtrc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+node_types:
+  EnvironmentMetrics:
+    description: >-
+      The `EnvironmentMetrics` schema represents the environmental metrics of a device.
+    derived_from: envrmtrc:EnvironmentMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: envmtrcp:EnvironmentMetricsFeature
+      containable:
+        type: envmtrcp:EnvironmentMetricsContainable

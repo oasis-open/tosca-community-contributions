@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SpareResourceSet.v1_0_2.yaml
+  namespace: sprrsrst
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SpareResourceSet_caps.yaml
+  namespace: sprsstcp
+node_types:
+  SpareResourceSet:
+    description: >-
+      A description of a set of spare resources.
+    derived_from: sprrsrst:SpareResourceSet
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: sprsstcp:SpareResourceSetFeature
+      containable:
+        type: sprsstcp:SpareResourceSetContainable

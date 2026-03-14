@@ -1,0 +1,60 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: AccountService.v1_18_1.yaml
+  namespace: accnsrvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: AccountService_caps.yaml
+  namespace: accsrvcp
+data_types:
+  MFABypass:
+    description: >-
+      Multi-factor authentication bypass settings.
+    properties:
+      BypassTypes:
+        type: list
+        description: >-
+          The types of multi-factor authentication this account or role mapping is
+          allowed to bypass.
+        required: false
+        entry_schema:
+          type: string
+  MFABypassType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - All
+        - SecurID
+        - GoogleAuthenticator
+        - MicrosoftAuthenticator
+        - ClientCertificate
+        - OneTimePasscode
+        - TimeBasedOneTimePassword
+        - OEM
+node_types:
+  AccountService:
+    description: >-
+      The `AccountService` schema defines an account service.  The properties are
+      common to, and enable management of, all user accounts.  The properties include
+      the password requirements and control features, such as account lockout.  Properties
+      and actions in this service specify general behavior that should be followed
+      for typical accounts, however implementations might override these behaviors
+      for special accounts or situations to avoid denial of service or other deadlock
+      situations.
+    derived_from: accnsrvc:AccountService
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: accsrvcp:AccountServiceFeature
+      containable:
+        type: accsrvcp:AccountServiceContainable

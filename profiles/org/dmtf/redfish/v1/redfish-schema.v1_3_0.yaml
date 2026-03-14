@@ -1,0 +1,56 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+data_types:
+  readonly:
+    description: >-
+      This property shall designate a property to be readonly when set to true.
+    derived_from: boolean
+  requiredOnCreate:
+    description: >-
+      This property is required to be specified in the body of a POST request to create
+      the resource.
+    derived_from: list
+  requiredParameter:
+    description: >-
+      This property specifies that an action parameter is required to be provided
+      by the client as part of the action request when set to true.  Parameters not
+      containing this property with the value of true can be left out of the client's
+      action request.
+    derived_from: boolean
+  longDescription:
+    description: >-
+      This attribute shall contain normative language relating to the Redfish Specification
+      and documentation.
+    derived_from: string
+  copyright:
+    description: >-
+      This attribute shall contain the copyright notice for the schema.
+    derived_from: string
+  deprecated:
+    description: >-
+      The term shall be applied to a property in order to specify that the property
+      is deprecated.  The value of the string should explain the deprecation, including
+      new property or properties to be used. The property can be supported in new
+      and existing implementations, but usage in new implementations is discouraged.  Deprecated
+      properties are likely to be removed in a future major version of the schema.
+    derived_from: string
+  enumDescriptions:
+    description: >-
+      This attribute shall contain informative language related to the enumeration
+      values of the property.
+  enumLongDescriptions:
+    description: >-
+      This attribute shall contain normative language relating to the enumeration
+      values of the property.
+  enumDeprecated:
+    description: >-
+      The term shall be applied to a value in order to specify that the value is deprecated.  The
+      value of the string should explain the deprecation, including new value to be
+      used.  The value can be supported in new and existing implementations, but usage
+      in new implementations is discouraged.  Deprecated values are likely to be removed
+      in a future major version of the schema.
+  units:
+    description: >-
+      This attribute shall contain the units of measure used by the value of the property.
+    derived_from: string

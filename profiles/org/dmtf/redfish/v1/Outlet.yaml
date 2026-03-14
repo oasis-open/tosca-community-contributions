@@ -1,0 +1,56 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Outlet.v1_4_4.yaml
+  namespace: outlet
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Outlet_caps.yaml
+  namespace: otltcps
+data_types:
+  PowerState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - 'On'
+        - 'Off'
+        - PowerCycle
+  ReceptacleType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NEMA_5_15R
+        - NEMA_5_20R
+        - NEMA_L5_20R
+        - NEMA_L5_30R
+        - NEMA_L6_20R
+        - NEMA_L6_30R
+        - IEC_60320_C13
+        - IEC_60320_C19
+        - CEE_7_Type_E
+        - CEE_7_Type_F
+        - SEV_1011_TYPE_12
+        - SEV_1011_TYPE_23
+        - BS_1363_Type_G
+        - BusConnection
+node_types:
+  Outlet:
+    description: >-
+      The `Outlet` schema contains a definition for an electrical outlet.
+    derived_from: outlet:Outlet
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: otltcps:OutletFeature
+      containable:
+        type: otltcps:OutletContainable

@@ -1,0 +1,528 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Certificate.yaml
+  namespace: crtfct
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ComponentIntegrity_caps.yaml
+  namespace: cmpintcp
+- url: Certificate_caps.yaml
+  namespace: crtfcps
+data_types:
+  CommunicationInfo:
+    description: >-
+      Information about communication between two components.
+    properties:
+      Sessions:
+        type: list
+        description: >-
+          The active sessions or communication channels between two components.
+        required: false
+        entry_schema:
+          type: SingleSessionInfo
+  ComponentIntegrityType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SPDM
+        - TPM
+        - OEM
+  DMTFmeasurementTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ImmutableROM
+        - MutableFirmware
+        - HardwareConfiguration
+        - FirmwareConfiguration
+        - MutableFirmwareVersion
+        - MutableFirmwareSecurityVersionNumber
+        - MeasurementManifest
+  MeasurementSpecification:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - DMTF
+  SPDMcommunication:
+    description: >-
+      Information about communication between two components.
+    properties:
+      Sessions:
+        type: list
+        description: >-
+          The active sessions or communication channels between two components.
+        required: false
+        entry_schema:
+          type: SingleSessionInfo
+  SPDMidentity:
+    description: >-
+      Identity authentication information about the SPDM Requester and SPDM Responder.
+    properties:
+      RequesterAuthentication:
+        type: SPDMrequesterAuth
+        description: >-
+          Authentication information of the identity of the SPDM Requester.
+        required: false
+      ResponderAuthentication:
+        type: SPDMresponderAuth
+        description: >-
+          Authentication information of the identity of the SPDM Responder.
+        required: false
+  SPDMinfo:
+    description: >-
+      Integrity information about an SPDM Responder as reported by an SPDM Requester.
+    properties:
+      ComponentCommunication:
+        type: SPDMcommunication
+        description: >-
+          Information about communication between the SPDM Requester and SPDM Responder.
+        required: false
+      IdentityAuthentication:
+        type: SPDMidentity
+        description: >-
+          Identity authentication information about the SPDM Requester and SPDM Responder.
+        required: false
+      MeasurementSet:
+        type: SPDMmeasurementSet
+        description: >-
+          Measurement information about the SPDM Responder.
+        required: false
+      Requester:
+        type: odatav4:idRef
+        description: >-
+          The link to the component that is reporting the integrity information of
+          the target component.
+        required: true
+  SPDMmeasurementSet:
+    description: >-
+      SPDM Responder measurement information.
+    properties:
+      MeasurementSpecification:
+        type: MeasurementSpecification
+        description: >-
+          The measurement specification negotiated between the SPDM Requester and
+          SPDM Responder.
+        required: false
+      MeasurementSummary:
+        type: string
+        description: >-
+          The measurement summary data.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z0-9+/]+={0,2}$
+      MeasurementSummaryHashAlgorithm:
+        type: string
+        description: >-
+          The hash algorithm used to compute the measurement summary.
+        required: false
+      MeasurementSummaryType:
+        type: SPDMmeasurementSummaryType
+        description: >-
+          The type of measurement summary.
+        required: false
+      Measurements:
+        type: list
+        description: >-
+          Measurements from an SPDM Responder.
+        required: false
+        entry_schema:
+          type: SPDMsingleMeasurement
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+  SPDMmeasurementSummaryType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - TCB
+        - All
+  SPDMsingleMeasurement:
+    description: >-
+      A single SPDM measurement for an SPDM Responder.
+    properties:
+      LastUpdated:
+        type: string
+        description: >-
+          The date and time when information for the measurement was last updated.
+        required: false
+      Measurement:
+        type: string
+        description: >-
+          The measurement data.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z0-9+/]+={0,2}$
+      MeasurementHashAlgorithm:
+        type: string
+        description: >-
+          The hash algorithm used to compute the measurement.
+        required: false
+      MeasurementIndex:
+        type: integer
+        description: >-
+          The index of the measurement.
+        required: false
+      MeasurementType:
+        type: DMTFmeasurementTypes
+        description: >-
+          The type or characteristics of the data that this measurement represents.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartofSummaryHash:
+        type: boolean
+        description: >-
+          Indicates whether this measurement is part of the measurement summary.
+        required: false
+  SecureSessionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Plain
+        - EncryptedAuthenticated
+        - AuthenticatedOnly
+  SingleSessionInfo:
+    description: >-
+      Information about a single communication channel or session between two components.
+    properties:
+      SessionId:
+        type: integer
+        description: >-
+          The identifier for an active session or communication channel between two
+          components.
+        required: false
+      SessionType:
+        type: SecureSessionType
+        description: >-
+          The type of session or communication channel between two components.
+        required: false
+  TPMcommunication:
+    description: >-
+      Information about communication between two components.
+    properties:
+      Sessions:
+        type: list
+        description: >-
+          The active sessions or communication channels between two components.
+        required: false
+        entry_schema:
+          type: SingleSessionInfo
+  TPMinfo:
+    description: >-
+      Integrity information about a Trusted Platform Module (TPM).
+    properties:
+      ComponentCommunication:
+        type: TPMcommunication
+        description: >-
+          Information about communication with the TPM.
+        required: false
+      IdentityAuthentication:
+        type: TPMauth
+        description: >-
+          Identity authentication information about the TPM.
+        required: false
+      MeasurementSet:
+        type: TPMmeasurementSet
+        description: >-
+          Measurement information from the TPM.
+        required: false
+  TPMmeasurementSet:
+    description: >-
+      Trusted Computing Group TPM measurement information.
+    properties:
+      Measurements:
+        type: list
+        description: >-
+          Measurements from a TPM.
+        required: false
+        entry_schema:
+          type: TPMsingleMeasurement
+  TPMsingleMeasurement:
+    description: >-
+      A single Trusted Computing Group TPM measurement.
+    properties:
+      LastUpdated:
+        type: string
+        description: >-
+          The date and time when information for the measurement was last updated.
+        required: false
+      Measurement:
+        type: string
+        description: >-
+          The measurement data.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z0-9+/]+={0,2}$
+      MeasurementHashAlgorithm:
+        type: string
+        description: >-
+          The hash algorithm used to compute the measurement.
+        required: false
+      PCR:
+        type: integer
+        description: >-
+          The Platform Configuration Register (PCR) bank of the measurement.
+        required: false
+  VerificationStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Success
+        - Failed
+interface_types:
+  ComponentIntegrityActions:
+    operations:
+      SPDMGetSignedMeasurements:
+        description: >-
+          This action generates an SPDM cryptographic signed statement over the given
+          nonce and measurements of the SPDM Responder.
+        inputs:
+          MeasurementIndices:
+            type: list
+            description: >-
+              An array of indices that identify the measurement blocks to sign.
+            required: false
+          Nonce:
+            type: string
+            description: >-
+              A 32-byte hex-encoded string that is signed with the measurements.  The
+              value should be unique.
+            required: false
+          SlotId:
+            type: integer
+            description: >-
+              The slot identifier for the certificate containing the private key to
+              generate the signature over the measurements.
+            required: false
+node_types:
+  ComponentIntegrity:
+    description: >-
+      The ComponentIntegrity resource provides critical and pertinent security information
+      about a specific device, system, software element, or other managed entity.
+    properties:
+      ComponentIntegrityEnabled:
+        type: boolean
+        description: >-
+          An indication of whether security protocols are enabled for the component.
+        required: false
+      ComponentIntegrityType:
+        type: ComponentIntegrityType
+        description: >-
+          The type of security technology for the component.
+        required: true
+      ComponentIntegrityTypeVersion:
+        type: string
+        description: >-
+          The version of the security technology.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LastUpdated:
+        type: string
+        description: >-
+          The date and time when information for the component was last updated.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SPDM:
+        type: SPDMinfo
+        description: >-
+          Integrity information about the SPDM Responder as reported by an SPDM Requester.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TPM:
+        type: TPMinfo
+        description: >-
+          Integrity information about the Trusted Platform Module (TPM).
+        required: false
+      TargetComponentURI:
+        type: string
+        description: >-
+          The link to the component whose integrity that this resource reports.
+        required: true
+    interfaces:
+      Actions:
+        type: ComponentIntegrityActions
+    capabilities:
+      feature:
+        type: cmpintcp:ComponentIntegrityFeature
+      containable:
+        type: cmpintcp:ComponentIntegrityContainable
+  CommonAuthInfo:
+    description: >-
+      Common Authentication information.
+    properties:
+      VerificationStatus:
+        type: VerificationStatus
+        description: >-
+          The status of the verification of the identity of the component.
+        required: false
+    requirements:
+    - ComponentCertificate:
+        node: crtfct:Certificate
+        capability: crtfcps:CertificateContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the certificate that represents the identity of the component.
+    capabilities:
+      containable:
+        type: cmpintcp:CommonAuthInfoContainable
+  SPDMGetSignedMeasurementsResponse:
+    description: >-
+      The SPDM signed measurement from an SPDM Responder.
+    properties:
+      HashingAlgorithm:
+        type: string
+        description: >-
+          The hashing algorithm used for generating the cryptographic signed statement.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PublicKey:
+        type: string
+        description: >-
+          A Privacy Enhanced Mail (PEM)-encoded public key that can be used to validate
+          the signature.
+        required: false
+      SignedMeasurements:
+        type: string
+        description: >-
+          Base64-encoded cryptographic signed statement generated by the signer.
+        required: true
+      SigningAlgorithm:
+        type: string
+        description: >-
+          The asymmetric signing algorithm used for generating the cryptographic signed
+          statement.
+        required: true
+      Version:
+        type: string
+        description: >-
+          The SPDM version used by the SPDM Responder to generate the cryptographic
+          signed statement.
+        required: true
+    requirements:
+    - Certificate:
+        node: crtfct:Certificate
+        capability: crtfcps:CertificateContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the certificate corresponding to the SPDM slot identifier that
+          can be used to validate the signature.
+    capabilities:
+      containable:
+        type: cmpintcp:SPDMGetSignedMeasurementsResponseContainable
+  SPDMrequesterAuth:
+    description: >-
+      Authentication information of the identity of the SPDM Requester.
+    requirements:
+    - ProvidedCertificate:
+        node: crtfct:Certificate
+        capability: crtfcps:CertificateContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the certificate that represents the identity of the SPDM Requester
+          provided in mutual authentication.
+    capabilities:
+      containable:
+        type: cmpintcp:SPDMrequesterAuthContainable
+  SPDMresponderAuth:
+    description: >-
+      Common Authentication information.
+    properties:
+      VerificationStatus:
+        type: VerificationStatus
+        description: >-
+          The status of the verification of the identity of the component.
+        required: false
+    requirements:
+    - ComponentCertificate:
+        node: crtfct:Certificate
+        capability: crtfcps:CertificateContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the certificate that represents the identity of the component.
+    capabilities:
+      containable:
+        type: cmpintcp:SPDMresponderAuthContainable
+  TPMauth:
+    description: >-
+      Common Authentication information.
+    properties:
+      VerificationStatus:
+        type: VerificationStatus
+        description: >-
+          The status of the verification of the identity of the component.
+        required: false
+    requirements:
+    - ComponentCertificate:
+        node: crtfct:Certificate
+        capability: crtfcps:CertificateContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the certificate that represents the identity of the component.
+    capabilities:
+      containable:
+        type: cmpintcp:TPMauthContainable

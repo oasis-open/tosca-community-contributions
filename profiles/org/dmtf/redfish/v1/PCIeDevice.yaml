@@ -1,0 +1,199 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: PCIeDevice.v1_21_0.yaml
+  namespace: pcdvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+- url: Resource.yaml
+  namespace: resource
+data_types:
+  PCIeErrors:
+    description: >-
+      The PCIe errors associated with this device.
+    properties:
+      CorrectableErrorCount:
+        type: integer
+        description: >-
+          The total number of PCIe correctable errors for this device.
+        required: false
+      FatalErrorCount:
+        type: integer
+        description: >-
+          The total number of PCIe fatal errors for this device.
+        required: false
+      L0ToRecoveryCount:
+        type: integer
+        description: >-
+          The total number of times the PCIe link states transitioned from L0 to the
+          recovery state for this device.
+        required: false
+      NAKReceivedCount:
+        type: integer
+        description: >-
+          The total number of NAKs issued on the PCIe link by the receiver.
+        required: false
+      NAKSentCount:
+        type: integer
+        description: >-
+          The total number of NAKs issued on the PCIe link by this device.
+        required: false
+      NonFatalErrorCount:
+        type: integer
+        description: >-
+          The total number of PCIe non-fatal errors for this device.
+        required: false
+      ReplayCount:
+        type: integer
+        description: >-
+          The total number of PCIe replays issued by this device.
+        required: false
+      ReplayRolloverCount:
+        type: integer
+        description: >-
+          The total number of PCIe replay rollovers issued by this device.
+        required: false
+      UnsupportedRequestCount:
+        type: integer
+        description: >-
+          The total number of PCIe unsupported requests received by this device.
+        required: false
+      BadDLLPCount:
+        type: integer
+        description: >-
+          The total number of Bad DLLPs issued on the PCIe link by the receiver.
+        required: false
+      BadTLPCount:
+        type: integer
+        description: >-
+          The total number of Bad TLPs issued on the PCIe link by the receiver.
+        required: false
+      FlowControlTimeoutErrors:
+        type: integer
+        description: >-
+          The total number of Flow Control Credit timeouts.
+        required: false
+  PCIeInterface:
+    description: >-
+      This type describes a PCIe Interface.
+    properties:
+      LanesInUse:
+        type: integer
+        description: >-
+          The number of PCIe lanes in use by this device.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 32
+      MaxLanes:
+        type: integer
+        description: >-
+          The number of PCIe lanes supported by this device.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 32
+      MaxPCIeType:
+        type: string
+        description: >-
+          The highest version of the PCIe specification supported by this device.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeType:
+        type: string
+        description: >-
+          The version of the PCIe specification in use by this device.
+        required: false
+  PCIeMetrics:
+    description: >-
+      The PCIe metrics associated with this device.
+    properties:
+      CompletionCreditExhaustionDrops:
+        type: integer
+        description: >-
+          The total number of read requests dropped due to completion credit exhaustion.
+        required: false
+      NPCreditExhaustionDrops:
+        type: integer
+        description: >-
+          The total number of of read requests dropped due to non-posted credit exhaustion.
+        required: false
+      OutboundCompletionTLPBytes:
+        type: integer
+        description: >-
+          The total data payload in bytes transferred through outbound completion
+          transaction layer packets (TLPs).
+        required: false
+      OutboundCompletionTLPCount:
+        type: integer
+        description: >-
+          The total number of outbound completion transaction layer packets (TLPs).
+        required: false
+      OutboundReadTLPBytes:
+        type: integer
+        description: >-
+          The total data payload in bytes transferred through outbound read transaction
+          layer packets (TLPs).
+        required: false
+      OutboundReadTLPCount:
+        type: integer
+        description: >-
+          The total number of outbound read transaction layer packets (TLPs).
+        required: false
+      OutboundWriteTLPBytes:
+        type: integer
+        description: >-
+          The total data payload in bytes transferred through outbound write transaction
+          layer packets (TLPs).
+        required: false
+      OutboundWriteTLPCount:
+        type: integer
+        description: >-
+          The total number of outbound write transaction layer packets (TLPs).
+        required: false
+      TagUnavailabilityDrops:
+        type: integer
+        description: >-
+          The total number of read requests dropped due to tag unavailability.
+        required: false
+  PCIeTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Gen1
+        - Gen2
+        - Gen3
+        - Gen4
+        - Gen5
+        - Gen6
+node_types:
+  PCIeDevice:
+    description: >-
+      The `PCIeDevice` schema describes the properties of a PCIe device that is attached
+      to a system.  It also describes the location, such as a slot, socket, or bay,
+      where a unit can be installed, by populating a resource instance with an absent
+      state if a unit is not present.
+    derived_from: pcdvc:PCIeDevice
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: pcdvccps:PCIeDeviceFeature
+      containable:
+        type: pcdvccps:PCIeDeviceContainable

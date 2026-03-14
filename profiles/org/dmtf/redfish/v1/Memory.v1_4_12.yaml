@@ -1,0 +1,626 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Assembly.yaml
+  namespace: assembly
+- url: MemoryMetrics.yaml
+  namespace: mmrymtrc
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: MemoryMetrics_caps.yaml
+  namespace: mmrmtrcp
+- url: Memory_caps.yaml
+  namespace: mmrycps
+data_types:
+  BaseModuleType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RDIMM
+        - UDIMM
+        - SO_DIMM
+        - LRDIMM
+        - Mini_RDIMM
+        - Mini_UDIMM
+        - SO_RDIMM_72b
+        - SO_UDIMM_72b
+        - SO_DIMM_16b
+        - SO_DIMM_32b
+  ErrorCorrection:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NoECC
+        - SingleBitECC
+        - MultiBitECC
+        - AddressParity
+  MemoryClassification:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Volatile
+        - ByteAccessiblePersistent
+        - Block
+  MemoryDeviceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - DDR
+        - DDR2
+        - DDR3
+        - DDR4
+        - DDR4_SDRAM
+        - DDR4E_SDRAM
+        - LPDDR4_SDRAM
+        - DDR3_SDRAM
+        - LPDDR3_SDRAM
+        - DDR2_SDRAM
+        - DDR2_SDRAM_FB_DIMM
+        - DDR2_SDRAM_FB_DIMM_PROBE
+        - DDR_SGRAM
+        - DDR_SDRAM
+        - ROM
+        - SDRAM
+        - EDO
+        - FastPageMode
+        - PipelinedNibble
+        - Logical
+  MemoryLocation:
+    description: >-
+      Memory connection information to sockets and memory controllers.
+    properties:
+      Channel:
+        type: integer
+        description: >-
+          The channel number to which the memory device is connected.
+        required: false
+      MemoryController:
+        type: integer
+        description: >-
+          The memory controller number to which the memory device is connected.
+        required: false
+      Slot:
+        type: integer
+        description: >-
+          The slot number to which the memory device is connected.
+        required: false
+      Socket:
+        type: integer
+        description: >-
+          The socket number to which the memory device is connected.
+        required: false
+  MemoryMedia:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - DRAM
+        - NAND
+        - Proprietary
+  MemoryType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - DRAM
+        - NVDIMM_N
+        - NVDIMM_F
+        - NVDIMM_P
+  OperatingMemoryModes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Volatile
+        - PMEM
+        - Block
+  PowerManagementPolicy:
+    description: >-
+      Power management policy information.
+    properties:
+      AveragePowerBudgetMilliWatts:
+        type: integer
+        description: >-
+          Average power budget, in milliwatt units.
+        required: false
+      MaxTDPMilliWatts:
+        type: integer
+        description: >-
+          Maximum TDP in milliwatt units.
+        required: false
+      PeakPowerBudgetMilliWatts:
+        type: integer
+        description: >-
+          Peak power budget, in milliwatt units.
+        required: false
+      PolicyEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the power management policy is enabled.
+        required: false
+  RegionSet:
+    description: >-
+      Memory region information within a memory device.
+    properties:
+      MemoryClassification:
+        type: MemoryClassification
+        description: >-
+          The classification of memory that the memory region occupies.
+        required: false
+      OffsetMiB:
+        type: integer
+        description: >-
+          Offset within the memory that corresponds to the start of this memory region
+          in mebibytes (MiB).
+        required: false
+      PassphraseState:
+        type: boolean
+        description: >-
+          An indication of whether the state of the passphrase for this region is
+          enabled.
+        required: false
+      RegionId:
+        type: string
+        description: >-
+          Unique region ID representing a specific region within the memory device.
+        required: false
+      SizeMiB:
+        type: integer
+        description: >-
+          Size of this memory region in mebibytes (MiB).
+        required: false
+  SecurityCapabilities:
+    description: >-
+      This type contains security capabilities of a memory device.
+    properties:
+      MaxPassphraseCount:
+        type: integer
+        description: >-
+          Maximum number of passphrases supported for this memory device.
+        required: false
+      PassphraseCapable:
+        type: boolean
+        description: >-
+          An indication of whether the memory device is passphrase capable.
+        required: false
+      SecurityStates:
+        type: list
+        description: >-
+          Security states supported by the memory device.
+        required: false
+        entry_schema:
+          type: SecurityStates
+  SecurityStates:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+        - Unlocked
+        - Locked
+        - Frozen
+        - Passphraselimit
+relationship_types:
+  MemoryDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  MemoryActions:
+    operations:
+      DisablePassphrase:
+        description: >-
+          Disable passphrase for the given region.
+        inputs:
+          Passphrase:
+            type: string
+            description: >-
+              Passphrase for doing the operation.
+            required: true
+          RegionId:
+            type: string
+            description: >-
+              The memory region ID to which to apply this action.
+            required: true
+      SecureEraseUnit:
+        description: >-
+          This contains the action for securely erasing given regions using the NIST
+          SP800-88 Purge: Cryptographic Erase.
+        inputs:
+          Passphrase:
+            type: string
+            description: >-
+              Passphrase for doing the operation.
+            required: true
+          RegionId:
+            type: string
+            description: >-
+              The memory region ID to which to apply this action.
+            required: true
+      SetPassphrase:
+        description: >-
+          Set passphrase for the given regions.
+        inputs:
+          Passphrase:
+            type: string
+            description: >-
+              Passphrase for doing the operation.
+            required: true
+          RegionId:
+            type: string
+            description: >-
+              The memory region ID to which to apply this action.
+            required: true
+      UnlockUnit:
+        description: >-
+          This contains the action for unlocking given regions.
+        inputs:
+          Passphrase:
+            type: string
+            description: >-
+              The passphrase required to complete the operation.
+            required: true
+          RegionId:
+            type: string
+            description: >-
+              The memory region ID to which to apply this action.
+            required: true
+node_types:
+  Memory:
+    description: >-
+      The `Memory` schema represents a memory device, such as a DIMM, and its configuration.  It
+      also describes the location, such as a slot, socket, or bay, where a unit can
+      be installed, by populating a resource instance with an absent state if a unit
+      is not present.
+    properties:
+      AllocationAlignmentMiB:
+        type: integer
+        description: >-
+          The boundary that memory regions are allocated on, measured in mebibytes
+          (MiB).
+        required: false
+      AllocationIncrementMiB:
+        type: integer
+        description: >-
+          The size of the smallest unit of allocation for a memory region in mebibytes
+          (MiB).
+        required: false
+      AllowedSpeedsMHz:
+        type: list
+        description: >-
+          Speeds supported by this memory device.
+        required: false
+        entry_schema:
+          type: integer
+      BaseModuleType:
+        type: BaseModuleType
+        description: >-
+          The base module type of the memory device.
+        required: false
+      BusWidthBits:
+        type: integer
+        description: >-
+          The bus width, in bits.
+        required: false
+      CacheSizeMiB:
+        type: integer
+        description: >-
+          Total size of the cache portion memory in MiB.
+        required: false
+      CapacityMiB:
+        type: integer
+        description: >-
+          Memory capacity in mebibytes (MiB).
+        required: false
+      DataWidthBits:
+        type: integer
+        description: >-
+          Data width in bits.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DeviceID:
+        type: string
+        description: >-
+          Device ID.
+        required: false
+      DeviceLocator:
+        type: string
+        description: >-
+          Location of the memory device in the platform.
+        required: false
+      ErrorCorrection:
+        type: ErrorCorrection
+        description: >-
+          Error correction scheme supported for this memory device.
+        required: false
+      FirmwareApiVersion:
+        type: string
+        description: >-
+          Version of API supported by the firmware.
+        required: false
+      FirmwareRevision:
+        type: string
+        description: >-
+          Revision of firmware on the memory controller.
+        required: false
+      FunctionClasses:
+        type: list
+        description: >-
+          Function classes by the memory device.
+        required: false
+        entry_schema:
+          type: string
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IsRankSpareEnabled:
+        type: boolean
+        description: >-
+          An indication of whether rank spare is enabled for this memory device.
+        required: false
+      IsSpareDeviceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether a spare device is enabled for this memory device.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the memory device.
+        required: false
+      LogicalSizeMiB:
+        type: integer
+        description: >-
+          Total size of the logical memory in MiB.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The memory device manufacturer.
+        required: false
+      MaxTDPMilliWatts:
+        type: list
+        description: >-
+          Set of maximum power budgets supported by the memory device in milliwatt
+          units.
+        required: false
+        entry_schema:
+          type: integer
+      MemoryDeviceType:
+        type: MemoryDeviceType
+        description: >-
+          Type details of the memory device.
+        required: false
+      MemoryLocation:
+        type: MemoryLocation
+        description: >-
+          Memory connection information to sockets and memory controllers.
+        required: false
+      MemoryMedia:
+        type: list
+        description: >-
+          Media of this memory device.
+        required: false
+        entry_schema:
+          type: MemoryMedia
+      MemorySubsystemControllerManufacturerID:
+        type: string
+        description: >-
+          The manufacturer ID of the memory subsystem controller of this memory device.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      MemorySubsystemControllerProductID:
+        type: string
+        description: >-
+          The product ID of the memory subsystem controller of this memory device.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      MemoryType:
+        type: MemoryType
+        description: >-
+          The type of memory device.
+        required: false
+      ModuleManufacturerID:
+        type: string
+        description: >-
+          The manufacturer ID of this memory device.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      ModuleProductID:
+        type: string
+        description: >-
+          The product ID of this memory device.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NonVolatileSizeMiB:
+        type: integer
+        description: >-
+          Total size of the non-volatile portion memory in MiB.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OperatingMemoryModes:
+        type: list
+        description: >-
+          Memory modes supported by the memory device.
+        required: false
+        entry_schema:
+          type: OperatingMemoryModes
+      OperatingSpeedMhz:
+        type: integer
+        description: >-
+          Operating speed of the memory device in MHz or MT/s as appropriate.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The product part number of this device.
+        required: false
+      PersistentRegionNumberLimit:
+        type: integer
+        description: >-
+          Total number of persistent regions this memory device can support.
+        required: false
+      PersistentRegionSizeLimitMiB:
+        type: integer
+        description: >-
+          Total size of persistent regions in mebibytes (MiB).
+        required: false
+      PersistentRegionSizeMaxMiB:
+        type: integer
+        description: >-
+          Maximum size of a single persistent region in mebibytes (MiB).
+        required: false
+      PowerManagementPolicy:
+        type: PowerManagementPolicy
+        description: >-
+          Power management policy information.
+        required: false
+      RankCount:
+        type: integer
+        description: >-
+          Number of ranks available in the memory device.
+        required: false
+      Regions:
+        type: list
+        description: >-
+          Memory regions information within the memory device.
+        required: false
+        entry_schema:
+          type: RegionSet
+      SecurityCapabilities:
+        type: SecurityCapabilities
+        description: >-
+          Security capabilities of the memory device.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The product serial number of this device.
+        required: false
+      SpareDeviceCount:
+        type: integer
+        description: >-
+          Number of unused spare devices available in the memory device.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SubsystemDeviceID:
+        type: string
+        description: >-
+          Subsystem device ID.
+        required: false
+      SubsystemVendorID:
+        type: string
+        description: >-
+          SubSystem vendor ID.
+        required: false
+      VendorID:
+        type: string
+        description: >-
+          Vendor ID.
+        required: false
+      VolatileRegionNumberLimit:
+        type: integer
+        description: >-
+          Total number of volatile regions this memory device can support.
+        required: false
+      VolatileRegionSizeLimitMiB:
+        type: integer
+        description: >-
+          Total size of volatile regions in mebibytes (MiB).
+        required: false
+      VolatileRegionSizeMaxMiB:
+        type: integer
+        description: >-
+          Maximum size of a single volatile region in mebibytes (MiB).
+        required: false
+      VolatileSizeMiB:
+        type: integer
+        description: >-
+          Total size of the volatile portion memory in MiB.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly resource associated with this memory device.
+    - Metrics:
+        node: mmrymtrc:MemoryMetrics
+        capability: mmrmtrcp:MemoryMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metrics associated with this memory device.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: MemoryDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the chassis that contains this memory device.
+    interfaces:
+      Actions:
+        type: MemoryActions
+    capabilities:
+      feature:
+        type: mmrycps:MemoryFeature
+      containable:
+        type: mmrycps:MemoryContainable

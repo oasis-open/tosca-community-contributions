@@ -1,0 +1,235 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Assembly.yaml
+  namespace: assembly
+- url: BatteryMetrics.yaml
+  namespace: bttrmtrc
+- url: Sensor.yaml
+  namespace: sensor
+- url: Core.yaml
+  namespace: core
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: BatteryMetrics_caps.yaml
+  namespace: bttmtrcp
+- url: Battery_caps.yaml
+  namespace: bttrycps
+data_types:
+  ChargeState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Idle
+        - Charging
+        - Discharging
+interface_types:
+  BatteryActions:
+    operations:
+      Calibrate:
+        description: >-
+          This action performs a self-calibration, or learn cycle, of the battery.
+      Reset:
+        description: >-
+          This action resets the battery.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+      SelfTest:
+        description: >-
+          This action performs a self-test of the battery.
+node_types:
+  Battery:
+    description: >-
+      The Battery schema describes a battery unit, such as those used to provide systems
+      with power during a power loss event.
+    properties:
+      CapacityActualAmpHours:
+        type: float
+        description: >-
+          The actual maximum capacity of this battery in amp-hours.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      CapacityActualWattHours:
+        type: float
+        description: >-
+          The actual maximum capacity of this battery in watt-hours.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      CapacityRatedAmpHours:
+        type: float
+        description: >-
+          The rated maximum capacity of this battery in amp-hours.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      CapacityRatedWattHours:
+        type: float
+        description: >-
+          The rated maximum capacity of this battery in watt-hours.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ChargeState:
+        type: ChargeState
+        description: >-
+          The charge state of this battery.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version for this battery.
+        required: false
+      HotPluggable:
+        type: boolean
+        description: >-
+          An indication of whether this device can be inserted or removed while the
+          equipment is in operation.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the battery.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this battery.
+        required: false
+      MaxChargeRateAmps:
+        type: float
+        description: >-
+          The maximum charge rate of this battery in amps.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MaxChargeVoltage:
+        type: float
+        description: >-
+          The maximum charge voltage of this battery.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MaxDischargeRateAmps:
+        type: float
+        description: >-
+          The maximum discharge rate of this battery in amps.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Model:
+        type: string
+        description: >-
+          The model number for this battery.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this battery.
+        required: false
+      ProductionDate:
+        type: string
+        description: >-
+          The production or manufacturing date of this battery.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this battery.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number for this battery.
+        required: false
+      StateOfHealthPercent:
+        type: sensor:SensorExcerpt
+        description: >-
+          The state of health of this battery.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The hardware version of this battery.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this battery.
+    - Metrics:
+        node: bttrmtrc:BatteryMetrics
+        capability: bttmtrcp:BatteryMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the battery metrics resource associated with this battery.
+    interfaces:
+      Actions:
+        type: BatteryActions
+    capabilities:
+      feature:
+        type: bttrycps:BatteryFeature
+      containable:
+        type: bttrycps:BatteryContainable

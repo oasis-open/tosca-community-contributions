@@ -1,0 +1,158 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: PortCollection.yaml
+  namespace: prtcllc
+- url: PortCollection_caps.yaml
+  namespace: prtcllcp
+- url: MediaController_caps.yaml
+  namespace: mdcntcp
+- url: MemoryDomain_caps.yaml
+  namespace: mmrdmncp
+data_types:
+  MediaControllerType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Memory
+relationship_types:
+  MediaControllerDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      MemoryDomains@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  MediaControllerActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets this media controller.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  MediaController:
+    description: >-
+      The MediaController schema contains the definition of the media controller and
+      its configuration.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this media controller.
+        required: false
+      MediaControllerType:
+        type: MediaControllerType
+        description: >-
+          The type of media controller.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model of this media controller.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number of this media controller.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number of this media controller.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this media controller.
+        required: false
+    requirements:
+    - Ports:
+        node: prtcllc:PortCollection
+        capability: prtcllcp:PortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of ports associated with this media controller.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: MediaControllerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect to this media controller.
+    - MemoryDomains:
+        # node: mmrydmn:MemoryDomain
+        capability: core:Feature
+        relationship: MediaControllerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the memory domains associated with this media controller.
+    interfaces:
+      Actions:
+        type: MediaControllerActions
+    capabilities:
+      feature:
+        type: mdcntcp:MediaControllerFeature
+      containable:
+        type: mdcntcp:MediaControllerContainable

@@ -1,0 +1,35 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: StorageController.v1_11_0.yaml
+  namespace: strgcntr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: StorageController_caps.yaml
+  namespace: strcntcp
+data_types:
+  NVMeSMARTCriticalWarnings:
+    description: >-
+      The NVMe SMART Critical Warnings for a storage controller.
+    derived_from: strgcntr:NVMeSMARTCriticalWarnings
+node_types:
+  StorageController:
+    description: >-
+      The `StorageController` schema describes a storage controller and its properties.  A
+      storage controller represents a physical or virtual storage device that produces
+      volumes.
+    derived_from: strgcntr:StorageController
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: strcntcp:StorageControllerFeature
+      containable:
+        type: strcntcp:StorageControllerContainable

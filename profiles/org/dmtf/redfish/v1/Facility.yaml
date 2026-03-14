@@ -1,0 +1,302 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Facility_caps.yaml
+  namespace: fcltycps
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+relationship_types:
+  FacilityDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      CDUs@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ContainsChassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ContainsFacilities@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      CoolingLoops@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ElectricalBuses@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      FloorPDUs@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ImmersionUnits@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerShelves@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RackPDUs@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Switchgear@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      TransferSwitches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  Facility:
+    description: >-
+      The `Facility` schema represents the physical location containing equipment,
+      such as a room, building, or campus.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      Description:
+        type: string
+        required: false
+      FacilityType:
+        type: string
+        description: >-
+          The type of location this resource represents.
+        required: true
+        validation:
+          $valid_values:
+          - $value
+          - - Room
+            - Floor
+            - Building
+            - Site
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the facility.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - PowerDomains:
+        # node: pwrdmncl:PowerDomainCollection
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Link to the power domains in this facility.
+    - AmbientMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the ambient environment metrics for this facility.
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this facility.
+    - CDUs:
+        # node: clngunt:CoolingUnit
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the coolant distribution units in this facility.
+    - ContainedByFacility:
+        node: Facility
+        capability: fcltycps:FacilityFeature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the facility that contains this facility.
+    - ContainsChassis:
+        # node: chassis:Chassis
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the outermost chassis contained within this facility.
+    - ContainsFacilities:
+        node: Facility
+        capability: fcltycps:FacilityFeature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to other facilities contained within this facility.
+    - CoolingLoops:
+        # node: clnglp:CoolingLoop
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the cooling loops in this facility.
+    - ElectricalBuses:
+        # node: pwrdstr:PowerDistribution
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the electrical buses in this facility.
+    - FloorPDUs:
+        # node: pwrdstr:PowerDistribution
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the floor power distribution units in this facility.
+    - ImmersionUnits:
+        # node: clngunt:CoolingUnit
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the immersion cooling units in this facility.
+    - ManagedBy:
+        # node: manager:Manager
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers responsible for managing this facility.
+    - PowerShelves:
+        # node: pwrdstr:PowerDistribution
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the power shelves in this facility.
+    - RackPDUs:
+        # node: pwrdstr:PowerDistribution
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the rack-level power distribution units in this facility.
+    - Switchgear:
+        # node: pwrdstr:PowerDistribution
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switchgear in this facility.
+    - TransferSwitches:
+        # node: pwrdstr:PowerDistribution
+        capability: core:Feature
+        relationship: FacilityDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the transfer switches in this facility.
+    capabilities:
+      feature:
+        type: fcltycps:FacilityFeature
+      containable:
+        type: fcltycps:FacilityContainable

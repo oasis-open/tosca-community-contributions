@@ -1,0 +1,125 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+- url: Schedule_caps.yaml
+  namespace: schdlcps
+data_types:
+  DayOfWeek:
+    description: >-
+      Days of the Week.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Monday
+        - Tuesday
+        - Wednesday
+        - Thursday
+        - Friday
+        - Saturday
+        - Sunday
+        - Every
+  MonthOfYear:
+    description: >-
+      Months of the year.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - January
+        - February
+        - March
+        - April
+        - May
+        - June
+        - July
+        - August
+        - September
+        - October
+        - November
+        - December
+        - Every
+node_types:
+  Schedule:
+    description: >-
+      Schedule a series of occurrences.
+    properties:
+      EnabledDaysOfMonth:
+        type: list
+        description: >-
+          Days of month when scheduled occurrences are enabled. Zero indicates that
+          every day of the month is enabled.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 31
+        entry_schema:
+          type: integer
+      EnabledDaysOfWeek:
+        type: list
+        description: >-
+          Days of the week when scheduled occurrences are enabled, for enabled days
+          of month and months of year.
+        required: false
+        entry_schema:
+          type: DayOfWeek
+      EnabledIntervals:
+        type: list
+        description: >-
+          Intervals when scheduled occurrences are enabled.
+        required: false
+        entry_schema:
+          type: string
+      EnabledMonthsOfYear:
+        type: list
+        description: >-
+          Months of year when scheduled occurrences are enabled.
+        required: false
+        entry_schema:
+          type: MonthOfYear
+      InitialStartTime:
+        type: string
+        description: >-
+          Time for initial occurrence.
+        required: false
+      Lifetime:
+        type: string
+        description: >-
+          The time after provisioning when the schedule as a whole expires.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - -?P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?
+      MaxOccurrences:
+        type: integer
+        description: >-
+          Maximum number of scheduled occurrences.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The Schedule name.
+        required: false
+      RecurrenceInterval:
+        type: string
+        description: >-
+          Distance until the next occurrences.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - -?P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?
+    capabilities:
+      feature:
+        type: schdlcps:ScheduleFeature
+      containable:
+        type: schdlcps:ScheduleContainable

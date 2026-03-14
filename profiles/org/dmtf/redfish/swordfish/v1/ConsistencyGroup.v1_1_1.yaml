@@ -1,0 +1,238 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: StorageReplicaInfo.v1_4_0.yaml
+  namespace: strrplin
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: StorageReplicaInfo_caps.yaml
+  namespace: strpincp
+- url: ConsistencyGroup_caps.yaml
+  namespace: cnsgrpcp
+interface_types:
+  ConsistencyGroupActions:
+    operations:
+      AssignReplicaTarget:
+        description: >-
+          This action is used to establish a replication relationship by assigning
+          an existing consistency group to serve as a target replica for an existing
+          source consistency group.
+        inputs:
+          ReplicaType:
+            type: strrplin:ReplicaType
+            description: >-
+              The type of replica relationship to be created (e.g., Clone, Mirror,
+              Snap).
+            required: true
+          ReplicaUpdateMode:
+            type: strrplin:ReplicaUpdateMode
+            description: >-
+              The replica update mode (synchronous vs asynchronous).
+            required: true
+          TargetConsistencyGroup:
+            type: string
+            description: >-
+              The Uri to the existing target consistency group.
+            required: true
+      CreateReplicaTarget:
+        description: >-
+          This action is used to create a new consistency group resource to provide
+          expanded data protection through a replica relationship with the specified
+          source consistency group.
+        inputs:
+          ConsistencyGroupName:
+            type: string
+            description: >-
+              The Name for the new target consistency group.
+            required: true
+          ReplicaType:
+            type: strrplin:ReplicaType
+            description: >-
+              The type of replica relationship to be created (e.g., Clone, Mirror,
+              Snap).
+            required: true
+          ReplicaUpdateMode:
+            type: strrplin:ReplicaUpdateMode
+            description: >-
+              The replica update mode (synchronous vs asynchronous).
+            required: true
+          TargetStoragePool:
+            type: string
+            description: >-
+              The Uri to the existing target Storage Pool.
+            required: true
+      RemoveReplicaRelationship:
+        description: >-
+          This action is used to disable data synchronization between a source and
+          target consistency group, remove the replication relationship, and optionally
+          delete the target consistency group.
+        inputs:
+          DeleteTargetConsistencyGroup:
+            type: boolean
+            description: >-
+              Indicate whether or not to delete the target consistency group as part
+              of the operation.
+            required: false
+          TargetConsistencyGroup:
+            type: string
+            description: >-
+              The Uri to the existing target consistency group.
+            required: true
+      ResumeReplication:
+        description: >-
+          This action is used to resume the active data synchronization between a
+          source and target consistency group, without otherwise altering the replication
+          relationship.
+        inputs:
+          TargetConsistencyGroup:
+            type: string
+            description: >-
+              The Uri to the existing target consistency group.
+            required: true
+      ReverseReplicationRelationship:
+        description: >-
+          This action is used to reverse the replication relationship between a source
+          and target consistency group.
+        inputs:
+          TargetConsistencyGroup:
+            type: string
+            description: >-
+              The Uri to the existing target consistency group.
+            required: true
+      SplitReplication:
+        description: >-
+          This action is used to split the replication relationship and suspend data
+          synchronization between a source and target consistency group.
+        inputs:
+          TargetConsistencyGroup:
+            type: string
+            description: >-
+              The Uri to the existing target consistency group.
+            required: true
+      SuspendReplication:
+        description: >-
+          This action is used to suspend active data synchronization between a source
+          and target consistency group, without otherwise altering the replication
+          relationship.
+        inputs:
+          TargetConsistencyGroup:
+            type: string
+            description: >-
+              The Uri to the existing target consistency group.
+            required: true
+node_types:
+  ConsistencyGroup:
+    description: >-
+      A collection of volumes grouped together to ensure write order consistency across
+      all those volumes.
+    properties:
+      ConsistencyMethod:
+        type: string
+        description: >-
+          The consistency method used by this group.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - HotStandby
+            - VASA
+            - VDI
+            - VSS
+            - Other
+      ConsistencyType:
+        type: string
+        description: >-
+          The consistency type used by this group.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - CrashConsistent
+            - ApplicationConsistent
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IsConsistent:
+        type: boolean
+        description: >-
+          This value is true when the consistency group is in a consistent state.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RemoteReplicaTargets:
+        type: list
+        description: >-
+          URIs to the resources that are remote target replicas of this source.
+        required: false
+        entry_schema:
+          type: string
+      ReplicaTargets:
+        type: list
+        description: >-
+          The resources that are target replicas of this source.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      ReplicaTargets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The property contains the status of the ConsistencyGroup.
+        required: false
+      Volumes@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - ReplicaInfo:
+        node: strrplin:ReplicaInfo
+        capability: strpincp:ReplicaInfoContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Describes this storage group in its role as a target for replication.
+    - Volumes:
+        # node: volume:Volume
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Volumes in this storage group.
+    interfaces:
+      Actions:
+        type: ConsistencyGroupActions
+    capabilities:
+      feature:
+        type: cnsgrpcp:ConsistencyGroupFeature
+      containable:
+        type: cnsgrpcp:ConsistencyGroupContainable

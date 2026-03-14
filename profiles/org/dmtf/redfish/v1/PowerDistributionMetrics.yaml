@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: PowerDistributionMetrics.v1_4_0.yaml
+  namespace: pwrdstmt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PowerDistributionMetrics_caps.yaml
+  namespace: pwdsmtcp
+node_types:
+  PowerDistributionMetrics:
+    description: >-
+      The `PowerDistributionMetrics` schema contains metrics of a power distribution
+      component or unit, such as a floor power distribution unit (PDU) or switchgear.
+    derived_from: pwrdstmt:PowerDistributionMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: pwdsmtcp:PowerDistributionMetricsFeature
+      containable:
+        type: pwdsmtcp:PowerDistributionMetricsContainable

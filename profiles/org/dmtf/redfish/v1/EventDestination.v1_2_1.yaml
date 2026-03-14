@@ -1,0 +1,130 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Event.v1_0_0.yaml
+  namespace: event
+- url: odata.4.0.0.yaml
+  namespace: odata400
+- url: Core.yaml
+  namespace: core
+- url: EventDestination_caps.yaml
+  namespace: evndstcp
+data_types:
+  EventDestinationProtocol:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Redfish
+  HttpHeaderProperty:
+    description: >-
+      The value of the HTTP header is the property value.  The header name is the
+      property name.
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        description: >-
+          The available OEM specific actions for this resource.
+        required: false
+node_types:
+  EventDestination:
+    description: >-
+      An Event Destination desribes the target of an event subscription, including
+      the types of events subscribed and context to provide to the target in the Event
+      payload.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Destination:
+        type: string
+        description: >-
+          The URI of the destination Event Service.
+        required: false
+      EventTypes:
+        type: list
+        description: >-
+          This property shall contain the types of events that shall be sent to the
+          desination.
+        required: false
+        entry_schema:
+          type: event:EventType
+      Context:
+        type: string
+        description: >-
+          A client-supplied string that is stored with the event destination subscription.
+        required: true
+      Protocol:
+        type: EventDestinationProtocol
+        description: >-
+          The protocol type of the event connection.
+        required: false
+      HttpHeaders:
+        type: list
+        description: >-
+          This is for setting HTTP headers, such as authorization information.  This
+          object will be null on a GET.
+        required: false
+        entry_schema:
+          type: HttpHeaderProperty
+      MessageIds:
+        type: list
+        description: >-
+          A list of MessageIds that the service will only send.  If this property
+          is absent or the array is empty, then Events with any MessageId will be
+          sent to the subscriber.
+        required: false
+        entry_schema:
+          type: string
+      OriginResources@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      OriginResources@odata_navigationLink:
+        type: string
+        required: false
+      OriginResources:
+        type: list
+        description: >-
+          A list of resources for which the service will only send related events.  If
+          this property is absent or the array is empty, then Events originating from
+          any resource will be sent to the subscriber.
+        required: false
+        entry_schema:
+          type: odata400:idRef
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    capabilities:
+      feature:
+        type: evndstcp:EventDestinationFeature
+      containable:
+        type: evndstcp:EventDestinationContainable

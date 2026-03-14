@@ -1,0 +1,165 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: PowerDistribution.yaml
+  namespace: pwrdstr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Manager.yaml
+  namespace: manager
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: PowerDistribution_caps.yaml
+  namespace: pwrdstcp
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: PowerDomain_caps.yaml
+  namespace: pwrdmncp
+relationship_types:
+  PowerDomainDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ElectricalBuses@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      FloorPDUs@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerShelves@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RackPDUs@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Switchgear@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      TransferSwitches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  PowerDomain:
+    description: >-
+      The `PowerDomain` schema contains the definition for the DCIM power domain.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - ElectricalBuses:
+        node: pwrdstr:PowerDistribution
+        capability: pwrdstcp:PowerDistributionFeature
+        relationship: PowerDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the electrical buses in this power domain.
+    - FloorPDUs:
+        node: pwrdstr:PowerDistribution
+        capability: pwrdstcp:PowerDistributionFeature
+        relationship: PowerDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the floor power distribution units in this power domain.
+    - ManagedBy:
+        node: manager:Manager
+        capability: mngrcps:ManagerFeature
+        relationship: PowerDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers responsible for managing this power domain.
+    - PowerShelves:
+        node: pwrdstr:PowerDistribution
+        capability: pwrdstcp:PowerDistributionFeature
+        relationship: PowerDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the power shelves in this power domain.
+    - RackPDUs:
+        node: pwrdstr:PowerDistribution
+        capability: pwrdstcp:PowerDistributionFeature
+        relationship: PowerDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the rack-level power distribution units in this power
+          domain.
+    - Switchgear:
+        node: pwrdstr:PowerDistribution
+        capability: pwrdstcp:PowerDistributionFeature
+        relationship: PowerDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switchgear in this power domain.
+    - TransferSwitches:
+        node: pwrdstr:PowerDistribution
+        capability: pwrdstcp:PowerDistributionFeature
+        relationship: PowerDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the transfer switches in this power domain.
+    capabilities:
+      feature:
+        type: pwrdmncp:PowerDomainFeature
+      containable:
+        type: pwrdmncp:PowerDomainContainable

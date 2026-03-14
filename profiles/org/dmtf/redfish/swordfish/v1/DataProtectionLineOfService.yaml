@@ -1,0 +1,140 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.v1_3_0.yaml
+  namespace: resource
+- url: Schedule.yaml
+  namespace: schedule
+- url: Core.yaml
+  namespace: core
+- url: Schedule_caps.yaml
+  namespace: schdlcps
+- url: DataProtectionLineOfService_caps.yaml
+  namespace: dtprlosc
+interface_types:
+  DataProtectionLineOfServiceActions:
+    operations:
+      CreateReplicas:
+        description: >-
+          This action creates an on-demand replica.
+        inputs:
+          ReplicaLineOfService:
+            type: DataProtectionLineOfService
+            description: >-
+              The data protection line of service this action is bound to.
+            required: true
+          ReplicaRequests:
+            type: list
+            description: >-
+              Specifies the resources to replicate and a name for the replica.
+            required: false
+node_types:
+  DataProtectionLineOfService:
+    description: >-
+      Describes a data protection service option.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      Description:
+        type: string
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IsIsolated:
+        type: boolean
+        description: >-
+          The replica is in a separate fault domain.
+        required: false
+      MinLifetime:
+        type: string
+        description: >-
+          Minimum lifetime (seconds) that replica must be maintained.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RecoveryGeographicObjective:
+        type: string
+        description: >-
+          Geographic distribution scopes.
+        required: false
+      RecoveryPointObjectiveTime:
+        type: string
+        description: >-
+          Time interval defining how much source data that can be lost on failure.
+        required: false
+      RecoveryTimeObjective:
+        type: string
+        description: >-
+          An enumeration value that indicates the expected time to access an alternate
+          replica.
+        required: false
+      ReplicaAccessLocation:
+        type: resource:Location
+        description: >-
+          Location that supplies data access to the replica.
+        required: false
+      ReplicaType:
+        type: string
+        description: >-
+          Type of replica.
+        required: false
+    requirements:
+    - ReplicaClassOfService:
+        # node: clsofsr:ClassOfService
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The replica's class of service.
+    - Schedule:
+        node: schedule:Schedule
+        capability: schdlcps:ScheduleContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A schedule for making periodic point in time replicas.
+    interfaces:
+      Actions:
+        type: DataProtectionLineOfServiceActions
+    capabilities:
+      feature:
+        type: dtprlosc:DataProtectionLineOfServiceFeature
+      containable:
+        type: dtprlosc:DataProtectionLineOfServiceContainable

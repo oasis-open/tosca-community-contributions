@@ -1,0 +1,357 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: NetworkDeviceFunction_caps.yaml
+  namespace: ntdvfncp
+- url: Port_caps.yaml
+  namespace: portcaps
+- url: Protocol.yaml
+  namespace: protocol
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: IPAddresses.yaml
+  namespace: ipddrsss
+- url: Resource_caps.yaml
+  namespace: rsrccps
+data_types:
+  EntityRole:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Initiator
+        - Target
+        - Both
+  EntityType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - StorageInitiator
+        - RootComplex
+        - NetworkController
+        - Drive
+        - StorageExpander
+        - DisplayController
+        - Bridge
+        - Processor
+        - Volume
+        - AccelerationFunction
+  PciId:
+    description: >-
+      A PCI ID.
+    properties:
+      ClassCode:
+        type: string
+        description: >-
+          The Class Code, Subclass, and Programming Interface code of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){3}$
+      DeviceId:
+        type: string
+        description: >-
+          The Device ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      FunctionNumber:
+        type: integer
+        description: >-
+          The PCI ID of the connected entity.
+        required: false
+      SubsystemId:
+        type: string
+        description: >-
+          The Subsystem ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      SubsystemVendorId:
+        type: string
+        description: >-
+          The Subsystem Vendor ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      VendorId:
+        type: string
+        description: >-
+          The Vendor ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+relationship_types:
+  EndpointDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      MutuallyExclusiveEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      NetworkDeviceFunction@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Ports@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  Endpoint:
+    description: >-
+      The Endpoint schema contains the properties of an endpoint resource that represents
+      the properties of an entity that sends or receives protocol-defined messages
+      over a transport.
+    properties:
+      ConnectedEntities:
+        type: list
+        description: >-
+          All the entities connected to this endpoint.
+        required: false
+        entry_schema:
+          type: ConnectedEntity
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      HostReservationMemoryBytes:
+        type: integer
+        description: >-
+          The amount of memory in bytes that the host should allocate to connect to
+          this endpoint.
+        required: false
+      IPTransportDetails:
+        type: list
+        description: >-
+          An array of details for each IP transport supported by this endpoint.  The
+          array structure can model multiple IP addresses for this endpoint.
+        required: false
+        entry_schema:
+          type: IPTransportDetails
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          Identifiers for this endpoint.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PciId:
+        type: PciId
+        description: >-
+          The PCI ID of the endpoint.
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - EndpointProtocol:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol supported by this endpoint.
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Redundancy information for the lower-level endpoints supporting this endpoint.
+    - MutuallyExclusiveEndpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: EndpointDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that cannot be used in zones if this
+          endpoint is in a zone.
+    - NetworkDeviceFunction:
+        node: NetworkDeviceFunction
+        capability: ntdvfncp:NetworkDeviceFunctionFeature
+        relationship: EndpointDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          When NetworkDeviceFunction resources are present, this array contains links
+          to the network device functions that connect to this endpoint.
+    - Ports:
+        node: Port
+        capability: portcaps:PortFeature
+        relationship: EndpointDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the physical ports associated with this endpoint.
+    capabilities:
+      feature:
+        type: endpcps:EndpointFeature
+      containable:
+        type: endpcps:EndpointContainable
+  ConnectedEntity:
+    description: >-
+      Represents a remote resource that is connected to the network accessible to
+      this endpoint.
+    properties:
+      EntityPciId:
+        type: PciId
+        description: >-
+          The PCI ID of the connected entity.
+        required: false
+      EntityRole:
+        type: EntityRole
+        description: >-
+          The role of the connected entity.
+        required: false
+      EntityType:
+        type: EntityType
+        description: >-
+          The type of the connected entity.
+        required: false
+      Identifiers:
+        type: list
+        description: >-
+          Identifiers for the remote entity.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PciClassCode:
+        type: string
+        description: >-
+          The Class Code, Subclass, and Programming Interface code of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){3}$
+      PciFunctionNumber:
+        type: integer
+        description: >-
+          The PCI ID of the connected entity.
+        required: false
+    requirements:
+    - EntityLink:
+        node: resource:Resource
+        capability: rsrccps:ResourceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the associated entity.
+    capabilities:
+      containable:
+        type: endpcps:ConnectedEntityContainable
+  IPTransportDetails:
+    description: >-
+      This type specifies the details of the transport supported by the endpoint.  The
+      properties that are present are dependent on the type of transport supported
+      by the endpoint.
+    properties:
+      IPv4Address:
+        type: ipddrsss:IPv4Address
+        description: >-
+          The IPv4 addresses assigned to the endpoint.
+        required: false
+      IPv6Address:
+        type: ipddrsss:IPv6Address
+        description: >-
+          The IPv6 addresses assigned to the endpoint.
+        required: false
+      Port:
+        type: float
+        description: >-
+          The UDP or TCP port number used by the endpoint.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 65535
+    requirements:
+    - TransportProtocol:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol used by the connection entity.
+    capabilities:
+      containable:
+        type: endpcps:IPTransportDetailsContainable

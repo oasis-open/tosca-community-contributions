@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: PortMetrics.v1_8_1.yaml
+  namespace: prtmtrcs
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PortMetrics_caps.yaml
+  namespace: prtmtrcp
+node_types:
+  PortMetrics:
+    description: >-
+      The `PortMetrics` schema contains usage and health statistics for a switch device
+      or component port summary.
+    derived_from: prtmtrcs:PortMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: prtmtrcp:PortMetricsFeature
+      containable:
+        type: prtmtrcp:PortMetricsContainable

@@ -1,0 +1,81 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Capacity.v1_2_2.yaml
+  namespace: capacity
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Capacity_caps.yaml
+  namespace: cpctycps
+data_types:
+  Capacity:
+    description: >-
+      This is the schema definition for the Capacity of a device. It represents the
+      properties for capacity for any data store.
+    properties:
+      Data:
+        type: CapacityInfo
+        description: >-
+          The capacity information relating to the user data.
+        required: false
+      IsThinProvisioned:
+        type: boolean
+        description: >-
+          Marks that the capacity is not necessarily fully allocated.
+        required: false
+      Metadata:
+        type: CapacityInfo
+        description: >-
+          The capacity information relating to  metadata.
+        required: false
+      Snapshot:
+        type: CapacityInfo
+        description: >-
+          The capacity information relating to snapshot or backup data.
+        required: false
+  CapacityInfo:
+    description: >-
+      The capacity of specific data type in a data store.
+    properties:
+      AllocatedBytes:
+        type: integer
+        description: >-
+          The number of bytes currently allocated by the storage system in this data
+          store for this data type.
+        required: false
+      ConsumedBytes:
+        type: integer
+        description: >-
+          The number of bytes consumed in this data store for this data type.
+        required: false
+      GuaranteedBytes:
+        type: integer
+        description: >-
+          The number of bytes the storage system guarantees can be allocated in this
+          data store for this data type.
+        required: false
+      ProvisionedBytes:
+        type: integer
+        description: >-
+          The maximum number of bytes that can be allocated in this data store for
+          this data type.
+        required: false
+node_types:
+  CapacitySource:
+    description: >-
+      A description of the type and source of storage.
+    derived_from: capacity:CapacitySource
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: cpctycps:CapacitySourceFeature
+      containable:
+        type: cpctycps:CapacitySourceContainable

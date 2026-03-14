@@ -1,0 +1,485 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: AttributeRegistry_caps.yaml
+  namespace: attrgscp
+data_types:
+  AttributeType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enumeration
+        - String
+        - Integer
+        - Boolean
+        - Password
+  AttributeValue:
+    description: >-
+      A possible value for an enumeration attribute.
+    properties:
+      ValueDisplayName:
+        type: string
+        description: >-
+          A user-readable display string of the value for the attribute in the defined
+          language.
+        required: false
+      ValueName:
+        type: string
+        description: >-
+          The unique value name for the attribute.
+        required: true
+  Attributes:
+    description: >-
+      An attribute and its possible values and other metadata.
+    properties:
+      AttributeName:
+        type: string
+        description: >-
+          The unique name for the attribute.
+        required: true
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z][A-Za-z0-9_]+$
+      CurrentValue:
+        type: string
+        description: >-
+          The placeholder of the current value for the attribute.
+        required: false
+      DefaultValue:
+        type: string
+        description: >-
+          The default value for the attribute.
+        required: false
+      DisplayName:
+        type: string
+        description: >-
+          The user-readable display string for the attribute in the defined language.
+        required: false
+      DisplayOrder:
+        type: integer
+        description: >-
+          The ascending order, as a number, in which this attribute appears relative
+          to other attributes.
+        required: false
+      GrayOut:
+        type: boolean
+        description: >-
+          An indication of whether this attribute is grayed out.  A grayed-out attribute
+          is not active and is grayed out in user interfaces but the attribute value
+          can be modified.
+        required: false
+      HelpText:
+        type: string
+        description: >-
+          The help text for the attribute.
+        required: false
+      Hidden:
+        type: boolean
+        description: >-
+          An indication of whether this attribute is hidden in user interfaces.
+        required: false
+      Immutable:
+        type: boolean
+        description: >-
+          An indication of whether this attribute is immutable.  Immutable attributes
+          shall not be modified and typically reflect a hardware state.
+        required: false
+      IsSystemUniqueProperty:
+        type: boolean
+        description: >-
+          An indication of whether this attribute is unique for this system and should
+          not be replicated.
+        required: false
+      LowerBound:
+        type: integer
+        description: >-
+          The lower limit for an integer attribute.
+        required: false
+      MaxLength:
+        type: integer
+        description: >-
+          The maximum character length of a string attribute.
+        required: false
+      MenuPath:
+        type: string
+        description: >-
+          The path that describes the menu hierarchy of this attribute.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^\.\/([^/]+(\/[^/]+)*)?$
+      MinLength:
+        type: integer
+        description: >-
+          The minimum character length of the string attribute.
+        required: false
+      ReadOnly:
+        type: boolean
+        description: >-
+          An indication of whether this attribute is read-only.  A read-only attribute
+          cannot be modified, and should be grayed out in user interfaces.
+        required: false
+      ScalarIncrement:
+        type: integer
+        description: >-
+          The amount to increment or decrement an integer attribute each time a user
+          requests a value change.  The `0` value indicates a free-form numeric user-input
+          attribute.
+        required: false
+      Type:
+        type: AttributeType
+        description: >-
+          The attribute type.
+        required: false
+      UpperBound:
+        type: integer
+        description: >-
+          The upper limit for an integer attribute.
+        required: false
+      Value:
+        type: list
+        description: >-
+          An array of the possible values for enumerated attribute values.
+        required: false
+        entry_schema:
+          type: AttributeValue
+      ValueExpression:
+        type: string
+        description: >-
+          A valid regular expression, according to the Perl regular expression dialect,
+          that validates the attribute value.  Applies to only string and integer
+          attributes.
+        required: false
+      WarningText:
+        type: string
+        description: >-
+          The warning text for the attribute.
+        required: false
+      WriteOnly:
+        type: boolean
+        description: >-
+          An indication of whether this attribute is write-only.  A write-only attribute
+          reverts to its initial value after settings are applied.
+        required: false
+  Dependencies:
+    description: >-
+      The dependency of attributes on this component.
+    properties:
+      Dependency:
+        type: Dependency
+        description: >-
+          The dependency expression for one or more attributes in this Attribute Registry.
+        required: false
+      DependencyFor:
+        type: string
+        description: >-
+          The AttributeName of the attribute whose change triggers the evaluation
+          of this dependency expression.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z][A-Za-z0-9_]+$
+      Type:
+        type: DependencyType
+        description: >-
+          The type of the dependency structure.
+        required: false
+  Dependency:
+    description: >-
+      The dependency expression for one or more attributes in this Attribute Registry.
+    properties:
+      MapFrom:
+        type: list
+        description: >-
+          An array of the map-from conditions for a mapping dependency.
+        required: false
+        entry_schema:
+          type: MapFrom
+      MapToAttribute:
+        type: string
+        description: >-
+          The AttributeName of the attribute that is affected by this dependency expression.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z][A-Za-z0-9_]+$
+      MapToProperty:
+        type: MapToProperty
+        description: >-
+          The metadata property for the attribute that contains the map-from condition
+          that evaluates this dependency expression.
+        required: false
+      MapToValue:
+        type: string
+        description: >-
+          The value that the map-to property changes to if the dependency expression
+          evaluates to `true`.
+        required: false
+  DependencyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Map
+  MapFrom:
+    description: >-
+      A map-from condition for mapping dependency.
+    properties:
+      MapFromAttribute:
+        type: string
+        description: >-
+          The attribute to use to evaluate this dependency expression.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z][A-Za-z0-9_]+$
+      MapFromCondition:
+        type: MapFromCondition
+        description: >-
+          The condition to use to evaluate this dependency expression.
+        required: false
+      MapFromProperty:
+        type: MapFromProperty
+        description: >-
+          The metadata property for the attribute that the MapFromAttribute property
+          specifies to use to evaluate this dependency expression.
+        required: false
+      MapFromValue:
+        type: string
+        description: >-
+          The value to use to evaluate this dependency expression.
+        required: false
+      MapTerms:
+        type: MapTerms
+        description: >-
+          The logical term that combines two or more map-from conditions in this dependency
+          expression.  For example, `AND` for logical AND, or `OR` for logical OR.
+        required: false
+  MapFromCondition:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - EQU
+        - NEQ
+        - GTR
+        - GEQ
+        - LSS
+        - LEQ
+  MapFromProperty:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CurrentValue
+        - DefaultValue
+        - ReadOnly
+        - WriteOnly
+        - GrayOut
+        - Hidden
+        - LowerBound
+        - UpperBound
+        - MinLength
+        - MaxLength
+        - ScalarIncrement
+  MapTerms:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - AND
+        - OR
+  MapToProperty:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CurrentValue
+        - DefaultValue
+        - ReadOnly
+        - WriteOnly
+        - GrayOut
+        - Hidden
+        - Immutable
+        - HelpText
+        - WarningText
+        - DisplayName
+        - DisplayOrder
+        - LowerBound
+        - UpperBound
+        - MinLength
+        - MaxLength
+        - ScalarIncrement
+        - ValueExpression
+  Menus:
+    description: >-
+      An attribute's menu and its hierarchy.
+    properties:
+      DisplayName:
+        type: string
+        description: >-
+          The user-readable display string of this menu in the defined language.
+        required: false
+      DisplayOrder:
+        type: integer
+        description: >-
+          The ascending order, as a number, in which this menu appears relative to
+          other menus.
+        required: false
+      GrayOut:
+        type: boolean
+        description: >-
+          An indication of whether this menu is grayed out.  A grayed-only menu is
+          not accessible in user interfaces.
+        required: false
+      MenuName:
+        type: string
+        description: >-
+          The unique name string of this menu.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[^/]+$
+      MenuPath:
+        type: string
+        description: >-
+          The path to the menu names that describes this menu hierarchy relative to
+          other menus.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^\.\/([^/]+(\/[^/]+)*)?$
+      ReadOnly:
+        type: boolean
+        description: >-
+          An indication of whether this menu is read-only.  A read-only menu, its
+          properties, and sub-menus are not accessible in user interfaces.
+        required: false
+  RegistryEntries:
+    description: >-
+      The list of all attributes and metadata for this component.
+    properties:
+      Attributes:
+        type: list
+        description: >-
+          An array of attributes and their possible values in the Attribute Registry.
+        required: false
+        entry_schema:
+          type: Attributes
+      Dependencies:
+        type: list
+        description: >-
+          An array of dependencies of attributes on this component.
+        required: false
+        entry_schema:
+          type: Dependencies
+      Menus:
+        type: list
+        description: >-
+          An array for the attributes menus and their hierarchy in the Attribute Registry.
+        required: false
+        entry_schema:
+          type: Menus
+  SupportedSystems:
+    description: >-
+      A system that this Attribute Registry supports.
+    properties:
+      FirmwareVersion:
+        type: string
+        description: >-
+          Firmware version.
+        required: false
+      ProductName:
+        type: string
+        description: >-
+          The product name of the computer system to which this Attribute Registry
+          applies.
+        required: false
+      SystemId:
+        type: string
+        description: >-
+          The ID of the systems to which this Attribute Registry applies.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z0-9]+$
+node_types:
+  AttributeRegistry:
+    description: >-
+      The AttributeRegistry schema contains a set of key-value pairs that represent
+      the structure of an Attribute Registry.  It includes mechanisms for building
+      user interfaces, or menus, allowing consistent navigation of the contents.  The
+      Attribute Registry is specific to an implementation or product.  The attributes
+      and property names are not standardized.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Language:
+        type: string
+        description: >-
+          The RFC5646-conformant language code for the Attribute Registry.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OwningEntity:
+        type: string
+        description: >-
+          The organization or company that publishes this Attribute Registry.
+        required: true
+      RegistryEntries:
+        type: RegistryEntries
+        description: >-
+          The list of all attributes and their metadata for this component.
+        required: false
+      RegistryVersion:
+        type: string
+        description: >-
+          The Attribute Registry version.
+        required: true
+        validation:
+          $matches:
+          - $value
+          - ^\d+\.\d+\.\d+$
+      SupportedSystems:
+        type: list
+        description: >-
+          An array of systems that this Attribute Registry supports.
+        required: false
+        entry_schema:
+          type: SupportedSystems
+    capabilities:
+      feature:
+        type: attrgscp:AttributeRegistryFeature
+      containable:
+        type: attrgscp:AttributeRegistryContainable

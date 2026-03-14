@@ -1,0 +1,249 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata.4.0.0.yaml
+  namespace: odata400
+- url: EthernetInterface.yaml
+  namespace: ethrintr
+- url: Drive.yaml
+  namespace: drive
+- url: Storage.v1_0_0.yaml
+  namespace: storage
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: Core.yaml
+  namespace: core
+- url: PCIeFunction_caps.yaml
+  namespace: pcfnccp
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+- url: Drive_caps.yaml
+  namespace: drvcps
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+data_types:
+  DeviceClass:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - UnclassifiedDevice
+        - MassStorageController
+        - NetworkController
+        - DisplayController
+        - MultimediaController
+        - MemoryController
+        - Bridge
+        - CommunicationController
+        - GenericSystemPeripheral
+        - InputDeviceController
+        - DockingStation
+        - Processor
+        - SerialBusController
+        - WirelessController
+        - IntelligentController
+        - SatelliteCommunicationsController
+        - EncryptionController
+        - SignalProcessingController
+        - ProcessingAccelerators
+        - NonEssentialInstrumentation
+        - Coprocessor
+        - UnassignedClass
+        - Other
+  FunctionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Physical
+        - Virtual
+node_types:
+  PCIeFunction:
+    description: >-
+      This is the schema definition for the PCIeFunction resource.  It represents
+      the properties of a PCIeFunction attached to a System.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      FunctionId:
+        type: float
+        description: >-
+          The the PCIe Function identifier.
+        required: false
+      FunctionType:
+        type: FunctionType
+        description: >-
+          The type of the PCIe Function.
+        required: false
+      DeviceClass:
+        type: DeviceClass
+        description: >-
+          The class for this PCIe Function.
+        required: false
+      DeviceId:
+        type: string
+        description: >-
+          The Device ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      VendorId:
+        type: string
+        description: >-
+          The Vendor ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      ClassCode:
+        type: string
+        description: >-
+          The Class Code of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){3}$
+      RevisionId:
+        type: string
+        description: >-
+          The Revision ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){1}$
+      SubsystemId:
+        type: string
+        description: >-
+          The Subsystem ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      SubsystemVendorId:
+        type: string
+        description: >-
+          The Subsystem Vendor ID of this PCIe function.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      Links:
+        type: Links
+        description: >-
+          The links object contains the links to other resources that are related
+          to this resource.
+        required: false
+    capabilities:
+      feature:
+        type: pcfnccp:PCIeFunctionFeature
+      containable:
+        type: pcfnccp:PCIeFunctionContainable
+  Links:
+    description: >-
+      The links object contains the links to other resources that are related to this
+      resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      EthernetInterfaces@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      EthernetInterfaces@odata_navigationLink:
+        type: string
+        required: false
+      Drives@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Drives@odata_navigationLink:
+        type: string
+        required: false
+      StorageControllers@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      StorageControllers@odata_navigationLink:
+        type: string
+        required: false
+      StorageControllers:
+        type: list
+        description: >-
+          An array of references to the storage controllers which the PCIe device
+          produces.
+        required: false
+        entry_schema:
+          type: storage:StorageController
+    requirements:
+    - EthernetInterfaces:
+        node: ethrintr:EthernetInterface
+        capability: ethintcp:EthernetInterfaceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the ethernet interfaces which the PCIe device
+          produces.
+    - Drives:
+        node: drive:Drive
+        capability: drvcps:DriveContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the drives which the PCIe device produces.
+    - PCIeDevice:
+        node: pcdvc:PCIeDevice
+        capability: pcdvccps:PCIeDeviceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the PCIeDevice on which this function resides.
+    capabilities:
+      containable:
+        type: pcfnccp:LinksContainable

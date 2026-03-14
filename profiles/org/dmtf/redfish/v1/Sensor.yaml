@@ -1,0 +1,355 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Sensor.v1_12_0.yaml
+  namespace: sensor
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Sensor_caps.yaml
+  namespace: snsrcps
+data_types:
+  ElectricalContext:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Line1
+        - Line2
+        - Line3
+        - Neutral
+        - LineToLine
+        - Line1ToLine2
+        - Line2ToLine3
+        - Line3ToLine1
+        - LineToNeutral
+        - Line1ToNeutral
+        - Line2ToNeutral
+        - Line3ToNeutral
+        - Line1ToNeutralAndL1L2
+        - Line2ToNeutralAndL1L2
+        - Line2ToNeutralAndL2L3
+        - Line3ToNeutralAndL3L1
+        - Total
+  SensorArrayExcerpt:
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      PhysicalContext:
+        type: string
+        description: >-
+          The area or device to which this sensor measurement applies.
+        required: false
+      PhysicalSubContext:
+        type: string
+        description: >-
+          The usage or location within a device to which this sensor measurement applies.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      DeviceName:
+        type: string
+        description: >-
+          The name of the device.
+        required: false
+  SensorCurrentExcerpt:
+    properties:
+      CrestFactor:
+        type: float
+        description: >-
+          The crest factor for this sensor.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      THDPercent:
+        type: float
+        description: >-
+          The total harmonic distortion percent (% THD).
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  SensorEnergykWhExcerpt:
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      SensorResetTime:
+        type: string
+        description: >-
+          The date and time when the time-based properties were last reset.
+        required: false
+      ApparentkVAh:
+        type: float
+        description: >-
+          Apparent energy (kVAh).
+        required: false
+      LifetimeReading:
+        type: float
+        description: >-
+          The total accumulation value for this sensor.
+        required: false
+      ReactivekVARh:
+        type: float
+        description: >-
+          Reactive energy (kVARh).
+        required: false
+  SensorExcerpt:
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+  SensorFanArrayExcerpt:
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      PhysicalContext:
+        type: string
+        description: >-
+          The area or device to which this sensor measurement applies.
+        required: false
+      PhysicalSubContext:
+        type: string
+        description: >-
+          The usage or location within a device to which this sensor measurement applies.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      DeviceName:
+        type: string
+        description: >-
+          The name of the device.
+        required: false
+      SpeedRPM:
+        type: float
+        description: >-
+          The rotational speed.
+        required: false
+  SensorFanExcerpt:
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      SpeedRPM:
+        type: float
+        description: >-
+          The rotational speed.
+        required: false
+  SensorPowerArrayExcerpt:
+    properties:
+      ApparentVA:
+        type: float
+        description: >-
+          The product of voltage and current for an AC circuit, in volt-ampere units.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      PhysicalContext:
+        type: string
+        description: >-
+          The area or device to which this sensor measurement applies.
+        required: false
+      PhysicalSubContext:
+        type: string
+        description: >-
+          The usage or location within a device to which this sensor measurement applies.
+        required: false
+      PowerFactor:
+        type: float
+        description: >-
+          The power factor for this sensor.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -1
+          - $less_or_equal:
+            - $value
+            - 1
+      ReactiveVAR:
+        type: float
+        description: >-
+          The square root of the difference term of squared apparent VA and squared
+          power (Reading) for a circuit, in VAR units.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      PhaseAngleDegrees:
+        type: float
+        description: >-
+          The phase angle (degrees) between the current and voltage waveforms.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -90
+          - $less_or_equal:
+            - $value
+            - 90
+  SensorPowerExcerpt:
+    properties:
+      ApparentVA:
+        type: float
+        description: >-
+          The product of voltage and current for an AC circuit, in volt-ampere units.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      PowerFactor:
+        type: float
+        description: >-
+          The power factor for this sensor.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -1
+          - $less_or_equal:
+            - $value
+            - 1
+      ReactiveVAR:
+        type: float
+        description: >-
+          The square root of the difference term of squared apparent VA and squared
+          power (Reading) for a circuit, in VAR units.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      PhaseAngleDegrees:
+        type: float
+        description: >-
+          The phase angle (degrees) between the current and voltage waveforms.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - -90
+          - $less_or_equal:
+            - $value
+            - 90
+  SensorPumpExcerpt:
+    properties:
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      SpeedRPM:
+        type: float
+        description: >-
+          The rotational speed.
+        required: false
+  SensorVoltageExcerpt:
+    properties:
+      CrestFactor:
+        type: float
+        description: >-
+          The crest factor for this sensor.
+        required: false
+      DataSourceUri:
+        type: string
+        description: >-
+          The link to the resource that provides the data for this sensor.
+        required: false
+      Reading:
+        type: float
+        description: >-
+          The sensor value.
+        required: false
+      THDPercent:
+        type: float
+        description: >-
+          The total harmonic distortion percent (% THD).
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  VoltageType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - AC
+        - DC
+node_types:
+  Sensor:
+    description: >-
+      The `Sensor` schema describes a sensor and its properties.
+    derived_from: sensor:Sensor
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: snsrcps:SensorFeature
+      containable:
+        type: snsrcps:SensorContainable

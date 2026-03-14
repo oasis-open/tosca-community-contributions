@@ -1,0 +1,323 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Manager.yaml
+  namespace: manager
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: Assembly.yaml
+  namespace: assembly
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: FilterCollection.yaml
+  namespace: fltrcllc
+- url: LeakDetection.yaml
+  namespace: lkdtctn
+- url: CoolantConnectorCollection.yaml
+  namespace: clncnncl
+- url: PumpCollection.yaml
+  namespace: pmpcllc
+- url: ReservoirCollection.yaml
+  namespace: rsrvcllc
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+- url: FilterCollection_caps.yaml
+  namespace: fltcllcp
+- url: LeakDetection_caps.yaml
+  namespace: lkdtccp
+- url: CoolantConnectorCollection_caps.yaml
+  namespace: clcnclcp
+- url: PumpCollection_caps.yaml
+  namespace: pmpcllcp
+- url: ReservoirCollection_caps.yaml
+  namespace: rsrcllcp
+- url: CoolingUnit_caps.yaml
+  namespace: clnuntcp
+data_types:
+  CoolingEquipmentType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CDU
+        - HeatExchanger
+        - ImmersionUnit
+  CoolingUnitMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+relationship_types:
+  CoolingUnitDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  CoolingUnitActions:
+    operations:
+      SetMode:
+        description: >-
+          This action sets the operating mode of the cooling unit.
+        inputs:
+          Mode:
+            type: CoolingUnitMode
+            description: >-
+              The desired operating mode of the cooling unit.
+            required: false
+node_types:
+  CoolingUnit:
+    description: >-
+      The `CoolingUnit` schema contains the definition for a cooling system component
+      or unit, such as a coolant distribution unit (CDU) or a heat exchanger.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this equipment.
+        required: false
+      Coolant:
+        type: string
+        description: >-
+          Details about the coolant used in this unit.
+        required: false
+      CoolantConnectorRedundancy:
+        type: list
+        description: >-
+          The redundancy information for the coolant connectors in this cooling unit.
+        required: false
+        entry_schema:
+          type: rdndncy:RedundantGroup
+      CoolingCapacityWatts:
+        type: integer
+        description: >-
+          The cooling capacity (W) of this equipment.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EquipmentType:
+        type: CoolingEquipmentType
+        description: >-
+          The type of equipment this resource represents.
+        required: true
+      FilterRedundancy:
+        type: list
+        description: >-
+          The redundancy information for the groups of filters in this unit.
+        required: false
+        entry_schema:
+          type: rdndncy:RedundantGroup
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version of this equipment.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the equipment.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this equipment.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The product model number of this equipment.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this equipment.
+        required: false
+      ProductionDate:
+        type: string
+        description: >-
+          The production or manufacturing date of this equipment.
+        required: false
+      PumpRedundancy:
+        type: list
+        description: >-
+          The redundancy information for the groups of pumps in this unit.
+        required: false
+        entry_schema:
+          type: rdndncy:RedundantGroup
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this equipment.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UserLabel:
+        type: string
+        description: >-
+          A user-assigned label.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The hardware version of this equipment.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this cooling unit.
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this equipment.
+    - Filters:
+        node: fltrcllc:FilterCollection
+        capability: fltcllcp:FilterCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the filters for this equipment.
+    - LeakDetection:
+        node: lkdtctn:LeakDetection
+        capability: lkdtccp:LeakDetectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the leak detection components associated with this equipment.
+    - PrimaryCoolantConnectors:
+        node: clncnncl:CoolantConnectorCollection
+        capability: clcnclcp:CoolantConnectorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the primary coolant connectors for this equipment.
+    - Pumps:
+        node: pmpcllc:PumpCollection
+        capability: pmpcllcp:PumpCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the pumps for this equipment.
+    - Reservoirs:
+        node: rsrvcllc:ReservoirCollection
+        capability: rsrcllcp:ReservoirCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the reservoirs for this equipment.
+    - SecondaryCoolantConnectors:
+        node: clncnncl:CoolantConnectorCollection
+        capability: clcnclcp:CoolantConnectorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the secondary coolant connectors for this equipment.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: CoolingUnitDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis that contain this equipment.
+    - Facility:
+        # node: facility:Facility
+        capability: core:Feature
+        relationship: CoolingUnitDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the facility that contains this equipment.
+    - ManagedBy:
+        node: manager:Manager
+        capability: mngrcps:ManagerFeature
+        relationship: CoolingUnitDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers responsible for managing this equipment.
+    interfaces:
+      Actions:
+        type: CoolingUnitActions
+    capabilities:
+      feature:
+        type: clnuntcp:CoolingUnitFeature
+      containable:
+        type: clnuntcp:CoolingUnitContainable

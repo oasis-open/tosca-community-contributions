@@ -1,0 +1,178 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Privileges.yaml
+  namespace: prvlgs
+- url: Core.yaml
+  namespace: core
+- url: PrivilegeRegistry_caps.yaml
+  namespace: prvrgscp
+data_types:
+  Mapping:
+    description: >-
+      The mapping between a Resource type and the relevant privileges that accesses
+      the Resource.
+    properties:
+      Entity:
+        type: string
+        description: >-
+          The Resource name, such as `Manager`.
+        required: false
+      OperationMap:
+        type: OperationMap
+        description: >-
+          List mapping between HTTP methods and privilege required for the Resource.
+        required: false
+      PropertyOverrides:
+        type: list
+        description: >-
+          The privilege overrides of properties within a Resource.
+        required: false
+        entry_schema:
+          type: Target_PrivilegeMap
+      ResourceURIOverrides:
+        type: list
+        description: >-
+          The privilege overrides of Resource URIs.
+        required: false
+        entry_schema:
+          type: Target_PrivilegeMap
+      SubordinateOverrides:
+        type: list
+        description: >-
+          The privilege overrides of the subordinate Resource.
+        required: false
+        entry_schema:
+          type: Target_PrivilegeMap
+  OperationMap:
+    description: >-
+      The specific privileges required to complete a set of HTTP operations.
+    properties:
+      DELETE:
+        type: list
+        description: >-
+          The privilege required to complete an HTTP DELETE operation.
+        required: false
+        entry_schema:
+          type: OperationPrivilege
+      GET:
+        type: list
+        description: >-
+          The privilege required to complete an HTTP GET operation.
+        required: false
+        entry_schema:
+          type: OperationPrivilege
+      HEAD:
+        type: list
+        description: >-
+          The privilege required to complete an HTTP HEAD operation.
+        required: false
+        entry_schema:
+          type: OperationPrivilege
+      PATCH:
+        type: list
+        description: >-
+          The privilege required to complete an HTTP PATCH operation.
+        required: false
+        entry_schema:
+          type: OperationPrivilege
+      POST:
+        type: list
+        description: >-
+          The privilege required to complete an HTTP POST operation.
+        required: false
+        entry_schema:
+          type: OperationPrivilege
+      PUT:
+        type: list
+        description: >-
+          The privilege required to complete an HTTP PUT operation.
+        required: false
+        entry_schema:
+          type: OperationPrivilege
+  OperationPrivilege:
+    description: >-
+      The privileges for a specific HTTP operation.
+    properties:
+      Privilege:
+        type: list
+        description: >-
+          An array of privileges that are required to complete a specific HTTP operation
+          on a Resource.
+        required: false
+        entry_schema:
+          type: string
+  Target_PrivilegeMap:
+    description: >-
+      This type describes a mapping between one or more targets and the HTTP operations
+      associated with them.
+    properties:
+      OperationMap:
+        type: OperationMap
+        description: >-
+          The mapping between the HTTP operation and the privilege required to complete
+          the operation.
+        required: false
+      Targets:
+        type: list
+        description: >-
+          The set of URIs, Resource types, or properties.
+        required: false
+        entry_schema:
+          type: string
+node_types:
+  PrivilegeRegistry:
+    description: >-
+      The PrivilegeRegistry schema describes the operation-to-privilege mappings.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Mappings:
+        type: list
+        description: >-
+          The mappings between entities and the relevant privileges that access those
+          entities.
+        required: false
+        entry_schema:
+          type: Mapping
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      OEMPrivilegesUsed:
+        type: list
+        description: >-
+          The set of OEM privileges used in this mapping.
+        required: false
+        entry_schema:
+          type: string
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PrivilegesUsed:
+        type: list
+        description: >-
+          The set of Redfish standard privileges used in this mapping.
+        required: false
+        entry_schema:
+          type: prvlgs:PrivilegeType
+    capabilities:
+      feature:
+        type: prvrgscp:PrivilegeRegistryFeature
+      containable:
+        type: prvrgscp:PrivilegeRegistryContainable

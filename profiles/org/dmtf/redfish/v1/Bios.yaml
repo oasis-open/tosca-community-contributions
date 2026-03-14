@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Bios.v1_2_3.yaml
+  namespace: bios
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Bios_caps.yaml
+  namespace: bioscaps
+node_types:
+  Bios:
+    description: >-
+      The `Bios` schema contains properties related to the BIOS attribute registry.  The
+      attribute registry describes the system-specific BIOS attributes and actions
+      for changing to BIOS settings.  Changes to the BIOS typically require a system
+      reset before they take effect.  It is likely that a client finds the `@Redfish.Settings`
+      term in this resource, and if it is found, the client makes requests to change
+      BIOS settings by modifying the resource identified by the `@Redfish.Settings`
+      term.
+    derived_from: bios:Bios
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: bioscaps:BiosFeature
+      containable:
+        type: bioscaps:BiosContainable

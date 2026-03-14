@@ -1,0 +1,106 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: AggregationSource.yaml
+  namespace: aggrsrc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: AggregationSource_caps.yaml
+  namespace: aggsrccp
+- url: ConnectionMethod_caps.yaml
+  namespace: cnnmthcp
+data_types:
+  ConnectionMethodType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Redfish
+        - SNMP
+        - IPMI15
+        - IPMI20
+        - NETCONF
+        - OEM
+  TunnelingProtocolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SSH
+        - OEM
+relationship_types:
+  ConnectionMethodDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AggregationSources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  ConnectionMethod:
+    description: >-
+      The `ConnectionMethod` schema describes the protocol, provider, or other method
+      used to communicate to a given access point for a Redfish aggregation service.
+    properties:
+      ConnectionMethodType:
+        type: ConnectionMethodType
+        description: >-
+          The type of connection method.
+        required: false
+      ConnectionMethodVariant:
+        type: string
+        description: >-
+          The variant of connection method.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      TunnelingProtocol:
+        type: TunnelingProtocolType
+        description: >-
+          The tunneling protocol used for this connection method.
+        required: false
+    requirements:
+    - AggregationSources:
+        node: aggrsrc:AggregationSource
+        capability: aggsrccp:AggregationSourceFeature
+        relationship: ConnectionMethodDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the access points using this connection method.
+    capabilities:
+      feature:
+        type: cnnmthcp:ConnectionMethodFeature
+      containable:
+        type: cnnmthcp:ConnectionMethodContainable

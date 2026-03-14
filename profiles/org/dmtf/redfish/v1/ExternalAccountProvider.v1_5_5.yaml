@@ -1,0 +1,324 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: ExternalAccountProvider_caps.yaml
+  namespace: exacprcp
+data_types:
+  AccountProviderTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RedfishService
+        - ActiveDirectoryService
+        - LDAPService
+        - OEM
+        - TACACSplus
+        - OAuth2
+  Authentication:
+    description: >-
+      The information required to authenticate to the external service.
+    properties:
+      AuthenticationType:
+        type: AuthenticationTypes
+        description: >-
+          The type of authentication used to connect to the external account provider.
+        required: false
+      EncryptionKey:
+        type: string
+        description: >-
+          Specifies the encryption key.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[0-9a-fA-F]+$
+      EncryptionKeySet:
+        type: boolean
+        description: >-
+          Indicates if the `EncryptionKey` property is set.
+        required: false
+      KerberosKeytab:
+        type: string
+        description: >-
+          The Base64-encoded Kerberos keytab for this service.  A `PATCH` or `PUT`
+          operation writes the keytab.  This property is `null` in responses.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Password:
+        type: string
+        description: >-
+          The password for this service.  A `PATCH` or `PUT` request writes the password.  This
+          property is `null` in responses.
+        required: false
+      Token:
+        type: string
+        description: >-
+          The token for this service.  A `PATCH` or `PUT` operation writes the token.  This
+          property is `null` in responses.
+        required: false
+      Username:
+        type: string
+        description: >-
+          The username for the service.
+        required: false
+  AuthenticationTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Token
+        - KerberosKeytab
+        - UsernameAndPassword
+        - OEM
+  LDAPSearchSettings:
+    description: >-
+      The settings to search a generic LDAP service.
+    properties:
+      BaseDistinguishedNames:
+        type: list
+        description: >-
+          The base distinguished names to use to search an external LDAP service.
+        required: false
+        entry_schema:
+          type: string
+      GroupNameAttribute:
+        type: string
+        description: >-
+          The attribute name that contains the LDAP group name entry.
+        required: false
+      GroupsAttribute:
+        type: string
+        description: >-
+          The attribute name that contains the groups for a user on the LDAP user
+          entry.
+        required: false
+      SSHKeyAttribute:
+        type: string
+        description: >-
+          The attribute name that contains the LDAP user's SSH public key entry.
+        required: false
+      UsernameAttribute:
+        type: string
+        description: >-
+          The attribute name that contains the LDAP username entry.
+        required: false
+  LDAPService:
+    description: >-
+      The settings required to parse a generic LDAP service.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SearchSettings:
+        type: LDAPSearchSettings
+        description: >-
+          The required settings to search an external LDAP service.
+        required: false
+  OAuth2Mode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Discovery
+        - Offline
+  OAuth2Service:
+    description: >-
+      Various settings to parse an OAuth 2.0 service.
+    properties:
+      Audience:
+        type: list
+        description: >-
+          The allowable audience strings of the Redfish service.
+        required: false
+        entry_schema:
+          type: string
+      Issuer:
+        type: string
+        description: >-
+          The issuer string of the OAuth 2.0 service.  Clients should configure this
+          property if `Mode` contains `Offline`.
+        required: false
+      Mode:
+        type: OAuth2Mode
+        description: >-
+          The mode of operation for token validation.
+        required: false
+      OAuthServiceSigningKeys:
+        type: string
+        description: >-
+          The Base64-encoded signing keys of the issuer of the OAuth 2.0 service.  Clients
+          should configure this property if `Mode` contains `Offline`.
+        required: false
+  RoleMapping:
+    description: >-
+      The mapping rules that are used to convert the external account providers account
+      information to the local Redfish role.
+    properties:
+      LocalRole:
+        type: string
+        description: >-
+          The name of the local Redfish role to which to map the remote user or group.
+        required: false
+      MFABypass:
+        type: string
+        description: >-
+          The multi-factor authentication bypass settings.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RemoteGroup:
+        type: string
+        description: >-
+          The name of the remote group, or the remote role in the case of a Redfish
+          service, that maps to the local Redfish role to which this entity links.
+        required: false
+      RemoteUser:
+        type: string
+        description: >-
+          The name of the remote user that maps to the local Redfish role to which
+          this entity links.
+        required: false
+  TACACSplusPasswordExchangeProtocol:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ASCII
+        - PAP
+        - CHAP
+        - MSCHAPv1
+        - MSCHAPv2
+  TACACSplusService:
+    description: >-
+      Various settings to parse a TACACS+ service.
+    properties:
+      PasswordExchangeProtocols:
+        type: list
+        description: >-
+          Indicates the allowed TACACS+ password exchange protocols.
+        required: false
+        entry_schema:
+          type: TACACSplusPasswordExchangeProtocol
+      PrivilegeLevelArgument:
+        type: string
+        description: >-
+          Indicates the name of the TACACS+ argument name in an authorization request.
+        required: false
+node_types:
+  ExternalAccountProvider:
+    description: >-
+      The `ExternalAccountProvider` schema represents a remote service that provides
+      accounts for this manager to use for authentication.
+    properties:
+      AccountProviderType:
+        type: AccountProviderTypes
+        description: >-
+          The type of external account provider to which this service connects.
+        required: false
+      Authentication:
+        type: Authentication
+        description: >-
+          The authentication information for the external account provider.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LDAPService:
+        type: LDAPService
+        description: >-
+          The additional mapping information needed to parse a generic LDAP service.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      OAuth2Service:
+        type: OAuth2Service
+        description: >-
+          The additional information needed to parse an OAuth 2.0 service.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Priority:
+        type: integer
+        description: >-
+          The authentication priority for the external account provider.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RemoteRoleMapping:
+        type: list
+        description: >-
+          The mapping rules to convert the external account providers account information
+          to the local Redfish role.
+        required: false
+        entry_schema:
+          type: RoleMapping
+      ServiceAddresses:
+        type: list
+        description: >-
+          The addresses of the user account providers to which this external account
+          provider links.  The format of this field depends on the type of external
+          account provider.
+        required: false
+        entry_schema:
+          type: string
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+      TACACSplusService:
+        type: TACACSplusService
+        description: >-
+          The additional information needed to parse a TACACS+ services.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates that the external account provider
+          uses.
+    capabilities:
+      feature:
+        type: exacprcp:ExternalAccountProviderFeature
+      containable:
+        type: exacprcp:ExternalAccountProviderContainable

@@ -1,0 +1,128 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: NetworkAdapterMetrics_caps.yaml
+  namespace: ntadmtcp
+interface_types:
+  NetworkAdapterMetricsActions:
+    operations:
+      ResetMetrics:
+        description: >-
+          This action resets the summary metrics related to this device.
+node_types:
+  NetworkAdapterMetrics:
+    description: >-
+      The NetworkAdapterMetrics schema contains usage and health statistics for a
+      network adapter.
+    properties:
+      CPUCorePercent:
+        type: float
+        description: >-
+          The device CPU core utilization as a percentage.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      HostBusRXPercent:
+        type: float
+        description: >-
+          The host bus, such as PCIe, RX utilization as a percentage.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      HostBusTXPercent:
+        type: float
+        description: >-
+          The host bus, such as PCIe, TX utilization as a percentage.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      NCSIRXBytes:
+        type: integer
+        description: >-
+          The total number of NC-SI bytes received since reset.
+        required: false
+      NCSIRXFrames:
+        type: integer
+        description: >-
+          The total number of NC-SI frames received since reset.
+        required: false
+      NCSITXBytes:
+        type: integer
+        description: >-
+          The total number of NC-SI bytes sent since reset.
+        required: false
+      NCSITXFrames:
+        type: integer
+        description: >-
+          The total number of NC-SI frames sent since reset.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RXBytes:
+        type: integer
+        description: >-
+          The total number of bytes received since reset.
+        required: false
+      RXMulticastFrames:
+        type: integer
+        description: >-
+          The total number of good multicast frames received since reset.
+        required: false
+      RXUnicastFrames:
+        type: integer
+        description: >-
+          The total number of good unicast frames received since reset.
+        required: false
+      TXBytes:
+        type: integer
+        description: >-
+          The total number of bytes transmitted since reset.
+        required: false
+      TXMulticastFrames:
+        type: integer
+        description: >-
+          The total number of good multicast frames transmitted since reset.
+        required: false
+      TXUnicastFrames:
+        type: integer
+        description: >-
+          The total number of good unicast frames transmitted since reset.
+        required: false
+    interfaces:
+      Actions:
+        type: NetworkAdapterMetricsActions
+    capabilities:
+      feature:
+        type: ntadmtcp:NetworkAdapterMetricsFeature
+      containable:
+        type: ntadmtcp:NetworkAdapterMetricsContainable

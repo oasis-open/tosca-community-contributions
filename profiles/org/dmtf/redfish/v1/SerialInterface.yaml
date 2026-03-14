@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SerialInterface.v1_3_0.yaml
+  namespace: srlintr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SerialInterface_caps.yaml
+  namespace: srlintcp
+node_types:
+  SerialInterface:
+    description: >-
+      The `SerialInterface` schema describes an asynchronous serial interface, such
+      as an RS-232 interface, available to a system or device.
+    derived_from: srlintr:SerialInterface
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: srlintcp:SerialInterfaceFeature
+      containable:
+        type: srlintcp:SerialInterfaceContainable

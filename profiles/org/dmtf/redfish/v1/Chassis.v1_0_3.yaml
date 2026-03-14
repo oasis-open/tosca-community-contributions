@@ -1,0 +1,338 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata.4.0.0.yaml
+  namespace: odata400
+- url: Chassis.yaml
+  namespace: chassis
+- url: LogServiceCollection.yaml
+  namespace: lgsrvcl
+- url: Thermal.yaml
+  namespace: thermal
+- url: Power.yaml
+  namespace: power
+- url: Core.yaml
+  namespace: core
+- url: LogServiceCollection_caps.yaml
+  namespace: lgsrclcp
+- url: Thermal_caps.yaml
+  namespace: thrmlcps
+- url: Power_caps.yaml
+  namespace: pwrcps
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: ComputerSystem_caps.yaml
+  namespace: cmpsyscp
+- url: Manager_caps.yaml
+  namespace: mngrcps
+data_types:
+  Reset:
+    description: >-
+      This action is used to reset the chassis. This action resets the chassis, not
+      Systems or other contained resources, although side effects may occur which
+      affect those resources.
+    properties:
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+  ChassisType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Rack
+        - Blade
+        - Enclosure
+        - StandAlone
+        - RackMount
+        - Card
+        - Cartridge
+        - Row
+        - Pod
+        - Expansion
+        - Sidecar
+        - Zone
+        - Sled
+        - Shelf
+        - Drawer
+        - Module
+        - Component
+        - IPBasedDrive
+        - RackGroup
+        - Other
+  IndicatorLED:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unknown
+        - Lit
+        - Blinking
+        - 'Off'
+  PowerState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - 'On'
+        - 'Off'
+        - PoweringOn
+        - PoweringOff
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        required: false
+      '#Chassis_Reset':
+        type: Reset
+        description: >-
+          This action is used to reset the chassis. This action resets the chassis,
+          not Systems or other contained resources, although side effects may occur
+          which affect those resources.
+        required: false
+node_types:
+  Chassis:
+    description: >-
+      A Chassis represents the physical components for any system.  This resource
+      represents the sheet-metal confined spaces and logical zones like racks, enclosures,
+      chassis and all other containers. Subsystems (like sensors), which operate outside
+      of a system's data plane (meaning the resources are not accessible to software
+      running on the system) are linked either directly or indirectly through this
+      resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      ChassisType:
+        type: ChassisType
+        description: >-
+          This property indicates the type of physical form factor of this resource.
+        required: true
+      Manufacturer:
+        type: string
+        description: >-
+          This is the manufacturer of this chassis.
+        required: false
+      Model:
+        type: string
+        description: >-
+          This is the model number for the chassis.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          This is the SKU for this chassis.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this chassis.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this chassis.
+        required: false
+      AssetTag:
+        type: string
+        description: >-
+          The user assigned asset tag for this chassis.
+        required: false
+      IndicatorLED:
+        type: IndicatorLED
+        description: >-
+          The state of the indicator LED, used to identify the chassis.
+        required: false
+      Links:
+        type: Links
+        description: >-
+          Contains references to other resources that are related to this resource.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      PowerState:
+        type: PowerState
+        description: >-
+          This is the current power state of the chassis.
+        required: false
+    requirements:
+    - LogServices:
+        node: lgsrvcl:LogServiceCollection
+        capability: lgsrclcp:LogServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the logs for this chassis.
+    - Thermal:
+        node: thermal:Thermal
+        capability: thrmlcps:ThermalContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the thermal properties (fans, cooling, sensors) for this
+          chassis.
+    - Power:
+        node: power:Power
+        capability: pwrcps:PowerContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the power properties (power supplies, power policies, sensors)
+          for this chassis.
+    capabilities:
+      feature:
+        type: chssscps:ChassisFeature
+      containable:
+        type: chssscps:ChassisContainable
+  Links:
+    description: >-
+      Contains references to other resources that are related to this resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      ComputerSystems@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ComputerSystems@odata_navigationLink:
+        type: string
+        required: false
+      ManagedBy@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagedBy@odata_navigationLink:
+        type: string
+        required: false
+      Contains@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Contains@odata_navigationLink:
+        type: string
+        required: false
+      PoweredBy@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      PoweredBy@odata_navigationLink:
+        type: string
+        required: false
+      PoweredBy:
+        type: list
+        description: >-
+          An array of ID[s] of resources that power this chassis. Normally the ID
+          will be a chassis or a specific set of Power Supplies.
+        required: false
+        entry_schema:
+          type: odata400:idRef
+      CooledBy@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      CooledBy@odata_navigationLink:
+        type: string
+        required: false
+      CooledBy:
+        type: list
+        description: >-
+          An array of ID[s] of resources that cool this chassis. Normally the ID will
+          be a chassis or a specific set of fans.
+        required: false
+        entry_schema:
+          type: odata400:idRef
+    requirements:
+    - ComputerSystems:
+        node: ComputerSystem
+        capability: cmpsyscp:ComputerSystemContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the computer systems contained in this chassis.  This
+          will only reference ComputerSystems that are directly and wholly contained
+          in this chassis.
+    - ManagedBy:
+        node: Manager
+        capability: mngrcps:ManagerContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the Managers responsible for managing this chassis.
+    - ContainedBy:
+        node: chassis:Chassis
+        capability: chssscps:ChassisContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the chassis that this chassis is contained by.
+    - Contains:
+        node: chassis:Chassis
+        capability: chssscps:ChassisContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to any other chassis that this chassis has in it.
+    capabilities:
+      containable:
+        type: chssscps:LinksContainable

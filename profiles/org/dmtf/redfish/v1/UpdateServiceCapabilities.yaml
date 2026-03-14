@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: UpdateServiceCapabilities.v1_0_0.yaml
+  namespace: updsrvcp
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: UpdateServiceCapabilities_caps.yaml
+  namespace: upsrcpcp
+node_types:
+  UpdateServiceCapabilities:
+    description: >-
+      The `UpdateServiceCapabilities` schema contains capabilities of the update service.
+    derived_from: updsrvcp:UpdateServiceCapabilities
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: upsrcpcp:UpdateServiceCapabilitiesFeature
+      containable:
+        type: upsrcpcp:UpdateServiceCapabilitiesContainable

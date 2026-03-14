@@ -1,0 +1,97 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: NetworkAdapter.yaml
+  namespace: ntwradpt
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: NetworkAdapter_caps.yaml
+  namespace: ntwadpcp
+- url: NetworkDeviceFunctionCollection.yaml
+  namespace: ntdvfncl
+- url: NetworkPortCollection.yaml
+  namespace: ntwprtcl
+- url: NetworkDeviceFunctionCollection_caps.yaml
+  namespace: ntdvfncc
+- url: NetworkPortCollection_caps.yaml
+  namespace: ntprclcp
+- url: NetworkInterface_caps.yaml
+  namespace: ntwintcp
+relationship_types:
+  NetworkInterfaceDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  NetworkInterface:
+    description: >-
+      The `NetworkInterface` schema describes links to the network adapters, network
+      ports, and network device functions, and represents the functionality available
+      to the containing system.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - NetworkDeviceFunctions:
+        node: ntdvfncl:NetworkDeviceFunctionCollection
+        capability: ntdvfncc:NetworkDeviceFunctionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the network device functions associated with this network interface.
+    - NetworkPorts:
+        node: ntwprtcl:NetworkPortCollection
+        capability: ntprclcp:NetworkPortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the network ports associated with this network interface.
+    - NetworkAdapter:
+        node: ntwradpt:NetworkAdapter
+        capability: ntwadpcp:NetworkAdapterFeature
+        relationship: NetworkInterfaceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the network adapter that contains this network interface.
+    capabilities:
+      feature:
+        type: ntwintcp:NetworkInterfaceFeature
+      containable:
+        type: ntwintcp:NetworkInterfaceContainable

@@ -1,0 +1,145 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Message.yaml
+  namespace: message
+- url: Core.yaml
+  namespace: core
+- url: Message_caps.yaml
+  namespace: mssgcps
+- url: Task_caps.yaml
+  namespace: taskcaps
+data_types:
+  Payload:
+    description: >-
+      The HTTP and JSON payload details for this Task.
+    properties:
+      HttpHeaders:
+        type: list
+        description: >-
+          This represents the HTTP headers used in the operation of this Task.
+        required: false
+        entry_schema:
+          type: string
+      HttpOperation:
+        type: string
+        description: >-
+          The HTTP operation to perform to execute this Task.
+        required: false
+      JsonBody:
+        type: string
+        description: >-
+          This property contains the JSON payload to use in the execution of this
+          Task.
+        required: false
+      TargetUri:
+        type: string
+        description: >-
+          The URI of the target for this task.
+        required: false
+  TaskState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - New
+        - Starting
+        - Running
+        - Suspended
+        - Interrupted
+        - Pending
+        - Stopping
+        - Completed
+        - Killed
+        - Exception
+        - Service
+        - Cancelling
+        - Cancelled
+node_types:
+  Task:
+    description: >-
+      This resource contains information about a specific Task scheduled by or being
+      executed by a Redfish service's Task Service.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EndTime:
+        type: string
+        description: >-
+          The date-time stamp that the task was last completed.
+        required: false
+      HidePayload:
+        type: boolean
+        description: >-
+          Indicates that the contents of the Payload should be hidden from view after
+          the Task has been created.  When set to True, the Payload object will not
+          be returned on GET.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Payload:
+        type: Payload
+        description: >-
+          The HTTP and JSON payload details for this task.
+        required: false
+      PercentComplete:
+        type: integer
+        description: >-
+          The completion percentage of this Task.
+        required: false
+      StartTime:
+        type: string
+        description: >-
+          The date-time stamp that the task was last started.
+        required: false
+      TaskMonitor:
+        type: string
+        description: >-
+          The URI of the Task Monitor for this task.
+        required: false
+      TaskState:
+        type: TaskState
+        description: >-
+          The state of the task.
+        required: false
+      TaskStatus:
+        type: resource:Health
+        description: >-
+          This is the completion status of the task.
+        required: false
+    requirements:
+    - Messages:
+        node: message:Message
+        capability: mssgcps:MessageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          This is an array of messages associated with the task.
+    capabilities:
+      feature:
+        type: taskcaps:TaskFeature
+      containable:
+        type: taskcaps:TaskContainable

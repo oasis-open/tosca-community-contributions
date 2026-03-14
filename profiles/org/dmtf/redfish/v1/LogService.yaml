@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: LogService.v1_9_0.yaml
+  namespace: lgsrvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: LogService_caps.yaml
+  namespace: lgsrvcp
+node_types:
+  LogService:
+    description: >-
+      The `LogService` schema contains properties for monitoring and configuring a
+      log service.  When the `Id` property contains `DeviceLog`, the log contains
+      device-resident log entries that follow the physical device when moved from
+      system-to-system, and not a replication or subset of a system event log.
+    derived_from: lgsrvc:LogService
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: lgsrvcp:LogServiceFeature
+      containable:
+        type: lgsrvcp:LogServiceContainable

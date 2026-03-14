@@ -1,0 +1,254 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Drive.yaml
+  namespace: drive
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: VolumeCollection.yaml
+  namespace: vlmcllc
+- url: Drive_caps.yaml
+  namespace: drvcps
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: VolumeCollection_caps.yaml
+  namespace: vlmcllcp
+- url: Storage_caps.yaml
+  namespace: strgcps
+- url: Protocol.yaml
+  namespace: protocol
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+relationship_types:
+  StorageDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Enclosures@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  StorageActions:
+    operations:
+      SetEncryptionKey:
+        description: >-
+          This action sets the encryption key for the storage subsystem.
+        inputs:
+          EncryptionKey:
+            type: string
+            description: >-
+              The encryption key to set on the storage subsystem.
+            required: true
+node_types:
+  Storage:
+    description: >-
+      The Storage schema defines a storage subsystem and its respective properties.  A
+      storage subsystem represents a set of physical or virtual storage controllers
+      and the Resources, such as volumes, that can be accessed from that subsystem.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Drives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+      StorageControllers:
+        type: list
+        description: >-
+          The set of storage controllers that this Resource represents.
+        required: false
+        entry_schema:
+          type: StorageController
+      StorageControllers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - Drives:
+        node: drive:Drive
+        capability: drvcps:DriveContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of drives attached to the storage controllers that this Resource
+          represents.
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Redundancy information for the storage subsystem.
+    - Volumes:
+        node: vlmcllc:VolumeCollection
+        capability: vlmcllcp:VolumeCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The set of volumes that the storage controllers produce.
+    - Enclosures:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: StorageDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis to which this storage subsystem is attached.
+    interfaces:
+      Actions:
+        type: StorageActions
+    capabilities:
+      feature:
+        type: strgcps:StorageFeature
+      containable:
+        type: strgcps:StorageContainable
+  StorageController:
+    description: >-
+      The StorageController schema describes a storage controller and its properties.  A
+      storage controller represents a physical or virtual storage device that produces
+      volumes.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this storage controller.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version of this storage controller.
+        required: false
+      Identifiers:
+        type: list
+        description: >-
+          The Durable names for the storage controller.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this storage controller.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          The identifier for the member within the collection.
+        required: true
+      Model:
+        type: string
+        description: >-
+          The model number for the storage controller.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this storage controller.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this storage controller.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this storage controller.
+        required: false
+      SpeedGbps:
+        type: float
+        description: >-
+          The maximum speed of the storage controller's device interface.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+    requirements:
+    - SupportedControllerProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The supported set of protocols for communicating to this storage controller.
+    - SupportedDeviceProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The protocols that the storage controller can use to communicate with attached
+          devices.
+    capabilities:
+      containable:
+        type: strgcps:StorageControllerContainable

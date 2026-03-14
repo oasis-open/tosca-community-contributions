@@ -1,0 +1,192 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: StorageGroup_caps.yaml
+  namespace: strgrpcp
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: EndpointGroup.yaml
+  namespace: endpgrp
+- url: StorageReplicaInfo.yaml
+  namespace: strrplin
+- url: EndpointGroup_caps.yaml
+  namespace: endgrpcp
+relationship_types:
+  StorageGroupDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ChildStorageGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ParentStorageGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  StorageGroupActions:
+    operations:
+      ExposeVolumes:
+        description: >-
+          Expose the storage volumes of this group.
+      HideVolumes:
+        description: >-
+          Hide the storage volumes of this group.
+node_types:
+  StorageGroup:
+    description: >-
+      Collection of resources that are managed and exposed to hosts as a group.
+    properties:
+      AccessState:
+        type: string
+        description: >-
+          AccessState for this storage group.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Optimized
+            - NonOptimized
+            - Standby
+            - Unavailable
+            - Transitioning
+      ClientEndpointGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The value identifies this resource.
+        required: false
+      MembersAreConsistent:
+        type: boolean
+        description: >-
+          Members are kept in a consistent state.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ReplicaInfo:
+        type: strrplin:ReplicaInfo
+        description: >-
+          Describes this storage group in its role as a target for replication.
+        required: false
+      ServerEndpointGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The property contains the status of the StorageGroup.
+        required: false
+      Volumes@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      VolumesAreExposed:
+        type: boolean
+        description: >-
+          Storage volumes are exposed to paths defined by the client and server endpoints.
+        required: false
+    requirements:
+    - ClientEndpointGroups:
+        node: endpgrp:EndpointGroup
+        capability: endgrpcp:EndpointGroupContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Groups of client endpoints in this storage group.
+    - ServerEndpointGroups:
+        node: endpgrp:EndpointGroup
+        capability: endgrpcp:EndpointGroupContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Groups of server endpoints in this storage group.
+    - Volumes:
+        # node: volume:Volume
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Volumes in this storage group.
+    - ChildStorageGroups:
+        node: StorageGroup
+        capability: strgrpcp:StorageGroupFeature
+        relationship: StorageGroupDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Child StorageGroups.
+    - ClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceFeature
+        relationship: StorageGroupDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The ClassOfService that all storage in this StorageGroup conforms to.
+    - ParentStorageGroups:
+        node: StorageGroup
+        capability: strgrpcp:StorageGroupFeature
+        relationship: StorageGroupDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Parent StorageGroups.
+    interfaces:
+      Actions:
+        type: StorageGroupActions
+    capabilities:
+      feature:
+        type: strgrpcp:StorageGroupFeature
+      containable:
+        type: strgrpcp:StorageGroupContainable

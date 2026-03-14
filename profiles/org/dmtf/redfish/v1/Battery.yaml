@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Battery.v1_5_0.yaml
+  namespace: battery
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Battery_caps.yaml
+  namespace: bttrycps
+node_types:
+  Battery:
+    description: >-
+      The `Battery` schema describes a unit of energy storage, including batteries
+      and supercapacitors, used to provide systems or components within a system with
+      power during a power-loss event or to store energy for later use.  It also describes
+      the location, such as a slot, socket, or bay, where a unit can be installed
+      by populating a resource instance with an absent state if a unit is not present.
+    derived_from: battery:Battery
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: bttrycps:BatteryFeature
+      containable:
+        type: bttrycps:BatteryContainable

@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: GraphicsController.v1_0_2.yaml
+  namespace: grphcntr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: GraphicsController_caps.yaml
+  namespace: grpcntcp
+node_types:
+  GraphicsController:
+    description: >-
+      The `GraphicsController` schema defines a graphics controller that can be used
+      to drive one or more display devices.
+    derived_from: grphcntr:GraphicsController
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: grpcntcp:GraphicsControllerFeature
+      containable:
+        type: grpcntcp:GraphicsControllerContainable

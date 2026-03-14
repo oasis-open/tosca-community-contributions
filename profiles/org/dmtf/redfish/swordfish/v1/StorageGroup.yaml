@@ -1,0 +1,63 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: StorageGroup.v1_6_0.yaml
+  namespace: strggrp
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: StorageGroup_caps.yaml
+  namespace: strgrpcp
+data_types:
+  AccessCapability:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Read
+        - ReadWrite
+node_types:
+  StorageGroup:
+    description: >-
+      Collection of resources that are managed and exposed to hosts as a group.
+    derived_from: strggrp:StorageGroup
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: strgrpcp:StorageGroupFeature
+      containable:
+        type: strgrpcp:StorageGroupContainable
+  MappedVolume:
+    description: >-
+      Relate a SCSI Logical Unit Number to a Volume.
+    properties:
+      AccessCapability:
+        type: AccessCapability
+        description: >-
+          Supported IO access capability.
+        required: false
+      LogicalUnitNumber:
+        type: string
+        description: >-
+          A SCSI Logical Unit Number for a Volume.
+        required: false
+    requirements:
+    - Volume:
+        # node: volume:Volume
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A mapped Volume.
+    capabilities:
+      containable:
+        type: strgrpcp:MappedVolumeContainable

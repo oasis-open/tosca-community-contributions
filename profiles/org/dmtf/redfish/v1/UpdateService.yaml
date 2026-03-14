@@ -1,0 +1,34 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: UpdateService.v1_17_0.yaml
+  namespace: updtsrvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: UpdateService_caps.yaml
+  namespace: updsrvcp
+data_types:
+  UpdateParameters:
+    derived_from: updtsrvc:UpdateParameters
+node_types:
+  UpdateService:
+    description: >-
+      The `UpdateService` schema describes the update service and the properties for
+      the service itself with links to collections of firmware and software inventory.  The
+      update service also provides methods for updating software and firmware of the
+      resources in a Redfish service.
+    derived_from: updtsrvc:UpdateService
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: updsrvcp:UpdateServiceFeature
+      containable:
+        type: updsrvcp:UpdateServiceContainable

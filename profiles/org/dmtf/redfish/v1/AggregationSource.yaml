@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: AggregationSource.v1_5_0.yaml
+  namespace: aggrsrc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: AggregationSource_caps.yaml
+  namespace: aggsrccp
+node_types:
+  AggregationSource:
+    description: >-
+      The `AggregationSource` schema is used to represent the source of information
+      for a subset of the resources provided by a Redfish service.  It can be thought
+      of as a provider of information.  As such, most such interfaces have requirements
+      to support the gathering of information like address and account used to access
+      the information.
+    derived_from: aggrsrc:AggregationSource
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: aggsrccp:AggregationSourceFeature
+      containable:
+        type: aggsrccp:AggregationSourceContainable

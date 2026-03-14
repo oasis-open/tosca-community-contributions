@@ -1,0 +1,123 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Resource_caps.yaml
+  namespace: rsrccps
+data_types:
+  ReferenceableMember:
+    description: >-
+      This is the base type for addressable members of an array.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          This is the identifier for the member within the collection.
+        required: false
+  ResourceCollection:
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+  DurableNameFormat:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NAA
+        - iQN
+        - FC_WWN
+        - UUID
+        - EUI
+  Identifier:
+    properties:
+      DurableName:
+        type: string
+        description: >-
+          This indicates the world wide, persistent name of the resource.
+        required: false
+      DurableNameFormat:
+        type: DurableNameFormat
+        description: >-
+          This represents the format of the DurableName property.
+        required: false
+  IndicatorLED:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Lit
+        - Blinking
+        - 'Off'
+  Location:
+    properties:
+      Info:
+        type: string
+        description: >-
+          This indicates the location of the resource.
+        required: false
+      InfoFormat:
+        type: string
+        description: >-
+          This represents the format of the Info property.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension.
+        required: false
+node_types:
+  Resource:
+    description: >-
+      This is the base type for resources and referenceable members.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+    capabilities:
+      feature:
+        type: rsrccps:ResourceFeature
+      containable:
+        type: rsrccps:ResourceContainable

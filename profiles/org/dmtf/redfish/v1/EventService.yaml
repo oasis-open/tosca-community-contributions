@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: EventService.v1_12_0.yaml
+  namespace: evntsrvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: EventService_caps.yaml
+  namespace: evnsrvcp
+node_types:
+  EventService:
+    description: >-
+      The `EventService` schema contains properties for managing event subscriptions
+      and generates the events sent to subscribers.  The resource has links to the
+      actual collection of subscriptions, which are called event destinations.
+    derived_from: evntsrvc:EventService
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: evnsrvcp:EventServiceFeature
+      containable:
+        type: evnsrvcp:EventServiceContainable

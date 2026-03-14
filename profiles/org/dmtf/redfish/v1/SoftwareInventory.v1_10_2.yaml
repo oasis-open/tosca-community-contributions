@@ -1,0 +1,217 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+data_types:
+  AdditionalVersions:
+    description: >-
+      Additional versions.
+    properties:
+      Bootloader:
+        type: string
+        description: >-
+          The bootloader version contained in this software, such as U-Boot or UEFI.
+        required: false
+      Kernel:
+        type: string
+        description: >-
+          The kernel version contained in this software.
+        required: false
+      Microcode:
+        type: string
+        description: >-
+          The microcode version contained in this software, such as processor microcode.
+        required: false
+      OSDistribution:
+        type: string
+        description: >-
+          The operating system name of this software.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+  MeasurementBlock:
+    description: >-
+      The DSP0274-defined measurement block information.
+    properties:
+      Measurement:
+        type: string
+        description: >-
+          The hexadecimal string representation of the numeric value of the DSP0274-defined
+          'Measurement' field of the measurement block.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[0-9a-fA-F]+$
+      MeasurementIndex:
+        type: integer
+        description: >-
+          The DSP0274-defined 'Index' field of the measurement block.
+        required: false
+      MeasurementSize:
+        type: integer
+        description: >-
+          The DSP0274-defined 'MeasurementSize' field of the measurement block.
+        required: false
+      MeasurementSpecification:
+        type: integer
+        description: >-
+          The DSP0274-defined 'MeasurementSpecification' field of the measurement
+          block.
+        required: false
+  ReleaseType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Production
+        - Prototype
+        - Other
+  VersionScheme:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SemVer
+        - DotIntegerNotation
+        - OEM
+node_types:
+  SoftwareInventory:
+    description: >-
+      The `SoftwareInventory` schema contains an inventory of software components.  This
+      can include software components such as BIOS, BMC firmware, firmware for other
+      devices, system drivers, or provider software.
+    properties:
+      AdditionalVersions:
+        type: AdditionalVersions
+        description: >-
+          The additional versions of this software.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LowestSupportedVersion:
+        type: string
+        description: >-
+          The lowest supported version of this software.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer or producer of this software.
+        required: false
+      Measurement:
+        type: string
+        description: >-
+          A DSP0274-defined measurement block.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          An array of links to resources or objects that represent devices to which
+          this software inventory applies.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ReleaseDate:
+        type: string
+        description: >-
+          The release date of this software.
+        required: false
+      ReleaseType:
+        type: ReleaseType
+        description: >-
+          The type of release.
+        required: false
+      SoftwareId:
+        type: string
+        description: >-
+          The implementation-specific label that identifies this software.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UefiDevicePaths:
+        type: list
+        description: >-
+          The list of UEFI device paths of the components associated with this software
+          inventory item.
+        required: false
+        entry_schema:
+          type: string
+      Updateable:
+        type: boolean
+        description: >-
+          An indication of whether the update service can update this software.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The version of this software.
+        required: false
+      VersionScheme:
+        type: VersionScheme
+        description: >-
+          The format of the version.
+        required: false
+      WriteProtected:
+        type: boolean
+        description: >-
+          Indicates if the software is write-protected.
+        required: false
+    requirements:
+    - AssociatedPhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which the software applies.  Used to distinguish when
+          different parts of a device have different software components.
+    capabilities:
+      feature:
+        type: sftinvcp:SoftwareInventoryFeature
+      containable:
+        type: sftinvcp:SoftwareInventoryContainable

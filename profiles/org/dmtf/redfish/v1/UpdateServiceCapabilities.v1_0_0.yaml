@@ -1,0 +1,57 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: UpdateServiceCapabilities_caps.yaml
+  namespace: upsrcpcp
+node_types:
+  UpdateServiceCapabilities:
+    description: >-
+      The `UpdateServiceCapabilities` schema contains capabilities of the update service.
+    properties:
+      AllowableStaging:
+        type: list
+        description: >-
+          The allowable URIs that a client can specify in the `Targets` parameter
+          for update requests when requesting to stage an image on target devices.
+        required: false
+        entry_schema:
+          type: string
+      AllowableTargets:
+        type: list
+        description: >-
+          The allowable URIs that a client can specify in the `Targets` parameter
+          for update requests.
+        required: false
+        entry_schema:
+          type: string
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: upsrcpcp:UpdateServiceCapabilitiesFeature
+      containable:
+        type: upsrcpcp:UpdateServiceCapabilitiesContainable

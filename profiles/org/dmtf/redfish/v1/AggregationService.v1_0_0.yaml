@@ -1,0 +1,136 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: AggregateCollection.yaml
+  namespace: aggrcllc
+- url: AggregationSourceCollection.yaml
+  namespace: aggsrccl
+- url: ConnectionMethodCollection.yaml
+  namespace: cnnmthcl
+- url: Core.yaml
+  namespace: core
+- url: AggregateCollection_caps.yaml
+  namespace: aggcllcp
+- url: AggregationSourceCollection_caps.yaml
+  namespace: agsrclcp
+- url: ConnectionMethodCollection_caps.yaml
+  namespace: cnmtclcp
+- url: AggregationService_caps.yaml
+  namespace: aggsrvcp
+interface_types:
+  AggregationServiceActions:
+    operations:
+      Reset:
+        description: >-
+          This action is used to reset a set of resources. For example this could
+          be a list of computer systems.
+        inputs:
+          BatchSize:
+            type: integer
+            description: >-
+              The number of elements in each batch being reset.
+            required: false
+          DelayBetweenBatchesInSeconds:
+            type: integer
+            description: >-
+              The delay of the batches of elements being reset in seconds.
+            required: false
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+          TargetURIs:
+            type: list
+            description: >-
+              An array of links to the resources being reset.
+            required: true
+      SetDefaultBootOrder:
+        description: >-
+          This action is used to restore the boot order to the default state for the
+          specified computer systems.
+        inputs:
+          Systems:
+            type: list
+            description: >-
+              The computer systems to restore.
+            required: true
+node_types:
+  AggregationService:
+    description: >-
+      The AggregationService schema contains properties for managing aggregation operations,
+      either on ad hoc combinations of resources or on defined sets of resources called
+      aggregates.  Access points define the properties needed to access the entity
+      being aggregated and connection methods describe the protocol or other semantics
+      of the connection.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the aggregation service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Aggregates:
+        node: aggrcllc:AggregateCollection
+        capability: aggcllcp:AggregateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of aggregates associated with this service.
+    - AggregationSources:
+        node: aggsrccl:AggregationSourceCollection
+        capability: agsrclcp:AggregationSourceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of aggregation sources associated with this service.
+    - ConnectionMethods:
+        node: cnnmthcl:ConnectionMethodCollection
+        capability: cnmtclcp:ConnectionMethodCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of connection methods associated with this service.
+    interfaces:
+      Actions:
+        type: AggregationServiceActions
+    capabilities:
+      feature:
+        type: aggsrvcp:AggregationServiceFeature
+      containable:
+        type: aggsrvcp:AggregationServiceContainable

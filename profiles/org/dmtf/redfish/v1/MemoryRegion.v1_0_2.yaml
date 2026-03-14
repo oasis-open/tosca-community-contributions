@@ -1,0 +1,174 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MemoryChunks.yaml
+  namespace: mmrychnk
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: MemoryRegion_caps.yaml
+  namespace: mmrrgncp
+- url: MemoryChunks_caps.yaml
+  namespace: mmrchncp
+data_types:
+  MemoryExtent:
+    description: >-
+      Definition of memory extent identifying an available address range in the memory
+      region.
+    properties:
+      ExtentOffsetMiB:
+        type: integer
+        description: >-
+          Offset of the memory extent within the memory region in mebibytes (MiB).
+        required: false
+      ExtentSizeMiB:
+        type: integer
+        description: >-
+          Size of the memory extent in mebibytes (MiB).
+        required: false
+      SequenceNumber:
+        type: integer
+        description: >-
+          The memory extent sequence number.
+        required: false
+      Tag:
+        type: string
+        description: >-
+          The user-assigned tag of this memory extent.
+        required: false
+  RegionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Static
+        - Dynamic
+node_types:
+  MemoryRegion:
+    description: >-
+      The `MemoryRegion` schema contains the definition of a memory region and its
+      configuration.
+    properties:
+      BlockSizeMiB:
+        type: integer
+        description: >-
+          The memory region block size in mebibytes (MiB).
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ExtentsCount:
+        type: integer
+        description: >-
+          The number of extents defined for this memory region.
+        required: false
+      HardwareManagedCoherencyRegion:
+        type: boolean
+        description: >-
+          An indication of whether the device manages the cache coherency across hosts
+          for this memory region.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MemoryChunks:
+        type: list
+        description: >-
+          The set of memory chunks providing capacity for this memory region.
+        required: false
+        entry_schema:
+          type: MemoryChunk
+      MemoryExtents:
+        type: list
+        description: >-
+          The set of memory extents defined for this memory region.
+        required: false
+        entry_schema:
+          type: MemoryExtent
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NonVolatileRegion:
+        type: boolean
+        description: >-
+          An indication of whether this memory region represents non-volatile memory.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RegionBaseOffsetMiB:
+        type: integer
+        description: >-
+          The offset of the memory region in the device address range in mebibytes
+          (MiB).
+        required: false
+      RegionNumber:
+        type: integer
+        description: >-
+          The memory region number.
+        required: false
+      RegionSizeMiB:
+        type: integer
+        description: >-
+          The size of the memory region in mebibytes (MiB).
+        required: false
+      RegionType:
+        type: RegionType
+        description: >-
+          The type of memory region.
+        required: true
+      SanitizeOnRelease:
+        type: boolean
+        description: >-
+          An indication of whether the capacity released from this memory region will
+          be sanitized before it is made available to any host.
+        required: false
+      ShareableRegion:
+        type: boolean
+        description: >-
+          An indication of whether this memory region can be shared across multiple
+          hosts.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    capabilities:
+      feature:
+        type: mmrrgncp:MemoryRegionFeature
+      containable:
+        type: mmrrgncp:MemoryRegionContainable
+  MemoryChunk:
+    description: >-
+      Definition of memory chunk providing capacity for memory region.
+    properties:
+      ChunkOffsetMiB:
+        type: integer
+        description: >-
+          Offset of the memory chunk within the memory region in mebibytes (MiB).
+        required: false
+    requirements:
+    - ChunkLink:
+        node: mmrychnk:MemoryChunks
+        capability: mmrchncp:MemoryChunksContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the memory chunk providing capacity to the memory region.
+    capabilities:
+      containable:
+        type: mmrrgncp:MemoryChunkContainable

@@ -1,0 +1,32 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: AttributeRegistry.v1_4_0.yaml
+  namespace: attrrgst
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: AttributeRegistry_caps.yaml
+  namespace: attrgscp
+node_types:
+  AttributeRegistry:
+    description: >-
+      The `AttributeRegistry` schema contains a set of key-value pairs that represent
+      the structure of an attribute registry.  It includes mechanisms for building
+      user interfaces, or menus, allowing consistent navigation of the contents.  The
+      attribute registry is specific to an implementation or product.  The attributes
+      and property names are not standardized.
+    derived_from: attrrgst:AttributeRegistry
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: attrgscp:AttributeRegistryFeature
+      containable:
+        type: attrgscp:AttributeRegistryContainable

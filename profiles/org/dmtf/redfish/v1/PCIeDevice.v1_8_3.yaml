@@ -1,0 +1,301 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Assembly.yaml
+  namespace: assembly
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: PCIeFunctionCollection.yaml
+  namespace: pcfnccl
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+- url: PCIeFunctionCollection_caps.yaml
+  namespace: pcfnclcp
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+data_types:
+  DeviceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SingleFunction
+        - MultiFunction
+        - Simulated
+  PCIeErrors:
+    description: >-
+      The PCIe errors associated with this device.
+    properties:
+      CorrectableErrorCount:
+        type: integer
+        description: >-
+          The total number of PCIe correctable errors for this device.
+        required: false
+      FatalErrorCount:
+        type: integer
+        description: >-
+          The total number of PCIe fatal errors for this device.
+        required: false
+      L0ToRecoveryCount:
+        type: integer
+        description: >-
+          The total number of times the PCIe link states transitioned from L0 to the
+          recovery state for this device.
+        required: false
+      NAKReceivedCount:
+        type: integer
+        description: >-
+          The total number of NAKs issued on the PCIe link by the receiver.
+        required: false
+      NAKSentCount:
+        type: integer
+        description: >-
+          The total number of NAKs issued on the PCIe link by this device.
+        required: false
+      NonFatalErrorCount:
+        type: integer
+        description: >-
+          The total number of PCIe non-fatal errors for this device.
+        required: false
+      ReplayCount:
+        type: integer
+        description: >-
+          The total number of PCIe replays issued by this device.
+        required: false
+      ReplayRolloverCount:
+        type: integer
+        description: >-
+          The total number of PCIe replay rollovers issued by this device.
+        required: false
+  PCIeInterface:
+    description: >-
+      Properties that describe a PCIe interface.
+    properties:
+      LanesInUse:
+        type: integer
+        description: >-
+          The number of PCIe lanes in use by this device.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 32
+      MaxLanes:
+        type: integer
+        description: >-
+          The number of PCIe lanes supported by this device.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 32
+      MaxPCIeType:
+        type: string
+        description: >-
+          The highest version of the PCIe specification supported by this device.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Gen1
+            - Gen2
+            - Gen3
+            - Gen4
+            - Gen5
+            - Gen6
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeType:
+        type: string
+        description: >-
+          The version of the PCIe specification in use by this device.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - Gen1
+            - Gen2
+            - Gen3
+            - Gen4
+            - Gen5
+            - Gen6
+relationship_types:
+  PCIeDeviceDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  PCIeDevice:
+    description: >-
+      The `PCIeDevice` schema describes the properties of a PCIe device that is attached
+      to a system.  It also describes the location, such as a slot, socket, or bay,
+      where a unit can be installed, by populating a resource instance with an absent
+      state if a unit is not present.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this PCIe device.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DeviceType:
+        type: DeviceType
+        description: >-
+          The device type for this PCIe device.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The version of firmware for this PCIe device.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this PCIe device.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for the PCIe device.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeInterface:
+        type: PCIeInterface
+        description: >-
+          The PCIe interface details for this PCIe device.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this PCIe device.
+        required: false
+      ReadyToRemove:
+        type: boolean
+        description: >-
+          An indication of whether the PCIe device is prepared by the system for removal.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this PCIe device.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this PCIe device.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number of the PCIe device.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this PCIe device.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this PCIe device.
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this PCIe device.
+    - PCIeFunctions:
+        node: pcfnccl:PCIeFunctionCollection
+        capability: pcfnclcp:PCIeFunctionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of PCIe functions associated with this PCIe device.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: PCIeDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis in which the PCIe device is contained.
+    - PCIeFunctions:
+        # node: pcfnctn:PCIeFunction
+        capability: core:Feature
+        relationship: PCIeDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to PCIe functions exposed by this device.
+    capabilities:
+      feature:
+        type: pcdvccps:PCIeDeviceFeature
+      containable:
+        type: pcdvccps:PCIeDeviceContainable

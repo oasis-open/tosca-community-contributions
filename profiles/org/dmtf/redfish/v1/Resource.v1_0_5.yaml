@@ -1,0 +1,131 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Resource_caps.yaml
+  namespace: rsrccps
+data_types:
+  Health:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OK
+        - Warning
+        - Critical
+  IndicatorLED:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Lit
+        - Blinking
+        - 'Off'
+  PowerState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - 'On'
+        - 'Off'
+        - PoweringOn
+        - PoweringOff
+  ReferenceableMember:
+    description: >-
+      This is the base type for addressable members of an array.
+    properties:
+      MemberId:
+        type: string
+        description: >-
+          This is the identifier for the member within the collection.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+  ResetType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - 'On'
+        - ForceOff
+        - GracefulShutdown
+        - GracefulRestart
+        - ForceRestart
+        - Nmi
+        - ForceOn
+        - PushPowerButton
+        - PowerCycle
+  ResourceCollection:
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+  State:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+        - StandbyOffline
+        - StandbySpare
+        - InTest
+        - Starting
+        - Absent
+        - UnavailableOffline
+        - Deferring
+        - Quiesced
+        - Updating
+node_types:
+  Resource:
+    description: >-
+      This is the base type for resources and referenceable members.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+    capabilities:
+      feature:
+        type: rsrccps:ResourceFeature
+      containable:
+        type: rsrccps:ResourceContainable

@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: PowerDistribution.v1_6_0.yaml
+  namespace: pwrdstr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PowerDistribution_caps.yaml
+  namespace: pwrdstcp
+node_types:
+  PowerDistribution:
+    description: >-
+      The `PowerDistribution` schema contains the definitions for a power distribution
+      component or unit, such as a floor power distribution unit (PDU) or switchgear.
+    derived_from: pwrdstr:PowerDistribution
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: pwrdstcp:PowerDistributionFeature
+      containable:
+        type: pwrdstcp:PowerDistributionContainable

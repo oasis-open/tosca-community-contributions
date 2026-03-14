@@ -1,0 +1,140 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: DataSecurityLineOfService.yaml
+  namespace: dtsclnos
+- url: DataStorageLineOfService.yaml
+  namespace: dtstlnos
+- url: Resource.yaml
+  namespace: resource
+- url: IOConnectivityLineOfService.yaml
+  namespace: iclnofsr
+- url: IOPerformanceLineOfService.yaml
+  namespace: iplnofsr
+- url: Core.yaml
+  namespace: core
+- url: DataSecurityLineOfService_caps.yaml
+  namespace: dtsclosc
+- url: DataStorageLineOfService_caps.yaml
+  namespace: dtstlosc
+- url: IOConnectivityLineOfService_caps.yaml
+  namespace: iclnofsc
+- url: IOPerformanceLineOfService_caps.yaml
+  namespace: iplnofsc
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+node_types:
+  ClassOfService:
+    description: >-
+      A service option composed of one or more service options.
+    properties:
+      ClassOfServiceVersion:
+        type: string
+        description: >-
+          The value identifies the current version of this class of service definition.
+        required: false
+      DataProtectionLinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      DataSecurityLinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      DataStorageLinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      IOConnectivityLinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      IOPerformanceLinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The value identifies this resource.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - DataProtectionLinesOfService:
+        # node: dtprlnos:DataProtectionLineOfService
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A collection of DataProtection line of service elements.
+    - DataSecurityLinesOfService:
+        node: dtsclnos:DataSecurityLineOfService
+        capability: dtsclosc:DataSecurityLineOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A collection of DataSecurity line of service elements.
+    - DataStorageLinesOfService:
+        node: dtstlnos:DataStorageLineOfService
+        capability: dtstlosc:DataStorageLineOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A collection of DataStorage line of service elements.
+    - IOConnectivityLinesOfService:
+        node: iclnofsr:IOConnectivityLineOfService
+        capability: iclnofsc:IOConnectivityLineOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A collection of IOConnectivity line of service elements.
+    - IOPerformanceLinesOfService:
+        node: iplnofsr:IOPerformanceLineOfService
+        capability: iplnofsc:IOPerformanceLineOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A collection of IOPerformance line of service elements.
+    capabilities:
+      feature:
+        type: clofsrcp:ClassOfServiceFeature
+      containable:
+        type: clofsrcp:ClassOfServiceContainable

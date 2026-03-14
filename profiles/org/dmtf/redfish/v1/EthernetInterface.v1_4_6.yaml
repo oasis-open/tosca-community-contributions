@@ -1,0 +1,410 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: HostInterface.yaml
+  namespace: hstintr
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: HostInterface_caps.yaml
+  namespace: hstintcp
+- url: IPAddresses.yaml
+  namespace: ipddrsss
+- url: VLanNetworkInterface.yaml
+  namespace: vlnntwin
+- url: VLanNetworkInterfaceCollection.yaml
+  namespace: vlntincl
+- url: VLanNetworkInterfaceCollection_caps.yaml
+  namespace: vlntincc
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+data_types:
+  DHCPv4Configuration:
+    description: >-
+      DHCPv4 configuration for this interface.
+    properties:
+      DHCPEnabled:
+        type: boolean
+        description: >-
+          An indication of whether DHCP v4 is enabled on this Ethernet interface.
+        required: false
+      UseDNSServers:
+        type: boolean
+        description: >-
+          An indication of whether this interface uses DHCP v4-supplied DNS servers.
+        required: false
+      UseDomainName:
+        type: boolean
+        description: >-
+          An indication of whether this interface uses a DHCP v4-supplied domain name.
+        required: false
+      UseGateway:
+        type: boolean
+        description: >-
+          An indication of whether this interface uses a DHCP v4-supplied gateway.
+        required: false
+      UseNTPServers:
+        type: boolean
+        description: >-
+          An indication of whether the interface uses DHCP v4-supplied NTP servers.
+        required: false
+      UseStaticRoutes:
+        type: boolean
+        description: >-
+          An indication of whether the interface uses DHCP v4-supplied static routes.
+        required: false
+  DHCPv6Configuration:
+    description: >-
+      DHCPv6 configuration for this interface.
+    properties:
+      OperatingMode:
+        type: DHCPv6OperatingMode
+        description: >-
+          Determines the DHCPv6 operating mode for this interface.
+        required: false
+      UseDNSServers:
+        type: boolean
+        description: >-
+          An indication of whether the interface uses DHCP v6-supplied DNS servers.
+        required: false
+      UseDomainName:
+        type: boolean
+        description: >-
+          An indication of whether the interface uses a domain name supplied through
+          DHCP v6 stateless mode.
+        required: false
+      UseNTPServers:
+        type: boolean
+        description: >-
+          An indication of whether the interface uses DHCP v6-supplied NTP servers.
+        required: false
+      UseRapidCommit:
+        type: boolean
+        description: >-
+          An indication of whether the interface uses DHCP v6 rapid commit mode for
+          stateful mode address assignments.  Do not enable this option in networks
+          where more than one DHCP v6 server is configured to provide address assignments.
+        required: false
+  DHCPv6OperatingMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Stateful
+        - Stateless
+        - Disabled
+  IPv6AddressPolicyEntry:
+    description: >-
+      The entry in the RFC6724-defined address selection policy table.
+    properties:
+      Label:
+        type: integer
+        description: >-
+          The IPv6 label, as defined in RFC6724, section 2.1.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      Precedence:
+        type: integer
+        description: >-
+          The IPv6 precedence, as defined in RFC6724, section 2.1.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 100
+      Prefix:
+        type: string
+        description: >-
+          The IPv6 address prefix, as defined in RFC6724, section 2.1.
+        required: false
+  LinkStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - LinkUp
+        - NoLink
+        - LinkDown
+  MACAddress:
+    derived_from: string
+    validation:
+      $matches:
+      - $value
+      - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+  StatelessAddressAutoConfiguration:
+    description: >-
+      Stateless address autoconfiguration (SLAAC) parameters for this interface.
+    properties:
+      IPv4AutoConfigEnabled:
+        type: boolean
+        description: >-
+          An indication of whether IPv4 stateless address autoconfiguration (SLAAC)
+          is enabled for this interface.
+        required: false
+      IPv6AutoConfigEnabled:
+        type: boolean
+        description: >-
+          An indication of whether IPv6 stateless address autoconfiguration (SLAAC)
+          is enabled for this interface.
+        required: false
+relationship_types:
+  EthernetInterfaceDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  EthernetInterface:
+    description: >-
+      The EthernetInterface schema represents a single, logical Ethernet interface
+      or network interface controller (NIC).
+    properties:
+      AutoNeg:
+        type: boolean
+        description: >-
+          An indication of whether the speed and duplex are automatically negotiated
+          and configured on this interface.
+        required: false
+      DHCPv4:
+        type: DHCPv4Configuration
+        description: >-
+          DHCPv4 configuration for this interface.
+        required: false
+      DHCPv6:
+        type: DHCPv6Configuration
+        description: >-
+          DHCPv6 configuration for this interface.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FQDN:
+        type: string
+        description: >-
+          The complete, fully qualified domain name that DNS obtains for this interface.
+        required: false
+      FullDuplex:
+        type: boolean
+        description: >-
+          An indication of whether full-duplex mode is enabled on the Ethernet connection
+          for this interface.
+        required: false
+      HostName:
+        type: string
+        description: >-
+          The DNS host name, without any domain information.
+        required: false
+      IPv4Addresses:
+        type: list
+        description: >-
+          The IPv4 addresses currently in use by this interface.
+        required: false
+        entry_schema:
+          type: ipddrsss:IPv4Address
+      IPv4StaticAddresses:
+        type: list
+        description: >-
+          The IPv4 static addresses assigned to this interface.  See IPv4Addresses
+          for the addresses in use by this interface.
+        required: false
+        entry_schema:
+          type: ipddrsss:IPv4Address
+      IPv6AddressPolicyTable:
+        type: list
+        description: >-
+          An array that represents the RFC6724-defined address selection policy table.
+        required: false
+        entry_schema:
+          type: IPv6AddressPolicyEntry
+      IPv6Addresses:
+        type: list
+        description: >-
+          The IPv6 addresses currently in use by this interface.
+        required: false
+        entry_schema:
+          type: ipddrsss:IPv6Address
+      IPv6DefaultGateway:
+        type: string
+        description: >-
+          The IPv6 default gateway address in use on this interface.
+        required: false
+      IPv6StaticAddresses:
+        type: list
+        description: >-
+          The IPv6 static addresses assigned to this interface.  See IPv6Addresses
+          for the addresses in use by this interface.
+        required: false
+        entry_schema:
+          type: ipddrsss:IPv6StaticAddress
+      IPv6StaticDefaultGateways:
+        type: list
+        description: >-
+          The IPv6 static default gateways for this interface.
+        required: false
+        entry_schema:
+          type: ipddrsss:IPv6GatewayStaticAddress
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InterfaceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this interface is enabled.
+        required: false
+      LinkStatus:
+        type: LinkStatus
+        description: >-
+          The link status of this interface, or port.
+        required: false
+      MACAddress:
+        type: MACAddress
+        description: >-
+          The currently configured MAC address of the interface, or logical port.
+        required: false
+      MTUSize:
+        type: integer
+        description: >-
+          The currently configured maximum transmission unit (MTU), in bytes, on this
+          interface.
+        required: false
+      MaxIPv6StaticAddresses:
+        type: integer
+        description: >-
+          The maximum number of static IPv6 addresses that can be configured on this
+          interface.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NameServers:
+        type: list
+        description: >-
+          The DNS servers in use on this interface.
+        required: false
+        entry_schema:
+          type: string
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PermanentMACAddress:
+        type: MACAddress
+        description: >-
+          The permanent MAC address assigned to this interface, or port.
+        required: false
+      SpeedMbps:
+        type: integer
+        description: >-
+          The current speed, in Mbit/s, of this interface.
+        required: false
+      StatelessAddressAutoConfig:
+        type: StatelessAddressAutoConfiguration
+        description: >-
+          Stateless address autoconfiguration (SLAAC) parameters for this interface.
+        required: false
+      StaticNameServers:
+        type: list
+        description: >-
+          The statically-defined set of DNS server IPv4 and IPv6 addresses.
+        required: false
+        entry_schema:
+          type: string
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UefiDevicePath:
+        type: string
+        description: >-
+          The UEFI device path for this interface.
+        required: false
+      VLAN:
+        type: vlnntwin:VLAN
+        description: >-
+          If this network interface supports more than one VLAN, this property is
+          absent.  VLAN collections appear in the Links property of this resource.
+        required: false
+    requirements:
+    - VLANs:
+        node: vlntincl:VLanNetworkInterfaceCollection
+        capability: vlntincc:VLanNetworkInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of VLANs, which applies only if the interface supports
+          more than one VLAN.  If this property applies, the VLANEnabled and VLANId
+          properties do not apply.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: EthernetInterfaceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the chassis that contains this Ethernet interface.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: EthernetInterfaceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect to this Ethernet interface.
+    - HostInterface:
+        node: hstintr:HostInterface
+        capability: hstintcp:HostInterfaceFeature
+        relationship: EthernetInterfaceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a Host Interface that is associated with this Ethernet interface.
+    capabilities:
+      feature:
+        type: ethintcp:EthernetInterfaceFeature
+      containable:
+        type: ethintcp:EthernetInterfaceContainable

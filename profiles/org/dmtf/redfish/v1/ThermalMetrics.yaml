@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ThermalMetrics.v1_3_2.yaml
+  namespace: thrmmtrc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ThermalMetrics_caps.yaml
+  namespace: thrmtrcp
+node_types:
+  ThermalMetrics:
+    description: >-
+      The `ThermalMetrics` schema represents the thermal metrics of a chassis.
+    derived_from: thrmmtrc:ThermalMetrics
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: thrmtrcp:ThermalMetricsFeature
+      containable:
+        type: thrmtrcp:ThermalMetricsContainable

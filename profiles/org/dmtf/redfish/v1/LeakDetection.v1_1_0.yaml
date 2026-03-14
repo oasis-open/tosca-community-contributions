@@ -1,0 +1,107 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: LeakDetectorCollection.yaml
+  namespace: lkdtccl
+- url: Core.yaml
+  namespace: core
+- url: LeakDetectorCollection_caps.yaml
+  namespace: lkdtclcp
+- url: LeakDetection_caps.yaml
+  namespace: lkdtccp
+- url: LeakDetector.yaml
+  namespace: lkdtctr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Sensor.yaml
+  namespace: sensor
+data_types:
+  LeakDetectorGroup:
+    description: >-
+      A group of leak detection equipment.
+    properties:
+      Detectors:
+        type: list
+        description: >-
+          The leak detection states from all related leak detection devices in this
+          group.
+        required: false
+        entry_schema:
+          type: lkdtctr:LeakDetectorArrayExcerpt
+      Detectors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      GroupName:
+        type: string
+        description: >-
+          The name of this leak detector group.
+        required: false
+      HumidityPercent:
+        type: sensor:SensorExcerpt
+        description: >-
+          Humidity (percent).
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: true
+node_types:
+  LeakDetection:
+    description: >-
+      The `LeakDetection` schema contains definitions for reporting leaks in liquid
+      cooling systems or other equipment.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      LeakDetectorGroups:
+        type: list
+        description: >-
+          The groups of leak detection equipment.
+        required: false
+        entry_schema:
+          type: LeakDetectorGroup
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - LeakDetectors:
+        node: lkdtccl:LeakDetectorCollection
+        capability: lkdtclcp:LeakDetectorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of leak detectors within this subsystem.
+    capabilities:
+      feature:
+        type: lkdtccp:LeakDetectionFeature
+      containable:
+        type: lkdtccp:LeakDetectionContainable

@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: FabricAdapter.v1_5_3.yaml
+  namespace: fbrcadpt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: FabricAdapter_caps.yaml
+  namespace: fbradpcp
+node_types:
+  FabricAdapter:
+    description: >-
+      A fabric adapter represents the physical fabric adapter capable of connecting
+      to an interconnect fabric.  Examples include, but are not limited to, Ethernet,
+      NVMe over Fabrics, Gen-Z, and SAS fabric adapters.
+    derived_from: fbrcadpt:FabricAdapter
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: fbradpcp:FabricAdapterFeature
+      containable:
+        type: fbradpcp:FabricAdapterContainable

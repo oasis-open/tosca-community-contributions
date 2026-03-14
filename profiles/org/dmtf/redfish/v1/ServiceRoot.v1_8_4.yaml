@@ -1,0 +1,472 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: SessionCollection.yaml
+  namespace: sssncllc
+- url: Core.yaml
+  namespace: core
+- url: SessionCollection_caps.yaml
+  namespace: ssscllcp
+- url: AccountService.yaml
+  namespace: accnsrvc
+- url: AggregationService.yaml
+  namespace: aggrsrvc
+- url: CertificateService.yaml
+  namespace: crtfsrvc
+- url: ChassisCollection.yaml
+  namespace: chsscllc
+- url: CompositionService.yaml
+  namespace: cmpssrvc
+- url: EventService.yaml
+  namespace: evntsrvc
+- url: FabricCollection.yaml
+  namespace: fbrccllc
+- url: FacilityCollection.yaml
+  namespace: fcltcllc
+- url: JobService.yaml
+  namespace: jbsrvc
+- url: JsonSchemaFileCollection.yaml
+  namespace: jsscflcl
+- url: ManagerCollection.yaml
+  namespace: mngrcllc
+- url: PowerEquipment.yaml
+  namespace: pwreqpm
+- url: MessageRegistryFileCollection.yaml
+  namespace: msrgflcl
+- url: ResourceBlockCollection.yaml
+  namespace: rsrblccl
+- url: SessionService.yaml
+  namespace: sssnsrvc
+- url: StorageServiceCollection.yaml
+  namespace: strsrvcl
+- url: StorageSystemCollection.yaml
+  namespace: strsyscl
+- url: ComputerSystemCollection.yaml
+  namespace: cmpsyscl
+- url: TaskService.yaml
+  namespace: tsksrvc
+- url: TelemetryService.yaml
+  namespace: tlmtsrvc
+- url: UpdateService.yaml
+  namespace: updtsrvc
+- url: AccountService_caps.yaml
+  namespace: accsrvcp
+- url: AggregationService_caps.yaml
+  namespace: aggsrvcp
+- url: CertificateService_caps.yaml
+  namespace: crtsrvcp
+- url: ChassisCollection_caps.yaml
+  namespace: chscllcp
+- url: CompositionService_caps.yaml
+  namespace: cmpsrvcp
+- url: EventService_caps.yaml
+  namespace: evnsrvcp
+- url: FabricCollection_caps.yaml
+  namespace: fbrcllcp
+- url: FacilityCollection_caps.yaml
+  namespace: fclcllcp
+- url: JobService_caps.yaml
+  namespace: jbsrvcp
+- url: JsonSchemaFileCollection_caps.yaml
+  namespace: jsscflcc
+- url: ManagerCollection_caps.yaml
+  namespace: mngcllcp
+- url: PowerEquipment_caps.yaml
+  namespace: pwreqpcp
+- url: MessageRegistryFileCollection_caps.yaml
+  namespace: msrgflcc
+- url: ResourceBlockCollection_caps.yaml
+  namespace: rsblclcp
+- url: SessionService_caps.yaml
+  namespace: ssssrvcp
+- url: StorageServiceCollection_caps.yaml
+  namespace: stsrclcp
+- url: StorageSystemCollection_caps.yaml
+  namespace: stsyclcp
+- url: ComputerSystemCollection_caps.yaml
+  namespace: cmsyclcp
+- url: TaskService_caps.yaml
+  namespace: tsksrvcp
+- url: TelemetryService_caps.yaml
+  namespace: tlmsrvcp
+- url: UpdateService_caps.yaml
+  namespace: updsrvcp
+- url: ServiceRoot_caps.yaml
+  namespace: srvrtcp
+data_types:
+  DeepOperations:
+    description: >-
+      The information about deep operations that the service supports.
+    properties:
+      DeepPATCH:
+        type: boolean
+        description: >-
+          An indication of whether the service supports the deep `PATCH` operation.
+        required: false
+      DeepPOST:
+        type: boolean
+        description: >-
+          An indication of whether the service supports the deep `POST` operation.
+        required: false
+      MaxLevels:
+        type: integer
+        description: >-
+          The maximum levels of resources allowed in deep operations.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+  Expand:
+    description: >-
+      The information about the use of `$expand` in the service.
+    properties:
+      ExpandAll:
+        type: boolean
+        description: >-
+          An indication of whether the service supports the asterisk (`*`) option
+          of the `$expand` query parameter.
+        required: false
+      Levels:
+        type: boolean
+        description: >-
+          An indication of whether the service supports the `$levels` option of the
+          `$expand` query parameter.
+        required: false
+      Links:
+        type: boolean
+        description: >-
+          An indication of whether this service supports the tilde (`~`) option of
+          the `$expand` query parameter.
+        required: false
+      MaxLevels:
+        type: integer
+        description: >-
+          The maximum `$levels` option value in the `$expand` query parameter.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      NoLinks:
+        type: boolean
+        description: >-
+          An indication of whether the service supports the period (`.`) option of
+          the `$expand` query parameter.
+        required: false
+  ProtocolFeaturesSupported:
+    description: >-
+      The information about protocol features that the service supports.
+    properties:
+      DeepOperations:
+        type: DeepOperations
+        description: >-
+          The information about deep operations that the service supports.
+        required: false
+      ExcerptQuery:
+        type: boolean
+        description: >-
+          An indication of whether the service supports the `excerpt` query parameter.
+        required: false
+      ExpandQuery:
+        type: Expand
+        description: >-
+          The information about the use of `$expand` in the service.
+        required: false
+      FilterQuery:
+        type: boolean
+        description: >-
+          An indication of whether the service supports the `$filter` query parameter.
+        required: false
+      OnlyMemberQuery:
+        type: boolean
+        description: >-
+          An indication of whether the service supports the `only` query parameter.
+        required: false
+      SelectQuery:
+        type: boolean
+        description: >-
+          An indication of whether the service supports the `$select` query parameter.
+        required: false
+relationship_types:
+  ServiceRootDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  ServiceRoot:
+    description: >-
+      The `ServiceRoot` schema describes the root of the Redfish service, located
+      at the '/redfish/v1' URI.  All other resources accessible through the Redfish
+      interface on this device are linked directly or indirectly from the service
+      root.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Product:
+        type: string
+        description: >-
+          The product associated with this Redfish service.
+        required: false
+      ProtocolFeaturesSupported:
+        type: ProtocolFeaturesSupported
+        description: >-
+          The information about protocol features that the service supports.
+        required: false
+      RedfishVersion:
+        type: string
+        description: >-
+          The version of the Redfish service.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^\d+\.\d+\.\d+$
+      UUID:
+        type: string
+        description: >-
+          Unique identifier for a service instance.  When SSDP is used, this value
+          contains the same UUID returned in an HTTP `200 OK` response from an SSDP
+          `M-SEARCH` request during discovery.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+      Vendor:
+        type: string
+        description: >-
+          The vendor or manufacturer associated with this Redfish service.
+        required: false
+    requirements:
+    - AccountService:
+        node: accnsrvc:AccountService
+        capability: accsrvcp:AccountServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the account service.
+    - AggregationService:
+        node: aggrsrvc:AggregationService
+        capability: aggsrvcp:AggregationServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the aggregation service.
+    - CertificateService:
+        node: crtfsrvc:CertificateService
+        capability: crtsrvcp:CertificateServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the certificate service.
+    - Chassis:
+        node: chsscllc:ChassisCollection
+        capability: chscllcp:ChassisCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of chassis.
+    - CompositionService:
+        node: cmpssrvc:CompositionService
+        capability: cmpsrvcp:CompositionServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the composition service.
+    - EventService:
+        node: evntsrvc:EventService
+        capability: evnsrvcp:EventServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the event service.
+    - Fabrics:
+        node: fbrccllc:FabricCollection
+        capability: fbrcllcp:FabricCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of fabrics.
+    - Facilities:
+        node: fcltcllc:FacilityCollection
+        capability: fclcllcp:FacilityCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of facilities.
+    - JobService:
+        node: jbsrvc:JobService
+        capability: jbsrvcp:JobServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the job service.
+    - JsonSchemas:
+        node: jsscflcl:JsonSchemaFileCollection
+        capability: jsscflcc:JsonSchemaFileCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of JSON Schema files.
+    - Managers:
+        node: mngrcllc:ManagerCollection
+        capability: mngcllcp:ManagerCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of managers.
+    - PowerEquipment:
+        node: pwreqpm:PowerEquipment
+        capability: pwreqpcp:PowerEquipmentContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a set of power equipment.
+    - Registries:
+        node: msrgflcl:MessageRegistryFileCollection
+        capability: msrgflcc:MessageRegistryFileCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of registries.
+    - ResourceBlocks:
+        node: rsrblccl:ResourceBlockCollection
+        capability: rsblclcp:ResourceBlockCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of resource blocks.  This collection is intended
+          for implementations that do not contain a composition service but that expose
+          resources to an orchestrator that implements a composition service.
+    - SessionService:
+        node: sssnsrvc:SessionService
+        capability: ssssrvcp:SessionServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the sessions service.
+    - StorageServices:
+        node: strsrvcl:StorageServiceCollection
+        capability: stsrclcp:StorageServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of storage services.
+    - StorageSystems:
+        node: strsyscl:StorageSystemCollection
+        capability: stsyclcp:StorageSystemCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of storage systems.
+    - Systems:
+        node: cmpsyscl:ComputerSystemCollection
+        capability: cmsyclcp:ComputerSystemCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of systems.
+    - Tasks:
+        node: tsksrvc:TaskService
+        capability: tsksrvcp:TaskServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the task service.
+    - TelemetryService:
+        node: tlmtsrvc:TelemetryService
+        capability: tlmsrvcp:TelemetryServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the telemetry service.
+    - UpdateService:
+        node: updtsrvc:UpdateService
+        capability: updsrvcp:UpdateServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the update service.
+    - Sessions:
+        node: sssncllc:SessionCollection
+        capability: ssscllcp:SessionCollectionFeature
+        relationship: ServiceRootDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of sessions.
+    capabilities:
+      feature:
+        type: srvrtcp:ServiceRootFeature
+      containable:
+        type: srvrtcp:ServiceRootContainable

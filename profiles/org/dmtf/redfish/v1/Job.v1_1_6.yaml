@@ -1,0 +1,200 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Message.yaml
+  namespace: message
+- url: Schedule.yaml
+  namespace: schedule
+- url: JobCollection.yaml
+  namespace: jbcllctn
+- url: Core.yaml
+  namespace: core
+- url: Message_caps.yaml
+  namespace: mssgcps
+- url: Schedule_caps.yaml
+  namespace: schdlcps
+- url: JobCollection_caps.yaml
+  namespace: jbcllcp
+- url: Job_caps.yaml
+  namespace: jobcaps
+data_types:
+  JobState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - New
+        - Starting
+        - Running
+        - Suspended
+        - Interrupted
+        - Pending
+        - Stopping
+        - Completed
+        - Cancelled
+        - Exception
+        - Service
+        - UserIntervention
+        - Continue
+  Payload:
+    description: >-
+      The HTTP and JSON payload details for this job.
+    properties:
+      HttpHeaders:
+        type: list
+        description: >-
+          An array of HTTP headers in this job.
+        required: false
+        entry_schema:
+          type: string
+      HttpOperation:
+        type: string
+        description: >-
+          The HTTP operation that executes this job.
+        required: false
+      JsonBody:
+        type: string
+        description: >-
+          The JSON payload to use in the execution of this job.
+        required: false
+      TargetUri:
+        type: string
+        description: >-
+          The link to the target for this job.
+        required: false
+node_types:
+  Job:
+    description: >-
+      The `Job` schema contains information about a job that a Redfish job service
+      schedules or executes.  Clients create jobs to describe a series of operations
+      that occur at periodic intervals.
+    properties:
+      CreatedBy:
+        type: string
+        description: >-
+          The person or program that created this job entry.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EndTime:
+        type: string
+        description: >-
+          The date and time when the job was completed.
+        required: false
+      EstimatedDuration:
+        type: string
+        description: >-
+          The estimated total time required to complete the job.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      HidePayload:
+        type: boolean
+        description: >-
+          An indication of whether the contents of the payload should be hidden from
+          view after the job has been created.  If `true`, responses do not return
+          the payload.  If `false`, responses return the payload.  If this property
+          is not present when the job is created, the default is `false`.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      JobState:
+        type: JobState
+        description: >-
+          The state of the job.
+        required: false
+      JobStatus:
+        type: resource:Health
+        description: >-
+          The status of the job.
+        required: false
+      MaxExecutionTime:
+        type: string
+        description: >-
+          The maximum amount of time the job is allowed to execute.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Payload:
+        type: Payload
+        description: >-
+          The HTTP and JSON request payload details for this job.
+        required: false
+      PercentComplete:
+        type: integer
+        description: >-
+          The completion percentage of this job.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      StartTime:
+        type: string
+        description: >-
+          The date and time when the job was started or is scheduled to start.
+        required: false
+      StepOrder:
+        type: list
+        description: >-
+          The serialized execution order of the job steps.
+        required: false
+        entry_schema:
+          type: string
+    requirements:
+    - Messages:
+        node: message:Message
+        capability: mssgcps:MessageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of messages associated with the job.
+    - Schedule:
+        node: schedule:Schedule
+        capability: schdlcps:ScheduleContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The schedule settings for this job.
+    - Steps:
+        node: jbcllctn:JobCollection
+        capability: jbcllcp:JobCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of steps for this job.
+    capabilities:
+      feature:
+        type: jobcaps:JobFeature
+      containable:
+        type: jobcaps:JobContainable

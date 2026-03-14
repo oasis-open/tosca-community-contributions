@@ -1,0 +1,217 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Task.yaml
+  namespace: task
+- url: Resource.yaml
+  namespace: resource
+- url: odata.4.0.0.yaml
+  namespace: odata400
+- url: Drive.yaml
+  namespace: drive
+- url: Core.yaml
+  namespace: core
+- url: Volume_caps.yaml
+  namespace: vlmcps
+- url: Task_caps.yaml
+  namespace: taskcaps
+- url: Drive_caps.yaml
+  namespace: drvcps
+data_types:
+  Initialize:
+    description: >-
+      This action is used to prepare the contents of the volume for use by the system.
+    properties:
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+  EncryptionTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NativeDriveEncryption
+        - ControllerAssisted
+        - SoftwareAssisted
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        required: false
+      '#Volume_Initialize':
+        type: Initialize
+        description: >-
+          This action is used to prepare the contents of the volume for use by the
+          system.
+        required: false
+  VolumeType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RawDevice
+        - NonRedundant
+        - Mirrored
+        - StripedWithParity
+        - SpannedMirrors
+        - SpannedStripesWithParity
+node_types:
+  Volume:
+    description: >-
+      Volume contains properties used to describe a volume, virtual disk, LUN, or
+      other logical storage entity for any system.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      CapacityBytes:
+        type: float
+        description: >-
+          The size in bytes of this Volume
+        required: false
+      VolumeType:
+        type: VolumeType
+        description: >-
+          Is this drive currently predicting a failure in the near future
+        required: false
+      Encrypted:
+        type: boolean
+        description: >-
+          Is this Volume encrypted
+        required: false
+      EncryptionTypes:
+        type: list
+        description: >-
+          The types of encryption used by this Volume
+        required: false
+        entry_schema:
+          type: EncryptionTypes
+      Identifiers:
+        type: list
+        description: >-
+          The Durable names for the volume
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      BlockSizeBytes:
+        type: float
+        description: >-
+          The size of the smallest addressible unit (Block) of this volume in bytes
+        required: false
+      Operations:
+        type: list
+        description: >-
+          The operations currently running on the Volume
+        required: false
+        entry_schema:
+          type: Operations
+      OptimumIOSizeBytes:
+        type: float
+        description: >-
+          The size in bytes of this Volume's optimum IO size.
+        required: false
+      Links:
+        type: Links
+        description: >-
+          Contains references to other resources that are related to this resource.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    capabilities:
+      feature:
+        type: vlmcps:VolumeFeature
+      containable:
+        type: vlmcps:VolumeContainable
+  Operations:
+    properties:
+      OperationName:
+        type: string
+        description: >-
+          The name of the operation.
+        required: false
+      PercentageComplete:
+        type: float
+        description: >-
+          The percentage of the operation that has been completed.
+        required: false
+    requirements:
+    - AssociatedTask:
+        node: task:Task
+        capability: taskcaps:TaskContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the task associated with the operation if any.
+    capabilities:
+      containable:
+        type: vlmcps:OperationsContainable
+  Links:
+    description: >-
+      Contains references to other resources that are related to this resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      Drives@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Drives@odata_navigationLink:
+        type: string
+        required: false
+    requirements:
+    - Drives:
+        node: drive:Drive
+        capability: drvcps:DriveContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the drives which contain this volume. This will
+          reference Drives that either wholly or only partly contain this volume.
+    capabilities:
+      containable:
+        type: vlmcps:LinksContainable

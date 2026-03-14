@@ -1,0 +1,269 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: EventDestination.yaml
+  namespace: evntdstn
+- url: Event.yaml
+  namespace: event
+- url: MetricReportDefinition.yaml
+  namespace: mtrrprdf
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MetricReportDefinition_caps.yaml
+  namespace: mtrpdfcp
+- url: EventDestination_caps.yaml
+  namespace: evndstcp
+data_types:
+  DeliveryRetryPolicy:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - TerminateAfterRetries
+        - SuspendRetries
+        - RetryForever
+  EventDestinationProtocol:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Redfish
+        - SNMPv1
+        - SNMPv2c
+        - SNMPv3
+        - SMTP
+  HttpHeaderProperty:
+    description: >-
+      The HTTP header value is the property value.  The header name is the property
+      name.
+  SNMPAuthenticationProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - CommunityString
+        - HMAC_MD5
+        - HMAC_SHA96
+  SNMPEncryptionProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - CBC_DES
+        - CFB128_AES128
+  SNMPSettings:
+    description: >-
+      Settings for an SNMP event destination.
+    properties:
+      AuthenticationKey:
+        type: string
+        description: >-
+          The secret authentication key for SNMPv3.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^[ -~]+$)|(^Passphrase:[ -~]+$)|(^Hex:[0-9A-Fa-f]{24,96}$)|(^\*+$)
+      AuthenticationProtocol:
+        type: SNMPAuthenticationProtocols
+        description: >-
+          The authentication protocol for SNMPv3.
+        required: false
+      EncryptionKey:
+        type: string
+        description: >-
+          The secret authentication key for SNMPv3.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^[ -~]+$)|(^Passphrase:[ -~]+$)|(^Hex:[0-9A-Fa-f]{16,64}$)|(^\*+$)
+      EncryptionProtocol:
+        type: SNMPEncryptionProtocols
+        description: >-
+          The encryption protocol for SNMPv3.
+        required: false
+      TrapCommunity:
+        type: string
+        description: >-
+          The SNMP trap community string.
+        required: false
+  SubscriptionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RedfishEvent
+        - SSE
+        - SNMPTrap
+        - SNMPInform
+interface_types:
+  EventDestinationActions:
+    operations:
+      ResumeSubscription:
+        description: >-
+          This action resumes a suspended event subscription.
+node_types:
+  EventDestination:
+    description: >-
+      The `EventDestination` schema defines the target of an event subscription, including
+      the event types and context to provide to the target in the event payload.
+    properties:
+      Context:
+        type: string
+        description: >-
+          A client-supplied string that is stored with the event destination subscription.
+        required: true
+      DeliveryRetryPolicy:
+        type: DeliveryRetryPolicy
+        description: >-
+          The subscription delivery retry policy for events, where the subscription
+          type is `RedfishEvent`.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Destination:
+        type: string
+        description: >-
+          The URI of the destination event receiver.
+        required: false
+      EventFormatType:
+        type: evntdstn:EventFormatType
+        description: >-
+          The content types of the message that are sent to the `EventDestination`.
+        required: false
+      EventTypes:
+        type: list
+        description: >-
+          The types of events that are sent to the destination.
+        required: false
+        entry_schema:
+          type: event:EventType
+      HttpHeaders:
+        type: list
+        description: >-
+          An array of settings for HTTP headers, such as authorization information.  This
+          array is `null` or an empty array in responses.  An empty array is the preferred
+          return value on read operations.
+        required: false
+        entry_schema:
+          type: HttpHeaderProperty
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MessageIds:
+        type: list
+        description: >-
+          The list of `MessageId` values that are sent to this event destination.
+        required: false
+        entry_schema:
+          type: string
+      MetricReportDefinitions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OriginResources:
+        type: list
+        description: >-
+          The array of resources for which the service sends only related events.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      OriginResources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Protocol:
+        type: EventDestinationProtocol
+        description: >-
+          The protocol type of the event connection.
+        required: false
+      RegistryPrefixes:
+        type: list
+        description: >-
+          The list of prefixes for the message registries that contain the `MessageId`
+          values that are sent to this event destination.
+        required: false
+        entry_schema:
+          type: string
+      ResourceTypes:
+        type: list
+        description: >-
+          The list of resource type values (schema names) that correspond to the `OriginOfCondition`.  The
+          version and full namespace should not be specified.
+        required: false
+        entry_schema:
+          type: string
+      SNMP:
+        type: SNMPSettings
+        description: >-
+          Settings for an SNMP event destination.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SubordinateResources:
+        type: boolean
+        description: >-
+          An indication of whether the subscription is for events in the `OriginResources`
+          array and its subordinate resources.  If `true` and the `OriginResources`
+          array is specified, the subscription is for events in the `OriginResources`
+          array and its subordinate resources.  Note that resources associated through
+          the Links section are not considered subordinate.  If `false` and the `OriginResources`
+          array is specified, the subscription is for events in the `OriginResources`
+          array only.  If the `OriginResources` array is not present, this property
+          has no relevance.
+        required: false
+      SubscriptionType:
+        type: SubscriptionType
+        description: >-
+          The subscription type for events.
+        required: true
+    requirements:
+    - MetricReportDefinitions:
+        node: mtrrprdf:MetricReportDefinition
+        capability: mtrpdfcp:MetricReportDefinitionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A list of metric report definitions for which the service only sends related
+          metric reports.  If this property is absent or the array is empty, metric
+          reports that originate from any metric report definition are sent to the
+          subscriber.
+    interfaces:
+      Actions:
+        type: EventDestinationActions
+    capabilities:
+      feature:
+        type: evndstcp:EventDestinationFeature
+      containable:
+        type: evndstcp:EventDestinationContainable

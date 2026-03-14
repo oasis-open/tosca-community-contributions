@@ -1,0 +1,218 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: NVMeDomain_caps.yaml
+  namespace: nvmdmncp
+- url: NVMeFirmwareImage.yaml
+  namespace: nvmfrmim
+- url: StorageController.yaml
+  namespace: strgcntr
+- url: Volume.yaml
+  namespace: volume
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: NVMeFirmwareImage_caps.yaml
+  namespace: nvfrimcp
+- url: Resource_caps.yaml
+  namespace: rsrccps
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+- url: StorageController_caps.yaml
+  namespace: strcntcp
+- url: Volume_caps.yaml
+  namespace: vlmcps
+relationship_types:
+  NVMeDomainDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AssociatedDomains@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  NVMeDomain:
+    description: >-
+      This is the schema definition for domain.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      AvailableFirmwareImages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Description:
+        type: string
+        required: false
+      DomainMembers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaximumCapacityPerEnduranceGroupBytes:
+        type: integer
+        description: >-
+          The maximum capacity per endurance group in bytes of this NVMe Domain.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TotalDomainCapacityBytes:
+        type: integer
+        description: >-
+          The total capacity in bytes of this NVMe Domain.
+        required: false
+      UnallocatedDomainCapacityBytes:
+        type: integer
+        description: >-
+          The total unallocated capacity in bytes of this NVMe Domain.
+        required: false
+      ANAGroupId:
+        type: float
+        description: >-
+          The ANA group id for all namespaces within the domain.
+        required: false
+      DomainContents:
+        type: DomainContents
+        description: >-
+          Contains the members of the domain.
+        required: false
+      FirmwareImages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      MaxNamespacesSupportedPerController:
+        type: float
+        description: >-
+          The maximum number of namespace attachments of this NVMe Domain.
+        required: false
+    requirements:
+    - AvailableFirmwareImages:
+        node: nvmfrmim:NVMeFirmwareImage
+        capability: nvfrimcp:NVMeFirmwareImageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A collection of available firmware images.
+    - DomainMembers:
+        node: resource:Resource
+        capability: rsrccps:ResourceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The members of the domain.
+    - FirmwareImages:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Contains an array of pointers to available firmware images.
+    - AssociatedDomains:
+        node: NVMeDomain
+        capability: nvmdmncp:NVMeDomainFeature
+        relationship: NVMeDomainDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to associated domains.
+    capabilities:
+      feature:
+        type: nvmdmncp:NVMeDomainFeature
+      containable:
+        type: nvmdmncp:NVMeDomainContainable
+  DomainContents:
+    description: >-
+      Contains the members of the domain.
+    properties:
+      Controllers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Namespaces@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - Controllers:
+        node: strgcntr:StorageController
+        capability: strcntcp:StorageControllerContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Contains the current controllers that are part of this domain. These can
+          be IO, Admin, or discovery controllers.
+    - Namespaces:
+        node: volume:Volume
+        capability: vlmcps:VolumeContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Contains the current namespaces that are part of this domain. These can
+          be IO, Admin, or discovery controllers.
+    capabilities:
+      containable:
+        type: nvmdmncp:DomainContentsContainable

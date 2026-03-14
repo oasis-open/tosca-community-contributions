@@ -1,0 +1,181 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: SerialInterface_caps.yaml
+  namespace: srlintcp
+data_types:
+  BitRate:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - '1200'
+        - '2400'
+        - '4800'
+        - '9600'
+        - '19200'
+        - '38400'
+        - '57600'
+        - '115200'
+        - '230400'
+  ConnectorType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RJ45.
+        - RJ11.
+        - DB9 Female.
+        - DB9 Male.
+        - DB25 Female.
+        - DB25 Male.
+        - USB.
+        - mUSB.
+        - uUSB.
+  DataBits:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - '5'
+        - '6'
+        - '7'
+        - '8'
+  FlowControl:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - Software
+        - Hardware
+  Parity:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - Even
+        - Odd
+        - Mark
+        - Space
+  PinOut:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Cisco
+        - Cyclades
+        - Digi
+  SignalType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Rs232
+        - Rs485
+  StopBits:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - '1'
+        - '2'
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        description: >-
+          The available OEM specific actions for this resource.
+        required: false
+node_types:
+  SerialInterface:
+    description: >-
+      This schema defines an asynchronous serial interface resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      InterfaceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this interface is enabled.
+        required: false
+      SignalType:
+        type: SignalType
+        description: >-
+          The type of signal used for the communication connection - RS232 or RS485.
+        required: false
+      BitRate:
+        type: BitRate
+        description: >-
+          The receive and transmit rate of data flow, typically in bits-per-second
+          (bps), over the serial connection.
+        required: false
+      Parity:
+        type: Parity
+        description: >-
+          The type of parity used by the sender and receiver in order to detect errors
+          over the serial connection.
+        required: false
+      DataBits:
+        type: DataBits
+        description: >-
+          The number of data bits that will follow the start bit over the serial connection.
+        required: false
+      StopBits:
+        type: StopBits
+        description: >-
+          The period of time before the next start bit is transmitted.
+        required: false
+      FlowControl:
+        type: FlowControl
+        description: >-
+          The type of flow control, if any, that will be imposed on the serial connection.
+        required: false
+      ConnectorType:
+        type: ConnectorType
+        description: >-
+          The type of connector used for this interface.
+        required: false
+      PinOut:
+        type: PinOut
+        description: >-
+          The physical pin configuration needed for a serial connector.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    capabilities:
+      feature:
+        type: srlintcp:SerialInterfaceFeature
+      containable:
+        type: srlintcp:SerialInterfaceContainable

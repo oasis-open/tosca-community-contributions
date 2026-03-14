@@ -1,0 +1,90 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ActionInfo.yaml
+  namespace: actninf
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ResolutionStep_caps.yaml
+  namespace: rslstpcp
+data_types:
+  ResolutionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ContactVendor
+        - ReplaceComponent
+        - FirmwareUpdate
+        - Reset
+        - PowerCycle
+        - ResetToDefaults
+        - CollectDiagnosticData
+        - OEM
+node_types:
+  ResolutionStep:
+    description: >-
+      This type describes a recommended step of the service-defined resolution.
+    properties:
+      ActionParameters:
+        type: list
+        description: >-
+          The parameters of the action URI for a resolution step.
+        required: false
+        entry_schema:
+          type: actninf:Parameters
+      ActionURI:
+        type: string
+        description: >-
+          The action URI for a resolution step.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Priority:
+        type: integer
+        description: >-
+          The priority in the set of resolution steps.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ResolutionType:
+        type: ResolutionType
+        description: >-
+          The type of the resolution step.
+        required: true
+      RetryCount:
+        type: integer
+        description: >-
+          The number of retries for a resolution step.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RetryIntervalSeconds:
+        type: integer
+        description: >-
+          The interval between retries for a resolution step.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      TargetComponentURI:
+        type: string
+        description: >-
+          The target URI of the component for a resolution step.
+        required: false
+    capabilities:
+      feature:
+        type: rslstpcp:ResolutionStepFeature
+      containable:
+        type: rslstpcp:ResolutionStepContainable

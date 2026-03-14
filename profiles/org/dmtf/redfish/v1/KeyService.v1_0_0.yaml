@@ -1,0 +1,69 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: KeyPolicyCollection.yaml
+  namespace: kyplccl
+- url: KeyCollection.yaml
+  namespace: kycllctn
+- url: Core.yaml
+  namespace: core
+- url: KeyPolicyCollection_caps.yaml
+  namespace: kyplclcp
+- url: KeyCollection_caps.yaml
+  namespace: kycllcp
+- url: KeyService_caps.yaml
+  namespace: kysrvcp
+node_types:
+  KeyService:
+    description: >-
+      The KeyService schema describes a key service that represents the actions available
+      to manage keys.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - NVMeoFKeyPolicies:
+        node: kyplccl:KeyPolicyCollection
+        capability: kyplclcp:KeyPolicyCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The NVMe-oF key policies maintained by this service.
+    - NVMeoFSecrets:
+        node: kycllctn:KeyCollection
+        capability: kycllcp:KeyCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The NVMe-oF keys maintained by this service.
+    capabilities:
+      feature:
+        type: kysrvcp:KeyServiceFeature
+      containable:
+        type: kysrvcp:KeyServiceContainable

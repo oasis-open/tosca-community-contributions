@@ -1,0 +1,346 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Drive.yaml
+  namespace: drive
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: ClassOfService.yaml
+  namespace: clsofsr
+- url: Resource.yaml
+  namespace: resource
+- url: SpareResourceSet.yaml
+  namespace: sprrsrst
+- url: Core.yaml
+  namespace: core
+- url: Drive_caps.yaml
+  namespace: drvcps
+- url: ClassOfService_caps.yaml
+  namespace: clofsrcp
+- url: SpareResourceSet_caps.yaml
+  namespace: sprsstcp
+- url: StoragePoolCollection.yaml
+  namespace: strplcl
+- url: VolumeCollection.yaml
+  namespace: vlmcllc
+- url: Capacity.yaml
+  namespace: capacity
+- url: ClassOfServiceCollection.yaml
+  namespace: clofsrcl
+- url: IOStatistics.yaml
+  namespace: isttstcs
+- url: StoragePoolCollection_caps.yaml
+  namespace: stplclcp
+- url: VolumeCollection_caps.yaml
+  namespace: vlmcllcp
+- url: Capacity_caps.yaml
+  namespace: cpctycps
+- url: ClassOfServiceCollection_caps.yaml
+  namespace: clofsrcc
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+- url: StoragePool_caps.yaml
+  namespace: strplcp
+data_types:
+  Actions:
+    properties:
+      '#StoragePool_AddDrives':
+        type: AddDrives
+        description: >-
+          This action is used to add an additional drive, or set of drives, to a capacity
+          source for the storage pool.
+        required: false
+      '#StoragePool_RemoveDrives':
+        type: RemoveDrives
+        description: >-
+          This action is used to remove drive(s) from the capacity source for the
+          StoragePool.
+        required: false
+      '#StoragePool_SetCompressionState':
+        type: SetCompressionState
+        description: >-
+          This action is used to set the compression state of the pool.
+        required: false
+      '#StoragePool_SetDeduplicationState':
+        type: SetDeduplicationState
+        description: >-
+          This action is used to set the dedupe state of the pool.
+        required: false
+      '#StoragePool_SetEncryptionState':
+        type: SetEncryptionState
+        description: >-
+          This action is used to set the encryption state of the pool.
+        required: false
+  AddDrives:
+    description: >-
+      This action is used to add an additional drive, or set of drives, to a capacity
+      source for the storage pool.
+    properties:
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+  RemoveDrives:
+    description: >-
+      This action is used to remove drive(s) from the capacity source for the StoragePool.
+    properties:
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+  SetCompressionState:
+    description: >-
+      This action is used to set the compression state of the pool.
+    properties:
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+  SetDeduplicationState:
+    description: >-
+      This action is used to set the dedupe state of the pool.
+    properties:
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+  SetEncryptionState:
+    description: >-
+      This action is used to set the encryption state of the pool.
+    properties:
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+relationship_types:
+  StoragePoolDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      DedicatedSpareDrives@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SpareResourceSets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  StoragePool:
+    description: >-
+      A container of data storage.
+    properties:
+      BlockSizeBytes:
+        type: integer
+        description: >-
+          Maximum Block size in bytes.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      CapacitySources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The value identifies this resource.
+        required: false
+      LowSpaceWarningThresholdPercents:
+        type: list
+        description: >-
+          Low space warning threshold specified in percents.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+        entry_schema:
+          type: integer
+      MaxBlockSizeBytes:
+        type: integer
+        description: >-
+          Maximum Block size in bytes.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RecoverableCapacitySourceCount:
+        type: integer
+        description: >-
+          Current number of capacity source resources that are available as replacements.
+        required: false
+      RemainingCapacityPercent:
+        type: integer
+        description: >-
+          The percentage of the capacity remaining in the StoragePool.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The property contains the status of the StoragePool.
+        required: false
+    requirements:
+    - AllocatedPools:
+        node: strplcl:StoragePoolCollection
+        capability: stplclcp:StoragePoolCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the collection of storage pools allocated from this storage
+          pool.
+    - AllocatedVolumes:
+        node: vlmcllc:VolumeCollection
+        capability: vlmcllcp:VolumeCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the collection of volumes allocated from this storage pool.
+    - Capacity:
+        node: capacity:Capacity
+        capability: cpctycps:CapacityContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Capacity utilization.
+    - CapacitySources:
+        node: capacity:CapacitySource
+        capability: cpctycps:CapacitySourceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of space allocations to this store.
+    - ClassesOfService:
+        node: clofsrcl:ClassOfServiceCollection
+        capability: clofsrcc:ClassOfServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The ClassesOfService supported by this storage pool.
+    - DefaultClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The default class of service for entities allocated from this storage pool.
+    - IOStatistics:
+        node: isttstcs:IOStatistics
+        capability: isttcps:IOStatisticsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Statistics for this StoragePool.
+    - DedicatedSpareDrives:
+        node: drive:Drive
+        capability: drvcps:DriveFeature
+        relationship: StoragePoolDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the drives which are dedicated spares for this
+          StoragePool.
+    - DefaultClassOfService:
+        node: clsofsr:ClassOfService
+        capability: clofsrcp:ClassOfServiceFeature
+        relationship: StoragePoolDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The default class of service for entities allocated from this storage pool.
+    - SpareResourceSets:
+        node: sprrsrst:SpareResourceSet
+        capability: sprsstcp:SpareResourceSetFeature
+        relationship: StoragePoolDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to SpareResourceSets.
+    capabilities:
+      feature:
+        type: strplcp:StoragePoolFeature
+      containable:
+        type: strplcp:StoragePoolContainable

@@ -1,0 +1,76 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: DriveMetrics_caps.yaml
+  namespace: drvmtrcp
+node_types:
+  DriveMetrics:
+    description: >-
+      The usage and health statistics for a drive.
+    properties:
+      BadBlockCount:
+        type: integer
+        description: >-
+          The total number of bad blocks reported by the drive.
+        required: false
+      CorrectableIOReadErrorCount:
+        type: integer
+        description: >-
+          The number of correctable read errors for the lifetime of the drive.
+        required: false
+      CorrectableIOWriteErrorCount:
+        type: integer
+        description: >-
+          The number of correctable write errors for the lifetime of the drive.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      NVMeSMART:
+        type: string
+        description: >-
+          The NVMe SMART metrics for the drive.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerOnHours:
+        type: float
+        description: >-
+          The number of power-on hours for the lifetime of the drive.
+        required: false
+      UncorrectableIOReadErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable read errors for the lifetime of the drive.
+        required: false
+      UncorrectableIOWriteErrorCount:
+        type: integer
+        description: >-
+          The number of uncorrectable write errors for the lifetime of the drive.
+        required: false
+    capabilities:
+      feature:
+        type: drvmtrcp:DriveMetricsFeature
+      containable:
+        type: drvmtrcp:DriveMetricsContainable

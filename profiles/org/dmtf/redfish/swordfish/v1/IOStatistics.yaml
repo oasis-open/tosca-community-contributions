@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: IOStatistics.v1_0_4.yaml
+  namespace: isttstcs
+- url: Core.yaml
+  namespace: core
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+node_types:
+  IOStatistics:
+    description: >-
+      The properties of this type represent IO statistics.
+    derived_from: isttstcs:IOStatistics
+    capabilities:
+      feature:
+        type: isttcps:IOStatisticsFeature
+      containable:
+        type: isttcps:IOStatisticsContainable

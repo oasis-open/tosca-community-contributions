@@ -1,0 +1,72 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Certificate.yaml
+  namespace: crtfct
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Certificate_caps.yaml
+  namespace: crtfcps
+- url: CertificateLocations_caps.yaml
+  namespace: crtlctcp
+relationship_types:
+  CertificateLocationsDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Certificates@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  CertificateLocations:
+    description: >-
+      The `CertificateLocations` schema describes a resource that an administrator
+      can use in order to locate all certificates installed on a given service.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfct:Certificate
+        capability: crtfcps:CertificateFeature
+        relationship: CertificateLocationsDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the certificates installed on this service.
+    capabilities:
+      feature:
+        type: crtlctcp:CertificateLocationsFeature
+      containable:
+        type: crtlctcp:CertificateLocationsContainable

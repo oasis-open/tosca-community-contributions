@@ -1,0 +1,70 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: IOStatistics.yaml
+  namespace: isttstcs
+- url: Core.yaml
+  namespace: core
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+- url: FileSystemMetrics_caps.yaml
+  namespace: flsymtcp
+node_types:
+  FileSystemMetrics:
+    description: >-
+      The usage and health statistics for a file system.
+    properties:
+      CompressionSavingsBytes:
+        type: integer
+        description: >-
+          Current compression savings in the file system in Bytes.
+        required: false
+      DeduplicationSavingsBytes:
+        type: integer
+        description: >-
+          Current deduplication savings in the file system in Bytes.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ThinProvisioningSavingsBytes:
+        type: integer
+        description: >-
+          Current thin provisioning savings in the file system in Bytes.
+        required: false
+    requirements:
+    - IOStatistics:
+        node: isttstcs:IOStatistics
+        capability: isttcps:IOStatisticsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Statistics for this file system.
+    capabilities:
+      feature:
+        type: flsymtcp:FileSystemMetricsFeature
+      containable:
+        type: flsymtcp:FileSystemMetricsContainable

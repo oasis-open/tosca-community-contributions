@@ -1,0 +1,55 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+- url: redfish-error_caps.yaml
+  namespace: rdferrcp
+- url: Message.yaml
+  namespace: message
+- url: Message_caps.yaml
+  namespace: mssgcps
+node_types:
+  RedfishError:
+    description: >-
+      Contains an error payload from a Redfish Service.
+    properties:
+      error:
+        type: RedfishErrorContents
+        description: >-
+          Contains properties used to describe an error from a Redfish Service.
+        required: true
+    capabilities:
+      feature:
+        type: rdferrcp:RedfishErrorFeature
+      containable:
+        type: rdferrcp:RedfishErrorContainable
+  RedfishErrorContents:
+    description: >-
+      Contains properties used to describe an error from a Redfish Service.
+    properties:
+      code:
+        type: string
+        description: >-
+          A string indicating a specific MessageId from the message registry.
+        required: true
+      message:
+        type: string
+        description: >-
+          A human-readable error message corresponding to the message in the message
+          registry.
+        required: true
+    requirements:
+    - '@Message_ExtendedInfo':
+        node: message:Message
+        capability: mssgcps:MessageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of message objects describing one or more error message(s).
+    capabilities:
+      containable:
+        type: rdferrcp:RedfishErrorContentsContainable

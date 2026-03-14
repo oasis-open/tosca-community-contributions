@@ -1,0 +1,267 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: SecurityPolicy_caps.yaml
+  namespace: scrplccp
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+data_types:
+  SPDMAlgorithmSet:
+    description: >-
+      The SPDM algorithm settings.
+    properties:
+      AEAD:
+        type: list
+        description: >-
+          The AEAD algorithms.
+        required: false
+        entry_schema:
+          type: string
+      BaseAsym:
+        type: list
+        description: >-
+          The asymmetric signature algorithms.
+        required: false
+        entry_schema:
+          type: string
+      BaseHash:
+        type: list
+        description: >-
+          The hash algorithms.
+        required: false
+        entry_schema:
+          type: string
+  SPDMParameterSet:
+    description: >-
+      The SPDM policy settings.
+    properties:
+      Algorithms:
+        type: SPDMAlgorithmSet
+        description: >-
+          The SPDM algorithms.
+        required: false
+      Versions:
+        type: list
+        description: >-
+          The SPDM versions.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^\d+\.\d+$|^NONE$|^ALL$
+        entry_schema:
+          type: string
+  TLSAlgorithmSet:
+    description: >-
+      The TLS algorithm settings.
+    properties:
+      CipherSuites:
+        type: list
+        description: >-
+          The TLS cipher suites.
+        required: false
+        entry_schema:
+          type: string
+      SignatureAlgorithms:
+        type: list
+        description: >-
+          The TLS signature algorithms.
+        required: false
+        entry_schema:
+          type: string
+  TLSCommunication:
+    description: >-
+      The TLS client and server policies.
+    properties:
+      Client:
+        type: TLSPolicy
+        description: >-
+          The TLS policy.
+        required: false
+      Server:
+        type: TLSPolicy
+        description: >-
+          The TLS policy.
+        required: false
+  TLSParameterSet:
+    description: >-
+      The TLS policy settings.
+    properties:
+      Algorithms:
+        type: TLSAlgorithmSet
+        description: >-
+          The TLS algorithms.
+        required: false
+      Versions:
+        type: list
+        description: >-
+          The TLS versions.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^\d+\.\d+$|^NONE$|^ALL$
+        entry_schema:
+          type: string
+node_types:
+  SecurityPolicy:
+    description: >-
+      The `SecurityPolicy` resource provides a central point to configure the security
+      policy of a manager.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OverrideParentManager:
+        type: boolean
+        description: >-
+          Override the security policy of the parent manager.
+        required: false
+      SPDM:
+        type: SPDMPolicy
+        description: >-
+          The SPDM policy.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TLS:
+        type: TLSCommunication
+        description: >-
+          The TLS policy.
+        required: false
+    capabilities:
+      feature:
+        type: scrplccp:SecurityPolicyFeature
+      containable:
+        type: scrplccp:SecurityPolicyContainable
+  SPDMPolicy:
+    description: >-
+      SPDM policy settings.
+    properties:
+      AllowExtendedAlgorithms:
+        type: boolean
+        description: >-
+          An indication of whether SPDM extended algorithms are allowed.
+        required: false
+      Allowed:
+        type: SPDMParameterSet
+        description: >-
+          The SPDM policy settings that are allowed, such as the allowable SPDM versions
+          and algorithms.
+        required: false
+      Denied:
+        type: SPDMParameterSet
+        description: >-
+          The SPDM policy settings that are prohibited, such as the prohibited SPDM
+          versions and algorithms.
+        required: false
+      Enabled:
+        type: boolean
+        description: >-
+          An indication of whether SPDM communication with devices is enabled.
+        required: false
+      SecureSessionEnabled:
+        type: boolean
+        description: >-
+          An indication of whether SPDM secure sessions with devices is enabled.
+        required: false
+      VerifyCertificate:
+        type: boolean
+        description: >-
+          An indication of whether the manager will verify the certificate of the
+          SPDM endpoint.
+        required: false
+    requirements:
+    - RevokedCertificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The revoked SPDM device certificates.
+    - TrustedCertificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The trusted SPDM device certificates.
+    capabilities:
+      containable:
+        type: scrplccp:SPDMPolicyContainable
+  TLSPolicy:
+    description: >-
+      TLS policy settings.
+    properties:
+      Allowed:
+        type: TLSParameterSet
+        description: >-
+          The TLS policy settings that are allowed, such as the allowable TLS versions
+          and algorithms.
+        required: false
+      Denied:
+        type: TLSParameterSet
+        description: >-
+          The TLS policy settings that are prohibited, such as the prohibited TLS
+          versions and algorithms.
+        required: false
+      VerifyCertificate:
+        type: boolean
+        description: >-
+          An indication of whether the manager will verify the certificate of the
+          remote TLS endpoint.
+        required: false
+    requirements:
+    - RevokedCertificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The revoked TLS server certificates.
+    - TrustedCertificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The trusted TLS server certificates.
+    capabilities:
+      containable:
+        type: scrplccp:TLSPolicyContainable

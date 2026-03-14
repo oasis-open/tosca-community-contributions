@@ -1,0 +1,400 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: LogEntry.yaml
+  namespace: logentry
+- url: Core.yaml
+  namespace: core
+- url: LogEntry_caps.yaml
+  namespace: lgentcp
+- url: Event.yaml
+  namespace: event
+data_types:
+  EventSeverity:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OK
+        - Warning
+        - Critical
+  LogDiagnosticDataTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Manager
+        - PreOS
+        - OS
+        - OEM
+        - CPER
+        - CPERSection
+  LogEntryCode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Assert
+        - Deassert
+        - Lower Non-critical - going low
+        - Lower Non-critical - going high
+        - Lower Critical - going low
+        - Lower Critical - going high
+        - Lower Non-recoverable - going low
+        - Lower Non-recoverable - going high
+        - Upper Non-critical - going low
+        - Upper Non-critical - going high
+        - Upper Critical - going low
+        - Upper Critical - going high
+        - Upper Non-recoverable - going low
+        - Upper Non-recoverable - going high
+        - Transition to Idle
+        - Transition to Active
+        - Transition to Busy
+        - State Deasserted
+        - State Asserted
+        - Predictive Failure deasserted
+        - Predictive Failure asserted
+        - Limit Not Exceeded
+        - Limit Exceeded
+        - Performance Met
+        - Performance Lags
+        - Transition to OK
+        - Transition to Non-Critical from OK
+        - Transition to Critical from less severe
+        - Transition to Non-recoverable from less severe
+        - Transition to Non-Critical from more severe
+        - Transition to Critical from Non-recoverable
+        - Transition to Non-recoverable
+        - Monitor
+        - Informational
+        - Device Removed / Device Absent
+        - Device Inserted / Device Present
+        - Device Disabled
+        - Device Enabled
+        - Transition to Running
+        - Transition to In Test
+        - Transition to Power Off
+        - Transition to On Line
+        - Transition to Off Line
+        - Transition to Off Duty
+        - Transition to Degraded
+        - Transition to Power Save
+        - Install Error
+        - Fully Redundant
+        - Redundancy Lost
+        - Redundancy Degraded
+        - Non-redundant:Sufficient Resources from Redundant
+        - Non-redundant:Sufficient Resources from Insufficient Resources
+        - Non-redundant:Insufficient Resources
+        - Redundancy Degraded from Fully Redundant
+        - Redundancy Degraded from Non-redundant
+        - D0 Power State
+        - D1 Power State
+        - D2 Power State
+        - D3 Power State
+        - OEM
+  LogEntryType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Event
+        - SEL
+        - Oem
+  OriginatorTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Client
+        - Internal
+        - SupportingService
+  SensorType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Platform Security Violation Attempt
+        - Temperature
+        - Voltage
+        - Current
+        - Fan
+        - Physical Chassis Security
+        - Processor
+        - Power Supply / Converter
+        - PowerUnit
+        - CoolingDevice
+        - Other Units-based Sensor
+        - Memory
+        - Drive Slot/Bay
+        - POST Memory Resize
+        - System Firmware Progress
+        - Event Logging Disabled
+        - System Event
+        - Critical Interrupt
+        - Button/Switch
+        - Module/Board
+        - Microcontroller/Coprocessor
+        - Add-in Card
+        - Chassis
+        - ChipSet
+        - Other FRU
+        - Cable/Interconnect
+        - Terminator
+        - SystemBoot/Restart
+        - Boot Error
+        - BaseOSBoot/InstallationStatus
+        - OS Stop/Shutdown
+        - Slot/Connector
+        - System ACPI PowerState
+        - Watchdog
+        - Platform Alert
+        - Entity Presence
+        - Monitor ASIC/IC
+        - LAN
+        - Management Subsystem Health
+        - Battery
+        - Session Audit
+        - Version Change
+        - FRUState
+        - OEM
+relationship_types:
+  LogEntryDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OriginOfCondition:
+        type: odatav4:idRef
+        description: >-
+          The link to the resource that caused the log entry.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          An array of links to resources associated with this log entry.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RelatedLogEntries@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  LogEntry:
+    description: >-
+      The LogEntry schema defines the record format for a log.  It is designed for
+      Redfish event logs, OEM-specific log formats, and the IPMI System Event Log
+      (SEL).  The EntryType field indicates the type of log and the resource includes
+      several additional properties dependent on the EntryType.
+    properties:
+      AdditionalDataSizeBytes:
+        type: integer
+        description: >-
+          The size of the additional data for the log entry.
+        required: false
+      AdditionalDataURI:
+        type: string
+        description: >-
+          The URI at which to access the additional data for the log entry, such as
+          diagnostic data, image captures, or other files.
+        required: false
+      Created:
+        type: string
+        description: >-
+          The date and time when the log entry was created.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DiagnosticDataType:
+        type: LogDiagnosticDataTypes
+        description: >-
+          The type of diagnostic data available at the AdditionalDataURI location.
+        required: false
+      EntryCode:
+        type: LogEntryCode
+        description: >-
+          The entry code for the log entry if the entry type is `SEL`.
+        required: false
+      EntryType:
+        type: LogEntryType
+        description: >-
+          The type of log entry.
+        required: true
+      EventGroupId:
+        type: integer
+        description: >-
+          An identifier that correlates events with the same cause.
+        required: false
+      EventId:
+        type: string
+        description: >-
+          The unique instance identifier for an event.
+        required: false
+      EventTimestamp:
+        type: string
+        description: >-
+          The date and time when the event occurred.
+        required: false
+      EventType:
+        type: event:EventType
+        description: >-
+          The type of event recorded in this log.
+        required: false
+      GeneratorId:
+        type: string
+        description: >-
+          An identifier of the device that has generated the IPMI SEL Event Record.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){2}$
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Message:
+        type: string
+        description: >-
+          The message of the log entry.  This property decodes from the entry type.  If
+          the entry type is `Event`, this property contains a message.  If the entry
+          type is `SEL`, this property contains an SEL-specific message.  If the entry
+          type is `CXL`, this property contains a CXL event record.  Otherwise, this
+          property contains an OEM-specific log entry.  In most cases, this property
+          contains the actual log entry.
+        required: false
+      MessageArgs:
+        type: list
+        description: >-
+          The arguments for the message.
+        required: false
+        entry_schema:
+          type: string
+      MessageId:
+        type: string
+        description: >-
+          The MessageId, event data, or OEM-specific information.  This property decodes
+          from the entry type.  If the entry type is `Event`, this property contains
+          a Redfish Specification-defined MessageId.  If the entry type is `SEL`,
+          this property contains the Event Data.  Otherwise, this property contains
+          OEM-specific information.
+        required: false
+      Modified:
+        type: string
+        description: >-
+          The date and time when the log entry was last modified.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      OEMDiagnosticDataType:
+        type: string
+        description: >-
+          The OEM-defined type of diagnostic data at the AdditionalDataURI location.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OemLogEntryCode:
+        type: string
+        description: >-
+          The OEM-specific entry code, if the LogEntryCode type is `OEM`.
+        required: false
+      OemRecordFormat:
+        type: string
+        description: >-
+          The OEM-specific format of the entry.  If the entry type is `Oem`, this
+          property contains more information about the record format from the OEM.
+        required: false
+      OemSensorType:
+        type: string
+        description: >-
+          The OEM-specific sensor type if the sensor type is `OEM`.
+        required: false
+      Originator:
+        type: string
+        description: >-
+          The source of the log entry.
+        required: false
+      OriginatorType:
+        type: OriginatorTypes
+        description: >-
+          The type of originator data.
+        required: false
+      Resolution:
+        type: string
+        description: >-
+          Used to provide suggestions on how to resolve the situation that caused
+          the log entry.
+        required: false
+      Resolved:
+        type: boolean
+        description: >-
+          Indicates if the cause of the log entry has been resolved or repaired.
+        required: false
+      SensorNumber:
+        type: integer
+        description: >-
+          The IPMI-defined sensor number.
+        required: false
+      SensorType:
+        type: SensorType
+        description: >-
+          The sensor type to which the log entry pertains if the entry type is `SEL`.
+        required: false
+      ServiceProviderNotified:
+        type: boolean
+        description: >-
+          Indicates if the log entry has been sent to the service provider.
+        required: false
+      Severity:
+        type: EventSeverity
+        description: >-
+          The severity of the log entry.
+        required: false
+      SpecificEventExistsInGroup:
+        type: boolean
+        description: >-
+          Indicates this log entry is equivalent to a more specific log entry within
+          the same EventGroupId.
+        required: false
+    requirements:
+    - RelatedLogEntries:
+        node: logentry:LogEntry
+        capability: lgentcp:LogEntryFeature
+        relationship: LogEntryDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to other log entries that are related to this log entry.
+    capabilities:
+      feature:
+        type: lgentcp:LogEntryFeature
+      containable:
+        type: lgentcp:LogEntryContainable

@@ -1,0 +1,37 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: NVMeFirmwareImage.v1_2_0.yaml
+  namespace: nvmfrmim
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: NVMeFirmwareImage_caps.yaml
+  namespace: nvfrimcp
+data_types:
+  NVMeDeviceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Drive
+        - JBOF
+        - FabricAttachArray
+node_types:
+  NVMeFirmwareImage:
+    description: >-
+      This is the schema definition for NVMe Domain firmware image properties.
+    derived_from: nvmfrmim:NVMeFirmwareImage
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: nvfrimcp:NVMeFirmwareImageFeature
+      containable:
+        type: nvfrimcp:NVMeFirmwareImageContainable

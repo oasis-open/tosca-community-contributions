@@ -1,0 +1,155 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Outlet.yaml
+  namespace: outlet
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: OutletGroup.yaml
+  namespace: otltgrp
+- url: Core.yaml
+  namespace: core
+- url: Outlet_caps.yaml
+  namespace: otltcps
+- url: Sensor.yaml
+  namespace: sensor
+- url: Circuit.yaml
+  namespace: circuit
+- url: OutletGroup_caps.yaml
+  namespace: otlgrpcp
+relationship_types:
+  OutletGroupDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Outlets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  OutletGroupActions:
+    operations:
+      PowerControl:
+        description: >-
+          This action turns the outlet group on or off.
+        inputs:
+          PowerState:
+            type: otltgrp:PowerState
+            description: >-
+              The desired power state of the outlet group.
+            required: false
+      ResetMetrics:
+        description: >-
+          This action resets metrics related to this outlet group.
+node_types:
+  OutletGroup:
+    description: >-
+      This is the schema definition for an electrical outlet group.
+    properties:
+      CreatedBy:
+        type: string
+        description: >-
+          The creator of this outlet group.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EnergykWh:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The energy reading for this outlet group.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerCycleDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power on after a PowerControl action to cycle
+          power.  Zero seconds indicates no delay.
+        required: false
+      PowerEnabled:
+        type: boolean
+        description: >-
+          Indicates if the outlet group can be powered.
+        required: false
+      PowerOffDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power off after a PowerControl action.  Zero
+          seconds indicates no delay to power off.
+        required: false
+      PowerOnDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power up after a power cycle or a PowerControl
+          action.  Zero seconds indicates no delay to power up.
+        required: false
+      PowerRestoreDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power on after power has been restored.  Zero
+          seconds indicates no delay.
+        required: false
+      PowerRestorePolicy:
+        type: circuit:PowerRestorePolicyTypes
+        description: >-
+          The desired power state of the outlet group when power is restored after
+          a power loss.
+        required: false
+      PowerState:
+        type: resource:PowerState
+        description: >-
+          The power state of the outlet group.
+        required: false
+      PowerWatts:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The power reading for this outlet group.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Outlets:
+        node: outlet:Outlet
+        capability: otltcps:OutletFeature
+        relationship: OutletGroupDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of outlets in this outlet group.
+    interfaces:
+      Actions:
+        type: OutletGroupActions
+    capabilities:
+      feature:
+        type: otlgrpcp:OutletGroupFeature
+      containable:
+        type: otlgrpcp:OutletGroupContainable

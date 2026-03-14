@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MessageRegistryFile.v1_1_5.yaml
+  namespace: mssrgsfl
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MessageRegistryFile_caps.yaml
+  namespace: msrgflcp
+node_types:
+  MessageRegistryFile:
+    description: >-
+      The `MessageRegistryFile` schema describes the registry file locator resource.  This
+      referenced registry file can be any type of registry, such as a message registry,
+      privilege registry, or attribute registry.
+    derived_from: mssrgsfl:MessageRegistryFile
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: msrgflcp:MessageRegistryFileFeature
+      containable:
+        type: msrgflcp:MessageRegistryFileContainable

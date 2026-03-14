@@ -1,0 +1,168 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: LogService.yaml
+  namespace: lgsrvc
+- url: MetricDefinitionCollection.yaml
+  namespace: mtrdfncl
+- url: MetricReportDefinitionCollection.yaml
+  namespace: mtrpdfcl
+- url: MetricReportCollection.yaml
+  namespace: mtrrprcl
+- url: TriggersCollection.yaml
+  namespace: trggcllc
+- url: Core.yaml
+  namespace: core
+- url: LogService_caps.yaml
+  namespace: lgsrvcp
+- url: MetricDefinitionCollection_caps.yaml
+  namespace: mtdfclcp
+- url: MetricReportDefinitionCollection_caps.yaml
+  namespace: mtrpdfcc
+- url: MetricReportCollection_caps.yaml
+  namespace: mtrpclcp
+- url: TriggersCollection_caps.yaml
+  namespace: trgcllcp
+- url: TelemetryService_caps.yaml
+  namespace: tlmsrvcp
+data_types:
+  CollectionFunction:
+    description: >-
+      An operation to perform over the sample.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Average
+        - Maximum
+        - Minimum
+        - Summation
+interface_types:
+  TelemetryServiceActions:
+    operations:
+      SubmitTestMetricReport:
+        description: >-
+          This action is used to generate a metric report.
+        inputs:
+          MetricReportName:
+            type: string
+            description: >-
+              The Name property of the metric report in generated metric report.
+            required: true
+          MetricReportValues:
+            type: string
+            description: >-
+              The content of MetricReportValues array in generated metric report.
+            required: false
+node_types:
+  TelemetryService:
+    description: >-
+      This is the schema definition for the Metrics Service.  It represents the properties
+      for the service itself and has links to collections of metric definitions and
+      metric report definitions.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaxReports:
+        type: integer
+        description: >-
+          The maximum number of metric reports supported by this service.
+        required: false
+      MinCollectionInterval:
+        type: string
+        description: >-
+          The minimum time interval between collections supported by this service.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - -?P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+      SupportedCollectionFunctions:
+        type: list
+        description: >-
+          The functions that can be performed over each metric.
+        required: false
+        entry_schema:
+          type: CollectionFunction
+    requirements:
+    - LogService:
+        node: lgsrvc:LogService
+        capability: lgsrvcp:LogServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to a Log Service used by the Telemetry Service.
+    - MetricDefinitions:
+        node: mtrdfncl:MetricDefinitionCollection
+        capability: mtdfclcp:MetricDefinitionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the collection of Metric Definitions.
+    - MetricReportDefinitions:
+        node: mtrpdfcl:MetricReportDefinitionCollection
+        capability: mtrpdfcc:MetricReportDefinitionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the collection of Metric Report Definitions.
+    - MetricReports:
+        node: mtrrprcl:MetricReportCollection
+        capability: mtrpclcp:MetricReportCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the collection of Metric Reports.
+    - Triggers:
+        node: trggcllc:TriggersCollection
+        capability: trgcllcp:TriggersCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the collection of Triggers, which apply to metrics.
+    interfaces:
+      Actions:
+        type: TelemetryServiceActions
+    capabilities:
+      feature:
+        type: tlmsrvcp:TelemetryServiceFeature
+      containable:
+        type: tlmsrvcp:TelemetryServiceContainable

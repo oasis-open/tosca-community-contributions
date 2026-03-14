@@ -1,0 +1,213 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: ComponentIntegrity.yaml
+  namespace: cmpnintg
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+- url: ComponentIntegrity_caps.yaml
+  namespace: cmpintcp
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: TrustedComponent_caps.yaml
+  namespace: trscmpcp
+data_types:
+  TPM:
+    description: >-
+      TPM-specific information for a trusted component.
+    properties:
+      CapabilitiesVendorID:
+        type: string
+        description: >-
+          The capabilities vendor ID for this trusted component.
+        required: false
+      HardwareInterfaceVendorID:
+        type: string
+        description: >-
+          The hardware interface vendor ID for this trusted component.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([0-9A-Fa-f]{2}){2}$
+  TrustedComponentType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Discrete
+        - Integrated
+relationship_types:
+  TrustedComponentDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ComponentIntegrity@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ComponentsProtected:
+        type: list
+        description: >-
+          An array of links to resources that the target component protects.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      ComponentsProtected@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      IntegratedInto:
+        type: odatav4:idRef
+        description: >-
+          A link to a resource to which this trusted component is integrated.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Owner:
+        type: odatav4:idRef
+        description: >-
+          A link to the resource that owns this trusted component.
+        required: false
+      SoftwareImages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  TrustedComponent:
+    description: >-
+      The `TrustedComponent` resource represents a trusted device, such as a TPM.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The software version of the active software image on the trusted component.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this trusted component.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number of the trusted component.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number of the trusted component.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU of the trusted component.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number of the trusted component.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TPM:
+        type: TPM
+        description: >-
+          TPM-specific information for this trusted component.
+        required: false
+      TrustedComponentType:
+        type: TrustedComponentType
+        description: >-
+          The type of trusted component, such as any physical distinction about the
+          trusted component.
+        required: true
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this trusted component.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of device identity certificates of the trusted
+          component.
+    - ActiveSoftwareImage:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: TrustedComponentDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the software inventory resource that represents the active firmware
+          image for this trusted component.
+    - ComponentIntegrity:
+        node: cmpnintg:ComponentIntegrity
+        capability: cmpintcp:ComponentIntegrityFeature
+        relationship: TrustedComponentDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to ComponentIntegrity resources for which the trusted
+          component is responsible.
+    - SoftwareImages:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: TrustedComponentDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The images that are associated with this trusted component.
+    capabilities:
+      feature:
+        type: trscmpcp:TrustedComponentFeature
+      containable:
+        type: trscmpcp:TrustedComponentContainable

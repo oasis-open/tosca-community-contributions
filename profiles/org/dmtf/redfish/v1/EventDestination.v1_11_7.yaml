@@ -1,0 +1,428 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: Resource.yaml
+  namespace: resource
+- url: EventDestination.yaml
+  namespace: evntdstn
+- url: Event.yaml
+  namespace: event
+- url: MetricReportDefinition.yaml
+  namespace: mtrrprdf
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: MetricReportDefinition_caps.yaml
+  namespace: mtrpdfcp
+- url: EventDestination_caps.yaml
+  namespace: evndstcp
+data_types:
+  DeliveryRetryPolicy:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - TerminateAfterRetries
+        - SuspendRetries
+        - RetryForever
+        - RetryForeverWithBackoff
+  EventDestinationProtocol:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Redfish
+        - SNMPv1
+        - SNMPv2c
+        - SNMPv3
+        - SMTP
+        - SyslogTLS
+        - SyslogTCP
+        - SyslogUDP
+        - SyslogRELP
+        - OEM
+  HttpHeaderProperty:
+    description: >-
+      The HTTP header value is the property value.  The header name is the property
+      name.
+  SNMPAuthenticationProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - CommunityString
+        - HMAC_MD5
+        - HMAC_SHA96
+        - HMAC128_SHA224
+        - HMAC192_SHA256
+        - HMAC256_SHA384
+        - HMAC384_SHA512
+  SNMPEncryptionProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - CBC_DES
+        - CFB128_AES128
+  SNMPSettings:
+    description: >-
+      Settings for an SNMP event destination.
+    properties:
+      AuthenticationKey:
+        type: string
+        description: >-
+          The secret authentication key for SNMPv3.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^[ !#-~]+$)|(^Passphrase:[ ^[ !#-~]+$)|(^Hex:[0-9A-Fa-f]{24,96})|(^\*+$)
+      AuthenticationKeySet:
+        type: boolean
+        description: >-
+          Indicates if the `AuthenticationKey` property is set.
+        required: false
+      AuthenticationProtocol:
+        type: SNMPAuthenticationProtocols
+        description: >-
+          The authentication protocol for SNMPv3.
+        required: false
+      EncryptionKey:
+        type: string
+        description: >-
+          The secret authentication key for SNMPv3.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^[A-Za-z0-9]+$)|(^\*+$)
+      EncryptionKeySet:
+        type: boolean
+        description: >-
+          Indicates if the `EncryptionKey` property is set.
+        required: false
+      EncryptionProtocol:
+        type: SNMPEncryptionProtocols
+        description: >-
+          The encryption protocol for SNMPv3.
+        required: false
+      TrapCommunity:
+        type: string
+        description: >-
+          The SNMP trap community string.
+        required: false
+  SubscriptionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RedfishEvent
+        - SSE
+        - SNMPTrap
+        - SNMPInform
+        - Syslog
+        - OEM
+  SyslogFacility:
+    description: >-
+      The syslog facility code is an enumeration of program types.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Kern
+        - User
+        - Mail
+        - Daemon
+        - Auth
+        - Syslog
+        - LPR
+        - News
+        - UUCP
+        - Cron
+        - Authpriv
+        - FTP
+        - NTP
+        - Security
+        - Console
+        - SolarisCron
+        - Local0
+        - Local1
+        - Local2
+        - Local3
+        - Local4
+        - Local5
+        - Local6
+        - Local7
+  SyslogFilter:
+    description: >-
+      A syslog filter.
+    properties:
+      LogFacilities:
+        type: list
+        description: >-
+          The types of programs that can log messages.
+        required: false
+        entry_schema:
+          type: SyslogFacility
+      LowestSeverity:
+        type: SyslogSeverity
+        description: >-
+          The lowest severity level message that will be forwarded.
+        required: false
+  SyslogSeverity:
+    description: >-
+      The syslog severity is an application-specific rating used to describe the urgency
+      of the message.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Emergency
+        - Alert
+        - Critical
+        - Error
+        - Warning
+        - Notice
+        - Informational
+        - Debug
+        - All
+interface_types:
+  EventDestinationActions:
+    operations:
+      ResumeSubscription:
+        description: >-
+          This action resumes a suspended event subscription.
+node_types:
+  EventDestination:
+    description: >-
+      The `EventDestination` schema defines the target of an event subscription, including
+      the event types and context to provide to the target in the event payload.
+    properties:
+      Context:
+        type: string
+        description: >-
+          A client-supplied string that is stored with the event destination subscription.
+        required: true
+      DeliveryRetryPolicy:
+        type: DeliveryRetryPolicy
+        description: >-
+          The subscription delivery retry policy for events, where the subscription
+          type is `RedfishEvent`.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Destination:
+        type: string
+        description: >-
+          The URI of the destination event receiver.
+        required: false
+      EventFormatType:
+        type: evntdstn:EventFormatType
+        description: >-
+          The content types of the message that are sent to the `EventDestination`.
+        required: false
+      EventTypes:
+        type: list
+        description: >-
+          The types of events that are sent to the destination.
+        required: false
+        entry_schema:
+          type: event:EventType
+      HeartbeatIntervalMinutes:
+        type: integer
+        description: >-
+          Interval for sending heartbeat events to the destination in minutes.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 65535
+      HttpHeaders:
+        type: list
+        description: >-
+          An array of settings for HTTP headers, such as authorization information.  This
+          array is `null` or an empty array in responses.  An empty array is the preferred
+          return value on read operations.
+        required: false
+        entry_schema:
+          type: HttpHeaderProperty
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IncludeOriginOfCondition:
+        type: boolean
+        description: >-
+          An indication of whether the events subscribed to will also include the
+          entire resource or object referenced by the `OriginOfCondition` property
+          in the event payload.
+        required: false
+      MessageIds:
+        type: list
+        description: >-
+          The list of `MessageId` values that are sent to this event destination.
+        required: false
+        entry_schema:
+          type: string
+      MetricReportDefinitions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      OEMProtocol:
+        type: string
+        description: >-
+          The OEM-defined protocol type of the event connection.
+        required: false
+      OEMSubscriptionType:
+        type: string
+        description: >-
+          The OEM-defined subscription type for events.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OriginResources:
+        type: list
+        description: >-
+          The array of resources for which the service sends only related events.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      OriginResources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Protocol:
+        type: EventDestinationProtocol
+        description: >-
+          The protocol type of the event connection.
+        required: false
+      RegistryPrefixes:
+        type: list
+        description: >-
+          The list of prefixes for the message registries that contain the `MessageId`
+          values that are sent to this event destination.
+        required: false
+        entry_schema:
+          type: string
+      ResourceTypes:
+        type: list
+        description: >-
+          The list of resource type values (schema names) that correspond to the `OriginOfCondition`.  The
+          version and full namespace should not be specified.
+        required: false
+        entry_schema:
+          type: string
+      SNMP:
+        type: SNMPSettings
+        description: >-
+          Settings for an SNMP event destination.
+        required: false
+      SendHeartbeat:
+        type: boolean
+        description: >-
+          Send a heartbeat event periodically to the destination.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SubordinateResources:
+        type: boolean
+        description: >-
+          An indication of whether the subscription is for events in the `OriginResources`
+          array and its subordinate resources.  If `true` and the `OriginResources`
+          array is specified, the subscription is for events in the `OriginResources`
+          array and its subordinate resources.  Note that resources associated through
+          the Links section are not considered subordinate.  If `false` and the `OriginResources`
+          array is specified, the subscription is for events in the `OriginResources`
+          array only.  If the `OriginResources` array is not present, this property
+          has no relevance.
+        required: false
+      SubscriptionType:
+        type: SubscriptionType
+        description: >-
+          The subscription type for events.
+        required: true
+      SyslogFilters:
+        type: list
+        description: >-
+          A list of filters applied to syslog messages before sending to a remote
+          syslog server.  An empty list indicates all syslog messages are sent.
+        required: false
+        entry_schema:
+          type: SyslogFilter
+      VerifyCertificate:
+        type: boolean
+        description: >-
+          An indication of whether the service will verify the certificate of the
+          server referenced by the `Destination` property prior to sending the event.
+        required: false
+    requirements:
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of server certificates for the server referenced
+          by the `Destination` property.
+    - ClientCertificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of client identity certificates provided to the
+          server referenced by the `Destination` property.
+    - MetricReportDefinitions:
+        node: mtrrprdf:MetricReportDefinition
+        capability: mtrpdfcp:MetricReportDefinitionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          A list of metric report definitions for which the service only sends related
+          metric reports.  If this property is absent or the array is empty, metric
+          reports that originate from any metric report definition are sent to the
+          subscriber.
+    interfaces:
+      Actions:
+        type: EventDestinationActions
+    capabilities:
+      feature:
+        type: evndstcp:EventDestinationFeature
+      containable:
+        type: evndstcp:EventDestinationContainable

@@ -1,0 +1,77 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: VLanNetworkInterface_caps.yaml
+  namespace: vlntincp
+data_types:
+  VLAN:
+    description: >-
+      This type describes the attributes of a Virtual LAN.
+    properties:
+      VLANEnable:
+        type: boolean
+        description: >-
+          This indicates if this VLAN is enabled.
+        required: false
+      VLANId:
+        type: VLANId
+        description: >-
+          This indicates the VLAN identifier for this VLAN.
+        required: false
+  VLANId:
+    derived_from: float
+    validation:
+      $and:
+      - $greater_or_equal:
+        - $value
+        - 0
+      - $less_or_equal:
+        - $value
+        - 4094
+node_types:
+  VLanNetworkInterface:
+    description: >-
+      This resource describes the attributes of a Virtual LAN.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      VLANEnable:
+        type: boolean
+        description: >-
+          This indicates if this VLAN is enabled.
+        required: false
+      VLANId:
+        type: VLANId
+        description: >-
+          This indicates the VLAN identifier for this VLAN.
+        required: false
+    capabilities:
+      feature:
+        type: vlntincp:VLanNetworkInterfaceFeature
+      containable:
+        type: vlntincp:VLanNetworkInterfaceContainable

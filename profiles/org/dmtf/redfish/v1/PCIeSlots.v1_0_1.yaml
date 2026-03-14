@@ -1,0 +1,137 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PCIeSlots_caps.yaml
+  namespace: pcsltcp
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+data_types:
+  PCIeSlot:
+    description: >-
+      This is the definition for a PCI slot information object.
+    properties:
+      Lanes:
+        type: integer
+        description: >-
+          This is the number of PCIe lanes supported by this slot.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 32
+      Links:
+        type: PCIeLinks
+        description: >-
+          Contains references to other resources that are related to this resource.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The Location of the PCIe slot.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      PCIeType:
+        type: pcdvc:PCIeTypes
+        description: >-
+          This is the PCIe specification supported by this slot.
+        required: false
+      SlotType:
+        type: SlotTypes
+        description: >-
+          This is the PCIe slot type for this slot.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+  SlotTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - FullLength
+        - HalfLength
+        - LowProfile
+        - Mini
+        - M2
+        - OEM
+node_types:
+  PCIeSlots:
+    description: >-
+      This is the schema definition for the PCIe Slot properties.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Slots:
+        type: list
+        description: >-
+          An array of PCI Slot information.
+        required: false
+        entry_schema:
+          type: PCIeSlot
+    capabilities:
+      feature:
+        type: pcsltcp:PCIeSlotsFeature
+      containable:
+        type: pcsltcp:PCIeSlotsContainable
+  PCIeLinks:
+    description: >-
+      Contains references to other resources that are related to this resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      PCIeDevice@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - PCIeDevice:
+        node: pcdvc:PCIeDevice
+        capability: pcdvccps:PCIeDeviceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the PCIe Devices contained in this slot.
+    capabilities:
+      containable:
+        type: pcsltcp:PCIeLinksContainable

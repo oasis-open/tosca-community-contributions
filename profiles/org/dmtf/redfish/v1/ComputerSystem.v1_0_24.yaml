@@ -1,0 +1,372 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: EthernetInterfaceCollection.yaml
+  namespace: ethintcl
+- url: LogServiceCollection.yaml
+  namespace: lgsrvcl
+- url: ProcessorCollection.yaml
+  namespace: prcscllc
+- url: SimpleStorageCollection.yaml
+  namespace: smpstrcl
+- url: EthernetInterfaceCollection_caps.yaml
+  namespace: etinclcp
+- url: LogServiceCollection_caps.yaml
+  namespace: lgsrclcp
+- url: ProcessorCollection_caps.yaml
+  namespace: prccllcp
+- url: SimpleStorageCollection_caps.yaml
+  namespace: smstclcp
+- url: ComputerSystem_caps.yaml
+  namespace: cmpsyscp
+data_types:
+  Boot:
+    description: >-
+      The boot information for this resource.
+    properties:
+      BootSourceOverrideEnabled:
+        type: BootSourceOverrideEnabled
+        description: >-
+          The state of the boot source override feature.
+        required: false
+      BootSourceOverrideTarget:
+        type: string
+        description: >-
+          The current boot source to use at the next boot instead of the normal boot
+          device, if `BootSourceOverrideEnabled` does not contain `Disabled`.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - None
+            - Pxe
+            - Floppy
+            - Cd
+            - Usb
+            - Hdd
+            - BiosSetup
+            - Utilities
+            - Diags
+            - UefiShell
+            - UefiTarget
+            - SDCard
+            - UefiHttp
+            - RemoteDrive
+            - UefiBootNext
+            - Recovery
+      UefiTargetBootSourceOverride:
+        type: string
+        description: >-
+          The UEFI device path of the device from which to boot when `BootSourceOverrideTarget`
+          is `UefiTarget`.
+        required: false
+  BootSourceOverrideEnabled:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Disabled
+        - Once
+        - Continuous
+  IndicatorLED:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unknown
+        - Lit
+        - Blinking
+        - 'Off'
+  MemorySummary:
+    description: >-
+      The memory of the system in general detail.
+    properties:
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TotalSystemMemoryGiB:
+        type: float
+        description: >-
+          The total configured operating system-accessible memory (RAM), measured
+          in GiB.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  ProcessorSummary:
+    description: >-
+      The central processors of the system in general detail.
+    properties:
+      Count:
+        type: integer
+        description: >-
+          The number of physical processors in the system.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Model:
+        type: string
+        description: >-
+          The processor model for the primary or majority of processors in this system.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+  SystemType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Physical
+        - Virtual
+        - OS
+        - PhysicallyPartitioned
+        - VirtuallyPartitioned
+relationship_types:
+  ComputerSystemDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      CooledBy:
+        type: list
+        description: >-
+          An array of links to resources or objects that cool this computer system.  Normally,
+          the link is for either a chassis or a specific set of fans.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      CooledBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PoweredBy:
+        type: list
+        description: >-
+          An array of links to resources or objects that power this computer system.  Normally,
+          the link is for either a chassis or a specific set of power supplies.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      PoweredBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  ComputerSystemActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets the system.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  ComputerSystem:
+    description: >-
+      The `ComputerSystem` schema represents a computer or system instance and the
+      software-visible resources, or items within the data plane, such as memory,
+      CPU, and other devices that it can access.  Details of those resources or subsystems
+      are also linked through this resource.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-definable tag that can track this computer system for inventory
+          or other client purposes.
+        required: false
+      BiosVersion:
+        type: string
+        description: >-
+          The version of the system BIOS or primary system firmware.
+        required: false
+      Boot:
+        type: Boot
+        description: >-
+          The boot settings for this system.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      HostName:
+        type: string
+        description: >-
+          The DNS host name, without any domain information.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IndicatorLED:
+        type: IndicatorLED
+        description: >-
+          The state of the indicator LED, which identifies the system.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer or OEM of this system.
+        required: false
+      MemorySummary:
+        type: MemorySummary
+        description: >-
+          The central memory of the system in general detail.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The product name for this system, without the manufacturer name.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this system.
+        required: false
+      PowerState:
+        type: resource:PowerState
+        description: >-
+          The current power state of the system.
+        required: false
+      ProcessorSummary:
+        type: ProcessorSummary
+        description: >-
+          The central processors of the system in general detail.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The manufacturer SKU for this system.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this system.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SystemType:
+        type: SystemType
+        description: >-
+          The type of computer system that this resource represents.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this system.
+        required: false
+    requirements:
+    - EthernetInterfaces:
+        node: ethintcl:EthernetInterfaceCollection
+        capability: etinclcp:EthernetInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of Ethernet interfaces associated with this system.
+    - LogServices:
+        node: lgsrvcl:LogServiceCollection
+        capability: lgsrclcp:LogServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of log services associated with this system.
+    - Processors:
+        node: prcscllc:ProcessorCollection
+        capability: prccllcp:ProcessorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of processors associated with this system.
+    - SimpleStorage:
+        node: smpstrcl:SimpleStorageCollection
+        capability: smstclcp:SimpleStorageCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of storage devices associated with this system.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: ComputerSystemDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis that contains this system.
+    - ManagedBy:
+        # node: manager:Manager
+        capability: core:Feature
+        relationship: ComputerSystemDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers responsible for this system.
+    interfaces:
+      Actions:
+        type: ComputerSystemActions
+    capabilities:
+      feature:
+        type: cmpsyscp:ComputerSystemFeature
+      containable:
+        type: cmpsyscp:ComputerSystemContainable

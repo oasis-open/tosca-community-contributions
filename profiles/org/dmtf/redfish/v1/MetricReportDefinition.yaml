@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MetricReportDefinition.v1_4_7.yaml
+  namespace: mtrrprdf
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: MetricReportDefinition_caps.yaml
+  namespace: mtrpdfcp
+node_types:
+  MetricReportDefinition:
+    description: >-
+      The `MetricReportDefinition` schema describes set of metrics that are collected
+      into a metric report.
+    derived_from: mtrrprdf:MetricReportDefinition
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: mtrpdfcp:MetricReportDefinitionFeature
+      containable:
+        type: mtrpdfcp:MetricReportDefinitionContainable

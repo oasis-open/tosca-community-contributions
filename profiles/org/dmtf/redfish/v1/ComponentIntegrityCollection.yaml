@@ -1,0 +1,79 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: ComponentIntegrity.yaml
+  namespace: cmpnintg
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ComponentIntegrity_caps.yaml
+  namespace: cmpintcp
+- url: ComponentIntegrityCollection_caps.yaml
+  namespace: cminclcp
+node_types:
+  ComponentIntegrityCollection:
+    description: >-
+      The collection of `ComponentIntegrity` resource instances.
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: true
+      '@odata_context':
+        type: odatav4:context
+        description: >-
+          The OData description of a payload.
+        required: false
+      '@odata_etag':
+        type: odatav4:etag
+        description: >-
+          The current ETag of the resource.
+        required: false
+      '@odata_type':
+        type: odatav4:type
+        description: >-
+          The type of a resource.
+        required: true
+      Description:
+        type: string
+        required: false
+      Members@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: true
+      Members@odata_nextLink:
+        type: odatav4:nextLink
+        description: >-
+          The URI to the resource containing the next set of partial members.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    requirements:
+    - Members:
+        node: cmpnintg:ComponentIntegrity
+        capability: cmpintcp:ComponentIntegrityContainable
+        relationship: core:Contains
+        count_range:
+        - 1
+        - UNBOUNDED
+        description: >-
+          The members of this collection.
+    capabilities:
+      feature:
+        type: cminclcp:ComponentIntegrityCollectionFeature
+      containable:
+        type: cminclcp:ComponentIntegrityCollectionContainable

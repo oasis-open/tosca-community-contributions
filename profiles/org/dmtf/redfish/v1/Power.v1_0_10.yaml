@@ -1,0 +1,504 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: Core.yaml
+  namespace: core
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: Power_caps.yaml
+  namespace: pwrcps
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+data_types:
+  LineInputVoltageType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unknown
+        - ACLowLine
+        - ACMidLine
+        - ACHighLine
+        - DCNeg48V
+        - DC380V
+  PowerControl:
+    properties:
+      MemberId:
+        type: string
+        description: >-
+          The identifier for the member within the collection.
+        required: true
+      Name:
+        type: string
+        description: >-
+          The power control function name.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerAllocatedWatts:
+        type: float
+        description: >-
+          The total amount of power that has been allocated or budgeted to chassis.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      PowerAvailableWatts:
+        type: float
+        description: >-
+          The amount of reserve power capacity, in watts, that remains.  This value
+          is the PowerCapacity value minus the PowerAllocated value.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      PowerCapacityWatts:
+        type: float
+        description: >-
+          The total amount of power that can be allocated to the chassis.  This value
+          can be either the power supply capacity or the power budget that an upstream
+          chassis assigns to this chassis.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      PowerConsumedWatts:
+        type: float
+        description: >-
+          The actual power that the chassis consumes, in watts.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      PowerLimit:
+        type: PowerLimit
+        description: >-
+          The power limit status and configuration information for this chassis.
+        required: false
+      PowerMetrics:
+        type: PowerMetric
+        description: >-
+          The power readings for this chassis.
+        required: false
+      PowerRequestedWatts:
+        type: float
+        description: >-
+          The potential power, in watts, that the chassis requests, which may be higher
+          than the current level being consumed because the requested power includes
+          a budget that the chassis wants for future use.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RelatedItem:
+        type: list
+        description: >-
+          An array of one or more IDs of the Resources associated with this power
+          limit.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+  PowerLimit:
+    description: >-
+      The power limit status and configuration information for the chassis.
+    properties:
+      CorrectionInMs:
+        type: integer
+        description: >-
+          The time required for the limiting process to reduce power consumption to
+          below the limit.
+        required: false
+      LimitException:
+        type: PowerLimitException
+        description: >-
+          The action that is taken if the power cannot be maintained below the LimitInWatts.
+        required: false
+      LimitInWatts:
+        type: float
+        description: >-
+          The power limit, in watts.  If `null`, power capping is disabled.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  PowerLimitException:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NoAction
+        - HardPowerOff
+        - LogEventOnly
+        - Oem
+  PowerMetric:
+    description: >-
+      The power metrics for a Resource.
+    properties:
+      AverageConsumedWatts:
+        type: float
+        description: >-
+          The average power level over the measurement window over the last IntervalInMin
+          minutes.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      IntervalInMin:
+        type: integer
+        description: >-
+          The time interval, or window, over which the power metrics are measured.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MaxConsumedWatts:
+        type: float
+        description: >-
+          The highest power consumption level, in watts, that has occurred over the
+          measurement window within the last IntervalInMin minutes.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      MinConsumedWatts:
+        type: float
+        description: >-
+          The lowest power consumption level, in watts, over the measurement window
+          that occurred within the last IntervalInMin minutes.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  PowerSupplyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Unknown
+        - AC
+        - DC
+        - ACorDC
+node_types:
+  Power:
+    description: >-
+      The Power schema describes power metrics and represents the properties for power
+      consumption and power limiting.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerControl:
+        type: list
+        description: >-
+          The set of power control functions, including power reading and limiting.
+        required: false
+        entry_schema:
+          type: PowerControl
+      PowerControl@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      PowerSupplies:
+        type: list
+        description: >-
+          The set of power supplies associated with this system or device.
+        required: false
+        entry_schema:
+          type: PowerSupply
+      PowerSupplies@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Voltages:
+        type: list
+        description: >-
+          The set of voltage sensors for this chassis.
+        required: false
+        entry_schema:
+          type: Voltage
+      Voltages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The redundancy information for the set of power supplies in this chassis.
+    capabilities:
+      feature:
+        type: pwrcps:PowerFeature
+      containable:
+        type: pwrcps:PowerContainable
+  PowerSupply:
+    description: >-
+      Details of a power supplies associated with this system or device.
+    properties:
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version for this power supply.
+        required: false
+      LastPowerOutputWatts:
+        type: float
+        description: >-
+          The average power output of this power supply.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      LineInputVoltage:
+        type: float
+        description: >-
+          The line input voltage at which the power supply is operating.
+        required: false
+      LineInputVoltageType:
+        type: LineInputVoltageType
+        description: >-
+          The line voltage type supported as an input to this power supply.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          The identifier for the member within the collection.
+        required: true
+      Model:
+        type: string
+        description: >-
+          The model number for this power supply.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the power supply.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this power supply.
+        required: false
+      PowerCapacityWatts:
+        type: float
+        description: >-
+          The maximum capacity of this power supply.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      PowerSupplyType:
+        type: PowerSupplyType
+        description: >-
+          The power supply type (AC or DC).
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          The ID(s) of the Resources associated with this power limit.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this power supply.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number for this power supply.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+    requirements:
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The set of redundancy groups for this power supply.
+    capabilities:
+      containable:
+        type: pwrcps:PowerSupplyContainable
+  Voltage:
+    properties:
+      LowerThresholdCritical:
+        type: float
+        description: >-
+          The value at which the reading is below normal range but not yet fatal.
+        required: false
+      LowerThresholdFatal:
+        type: float
+        description: >-
+          The value at which the reading is below normal range and fatal.
+        required: false
+      LowerThresholdNonCritical:
+        type: float
+        description: >-
+          The value at which the reading is below normal range.
+        required: false
+      MaxReadingRange:
+        type: float
+        description: >-
+          Maximum value for this sensor.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          The identifier for the member within the collection.
+        required: true
+      MinReadingRange:
+        type: float
+        description: >-
+          Minimum value for this sensor.
+        required: false
+      Name:
+        type: string
+        description: >-
+          Voltage sensor name.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ReadingVolts:
+        type: float
+        description: >-
+          The reading of the voltage sensor.
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          The areas or devices to which this voltage measurement applies.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      RelatedItem@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      SensorNumber:
+        type: integer
+        description: >-
+          A numerical identifier to represent the voltage sensor.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+      UpperThresholdCritical:
+        type: float
+        description: >-
+          The value at which the reading is above normal range but not yet fatal.
+        required: false
+      UpperThresholdFatal:
+        type: float
+        description: >-
+          The value at which the reading is above normal range and fatal.
+        required: false
+      UpperThresholdNonCritical:
+        type: float
+        description: >-
+          The value at which the reading is above normal range.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this voltage measurement applies.
+    capabilities:
+      containable:
+        type: pwrcps:VoltageContainable

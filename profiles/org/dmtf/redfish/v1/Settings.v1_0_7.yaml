@@ -1,0 +1,51 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Message.yaml
+  namespace: message
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Message_caps.yaml
+  namespace: mssgcps
+- url: Settings_caps.yaml
+  namespace: sttncps
+node_types:
+  Settings:
+    description: >-
+      The resource settings.
+    properties:
+      ETag:
+        type: string
+        description: >-
+          The entity tag (ETag) of the resource to which the settings were applied,
+          after the application.
+        required: false
+      SettingsObject:
+        type: odatav4:idRef
+        description: >-
+          The link to the resource that the client can PUT or PATCH to modify the
+          resource.
+        required: false
+      Time:
+        type: string
+        description: >-
+          The time when the settings were applied.
+        required: false
+    requirements:
+    - Messages:
+        node: message:Message
+        capability: mssgcps:MessageContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of messages associated with the settings.
+    capabilities:
+      feature:
+        type: sttncps:SettingsFeature
+      containable:
+        type: sttncps:SettingsContainable

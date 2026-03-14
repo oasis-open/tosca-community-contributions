@@ -1,0 +1,114 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+- url: Application_caps.yaml
+  namespace: applcps
+relationship_types:
+  ApplicationDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  ApplicationActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets the application.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  Application:
+    description: >-
+      The Application schema represents an application or service running on a computer
+      system.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DestinationURIs:
+        type: list
+        description: >-
+          The URIs to which this application pushes data.
+        required: false
+        entry_schema:
+          type: string
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MetricsURIs:
+        type: list
+        description: >-
+          The URIs that provide access to data or other information in this application.
+        required: false
+        entry_schema:
+          type: string
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      StartTime:
+        type: string
+        description: >-
+          The date and time when the application started running.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Vendor:
+        type: string
+        description: >-
+          The vendor of this application.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The version of this application.
+        required: false
+    requirements:
+    - SoftwareImage:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: ApplicationDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the software image for this application.
+    interfaces:
+      Actions:
+        type: ApplicationActions
+    capabilities:
+      feature:
+        type: applcps:ApplicationFeature
+      containable:
+        type: applcps:ApplicationContainable

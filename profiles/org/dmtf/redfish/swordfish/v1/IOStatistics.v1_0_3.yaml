@@ -1,0 +1,68 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+- url: IOStatistics_caps.yaml
+  namespace: isttcps
+node_types:
+  IOStatistics:
+    description: >-
+      The properties of this type represent IO statistics.
+    properties:
+      NonIORequestTime:
+        type: string
+        description: >-
+          The time that the resource is busy processing write requests.
+        required: false
+      NonIORequests:
+        type: integer
+        description: >-
+          Count of non IO requests.
+        required: false
+      ReadHitIORequests:
+        type: integer
+        description: >-
+          Count of read IO requests satisfied from memory.
+        required: false
+      ReadIOKiBytes:
+        type: integer
+        description: >-
+          Number of kibibytes read.
+        required: false
+      ReadIORequestTime:
+        type: string
+        description: >-
+          The time that the resource is busy processing read requests.
+        required: false
+      ReadIORequests:
+        type: integer
+        description: >-
+          Count of read IO requests.
+        required: false
+      WriteHitIORequests:
+        type: integer
+        description: >-
+          Count of write IO requests coalesced into memory.
+        required: false
+      WriteIOKiBytes:
+        type: integer
+        description: >-
+          Number of kibibytes written.
+        required: false
+      WriteIORequestTime:
+        type: string
+        description: >-
+          The time that the resource is busy processing write requests.
+        required: false
+      WriteIORequests:
+        type: integer
+        description: >-
+          Count of write IO requests.
+        required: false
+    capabilities:
+      feature:
+        type: isttcps:IOStatisticsFeature
+      containable:
+        type: isttcps:IOStatisticsContainable

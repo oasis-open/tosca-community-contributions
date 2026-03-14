@@ -1,0 +1,575 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Volume.yaml
+  namespace: volume
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Battery.yaml
+  namespace: battery
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: NetworkDeviceFunction.yaml
+  namespace: ntwdvcfn
+- url: PCIeFunction.yaml
+  namespace: pcfnctn
+- url: Core.yaml
+  namespace: core
+- url: Volume_caps.yaml
+  namespace: vlmcps
+- url: Battery_caps.yaml
+  namespace: bttrycps
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: NetworkDeviceFunction_caps.yaml
+  namespace: ntdvfncp
+- url: PCIeFunction_caps.yaml
+  namespace: pcfnccp
+- url: Assembly.yaml
+  namespace: assembly
+- url: CertificateCollection.yaml
+  namespace: crtfcllc
+- url: EnvironmentMetrics.yaml
+  namespace: envrmtrc
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: PortCollection.yaml
+  namespace: prtcllc
+- url: Protocol.yaml
+  namespace: protocol
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: CertificateCollection_caps.yaml
+  namespace: crtcllcp
+- url: EnvironmentMetrics_caps.yaml
+  namespace: envmtrcp
+- url: PortCollection_caps.yaml
+  namespace: prtcllcp
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: StorageController_caps.yaml
+  namespace: strcntcp
+data_types:
+  ANAAccessState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Optimized
+        - NonOptimized
+        - Inaccessible
+        - PersistentLoss
+  CacheSummary:
+    description: >-
+      This type describes the cache memory of the storage controller in general detail.
+    properties:
+      PersistentCacheSizeMiB:
+        type: integer
+        description: >-
+          The portion of the cache memory that is persistent, measured in MiB.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TotalCacheSizeMiB:
+        type: integer
+        description: >-
+          The total configured cache memory, measured in MiB.
+        required: true
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+  NVMeControllerAttributes:
+    description: >-
+      The NVMe controller attributes for a storage controller.
+    properties:
+      ReportsNamespaceGranularity:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports reporting of Namespace
+          Granularity.
+        required: false
+      ReportsUUIDList:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports reporting of a UUID list.
+        required: false
+      Supports128BitHostId:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports a 128-bit Host Identifier.
+        required: false
+      SupportsEnduranceGroups:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports Endurance Groups.
+        required: false
+      SupportsExceedingPowerOfNonOperationalState:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports exceeding Power of Non-Operational
+          State in order to execute controller initiated background operations in
+          a non-operational power state.
+        required: false
+      SupportsNVMSets:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports NVM Sets.
+        required: false
+      SupportsPredictableLatencyMode:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports Predictable Latency Mode.
+        required: false
+      SupportsReadRecoveryLevels:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports Read Recovery Levels.
+        required: false
+      SupportsReservations:
+        type: boolean
+        description: >-
+          Indicates if the controller supports reservations.
+        required: false
+      SupportsSQAssociations:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports SQ Associations.
+        required: false
+      SupportsTrafficBasedKeepAlive:
+        type: boolean
+        description: >-
+          Indicates whether or not the controller supports restarting Keep Alive Timer
+          if traffic is processed from an admin command or IO during a Keep Alive
+          Timeout interval.
+        required: false
+  NVMeControllerProperties:
+    description: >-
+      NVMe related properties for a storage controller.
+    properties:
+      ANACharacteristics:
+        type: list
+        description: >-
+          The ANA characteristics and volume information.
+        required: false
+        entry_schema:
+          type: ANACharacteristics
+      AllocatedCompletionQueues:
+        type: integer
+        description: >-
+          The number of I/O completion queues allocated to this NVMe I/O controller.
+        required: false
+      AllocatedSubmissionQueues:
+        type: integer
+        description: >-
+          The number of I/O submission queues allocated to this NVMe I/O controller.
+        required: false
+      ControllerType:
+        type: NVMeControllerType
+        description: >-
+          The type of NVMe controller.
+        required: false
+      MaxQueueSize:
+        type: integer
+        description: >-
+          The maximum individual queue size that an NVMe IO controller supports.
+        required: false
+      NVMeControllerAttributes:
+        type: NVMeControllerAttributes
+        description: >-
+          The NVMe controller attributes.
+        required: false
+      NVMeSMARTCriticalWarnings:
+        type: NVMeSMARTCriticalWarnings
+        description: >-
+          The NVMe SMART Critical Warnings for this storage controller.  This property
+          contains possible triggers for the predictive drive failure warning for
+          the corresponding drive.
+        required: false
+      NVMeVersion:
+        type: string
+        description: >-
+          The version of the NVMe Base Specification supported.
+        required: false
+  NVMeControllerType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Admin
+        - Discovery
+        - IO
+  NVMeSMARTCriticalWarnings:
+    description: >-
+      The NVMe SMART Critical Warnings for a storage controller.
+    properties:
+      MediaInReadOnly:
+        type: boolean
+        description: >-
+          Indicates the media has been placed in read only mode.
+        required: false
+      OverallSubsystemDegraded:
+        type: boolean
+        description: >-
+          Indicates that the NVM subsystem reliability has been compromised.
+        required: false
+      PMRUnreliable:
+        type: boolean
+        description: >-
+          The Persistent Memory Region has become unreliable.
+        required: false
+      PowerBackupFailed:
+        type: boolean
+        description: >-
+          Indicates that the volatile memory backup device has failed.
+        required: false
+      SpareCapacityWornOut:
+        type: boolean
+        description: >-
+          Indicates that the available spare capacity has fallen below the threshold.
+        required: false
+  Rates:
+    description: >-
+      This type describes the various controller rates used for processes such as
+      volume rebuild or consistency checks.
+    properties:
+      ConsistencyCheckRatePercent:
+        type: integer
+        description: >-
+          The percentage of controller resources used for performing a data consistency
+          check on volumes.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      RebuildRatePercent:
+        type: integer
+        description: >-
+          The percentage of controller resources used for rebuilding/repairing volumes.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      TransformationRatePercent:
+        type: integer
+        description: >-
+          The percentage of controller resources used for transforming volumes from
+          one configuration to another.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+relationship_types:
+  StorageControllerDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AttachedVolumes@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Batteries@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      NetworkDeviceFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  StorageController:
+    description: >-
+      The StorageController schema describes a storage controller and its properties.  A
+      storage controller represents a physical or virtual storage device that produces
+      volumes.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this storage controller.
+        required: false
+      CacheSummary:
+        type: CacheSummary
+        description: >-
+          The cache memory of the storage controller in general detail.
+        required: false
+      ControllerRates:
+        type: Rates
+        description: >-
+          This property describes the various controller rates used for processes
+          such as volume rebuild or consistency checks.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version of this storage controller.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for the storage controller.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the storage controller.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this storage controller.
+        required: false
+      Measurements:
+        type: list
+        description: >-
+          An array of DSP0274-defined measurement blocks.
+        required: false
+        entry_schema:
+          type: sftwinvn:MeasurementBlock
+      Model:
+        type: string
+        description: >-
+          The model number for the storage controller.
+        required: false
+      NVMeControllerProperties:
+        type: NVMeControllerProperties
+        description: >-
+          The NVMe related properties for this storage controller.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeInterface:
+        type: pcdvc:PCIeInterface
+        description: >-
+          The PCIe interface details for this controller.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this storage controller.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this storage controller.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this storage controller.
+        required: false
+      SpeedGbps:
+        type: float
+        description: >-
+          The maximum speed of the storage controller's device interface.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SupportedRAIDTypes:
+        type: list
+        description: >-
+          The set of RAID types supported by the storage controller.
+        required: false
+        entry_schema:
+          type: string
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this storage controller.
+    - Certificates:
+        node: crtfcllc:CertificateCollection
+        capability: crtcllcp:CertificateCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of certificates for device identity and attestation.
+    - EnvironmentMetrics:
+        node: envrmtrc:EnvironmentMetrics
+        capability: envmtrcp:EnvironmentMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the environment metrics for this storage controller.
+    - Ports:
+        node: prtcllc:PortCollection
+        capability: prtcllcp:PortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of ports that exist on the storage controller.
+    - SupportedControllerProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The supported set of protocols for communicating to this storage controller.
+    - SupportedDeviceProtocols:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The protocols that the storage controller can use to communicate with attached
+          devices.
+    - AttachedVolumes:
+        # node: volume:Volume
+        capability: vlmcps:VolumeFeature
+        relationship: StorageControllerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to volumes that are attached to this controller instance.
+    - Batteries:
+        node: battery:Battery
+        capability: bttrycps:BatteryFeature
+        relationship: StorageControllerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The batteries that provide power to this storage controller during a power
+          loss event.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: StorageControllerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect to this controller.
+    - NetworkDeviceFunctions:
+        node: ntwdvcfn:NetworkDeviceFunction
+        capability: ntdvfncp:NetworkDeviceFunctionFeature
+        relationship: StorageControllerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The network device functions that provide connectivity to this controller.
+    - PCIeFunctions:
+        node: pcfnctn:PCIeFunction
+        capability: pcfnccp:PCIeFunctionFeature
+        relationship: StorageControllerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIe functions that the storage controller produces.
+    capabilities:
+      feature:
+        type: strcntcp:StorageControllerFeature
+      containable:
+        type: strcntcp:StorageControllerContainable
+  ANACharacteristics:
+    description: >-
+      The ANA characteristics and volume information for a storage controller.
+    properties:
+      AccessState:
+        type: ANAAccessState
+        description: >-
+          Reported ANA access state.
+        required: false
+    requirements:
+    - Volume:
+        node: volume:Volume
+        capability: vlmcps:VolumeContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The specified volume.
+    capabilities:
+      containable:
+        type: strcntcp:ANACharacteristicsContainable

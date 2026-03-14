@@ -1,0 +1,393 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Facility.yaml
+  namespace: facility
+- url: Manager.yaml
+  namespace: manager
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Facility_caps.yaml
+  namespace: fcltycps
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: CircuitCollection.yaml
+  namespace: crctcllc
+- url: PowerDistributionMetrics.yaml
+  namespace: pwrdstmt
+- url: OutletGroupCollection.yaml
+  namespace: otlgrpcl
+- url: OutletCollection.yaml
+  namespace: otltcllc
+- url: SensorCollection.yaml
+  namespace: snsrcllc
+- url: CircuitCollection_caps.yaml
+  namespace: crccllcp
+- url: PowerDistributionMetrics_caps.yaml
+  namespace: pwdsmtcp
+- url: OutletGroupCollection_caps.yaml
+  namespace: otgrclcp
+- url: OutletCollection_caps.yaml
+  namespace: otlcllcp
+- url: SensorCollection_caps.yaml
+  namespace: snscllcp
+- url: PowerDistribution_caps.yaml
+  namespace: pwrdstcp
+data_types:
+  PowerEquipmentType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RackPDU
+        - FloorPDU
+        - ManualTransferSwitch
+        - AutomaticTransferSwitch
+        - Switchgear
+  TransferConfiguration:
+    description: >-
+      The configuration settings for an automatic transfer switch.
+    properties:
+      ActiveMainsId:
+        type: string
+        description: >-
+          The mains circuit that is switched on and qualified to supply power to the
+          output circuit.
+        required: false
+      AutoTransferEnabled:
+        type: boolean
+        description: >-
+          Indicates if the qualified alternate mains circuit is automatically switched
+          on when the preferred mains circuit becomes unqualified and is automatically
+          switched off.
+        required: false
+      ClosedTransitionAllowed:
+        type: boolean
+        description: >-
+          Indicates if a make-before-break switching sequence of the mains circuits
+          is permitted when they are both qualified and in synchronization.
+        required: false
+      ClosedTransitionTimeoutSeconds:
+        type: integer
+        description: >-
+          The time in seconds to wait for a closed transition to occur.
+        required: false
+      PreferredMainsId:
+        type: string
+        description: >-
+          The preferred source for the mains circuit to this equipment.
+        required: false
+      RetransferDelaySeconds:
+        type: integer
+        description: >-
+          The time in seconds to delay the automatic transfer from the alternate mains
+          circuit back to the preferred mains circuit.
+        required: false
+      RetransferEnabled:
+        type: boolean
+        description: >-
+          Indicates if the automatic transfer is permitted from the alternate mains
+          circuit back to the preferred mains circuit after the preferred mains circuit
+          is qualified again and the Retransfer Delay time has expired.
+        required: false
+      TransferDelaySeconds:
+        type: integer
+        description: >-
+          The time in seconds to delay the automatic transfer from the preferred mains
+          circuit to the alternate mains circuit when the preferred mains circuit
+          is disqualified.
+        required: false
+      TransferInhibit:
+        type: boolean
+        description: >-
+          Indicates if any transfer is inhibited.
+        required: false
+  TransferCriteria:
+    description: >-
+      The criteria used to initiate a transfer for an automatic transfer switch.
+    properties:
+      OverNominalFrequencyHz:
+        type: float
+        description: >-
+          The frequency in hertz units over the nominal value that satisfies a criterion
+          for transfer.
+        required: false
+      OverVoltageRMSPercentage:
+        type: float
+        description: >-
+          The positive percentage of voltage RMS over the nominal value that satisfies
+          a criterion for transfer.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      TransferSensitivity:
+        type: TransferSensitivityType
+        description: >-
+          The sensitivity to voltage waveform quality to satisfy the criterion for
+          initiating a transfer.
+        required: false
+      UnderNominalFrequencyHz:
+        type: float
+        description: >-
+          The frequency in hertz units under the nominal value that satisfies a criterion
+          for transfer.
+        required: false
+      UnderVoltageRMSPercentage:
+        type: float
+        description: >-
+          The negative percentage of voltage RMS under the nominal value that satisfies
+          a criterion for transfer.
+        required: false
+        validation:
+          $less_or_equal:
+          - $value
+          - 0
+  TransferSensitivityType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - High
+        - Medium
+        - Low
+relationship_types:
+  PowerDistributionDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagedBy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  PowerDistributionActions:
+    operations:
+      TransferControl:
+        description: >-
+          This action transfers control to the alternative input circuit.
+node_types:
+  PowerDistribution:
+    description: >-
+      This is the schema definition for a power distribution component or unit, such
+      as a floor power distribution unit (PDU) or switchgear.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user-assigned asset tag for this equipment.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EquipmentType:
+        type: PowerEquipmentType
+        description: >-
+          The type of equipment this resource represents.
+        required: true
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version of this equipment.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the equipment.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this equipment.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The product model number of this equipment.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this equipment.
+        required: false
+      ProductionDate:
+        type: string
+        description: >-
+          The production or manufacturing date of this equipment.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this equipment.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      TransferConfiguration:
+        type: TransferConfiguration
+        description: >-
+          The configuration settings for an automatic transfer switch.
+        required: false
+      TransferCriteria:
+        type: TransferCriteria
+        description: >-
+          The criteria used to initiate a transfer for an automatic transfer switch.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this equipment.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The hardware version of this equipment.
+        required: false
+    requirements:
+    - Branches:
+        node: crctcllc:CircuitCollection
+        capability: crccllcp:CircuitCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the branch circuits for this equipment.
+    - Feeders:
+        node: crctcllc:CircuitCollection
+        capability: crccllcp:CircuitCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the feeder circuits for this equipment.
+    - Mains:
+        node: crctcllc:CircuitCollection
+        capability: crccllcp:CircuitCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the power input circuits for this equipment.
+    - Metrics:
+        node: pwrdstmt:PowerDistributionMetrics
+        capability: pwdsmtcp:PowerDistributionMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the summary metrics for this equipment.
+    - OutletGroups:
+        node: otlgrpcl:OutletGroupCollection
+        capability: otgrclcp:OutletGroupCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the outlet groups for this equipment.
+    - Outlets:
+        node: otltcllc:OutletCollection
+        capability: otlcllcp:OutletCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the outlets for this equipment.
+    - Sensors:
+        node: snsrcllc:SensorCollection
+        capability: snscllcp:SensorCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the collection of sensors located in the equipment and sub-components.
+    - Subfeeds:
+        node: crctcllc:CircuitCollection
+        capability: crccllcp:CircuitCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the subfeed circuits for this equipment.
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: PowerDistributionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis that contain this equipment.
+    - Facility:
+        node: facility:Facility
+        capability: fcltycps:FacilityFeature
+        relationship: PowerDistributionDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the facility that contains this equipment.
+    - ManagedBy:
+        node: manager:Manager
+        capability: mngrcps:ManagerFeature
+        relationship: PowerDistributionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the managers responsible for managing this equipment.
+    interfaces:
+      Actions:
+        type: PowerDistributionActions
+    capabilities:
+      feature:
+        type: pwrdstcp:PowerDistributionFeature
+      containable:
+        type: pwrdstcp:PowerDistributionContainable

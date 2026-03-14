@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SessionService.v1_2_0.yaml
+  namespace: sssnsrvc
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SessionService_caps.yaml
+  namespace: ssssrvcp
+node_types:
+  SessionService:
+    description: >-
+      The `SessionService` schema describes the session service and its properties,
+      with links to the actual list of sessions.
+    derived_from: sssnsrvc:SessionService
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: ssssrvcp:SessionServiceFeature
+      containable:
+        type: ssssrvcp:SessionServiceContainable

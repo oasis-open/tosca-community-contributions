@@ -1,0 +1,35 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Signature.v1_0_3.yaml
+  namespace: sgntr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Signature_caps.yaml
+  namespace: sgntrcps
+data_types:
+  SignatureTypeRegistry:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - UEFI
+node_types:
+  Signature:
+    description: >-
+      The `Signature` schema describes a signature or a hash.
+    derived_from: sgntr:Signature
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: sgntrcps:SignatureFeature
+      containable:
+        type: sgntrcps:SignatureContainable

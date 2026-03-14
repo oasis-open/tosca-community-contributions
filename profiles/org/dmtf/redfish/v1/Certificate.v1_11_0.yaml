@@ -1,0 +1,355 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Certificate_caps.yaml
+  namespace: crtfcps
+data_types:
+  Identifier:
+    description: >-
+      The identifier information about a certificate.
+    properties:
+      AdditionalCommonNames:
+        type: list
+        description: >-
+          Additional common names of the entity.
+        required: false
+        entry_schema:
+          type: string
+      AdditionalOrganizationalUnits:
+        type: list
+        description: >-
+          Additional organizational units of the entity.
+        required: false
+        entry_schema:
+          type: string
+      AlternativeNames:
+        type: list
+        description: >-
+          The additional host names of the entity.
+        required: false
+        entry_schema:
+          type: string
+      City:
+        type: string
+        description: >-
+          The city or locality of the organization of the entity.
+        required: false
+      CommonName:
+        type: string
+        description: >-
+          The common name of the entity.
+        required: false
+      Country:
+        type: string
+        description: >-
+          The country of the organization of the entity.
+        required: false
+      DisplayString:
+        type: string
+        description: >-
+          A human-readable string for this identifier.
+        required: false
+      DomainComponents:
+        type: list
+        description: >-
+          The domain components of the entity.
+        required: false
+        entry_schema:
+          type: string
+      Email:
+        type: string
+        description: >-
+          The email address of the contact within the organization of the entity.
+        required: false
+      Organization:
+        type: string
+        description: >-
+          The name of the organization of the entity.
+        required: false
+      OrganizationalUnit:
+        type: string
+        description: >-
+          The name of the unit or division of the organization of the entity.
+        required: false
+      State:
+        type: string
+        description: >-
+          The state, province, or region of the organization of the entity.
+        required: false
+  SPDM:
+    description: >-
+      SPDM-related information for a certificate.
+    properties:
+      SlotId:
+        type: integer
+        description: >-
+          Slot identifier of the certificate.
+        required: false
+relationship_types:
+  CertificateDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Subjects@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  CertificateActions:
+    operations:
+      ForceAutomaticRenew:
+        description: >-
+          This action forces an automatic renewal of the certificate, if this certificate
+          is configured for automatic certificate enrollment.
+      Rekey:
+        description: >-
+          This action generates a new key-pair for a certificate and produces a certificate
+          signing request.
+        inputs:
+          ChallengePassword:
+            type: string
+            description: >-
+              The challenge password to apply to the certificate for revocation requests.
+            required: false
+          KeyBitLength:
+            type: integer
+            description: >-
+              The length of the key, in bits, if needed based on the `KeyPairAlgorithm`
+              parameter value.
+            required: false
+          KeyCurveId:
+            type: string
+            description: >-
+              The curve ID to use with the key, if needed based on the `KeyPairAlgorithm`
+              parameter value.
+            required: false
+          KeyPairAlgorithm:
+            type: string
+            description: >-
+              The type of key-pair for use with signing algorithms.
+            required: false
+      Renew:
+        description: >-
+          This action generates a certificate signing request by using the existing
+          information and key-pair of the certificate.
+        inputs:
+          ChallengePassword:
+            type: string
+            description: >-
+              The challenge password to apply to the certificate for revocation requests.
+            required: false
+node_types:
+  Certificate:
+    description: >-
+      The `Certificate` schema describes a certificate that proves the identity of
+      a component, account, or service.
+    properties:
+      CertificateString:
+        type: string
+        description: >-
+          The string for the certificate.
+        required: false
+      CertificateType:
+        type: string
+        description: >-
+          The format of the certificate.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - PEM
+            - PEMchain
+            - PKCS7
+            - PKCS12
+      CertificateUsageTypes:
+        type: list
+        description: >-
+          The types or purposes for this certificate.
+        required: false
+        entry_schema:
+          type: string
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Fingerprint:
+        type: string
+        description: >-
+          The fingerprint of the certificate.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}:){0,}([0-9A-Fa-f]{2})$
+      FingerprintHashAlgorithm:
+        type: string
+        description: >-
+          The hash algorithm for the fingerprint of the certificate.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Issuer:
+        type: Identifier
+        description: >-
+          The issuer of the certificate.
+        required: false
+      KeyUsage:
+        type: list
+        description: >-
+          The key usage extension, which defines the purpose of the public keys in
+          this certificate.
+        required: false
+        entry_schema:
+          type: string
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Password:
+        type: string
+        description: >-
+          The password for the certificate.
+        required: false
+      SPDM:
+        type: SPDM
+        description: >-
+          SPDM-related information for the certificate.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number of the certificate.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([0-9A-Fa-f]{2}:){0,}([0-9A-Fa-f]{2})$
+      SignatureAlgorithm:
+        type: string
+        description: >-
+          The algorithm used for creating the signature of the certificate.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Subject:
+        type: Identifier
+        description: >-
+          The subject of the certificate.
+        required: false
+      UefiSignatureOwner:
+        type: string
+        description: >-
+          The UEFI signature owner for this certificate.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+      ValidNotAfter:
+        type: string
+        description: >-
+          The date when the certificate is no longer valid.
+        required: false
+      ValidNotBefore:
+        type: string
+        description: >-
+          The date when the certificate becomes valid.
+        required: false
+    requirements:
+    - Issuer:
+        # node: crtfct:Certificate
+        capability: core:Feature
+        relationship: CertificateDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the certificate of the CA that issued this certificate.
+    - Subjects:
+        # node: crtfct:Certificate
+        capability: core:Feature
+        relationship: CertificateDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to certificates that were issued by the CA that is represented
+          by this certificate.
+    interfaces:
+      Actions:
+        type: CertificateActions
+    capabilities:
+      feature:
+        type: crtfcps:CertificateFeature
+      containable:
+        type: crtfcps:CertificateContainable
+  RekeyResponse:
+    description: >-
+      The response body for the `Rekey` action.
+    properties:
+      CSRString:
+        type: string
+        description: >-
+          The string for the certificate signing request.
+        required: true
+    requirements:
+    - Certificate:
+        # node: crtfct:Certificate
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 1
+        - 1
+        description: >-
+          The link to the certificate being rekeyed.
+    capabilities:
+      containable:
+        type: crtfcps:RekeyResponseContainable
+  RenewResponse:
+    description: >-
+      The response body for the `Renew` action.
+    properties:
+      CSRString:
+        type: string
+        description: >-
+          The string for the certificate signing request.
+        required: true
+    requirements:
+    - Certificate:
+        # node: crtfct:Certificate
+        capability: core:Containable
+        relationship: core:Contains
+        count_range:
+        - 1
+        - 1
+        description: >-
+          The link to the certificate being renewed.
+    capabilities:
+      containable:
+        type: crtfcps:RenewResponseContainable

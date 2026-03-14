@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: JsonSchemaFile.v1_1_5.yaml
+  namespace: jsnschfl
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: JsonSchemaFile_caps.yaml
+  namespace: jsscflcp
+node_types:
+  JsonSchemaFile:
+    description: >-
+      The `JsonSchemaFile` schema contains the properties that describe the locations,
+      as URIs, of a Redfish schema definition that a Redfish service implements or
+      references.
+    derived_from: jsnschfl:JsonSchemaFile
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: jsscflcp:JsonSchemaFileFeature
+      containable:
+        type: jsscflcp:JsonSchemaFileContainable

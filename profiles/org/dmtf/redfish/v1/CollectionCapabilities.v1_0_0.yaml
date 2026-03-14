@@ -1,0 +1,87 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata.4.0.0.yaml
+  namespace: odata400
+- url: Core.yaml
+  namespace: core
+- url: CollectionCapabilities_caps.yaml
+  namespace: cllcpbcp
+data_types:
+  Links:
+    description: >-
+      Contains references to other resources that are related to this resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      TargetCollection:
+        type: resource:ResourceCollection
+        description: >-
+          Reference to the collection that this capabilities structure is describing.
+        required: true
+      RelatedItem@odata_count:
+        type: odata400:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RelatedItem@odata_navigationLink:
+        type: string
+        required: false
+      RelatedItem:
+        type: list
+        description: >-
+          The ID(s) of the resources associated with this capability.
+        required: false
+        entry_schema:
+          type: odata400:idRef
+  Capability:
+    description: >-
+      This type describes a specific capability of a collection for a given use case.
+    properties:
+      UseCase:
+        type: UseCase
+        description: >-
+          This property represents the use case in which a client may issue a POST
+          request to the collection.
+        required: true
+      Links:
+        type: Links
+        description: >-
+          Contains references to other resources that are related to this resource.
+        required: true
+      CapabilitiesObject:
+        type: odata400:idRef
+        description: >-
+          Reference to the resource the client may GET to in order to understand how
+          to form a POST request for a given collection.
+        required: true
+  UseCase:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ComputerSystemComposition
+        - VolumeCreation
+node_types:
+  CollectionCapabilities:
+    description: >-
+      This type describes the capabilities of a collection.
+    properties:
+      Capabilities:
+        type: list
+        description: >-
+          This property contains the list of capabilities supported by this resource.
+        required: false
+        entry_schema:
+          type: Capability
+    capabilities:
+      feature:
+        type: cllcpbcp:CollectionCapabilitiesFeature
+      containable:
+        type: cllcpbcp:CollectionCapabilitiesContainable

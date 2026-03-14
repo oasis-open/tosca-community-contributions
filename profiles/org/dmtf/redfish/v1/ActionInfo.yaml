@@ -1,0 +1,36 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ActionInfo.v1_5_0.yaml
+  namespace: actninf
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ActionInfo_caps.yaml
+  namespace: actinfcp
+data_types:
+  Parameters:
+    description: >-
+      The information about a parameter included in a Redfish action for this resource.
+    derived_from: actninf:Parameters
+node_types:
+  ActionInfo:
+    description: >-
+      The `ActionInfo` schema defines the supported parameters and other information
+      for a Redfish action.  Supported parameters can differ among vendors and even
+      among resource instances.  This data can ensure that action requests from applications
+      contain supported parameters.
+    derived_from: actninf:ActionInfo
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: actinfcp:ActionInfoFeature
+      containable:
+        type: actinfcp:ActionInfoContainable

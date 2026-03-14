@@ -1,0 +1,173 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Resource_caps.yaml
+  namespace: rsrccps
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+data_types:
+  RedundancyMode:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Failover
+        - N+m
+        - Sharing
+        - Sparing
+        - NotRedundant
+  RedundancyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Failover
+        - NPlusM
+        - Sharing
+        - Sparing
+        - NotRedundant
+node_types:
+  Redundancy:
+    description: >-
+      The common redundancy definition and structure used in other Redfish schemas.
+    properties:
+      ActiveRedundancySet@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      MaxNumSupported:
+        type: integer
+        description: >-
+          The maximum number of members allowable for this particular redundancy group.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          The unique identifier for the member within an array.
+        required: true
+      MinNumNeeded:
+        type: integer
+        description: >-
+          The minimum number of members needed for this group to be redundant.
+        required: true
+      Mode:
+        type: RedundancyMode
+        description: >-
+          The redundancy mode of the group.
+        required: true
+      Name:
+        type: string
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RedundancyEnabled:
+        type: boolean
+        description: >-
+          An indication of whether redundancy is enabled.
+        required: false
+      RedundancySet:
+        type: list
+        description: >-
+          The links to components of this redundancy set.
+        required: true
+        entry_schema:
+          type: odatav4:idRef
+      RedundancySet@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: true
+    requirements:
+    - ActiveRedundancySet:
+        node: resource:Resource
+        capability: rsrccps:ResourceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The links to the active members included in this redundancy set.
+    capabilities:
+      feature:
+        type: rdndcps:RedundancyFeature
+      containable:
+        type: rdndcps:RedundancyContainable
+  RedundantGroup:
+    description: >-
+      The redundancy information for the devices in a redundancy group.
+    properties:
+      ActiveRedundancyGroup@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      GroupName:
+        type: string
+        description: >-
+          The name of the redundant group.
+        required: false
+      MaxSupportedInGroup:
+        type: integer
+        description: >-
+          The maximum number of devices supported in this redundancy group.
+        required: false
+      MinNeededInGroup:
+        type: integer
+        description: >-
+          The minimum number of devices needed for this group to be redundant.
+        required: true
+      RedundancyGroup@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RedundancyType:
+        type: RedundancyType
+        description: >-
+          The redundancy mode of the group.
+        required: true
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: true
+    requirements:
+    - ActiveRedundancyGroup:
+        node: resource:Resource
+        capability: rsrccps:ResourceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The links to the active members included in this redundancy group.
+    - RedundancyGroup:
+        node: resource:Resource
+        capability: rsrccps:ResourceContainable
+        relationship: core:Contains
+        count_range:
+        - 1
+        - UNBOUNDED
+        description: >-
+          The links to the devices included in this redundancy group.
+    capabilities:
+      containable:
+        type: rdndcps:RedundantGroupContainable

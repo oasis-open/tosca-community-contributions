@@ -1,0 +1,42 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: EndpointGroup.v1_3_4.yaml
+  namespace: endpgrp
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: EndpointGroup_caps.yaml
+  namespace: endgrpcp
+data_types:
+  AccessState:
+    description: >-
+      Describes the options for the access characteristics of an endpoint.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Optimized
+        - NonOptimized
+        - Standby
+        - Unavailable
+        - Transitioning
+node_types:
+  EndpointGroup:
+    description: >-
+      The `EndpointGroup` schema describes a group of endpoints that are managed as
+      a unit.
+    derived_from: endpgrp:EndpointGroup
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: endgrpcp:EndpointGroupFeature
+      containable:
+        type: endgrpcp:EndpointGroupContainable

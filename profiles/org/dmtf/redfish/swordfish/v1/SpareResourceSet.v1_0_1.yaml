@@ -1,0 +1,112 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.v1_5_0.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: SpareResourceSet_caps.yaml
+  namespace: sprsstcp
+relationship_types:
+  SpareResourceSetDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OnHandSpares:
+        type: list
+        description: >-
+          The type of resources in the set.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      OnHandSpares@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ReplacementSpareSets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  SpareResourceSet:
+    description: >-
+      A description of a set of spare resources.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OnHandLocation:
+        type: resource:Location
+        description: >-
+          Location where this set of spares is kept.
+        required: false
+      OnLine:
+        type: boolean
+        description: >-
+          This set is available online.
+        required: false
+      ResourceType:
+        type: string
+        description: >-
+          The type of resources in the set.
+        required: false
+      TimeToProvision:
+        type: string
+        description: >-
+          Amount of time needed to make an on-hand resource available as a spare.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      TimeToReplenish:
+        type: string
+        description: >-
+          Amount of time needed to get more on-hand resources.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+    requirements:
+    - ReplacementSpareSets:
+        node: SpareResourceSet
+        capability: sprsstcp:SpareResourceSetFeature
+        relationship: SpareResourceSetDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Other spare sets that can be utilized to replenish this spare set.
+    capabilities:
+      feature:
+        type: sprsstcp:SpareResourceSetFeature
+      containable:
+        type: sprsstcp:SpareResourceSetContainable

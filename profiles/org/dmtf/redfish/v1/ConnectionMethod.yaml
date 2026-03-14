@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ConnectionMethod.v1_2_0.yaml
+  namespace: cnncmthd
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ConnectionMethod_caps.yaml
+  namespace: cnnmthcp
+node_types:
+  ConnectionMethod:
+    description: >-
+      The `ConnectionMethod` schema describes the protocol, provider, or other method
+      used to communicate to a given access point for a Redfish aggregation service.
+    derived_from: cnncmthd:ConnectionMethod
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: cnnmthcp:ConnectionMethodFeature
+      containable:
+        type: cnnmthcp:ConnectionMethodContainable

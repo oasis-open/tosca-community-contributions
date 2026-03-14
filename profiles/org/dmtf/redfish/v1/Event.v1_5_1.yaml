@@ -1,0 +1,162 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Event_caps.yaml
+  namespace: evntcps
+- url: Event.yaml
+  namespace: event
+data_types:
+  EventRecord:
+    properties:
+      Actions:
+        type: EventRecordActions
+        description: >-
+          The available actions for this resource.
+        required: false
+      Context:
+        type: string
+        description: >-
+          A context can be supplied at subscription time.  This property is the context
+          value supplied by the subscriber.
+        required: false
+      EventGroupId:
+        type: integer
+        description: >-
+          The identifier that correlates events with the same root cause.  If `0`,
+          no other event is related to this event.
+        required: false
+      EventId:
+        type: string
+        description: >-
+          The unique instance identifier of an event.
+        required: false
+      EventTimestamp:
+        type: string
+        description: >-
+          The time the event occurred.
+        required: false
+      EventType:
+        type: event:EventType
+        description: >-
+          The type of event.
+        required: true
+      MemberId:
+        type: string
+        description: >-
+          The identifier for the member within the collection.
+        required: true
+      Message:
+        type: string
+        description: >-
+          The human-readable event message.
+        required: false
+      MessageArgs:
+        type: list
+        description: >-
+          An array of message arguments that are substituted for the arguments in
+          the message when looked up in the message registry.
+        required: false
+        entry_schema:
+          type: string
+      MessageId:
+        type: string
+        description: >-
+          The key used to find the message in a message registry.
+        required: true
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z0-9]+\.\d+\.\d+\.[A-Za-z0-9.]+$
+      MessageSeverity:
+        type: resource:Health
+        description: >-
+          The severity of the message in this event.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OriginOfCondition:
+        type: odatav4:idRef
+        description: >-
+          A link to the resource or object that originated the condition that caused
+          the event to be generated.
+        required: false
+      Severity:
+        type: string
+        description: >-
+          The severity of the event.
+        required: false
+  EventRecordActions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: EventRecordOemActions
+        description: >-
+          The available OEM-specific actions for this resource.
+        required: false
+  EventRecordOemActions:
+    description: >-
+      The available OEM-specific actions for this resource.
+node_types:
+  Event:
+    description: >-
+      The Event schema describes the JSON payload received by an event destination,
+      which has subscribed to event notification, when events occur.  This resource
+      contains data about events, including descriptions, severity, and a message
+      identifier to a message registry that can be accessed for further information.
+    properties:
+      Context:
+        type: string
+        description: >-
+          A context can be supplied at subscription time.  This property is the context
+          value supplied by the subscriber.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Events:
+        type: list
+        description: >-
+          Each event in this array has a set of properties that describe the event.  Because
+          this is an array, more than one event can be sent simultaneously.
+        required: true
+        entry_schema:
+          type: EventRecord
+      Events@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: evntcps:EventFeature
+      containable:
+        type: evntcps:EventContainable

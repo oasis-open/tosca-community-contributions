@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: TrustedComponent.v1_4_0.yaml
+  namespace: trstcmpn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: TrustedComponent_caps.yaml
+  namespace: trscmpcp
+node_types:
+  TrustedComponent:
+    description: >-
+      The `TrustedComponent` resource represents a trusted device, such as a TPM.
+    derived_from: trstcmpn:TrustedComponent
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: trscmpcp:TrustedComponentFeature
+      containable:
+        type: trscmpcp:TrustedComponentContainable

@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: KeyPolicy.v1_0_1.yaml
+  namespace: kyplcy
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: KeyPolicy_caps.yaml
+  namespace: kyplccp
+node_types:
+  KeyPolicy:
+    description: >-
+      The `KeyPolicy` schema describes settings for how keys are allowed to be used
+      for accessing devices or services.
+    derived_from: kyplcy:KeyPolicy
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: kyplccp:KeyPolicyFeature
+      containable:
+        type: kyplccp:KeyPolicyContainable

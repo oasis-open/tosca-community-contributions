@@ -1,0 +1,91 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: ResourceBlockCollection.yaml
+  namespace: rsrblccl
+- url: ZoneCollection.yaml
+  namespace: zncllctn
+- url: Core.yaml
+  namespace: core
+- url: ResourceBlockCollection_caps.yaml
+  namespace: rsblclcp
+- url: ZoneCollection_caps.yaml
+  namespace: zncllcp
+- url: CompositionService_caps.yaml
+  namespace: cmpsrvcp
+node_types:
+  CompositionService:
+    description: >-
+      The CompositionService schema describes a composition service and its properties
+      and links to the resources available for composition.
+    properties:
+      AllowOverprovisioning:
+        type: boolean
+        description: >-
+          An indication of whether this service is allowed to overprovision a composition
+          relative to the composition request.
+        required: false
+      AllowZoneAffinity:
+        type: boolean
+        description: >-
+          An indication of whether a client can request that a specific resource zone
+          fulfill a composition request.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - ResourceBlocks:
+        node: rsrblccl:ResourceBlockCollection
+        capability: rsblclcp:ResourceBlockCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The resource blocks available on the service.
+    - ResourceZones:
+        node: zncllctn:ZoneCollection
+        capability: zncllcp:ZoneCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The resource zones available on the service.
+    capabilities:
+      feature:
+        type: cmpsrvcp:CompositionServiceFeature
+      containable:
+        type: cmpsrvcp:CompositionServiceContainable

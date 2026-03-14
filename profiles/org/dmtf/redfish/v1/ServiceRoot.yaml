@@ -1,0 +1,31 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ServiceRoot.v1_20_0.yaml
+  namespace: srvcrt
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ServiceRoot_caps.yaml
+  namespace: srvrtcp
+node_types:
+  ServiceRoot:
+    description: >-
+      The `ServiceRoot` schema describes the root of the Redfish service, located
+      at the '/redfish/v1' URI.  All other resources accessible through the Redfish
+      interface on this device are linked directly or indirectly from the service
+      root.
+    derived_from: srvcrt:ServiceRoot
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: srvrtcp:ServiceRootFeature
+      containable:
+        type: srvrtcp:ServiceRootContainable

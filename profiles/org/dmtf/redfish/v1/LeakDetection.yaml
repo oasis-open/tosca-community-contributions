@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: LeakDetection.v1_2_0.yaml
+  namespace: lkdtctn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: LeakDetection_caps.yaml
+  namespace: lkdtccp
+node_types:
+  LeakDetection:
+    description: >-
+      The `LeakDetection` schema contains definitions for reporting leaks in liquid
+      cooling systems or other equipment.
+    derived_from: lkdtctn:LeakDetection
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: lkdtccp:LeakDetectionFeature
+      containable:
+        type: lkdtccp:LeakDetectionContainable

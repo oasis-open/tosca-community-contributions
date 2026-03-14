@@ -1,0 +1,262 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Core.yaml
+  namespace: core
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+- url: MetricDefinition_caps.yaml
+  namespace: mtrdfncp
+data_types:
+  Calculable:
+    description: >-
+      The types of calculations which can be applied to the metric reading.  This
+      property provides information to the client on the suitability of calculatiion
+      using the metric reading.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NonCalculatable
+        - Summable
+        - NonSummable
+  CalculationAlgorithmEnum:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Average
+        - Maximum
+        - Minimum
+  CalculationParamsType:
+    description: >-
+      Specifies the usage of the parameter in the calculation.
+    properties:
+      ResultMetric:
+        type: string
+        description: >-
+          The metric property used to store the results of the calculation.
+        required: false
+      SourceMetric:
+        type: string
+        description: >-
+          The metric property used as the input into the calculation.
+        required: false
+  ImplementationType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - PhysicalSensor
+        - Calculated
+        - Synthesized
+        - DigitalMeter
+  MetricDataType:
+    description: >-
+      The data type of the related metric values.  The property provides information
+      to the client on the nature of the metric reading.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Boolean
+        - DateTime
+        - Decimal
+        - Integer
+        - String
+        - Enumeration
+  MetricType:
+    description: >-
+      Specifies the type of metric provided.  The property provides information to
+      the client on how the metric can be handled.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Numeric
+        - Discrete
+        - Gauge
+        - Counter
+        - Countdown
+  Wildcard:
+    description: >-
+      Contains a list of wildcards and their substitution values.
+    properties:
+      Name:
+        type: string
+        description: >-
+          The name of Wildcard.
+        required: false
+      Values:
+        type: list
+        description: >-
+          An array of values to substitute for the wildcard.
+        required: false
+        entry_schema:
+          type: string
+node_types:
+  MetricDefinition:
+    description: >-
+      The metadata information about a metric.
+    properties:
+      Accuracy:
+        type: float
+        description: >-
+          Estimated percent error of measured vs. actual values.
+        required: false
+      Calculable:
+        type: Calculable
+        description: >-
+          Indicates whether the  metric can be used in a calculation.
+        required: false
+      CalculationAlgorithm:
+        type: CalculationAlgorithmEnum
+        description: >-
+          The calculation which is performed on a source metric to obtain the metric
+          being defined.
+        required: false
+      CalculationParameters:
+        type: list
+        description: >-
+          Specifies the metric properties which are part of the synthesis calculation.  This
+          property is present when the MetricType property has the value 'Synthesized'.
+        required: false
+        entry_schema:
+          type: CalculationParamsType
+      CalculationTimeInterval:
+        type: string
+        description: >-
+          The time interval over which the metric calculation is performed.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - -?P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?
+      Calibration:
+        type: float
+        description: >-
+          Specifies the calibration offset added to the metric reading.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DiscreteValues:
+        type: list
+        description: >-
+          This array property specifies possible values of a discrete metric.
+        required: false
+        entry_schema:
+          type: string
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Implementation:
+        type: ImplementationType
+        description: >-
+          The implementation of the metric.
+        required: false
+      IsLinear:
+        type: boolean
+        description: >-
+          Indicates whether the metric values are linear (vs non-linear).
+        required: false
+      MaxReadingRange:
+        type: float
+        description: >-
+          Maximum value for metric reading.
+        required: false
+      MetricDataType:
+        type: MetricDataType
+        description: >-
+          The data type of the metric.
+        required: false
+      MetricProperties:
+        type: list
+        description: >-
+          A collection of URI for the properties on which this metric definition is
+          defined.
+        required: false
+        entry_schema:
+          type: string
+      MetricType:
+        type: MetricType
+        description: >-
+          The type of metric.
+        required: false
+      MinReadingRange:
+        type: float
+        description: >-
+          Minimum value for metric reading.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Precision:
+        type: integer
+        description: >-
+          Number of significant digits in the metric reading.
+        required: false
+      SensingInterval:
+        type: string
+        description: >-
+          The time interval between when a metric is updated.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - -?P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?
+      TimestampAccuracy:
+        type: string
+        description: >-
+          Accuracy of the timestamp.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - -?P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?
+      Units:
+        type: string
+        description: >-
+          The units of measure for this metric.
+        required: false
+      Wildcards:
+        type: list
+        description: >-
+          Wildcards used to replace values in AppliesTo and Calculates metric property
+          arrays.
+        required: false
+        entry_schema:
+          type: Wildcard
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Specifies the physical context of the metric.
+    capabilities:
+      feature:
+        type: mtrdfncp:MetricDefinitionFeature
+      containable:
+        type: mtrdfncp:MetricDefinitionContainable

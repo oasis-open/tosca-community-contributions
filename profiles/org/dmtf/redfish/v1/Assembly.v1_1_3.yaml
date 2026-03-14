@@ -1,0 +1,152 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Assembly_caps.yaml
+  namespace: assmcps
+data_types:
+  AssemblyData:
+    properties:
+      Actions:
+        type: AssemblyDataActions
+        description: >-
+          The available actions for this Resource.
+        required: false
+      BinaryDataURI:
+        type: string
+        description: >-
+          The URI at which to access an image of the assembly information.
+        required: false
+      Description:
+        type: string
+        description: >-
+          The description of the assembly.
+        required: false
+      EngineeringChangeLevel:
+        type: string
+        description: >-
+          The engineering change level of the assembly.
+        required: false
+      MemberId:
+        type: string
+        description: >-
+          The identifier for the member within the collection.
+        required: true
+      Model:
+        type: string
+        description: >-
+          The model number of the assembly.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the assembly.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number of the assembly.
+        required: false
+      Producer:
+        type: string
+        description: >-
+          The producer or manufacturer of the assembly.
+        required: false
+      ProductionDate:
+        type: string
+        description: >-
+          The production date of the assembly.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU of the assembly.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number of the assembly.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+      Vendor:
+        type: string
+        description: >-
+          The vendor of the assembly.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The version of the assembly.
+        required: false
+  AssemblyDataActions:
+    description: >-
+      The available actions for this Resource.
+    properties:
+      Oem:
+        type: AssemblyDataOemActions
+        description: >-
+          The available OEM-specific actions for this Resource.
+        required: false
+  AssemblyDataOemActions:
+    description: >-
+      The available OEM-specific actions for this Resource.
+node_types:
+  Assembly:
+    description: >-
+      The Assembly schema defines an assembly.  Assembly information contains details
+      about a device, such as part number, serial number, manufacturer, and production
+      date.  It also provides access to the original data for the assembly.
+    properties:
+      Assemblies:
+        type: list
+        description: >-
+          The assembly records.
+        required: false
+        entry_schema:
+          type: AssemblyData
+      Assemblies@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: assmcps:AssemblyFeature
+      containable:
+        type: assmcps:AssemblyContainable

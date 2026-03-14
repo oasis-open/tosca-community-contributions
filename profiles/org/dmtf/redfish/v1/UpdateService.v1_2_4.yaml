@@ -1,0 +1,136 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: SoftwareInventoryCollection.yaml
+  namespace: sftinvcl
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventoryCollection_caps.yaml
+  namespace: sfinclcp
+- url: UpdateService_caps.yaml
+  namespace: updsrvcp
+data_types:
+  TransferProtocolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CIFS
+        - FTP
+        - SFTP
+        - HTTP
+        - HTTPS
+        - NSF
+        - SCP
+        - TFTP
+        - OEM
+interface_types:
+  UpdateServiceActions:
+    operations:
+      SimpleUpdate:
+        description: >-
+          This action is used to update software components.
+        inputs:
+          ImageURI:
+            type: string
+            description: >-
+              The URI of the software image to be installed.
+            required: true
+          Targets:
+            type: list
+            description: >-
+              The array of URIs indicating where the update image is to be applied.
+            required: false
+          TransferProtocol:
+            type: TransferProtocolType
+            description: >-
+              The network protocol used by the Update Service to retrieve the software
+              image file located at the URI provided in ImageURI, if the URI does
+              not contain a scheme.
+            required: false
+node_types:
+  UpdateService:
+    description: >-
+      This is the schema definition for the Update Service. It represents the properties
+      for the service itself and has links to collections of firmware and software
+      inventory.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      HttpPushUri:
+        type: string
+        description: >-
+          The URI used to perform an HTTP or HTTPS push update to the Update Service.
+        required: false
+      HttpPushUriTargets:
+        type: list
+        description: >-
+          The array of URIs indicating the target for applying the update image.
+        required: false
+        entry_schema:
+          type: string
+      HttpPushUriTargetsBusy:
+        type: boolean
+        description: >-
+          This represents if the HttpPushUriTargets property is reserved by any client.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+    requirements:
+    - FirmwareInventory:
+        node: sftinvcl:SoftwareInventoryCollection
+        capability: sfinclcp:SoftwareInventoryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An inventory of firmware.
+    - SoftwareInventory:
+        node: sftinvcl:SoftwareInventoryCollection
+        capability: sfinclcp:SoftwareInventoryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An inventory of software.
+    interfaces:
+      Actions:
+        type: UpdateServiceActions
+    capabilities:
+      feature:
+        type: updsrvcp:UpdateServiceFeature
+      containable:
+        type: updsrvcp:UpdateServiceContainable

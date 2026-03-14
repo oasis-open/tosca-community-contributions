@@ -1,0 +1,188 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: VirtualMedia_caps.yaml
+  namespace: vrtmdcp
+data_types:
+  ConnectedVia:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NotConnected
+        - URI
+        - Applet
+        - Oem
+  MediaType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CD
+        - Floppy
+        - USBStick
+        - DVD
+  TransferMethod:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Stream
+        - Upload
+  TransferProtocolType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CIFS
+        - FTP
+        - SFTP
+        - HTTP
+        - HTTPS
+        - NFS
+        - SCP
+        - TFTP
+        - OEM
+interface_types:
+  VirtualMediaActions:
+    operations:
+      EjectMedia:
+        description: >-
+          This action is used to detach remote media from virtual media.
+      InsertMedia:
+        description: >-
+          This action is used to attach remote media to virtual media.
+        inputs:
+          Image:
+            type: string
+            description: >-
+              The URI of the remote media to attach to the virtual media.
+            required: true
+          Inserted:
+            type: boolean
+            description: >-
+              Indicates if the image is to be treated as inserted upon completion
+              of the action.
+            required: false
+          Password:
+            type: string
+            description: >-
+              The password to be used when accessing the URI specified by the Image
+              parameter.
+            required: false
+          TransferMethod:
+            type: TransferMethod
+            description: >-
+              Transfer method to use with the given Image.
+            required: false
+          TransferProtocolType:
+            type: TransferProtocolType
+            description: >-
+              Network protocol to use with the image.
+            required: false
+          UserName:
+            type: string
+            description: >-
+              The username to be used when accessing the URI specified by the Image
+              parameter.
+            required: false
+          WriteProtected:
+            type: boolean
+            description: >-
+              Indicates if the remote media is supposed to be treated as write protected.
+            required: false
+node_types:
+  VirtualMedia:
+    description: >-
+      The VirtualMedia schema contains properties related to monitoring and control
+      of an instance of virtual media such as a remote CD, DVD, or USB device. Virtual
+      media functionality is provided by a Manager for a system or device.
+    properties:
+      ConnectedVia:
+        type: ConnectedVia
+        description: >-
+          Current virtual media connection methods.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Image:
+        type: string
+        description: >-
+          A URI providing the location of the selected image.
+        required: false
+      ImageName:
+        type: string
+        description: >-
+          The current image name.
+        required: false
+      Inserted:
+        type: boolean
+        description: >-
+          Indicates if virtual media is inserted in the virtual device.
+        required: false
+      MediaTypes:
+        type: list
+        description: >-
+          This is the media types supported as virtual media.
+        required: false
+        entry_schema:
+          type: MediaType
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Password:
+        type: string
+        description: >-
+          The password to be used when accessing the URI specified by the Image parameter.
+          This property is null on a GET.
+        required: false
+      TransferMethod:
+        type: TransferMethod
+        description: >-
+          Transfer method to use with the given Image.
+        required: false
+      TransferProtocolType:
+        type: TransferProtocolType
+        description: >-
+          Network protocol to use with the image.
+        required: false
+      UserName:
+        type: string
+        description: >-
+          The username to be used when accessing the URI specified by the Image parameter.
+        required: false
+      WriteProtected:
+        type: boolean
+        description: >-
+          Indicates the media is write protected.
+        required: false
+    interfaces:
+      Actions:
+        type: VirtualMediaActions
+    capabilities:
+      feature:
+        type: vrtmdcp:VirtualMediaFeature
+      containable:
+        type: vrtmdcp:VirtualMediaContainable

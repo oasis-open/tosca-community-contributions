@@ -1,0 +1,515 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: SoftwareInventory.yaml
+  namespace: sftwinvn
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: ComputerSystem.yaml
+  namespace: cmptsyst
+- url: Resource.yaml
+  namespace: resource
+- url: Manager.yaml
+  namespace: manager
+- url: Core.yaml
+  namespace: core
+- url: SoftwareInventory_caps.yaml
+  namespace: sftinvcp
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: ComputerSystem_caps.yaml
+  namespace: cmpsyscp
+- url: EthernetInterfaceCollection.yaml
+  namespace: ethintcl
+- url: HostInterfaceCollection.yaml
+  namespace: hstintcl
+- url: LogServiceCollection.yaml
+  namespace: lgsrvcl
+- url: ManagerNetworkProtocol.yaml
+  namespace: mngntwpr
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: AccountService.yaml
+  namespace: accnsrvc
+- url: SerialInterfaceCollection.yaml
+  namespace: srlintcl
+- url: VirtualMediaCollection.yaml
+  namespace: vrtmdcl
+- url: EthernetInterfaceCollection_caps.yaml
+  namespace: etinclcp
+- url: HostInterfaceCollection_caps.yaml
+  namespace: hsinclcp
+- url: LogServiceCollection_caps.yaml
+  namespace: lgsrclcp
+- url: ManagerNetworkProtocol_caps.yaml
+  namespace: mnntprcp
+- url: Redundancy_caps.yaml
+  namespace: rdndcps
+- url: AccountService_caps.yaml
+  namespace: accsrvcp
+- url: SerialInterfaceCollection_caps.yaml
+  namespace: srinclcp
+- url: VirtualMediaCollection_caps.yaml
+  namespace: vrmdclcp
+- url: Manager_caps.yaml
+  namespace: mngrcps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+data_types:
+  CommandConnectTypesSupported:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SSH
+        - Telnet
+        - IPMI
+        - Oem
+  CommandShell:
+    description: >-
+      The information about a command shell service that this manager provides.
+    properties:
+      ConnectTypesSupported:
+        type: list
+        description: >-
+          This property enumerates the command shell connection types that the implementation
+          allows.
+        required: false
+        entry_schema:
+          type: CommandConnectTypesSupported
+      MaxConcurrentSessions:
+        type: integer
+        description: >-
+          The maximum number of service sessions, regardless of protocol, that this
+          manager can support.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the service is enabled for this manager.
+        required: false
+  GraphicalConnectTypesSupported:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - KVMIP
+        - Oem
+  GraphicalConsole:
+    description: >-
+      The information about a graphical console service that this manager provides.
+    properties:
+      ConnectTypesSupported:
+        type: list
+        description: >-
+          This property enumerates the graphical console connection types that the
+          implementation allows.
+        required: false
+        entry_schema:
+          type: GraphicalConnectTypesSupported
+      MaxConcurrentSessions:
+        type: integer
+        description: >-
+          The maximum number of service sessions, regardless of protocol, that this
+          manager can support.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the service is enabled for this manager.
+        required: false
+  ManagerService:
+    description: >-
+      The manager services, such as serial console, command shell, or graphical console
+      service.
+    properties:
+      MaxConcurrentSessions:
+        type: integer
+        description: >-
+          The maximum number of service sessions, regardless of protocol, that this
+          manager can support.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the service is enabled for this manager.
+        required: false
+  ManagerType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ManagementController
+        - EnclosureManager
+        - BMC
+        - RackManager
+        - AuxiliaryController
+        - Service
+  SerialConnectTypesSupported:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SSH
+        - Telnet
+        - IPMI
+        - Oem
+  SerialConsole:
+    description: >-
+      The information about a serial console service that this manager provides.
+    properties:
+      ConnectTypesSupported:
+        type: list
+        description: >-
+          This property enumerates the serial console connection types that the implementation
+          allows.
+        required: false
+        entry_schema:
+          type: SerialConnectTypesSupported
+      MaxConcurrentSessions:
+        type: integer
+        description: >-
+          The maximum number of service sessions, regardless of protocol, that this
+          manager can support.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the service is enabled for this manager.
+        required: false
+relationship_types:
+  ManagerDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      ManagerForChassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagerForServers@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ManagerForSwitches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SoftwareImages@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  ManagerActions:
+    operations:
+      ForceFailover:
+        description: >-
+          The ForceFailover action forces a failover of this manager to the manager
+          used in the parameter.
+        inputs:
+          NewManager:
+            type: manager:Manager
+            description: >-
+              The manager to which to fail over.
+            required: true
+      ModifyRedundancySet:
+        description: >-
+          The ModifyRedundancySet operation adds members to or removes members from
+          a redundant group of managers.
+        inputs:
+          Add:
+            type: list
+            description: >-
+              An array of managers to add to the redundancy set.
+            required: false
+          Remove:
+            type: list
+            description: >-
+              An array of managers to remove from the redundancy set.
+            required: false
+      Reset:
+        description: >-
+          The reset action resets/reboots the manager.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  Manager:
+    description: >-
+      In Redfish, a manager is a systems management entity that can implement or provide
+      access to a Redfish service.  Examples of managers are BMCs, enclosure managers,
+      management controllers, and other subsystems that are assigned manageability
+      functions.  An implementation can have multiple managers, which might be directly
+      accessible through a Redfish-defined interface.
+    properties:
+      AutoDSTEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the manager is configured for automatic Daylight
+          Saving Time (DST) adjustment.
+        required: false
+      CommandShell:
+        type: CommandShell
+        description: >-
+          The command shell service that this manager provides.
+        required: false
+      DateTime:
+        type: string
+        description: >-
+          The current date and time with UTC offset of the manager.
+        required: false
+      DateTimeLocalOffset:
+        type: string
+        description: >-
+          The time offset from UTC that the DateTime property is in `+HH:MM` format.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^([-+][0-1][0-9]:[0-5][0-9])$
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version of this manager.
+        required: false
+      GraphicalConsole:
+        type: GraphicalConsole
+        description: >-
+          The information about the graphical console service of this manager.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      ManagerType:
+        type: ManagerType
+        description: >-
+          The type of manager that this resource represents.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model information of this manager, as defined by the manufacturer.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerState:
+        type: resource:PowerState
+        description: >-
+          The current power state of the manager.
+        required: false
+      Redundancy@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      RemoteRedfishServiceUri:
+        type: string
+        description: >-
+          The URI of the Redfish service root for the remote manager that this resource
+          represents.
+        required: false
+      SerialConsole:
+        type: SerialConsole
+        description: >-
+          The serial console service that this manager provides.
+        required: false
+      ServiceEntryPointUUID:
+        type: resource:UUID
+        description: >-
+          The UUID of the Redfish service that is hosted by this manager.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this manager.
+        required: false
+    requirements:
+    - EthernetInterfaces:
+        node: ethintcl:EthernetInterfaceCollection
+        capability: etinclcp:EthernetInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of NICs that this manager uses for network communication.
+    - HostInterfaces:
+        node: hstintcl:HostInterfaceCollection
+        capability: hsinclcp:HostInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of host interfaces that this manager uses for local
+          host communication.  Clients can find host interface configuration options
+          and settings in this navigation property.
+    - LogServices:
+        node: lgsrvcl:LogServiceCollection
+        capability: lgsrclcp:LogServiceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of logs that the manager uses.
+    - NetworkProtocol:
+        node: mngntwpr:ManagerNetworkProtocol
+        capability: mnntprcp:ManagerNetworkProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the network services and their settings that the manager controls.
+    - Redundancy:
+        node: rdndncy:Redundancy
+        capability: rdndcps:RedundancyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The redundancy information for the managers of this system.
+    - RemoteAccountService:
+        node: accnsrvc:AccountService
+        capability: accsrvcp:AccountServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the account service resource for the remote manager that this
+          resource represents.
+    - SerialInterfaces:
+        node: srlintcl:SerialInterfaceCollection
+        capability: srinclcp:SerialInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a collection of serial interfaces that this manager uses for
+          serial and console communication.
+    - VirtualMedia:
+        node: vrtmdcl:VirtualMediaCollection
+        capability: vrmdclcp:VirtualMediaCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the Virtual Media services for this particular manager.
+    - ActiveSoftwareImage:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: ManagerDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the software inventory resource that represents the active firmware
+          image for this manager.
+    - ManagerForChassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: ManagerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis this manager controls.
+    - ManagerForServers:
+        node: cmptsyst:ComputerSystem
+        capability: cmpsyscp:ComputerSystemFeature
+        relationship: ManagerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the systems that this manager controls.
+    - ManagerForSwitches:
+        # node: switch:Switch
+        capability: core:Feature
+        relationship: ManagerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switches that this manager controls.
+    - ManagerInChassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: ManagerDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the chassis where this manager is located.
+    - SoftwareImages:
+        node: sftwinvn:SoftwareInventory
+        capability: sftinvcp:SoftwareInventoryFeature
+        relationship: ManagerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The images that are associated with this manager.
+    interfaces:
+      Actions:
+        type: ManagerActions
+    capabilities:
+      feature:
+        type: mngrcps:ManagerFeature
+      containable:
+        type: mngrcps:ManagerContainable

@@ -1,0 +1,282 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+- url: Protocol.yaml
+  namespace: protocol
+- url: PortCollection.yaml
+  namespace: prtcllc
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: PortCollection_caps.yaml
+  namespace: prtcllcp
+- url: FabricAdapter_caps.yaml
+  namespace: fbradpcp
+- url: RouteEntryCollection.yaml
+  namespace: rtentcl
+- url: VCATEntryCollection.yaml
+  namespace: vctncllc
+- url: RouteEntryCollection_caps.yaml
+  namespace: rtenclcp
+- url: VCATEntryCollection_caps.yaml
+  namespace: vctcllcp
+relationship_types:
+  FabricAdapterDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      MemoryDomains@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeDevices@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  FabricAdapter:
+    description: >-
+      A fabric adapter represents the physical fabric adapter capable of connecting
+      to an interconnect fabric.  Examples include, but are not limited to, Ethernet,
+      NVMe over Fabrics, Gen-Z, and SAS fabric adapters.
+    properties:
+      ASICManufacturer:
+        type: string
+        description: >-
+          The manufacturer name for the ASIC of this fabric adapter.
+        required: false
+      ASICPartNumber:
+        type: string
+        description: >-
+          The part number for the ASIC on this fabric adapter.
+        required: false
+      ASICRevisionIdentifier:
+        type: string
+        description: >-
+          The revision identifier for the ASIC on this fabric adapter.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version of this fabric adapter.
+        required: false
+      GenZ:
+        type: GenZ
+        description: >-
+          The Gen-Z specific properties for this fabric adapter.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the fabric adapter.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer or OEM of this fabric adapter.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model string for this fabric adapter.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeInterface:
+        type: string
+        description: >-
+          The PCIe interface details for this fabric adapter.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this fabric adapter.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The manufacturer SKU for this fabric adapter.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this fabric adapter.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number for this fabric adapter.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this fabric adapter.
+        required: false
+    requirements:
+    - FabricType:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The configured fabric type of this fabric adapter.
+    - FabricTypeCapabilities:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of fabric types supported by this fabric adapter.
+    - Ports:
+        node: prtcllc:PortCollection
+        capability: prtcllcp:PortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of ports that exist on the fabric adapter.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: FabricAdapterDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that represent the logical fabric connection
+          to this fabric adapter.
+    - MemoryDomains:
+        # node: mmrydmn:MemoryDomain
+        capability: core:Feature
+        relationship: FabricAdapterDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the memory domains associated with this fabric adapter.
+    - PCIeDevices:
+        node: pcdvc:PCIeDevice
+        capability: pcdvccps:PCIeDeviceFeature
+        relationship: FabricAdapterDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIe devices associated with this fabric adapter.
+    capabilities:
+      feature:
+        type: fbradpcp:FabricAdapterFeature
+      containable:
+        type: fbradpcp:FabricAdapterContainable
+  GenZ:
+    description: >-
+      Gen-Z related properties for a fabric adapter.
+    properties:
+      PIDT:
+        type: list
+        description: >-
+          An array of table entry values for the Packet Injection Delay Table.
+        required: false
+        entry_schema:
+          type: string
+      RITable:
+        type: list
+        description: >-
+          An array of table entry values for the Responder Interface Table.
+        required: false
+        entry_schema:
+          type: string
+    requirements:
+    - MSDT:
+        node: rtentcl:RouteEntryCollection
+        capability: rtenclcp:RouteEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The Multi Subnet Destination Table for the component.
+    - RequestorVCAT:
+        node: vctncllc:VCATEntryCollection
+        capability: vctcllcp:VCATEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The Requestor Virtual Channel Action Table for the component.
+    - ResponderVCAT:
+        node: vctncllc:VCATEntryCollection
+        capability: vctcllcp:VCATEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The Responder Virtual Channel Action Table for the component.
+    - SSDT:
+        node: rtentcl:RouteEntryCollection
+        capability: rtenclcp:RouteEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The Single Subnet Destination Table for the component.
+    capabilities:
+      containable:
+        type: fbradpcp:GenZContainable

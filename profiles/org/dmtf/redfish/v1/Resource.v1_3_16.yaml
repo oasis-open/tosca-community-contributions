@@ -1,0 +1,323 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Resource_caps.yaml
+  namespace: rsrccps
+data_types:
+  DurableNameFormat:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NAA
+        - iQN
+        - FC_WWN
+        - UUID
+        - EUI
+  Identifier:
+    description: >-
+      Any additional identifiers for a resource.
+    properties:
+      DurableName:
+        type: string
+        description: >-
+          The world-wide, persistent name of the resource.
+        required: false
+      DurableNameFormat:
+        type: DurableNameFormat
+        description: >-
+          The format of the durable name property.
+        required: false
+  Location:
+    description: >-
+      The location of a resource.
+    properties:
+      Info:
+        type: string
+        description: >-
+          The location of the resource.
+        required: false
+      InfoFormat:
+        type: string
+        description: >-
+          The format of the `Info` property.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Placement:
+        type: Placement
+        description: >-
+          A place within the addressed location.
+        required: false
+      PostalAddress:
+        type: PostalAddress
+        description: >-
+          The postal address of the addressed resource.
+        required: false
+  Placement:
+    description: >-
+      The placement within the addressed location.
+    properties:
+      Rack:
+        type: string
+        description: >-
+          The name of a rack location within a row.
+        required: false
+      RackOffset:
+        type: integer
+        description: >-
+          The vertical location of the item, in terms of RackOffsetUnits.
+        required: false
+      RackOffsetUnits:
+        type: RackUnits
+        description: >-
+          The type of rack units in use.
+        required: false
+      Row:
+        type: string
+        description: >-
+          The name of the row.
+        required: false
+  PostalAddress:
+    description: >-
+      The postal address for a resource.
+    properties:
+      AdditionalCode:
+        type: string
+        description: >-
+          The additional code.
+        required: false
+      Building:
+        type: string
+        description: >-
+          The name of the building.
+        required: false
+      City:
+        type: string
+        description: >-
+          City, township, or shi (JP).
+        required: false
+      Community:
+        type: string
+        description: >-
+          The postal community name.
+        required: false
+      Country:
+        type: string
+        description: >-
+          The country.
+        required: false
+      District:
+        type: string
+        description: >-
+          A county, parish, gun (JP), or district (IN).
+        required: false
+      Division:
+        type: string
+        description: >-
+          City division, borough, city district, ward, or chou (JP).
+        required: false
+      Floor:
+        type: string
+        description: >-
+          The floor.
+        required: false
+      GPSCoords:
+        type: string
+        description: >-
+          The GPS coordinates of the part.
+        required: false
+      HouseNumber:
+        type: integer
+        description: >-
+          The numeric portion of house number.
+        required: false
+      HouseNumberSuffix:
+        type: string
+        description: >-
+          The house number suffix.
+        required: false
+      Landmark:
+        type: string
+        description: >-
+          The landmark.
+        required: false
+      LeadingStreetDirection:
+        type: string
+        description: >-
+          A leading street direction.
+        required: false
+      Location:
+        type: string
+        description: >-
+          The room designation or other additional information.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name.
+        required: false
+      Neighborhood:
+        type: string
+        description: >-
+          Neighborhood or block.
+        required: false
+      POBox:
+        type: string
+        description: >-
+          The post office box (PO box).
+        required: false
+      PlaceType:
+        type: string
+        description: >-
+          The description of the type of place that is addressed.
+        required: false
+      PostalCode:
+        type: string
+        description: >-
+          The postal code or zip code.
+        required: false
+      Road:
+        type: string
+        description: >-
+          The primary road or street.
+        required: false
+      RoadBranch:
+        type: string
+        description: >-
+          The road branch.
+        required: false
+      RoadPostModifier:
+        type: string
+        description: >-
+          The road post-modifier.
+        required: false
+      RoadPreModifier:
+        type: string
+        description: >-
+          The road pre-modifier.
+        required: false
+      RoadSection:
+        type: string
+        description: >-
+          The road section.
+        required: false
+      RoadSubBranch:
+        type: string
+        description: >-
+          The road sub branch.
+        required: false
+      Room:
+        type: string
+        description: >-
+          The name or number of the room.
+        required: false
+      Seat:
+        type: string
+        description: >-
+          The seat, such as the desk, cubicle, or workstation.
+        required: false
+      Street:
+        type: string
+        description: >-
+          Street name.
+        required: false
+      StreetSuffix:
+        type: string
+        description: >-
+          Avenue, Platz, Street, Circle.
+        required: false
+      Territory:
+        type: string
+        description: >-
+          A top-level subdivision within a country.
+        required: false
+      TrailingStreetSuffix:
+        type: string
+        description: >-
+          A trailing street suffix.
+        required: false
+      Unit:
+        type: string
+        description: >-
+          The name or number of the apartment unit or suite.
+        required: false
+  RackUnits:
+    description: >-
+      The type of rack unit in use.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - OpenU
+        - EIA_310
+  ReferenceableMember:
+    description: >-
+      The base type for addressable members of an array.
+    properties:
+      MemberId:
+        type: string
+        description: >-
+          The unique identifier for the member within an array.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+  ResourceCollection:
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+node_types:
+  Resource:
+    description: >-
+      The base type for resources and members that can be linked to.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: rsrccps:ResourceFeature
+      containable:
+        type: rsrccps:ResourceContainable

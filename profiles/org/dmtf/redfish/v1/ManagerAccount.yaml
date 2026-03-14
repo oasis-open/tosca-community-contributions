@@ -1,0 +1,46 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ManagerAccount.v1_14_1.yaml
+  namespace: mngraccn
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ManagerAccount_caps.yaml
+  namespace: mngacccp
+data_types:
+  AccountTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Redfish
+        - SNMP
+        - OEM
+        - HostConsole
+        - ManagerConsole
+        - IPMI
+        - KVMIP
+        - VirtualMedia
+        - WebUI
+        - ControlPanel
+node_types:
+  ManagerAccount:
+    description: >-
+      The `ManagerAccount` schema defines the user accounts that are owned by a manager.  Changes
+      to a manager account might affect the current Redfish service connection if
+      this manager is responsible for the Redfish service.
+    derived_from: mngraccn:ManagerAccount
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: mngacccp:ManagerAccountFeature
+      containable:
+        type: mngacccp:ManagerAccountContainable

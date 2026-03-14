@@ -1,0 +1,112 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: ComputerSystem.yaml
+  namespace: cmptsyst
+- url: Job.yaml
+  namespace: job
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: ComputerSystem_caps.yaml
+  namespace: cmpsyscp
+- url: Job_caps.yaml
+  namespace: jobcaps
+- url: Resource.yaml
+  namespace: resource
+- url: JobExecutor_caps.yaml
+  namespace: jbexccp
+relationship_types:
+  JobExecutorDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ExecutingJobs@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  JobExecutor:
+    description: >-
+      The `JobExecutor` schema describes an entity that carries out a job.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ExecutorType:
+        type: string
+        description: >-
+          The primary type of job this executor processes.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaximumConcurrentJobs:
+        type: integer
+        description: >-
+          The maximum concurrent jobs this executor can process.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: JobExecutorDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis that contain this equipment.
+    - ComputerSystem:
+        node: cmptsyst:ComputerSystem
+        capability: cmpsyscp:ComputerSystemFeature
+        relationship: JobExecutorDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The system that is performing the work of this job executor.
+    - ExecutingJobs:
+        node: job:Job
+        capability: jobcaps:JobFeature
+        relationship: JobExecutorDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Links to jobs this executor is running.
+    capabilities:
+      feature:
+        type: jbexccp:JobExecutorFeature
+      containable:
+        type: jbexccp:JobExecutorContainable

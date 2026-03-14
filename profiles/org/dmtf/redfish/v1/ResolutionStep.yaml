@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ResolutionStep.v1_0_1.yaml
+  namespace: rsltnstp
+- url: Core.yaml
+  namespace: core
+- url: ResolutionStep_caps.yaml
+  namespace: rslstpcp
+node_types:
+  ResolutionStep:
+    description: >-
+      This type describes a recommended step of the service-defined resolution.
+    derived_from: rsltnstp:ResolutionStep
+    capabilities:
+      feature:
+        type: rslstpcp:ResolutionStepFeature
+      containable:
+        type: rslstpcp:ResolutionStepContainable

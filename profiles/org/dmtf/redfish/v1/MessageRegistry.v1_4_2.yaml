@@ -1,0 +1,191 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: MessageRegistry_caps.yaml
+  namespace: mssrgscp
+data_types:
+  ClearingLogic:
+    description: >-
+      The clearing logic associated with this message.  The properties within indicate
+      that what messages are cleared by this message as well as under what conditions.
+    properties:
+      ClearsAll:
+        type: boolean
+        description: >-
+          An indication of whether all prior conditions and messages are cleared,
+          provided the ClearsIf condition is met.
+        required: false
+      ClearsIf:
+        type: ClearingType
+        description: >-
+          The condition when the event is cleared.
+        required: false
+      ClearsMessage:
+        type: list
+        description: >-
+          The array of MessageIds that this message clears when the other conditions
+          are met.
+        required: false
+        entry_schema:
+          type: string
+  ClearingType:
+    description: >-
+      The conditions when an event is cleared.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SameOriginOfCondition
+  Message:
+    description: >-
+      This type represents how a message is defined within the message registry.
+    properties:
+      ArgDescriptions:
+        type: list
+        description: >-
+          The MessageArg descriptions, in order, used for this message.
+        required: false
+        entry_schema:
+          type: string
+      ArgLongDescriptions:
+        type: list
+        description: >-
+          The MessageArg normative descriptions, in order, used for this message.
+        required: false
+        entry_schema:
+          type: string
+      ClearingLogic:
+        type: ClearingLogic
+        description: >-
+          The clearing logic associated with this message.  The properties within
+          indicate that what messages are cleared by this message as well as under
+          what conditions.
+        required: false
+      Description:
+        type: string
+        description: >-
+          A short description of how and when to use this message.
+        required: true
+      LongDescription:
+        type: string
+        description: >-
+          The normative language that describes this message's usage.
+        required: false
+      Message:
+        type: string
+        description: >-
+          The actual message.
+        required: true
+      MessageSeverity:
+        type: resource:Health
+        description: >-
+          The severity of the message.
+        required: true
+      NumberOfArgs:
+        type: integer
+        description: >-
+          The number of arguments in the message.
+        required: true
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ParamTypes:
+        type: list
+        description: >-
+          The MessageArg types, in order, for the message.
+        required: false
+        entry_schema:
+          type: ParamType
+      Resolution:
+        type: string
+        description: >-
+          Used to provide suggestions on how to resolve the situation that caused
+          the error.
+        required: true
+      Severity:
+        type: string
+        description: >-
+          The severity of the message.
+        required: true
+  MessageProperty:
+    description: >-
+      The message keys contained in the message registry.
+  ParamType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - string
+        - number
+node_types:
+  MessageRegistry:
+    description: >-
+      The MessageRegistry schema describes all message registries.  It represents
+      the properties for the message registries themselves.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Language:
+        type: string
+        description: >-
+          The RFC5646-conformant language code for the message registry.
+        required: true
+      Messages:
+        type: MessageProperty
+        description: >-
+          The message keys contained in the message registry.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OwningEntity:
+        type: string
+        description: >-
+          The organization or company that publishes this message registry.
+        required: true
+      RegistryPrefix:
+        type: string
+        description: >-
+          The single-word prefix that is used in forming and decoding MessageIds.
+        required: true
+      RegistryVersion:
+        type: string
+        description: >-
+          The message registry version in the middle portion of a MessageId.
+        required: true
+        validation:
+          $matches:
+          - $value
+          - ^\d+\.\d+\.\d+$
+    capabilities:
+      feature:
+        type: mssrgscp:MessageRegistryFeature
+      containable:
+        type: mssrgscp:MessageRegistryContainable

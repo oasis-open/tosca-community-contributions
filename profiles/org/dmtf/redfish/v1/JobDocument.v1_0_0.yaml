@@ -1,0 +1,235 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: JobExecutor.yaml
+  namespace: jbexctr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: JobExecutor_caps.yaml
+  namespace: jbexccp
+- url: Resource.yaml
+  namespace: resource
+- url: JobDocument_caps.yaml
+  namespace: jbdcmcp
+data_types:
+  DataType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Boolean
+        - Number
+        - String
+  Parameter:
+    description: >-
+      An object containing a set of parameters for submitting a new job based on a
+      job document.
+  ParameterMetadata:
+    description: >-
+      The metadata for a parameter supported by a job document for the `SubmitJob`
+      action.
+    properties:
+      AllowableNumbers:
+        type: list
+        description: >-
+          The allowable numeric values or duration values, inclusive ranges of values,
+          and incremental step values for this parameter.
+        required: false
+        entry_schema:
+          type: string
+      AllowablePattern:
+        type: string
+        description: >-
+          The allowable pattern for this parameter.
+        required: false
+      AllowableValueDescriptions:
+        type: list
+        description: >-
+          Descriptions of allowable values for this parameter.
+        required: false
+        entry_schema:
+          type: string
+      AllowableValues:
+        type: list
+        description: >-
+          The allowable values for this parameter.
+        required: false
+        entry_schema:
+          type: string
+      DataType:
+        type: DataType
+        description: >-
+          The JSON property type for this parameter.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          A description of the parameter.
+        required: false
+      MaximumValue:
+        type: float
+        description: >-
+          The maximum supported value for this parameter.
+        required: false
+      MinimumValue:
+        type: float
+        description: >-
+          The minimum supported value for this parameter.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the parameter.
+        required: true
+      Required:
+        type: boolean
+        description: >-
+          An indication of whether the parameter is required.
+        required: false
+      ValueHint:
+        type: string
+        description: >-
+          A hint value for the parameter.
+        required: false
+relationship_types:
+  JobDocumentDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      SupportedExecutors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  JobDocumentActions:
+    operations:
+      SubmitJob:
+        description: >-
+          Creates a new job based on the contents of this job document and additional
+          parameters.
+        inputs:
+          HidePayload:
+            type: boolean
+            description: >-
+              An indication of whether the contents of the parameters should be hidden
+              from view after the job has been created.  If `true`, responses do not
+              return the parameters.  If `false`, responses return the parameters.  If
+              this parameter is not present when the job is created, the default is
+              `false`.
+            required: false
+          JobCreator:
+            type: Job
+            description: >-
+              The link to the job that is submitting this job.
+            required: false
+          Parameters:
+            type: Parameter
+            description: >-
+              The list of parameters for the new job that are specific to this job
+              document.
+            required: true
+          PreferredExecutors:
+            type: list
+            description: >-
+              An array of links to the preferred executors to run this job.
+            required: true
+          StartTime:
+            type: string
+            description: >-
+              The date and time when the job is scheduled to start.
+            required: false
+node_types:
+  JobDocument:
+    description: >-
+      The `JobDocument` schema describes the template for a job with a set of parameters.
+    properties:
+      CreationTime:
+        type: string
+        description: >-
+          The date and time when this job document resource was created.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DocumentData:
+        type: string
+        description: >-
+          The job document data as a Base64-encoded string.
+        required: false
+      DocumentDataHash:
+        type: string
+        description: >-
+          The hash of the job document data.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[0-9a-fA-F]+$
+      DocumentDataURI:
+        type: string
+        description: >-
+          The URI at which to access the job document data.
+        required: false
+      DocumentType:
+        type: string
+        description: >-
+          The type of job document data associated with this job document.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ParameterMetadata:
+        type: list
+        description: >-
+          The metadata for each of the parameters supported by this job document for
+          the `SubmitJob` action.
+        required: false
+        entry_schema:
+          type: ParameterMetadata
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The version of this job document.
+        required: false
+    requirements:
+    - SupportedExecutors:
+        node: jbexctr:JobExecutor
+        capability: jbexccp:JobExecutorFeature
+        relationship: JobDocumentDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the executors that are capable of running jobs instantiated
+          from this job document.
+    interfaces:
+      Actions:
+        type: JobDocumentActions
+    capabilities:
+      feature:
+        type: jbdcmcp:JobDocumentFeature
+      containable:
+        type: jbdcmcp:JobDocumentContainable

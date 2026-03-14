@@ -1,0 +1,169 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: IOPerformanceLineOfService.yaml
+  namespace: iplnofsr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: IOPerformanceLineOfService_caps.yaml
+  namespace: iplnofsc
+- url: IOPerformanceLoSCapabilities_caps.yaml
+  namespace: iplsccp
+- url: Schedule.yaml
+  namespace: schedule
+- url: Schedule_caps.yaml
+  namespace: schdlcps
+data_types:
+  IOAccessPattern:
+    description: >-
+      Typical IO access patterns.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ReadWrite
+        - SequentialRead
+        - SequentialWrite
+        - RandomReadNew
+        - RandomReadAgain
+  IOWorkload:
+    description: >-
+      An IO Workload description.
+    properties:
+      Components:
+        type: list
+        description: >-
+          An array of IO workload component descriptions.
+        required: false
+        entry_schema:
+          type: IOWorkloadComponent
+      Name:
+        type: string
+        description: >-
+          The workload name.
+        required: false
+node_types:
+  IOPerformanceLoSCapabilities:
+    description: >-
+      Describe IO performance capabilities.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      IOLimitingIsSupported:
+        type: boolean
+        description: >-
+          Limiting IOPS is supported.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifier:
+        type: resource:Identifier
+        description: >-
+          The value identifies this resource.
+        required: false
+      MaxSamplePeriod:
+        type: string
+        description: >-
+          Maximum sampling period over which average values are calculated.
+        required: false
+      MinSamplePeriod:
+        type: string
+        description: >-
+          Minimum sampling period over which average values are calculated.
+        required: false
+      MinSupportedIoOperationLatencyMicroseconds:
+        type: integer
+        description: >-
+          Minimum supported average IO latency.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SupportedIOWorkloads:
+        type: list
+        description: >-
+          A collection of supported workloads.
+        required: false
+        entry_schema:
+          type: IOWorkload
+      SupportedLinesOfService@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - SupportedLinesOfService:
+        node: iplnofsr:IOPerformanceLineOfService
+        capability: iplnofsc:IOPerformanceLineOfServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          Collection of known and supported IOPerformanceLinesOfService.
+    capabilities:
+      feature:
+        type: iplsccp:IOPerformanceLoSCapabilitiesFeature
+      containable:
+        type: iplsccp:IOPerformanceLoSCapabilitiesContainable
+  IOWorkloadComponent:
+    description: >-
+      Describe a component of a IO workload.
+    properties:
+      AverageIOBytes:
+        type: integer
+        description: >-
+          Average I/O Size for this component.
+        required: false
+      Duration:
+        type: string
+        description: >-
+          Duration that this component is active.
+        required: false
+      IOAccessPattern:
+        type: IOAccessPattern
+        description: >-
+          Expected access pattern for this component.
+        required: false
+      PercentOfData:
+        type: integer
+        description: >-
+          Percent of data for this workload component.
+        required: false
+      PercentOfIOPS:
+        type: integer
+        description: >-
+          Percent of total IOPS for this workload component.
+        required: false
+    requirements:
+    - Schedule:
+        node: schedule:Schedule
+        capability: schdlcps:ScheduleContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          Specifies when to apply this workload component.
+    capabilities:
+      containable:
+        type: iplsccp:IOWorkloadComponentContainable

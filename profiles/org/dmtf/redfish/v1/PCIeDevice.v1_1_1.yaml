@@ -1,0 +1,153 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Chassis.yaml
+  namespace: chassis
+- url: odata.v4_0_3.yaml
+  namespace: odata
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+- url: PCIeFunction_caps.yaml
+  namespace: pcfnccp
+data_types:
+  DeviceType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - SingleFunction
+        - MultiFunction
+        - Simulated
+  PCIeTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Gen1
+        - Gen2
+        - Gen3
+        - Gen4
+        - Gen5
+relationship_types:
+  PCIeDeviceDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Chassis@odata_count:
+        type: odata:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          Oem extension object.
+        required: false
+      PCIeFunctions@odata_count:
+        type: odata:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  PCIeDevice:
+    description: >-
+      This is the schema definition for the PCIeDevice resource.  It represents the
+      properties of a PCIeDevice attached to a System.
+    properties:
+      AssetTag:
+        type: string
+        description: >-
+          The user assigned asset tag for this PCIe device.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      DeviceType:
+        type: DeviceType
+        description: >-
+          The device type for this PCIe device.
+        required: false
+      FirmwareVersion:
+        type: string
+        description: >-
+          The version of firmware for this PCIe device.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Manufacturer:
+        type: string
+        description: >-
+          This is the manufacturer of this PCIe device.
+        required: false
+      Model:
+        type: string
+        description: >-
+          This is the model number for the PCIe device.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this PCIe device.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          This is the SKU for this PCIe device.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this PCIe device.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          This property describes the status and health of the resource and its children.
+        required: false
+    requirements:
+    - Chassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: PCIeDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the chassis in which the PCIe device is contained.
+    - PCIeFunctions:
+        # node: pcfnctn:PCIeFunction
+        capability: core:Feature
+        relationship: PCIeDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to PCIeFunctions exposed by this device.
+    capabilities:
+      feature:
+        type: pcdvccps:PCIeDeviceFeature
+      containable:
+        type: pcdvccps:PCIeDeviceContainable

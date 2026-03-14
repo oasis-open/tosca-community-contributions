@@ -1,0 +1,96 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: MessageRegistryFile_caps.yaml
+  namespace: msrgflcp
+data_types:
+  Location:
+    description: >-
+      The location information for a registry file.
+    properties:
+      ArchiveFile:
+        type: string
+        description: >-
+          If the service hosts the registry in an archive file, the name of the file
+          within the archive.
+        required: false
+      ArchiveUri:
+        type: string
+        description: >-
+          If the registry is hosted on the service in an archive file, the link to
+          the archive file.
+        required: false
+      Language:
+        type: string
+        description: >-
+          The language code for the registry file.
+        required: false
+      PublicationUri:
+        type: string
+        description: >-
+          The link to publicly available (canonical) URI for the registry.
+        required: false
+      Uri:
+        type: string
+        description: >-
+          The link to locally available URI for the registry.
+        required: false
+node_types:
+  MessageRegistryFile:
+    description: >-
+      The `MessageRegistryFile` schema describes the registry file locator resource.  This
+      referenced registry file can be any type of registry, such as a message registry,
+      privilege registry, or attribute registry.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Languages:
+        type: list
+        description: >-
+          The RFC5646-conformant language codes for the available registries.
+        required: true
+        entry_schema:
+          type: string
+      Location:
+        type: list
+        description: >-
+          The location information for this registry file.
+        required: true
+        entry_schema:
+          type: Location
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Registry:
+        type: string
+        description: >-
+          The registry name and its major and minor versions.  This registry can be
+          any type of registry, such as a message registry, privilege registry, or
+          attribute registry.
+        required: true
+    capabilities:
+      feature:
+        type: msrgflcp:MessageRegistryFileFeature
+      containable:
+        type: msrgflcp:MessageRegistryFileContainable

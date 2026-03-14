@@ -1,0 +1,83 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Redundancy.yaml
+  namespace: rdndncy
+- url: FanCollection.yaml
+  namespace: fncllctn
+- url: ThermalMetrics.yaml
+  namespace: thrmmtrc
+- url: Core.yaml
+  namespace: core
+- url: FanCollection_caps.yaml
+  namespace: fncllcp
+- url: ThermalMetrics_caps.yaml
+  namespace: thrmtrcp
+- url: ThermalSubsystem_caps.yaml
+  namespace: thrsbscp
+node_types:
+  ThermalSubsystem:
+    description: >-
+      This ThermalSubsystem schema contains the definition for the thermal subsystem
+      of a chassis.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FanRedundancy:
+        type: list
+        description: >-
+          The redundancy information for the groups of fans in this subsystem.
+        required: false
+        entry_schema:
+          type: rdndncy:RedundantGroup
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Fans:
+        node: fncllctn:FanCollection
+        capability: fncllcp:FanCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of fans within this subsystem.
+    - ThermalMetrics:
+        node: thrmmtrc:ThermalMetrics
+        capability: thrmtrcp:ThermalMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the summary of thermal metrics for this subsystem.
+    capabilities:
+      feature:
+        type: thrsbscp:ThermalSubsystemFeature
+      containable:
+        type: thrsbscp:ThermalSubsystemContainable

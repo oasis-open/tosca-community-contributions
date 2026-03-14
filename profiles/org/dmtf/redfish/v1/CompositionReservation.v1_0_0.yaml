@@ -1,0 +1,87 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Manifest.yaml
+  namespace: manifest
+- url: ResourceBlock.yaml
+  namespace: rsrcblck
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Manifest_caps.yaml
+  namespace: mnfstcps
+- url: ResourceBlock_caps.yaml
+  namespace: rsrblccp
+- url: CompositionReservation_caps.yaml
+  namespace: cmprsrcp
+node_types:
+  CompositionReservation:
+    description: >-
+      The CompositionReservation schema contains reservation information related to
+      the Compose action defined in the CompositionService resource when the of RequestType
+      parameter contains the value `PreviewReserve`.
+    properties:
+      Client:
+        type: string
+        description: >-
+          The client that owns the reservation.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ReservationTime:
+        type: string
+        description: >-
+          The date time the service created the reservation.
+        required: false
+      ReservedResourceBlocks@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+    requirements:
+    - Manifest:
+        node: manifest:Manifest
+        capability: mnfstcps:ManifestContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The manifest document processed by the service that resulted in this reservation.
+    - ReservedResourceBlocks:
+        node: rsrcblck:ResourceBlock
+        capability: rsrblccp:ResourceBlockContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The array of links to the reserved resource blocks.
+    capabilities:
+      feature:
+        type: cmprsrcp:CompositionReservationFeature
+      containable:
+        type: cmprsrcp:CompositionReservationContainable

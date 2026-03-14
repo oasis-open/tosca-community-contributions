@@ -1,0 +1,28 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: PCIeSlots.v1_6_1.yaml
+  namespace: pcslts
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PCIeSlots_caps.yaml
+  namespace: pcsltcp
+node_types:
+  PCIeSlots:
+    description: >-
+      The `PCIeSlots` schema describes PCIe slot properties.
+    derived_from: pcslts:PCIeSlots
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: pcsltcp:PCIeSlotsFeature
+      containable:
+        type: pcsltcp:PCIeSlotsContainable

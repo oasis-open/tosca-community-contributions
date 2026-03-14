@@ -1,0 +1,121 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Event.v1_0_0.yaml
+  namespace: event
+- url: EventDestinationCollection.yaml
+  namespace: evndstcl
+- url: Core.yaml
+  namespace: core
+- url: EventDestinationCollection_caps.yaml
+  namespace: evdsclcp
+- url: EventService_caps.yaml
+  namespace: evnsrvcp
+data_types:
+  SubmitTestEvent:
+    description: >-
+      This action is used to generate a test event.
+    properties:
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        required: false
+      '#EventService_SubmitTestEvent':
+        type: SubmitTestEvent
+        description: >-
+          This action is used to generate a test event.
+        required: false
+node_types:
+  EventService:
+    description: >-
+      The Event Service resource contains properties for managing event subcriptions
+      and generates the events sent to subscribers.  The resource has links to the
+      actual collection of subscriptions (called Event Destinations).
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this service is enabled.
+        required: false
+      DeliveryRetryAttempts:
+        type: float
+        description: >-
+          This is the number of attempts an event posting is retried before the subscription
+          is terminated.
+        required: false
+      DeliveryRetryIntervalSeconds:
+        type: float
+        description: >-
+          This represents the number of seconds between retry attempts for sending
+          any given Event
+        required: false
+      EventTypesForSubscription:
+        type: list
+        description: >-
+          This is the types of Events that can be subscribed to.
+        required: false
+        entry_schema:
+          type: event:EventType
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+    requirements:
+    - Subscriptions:
+        node: evndstcl:EventDestinationCollection
+        capability: evdsclcp:EventDestinationCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to a collection of Event Destination resources.
+    capabilities:
+      feature:
+        type: evnsrvcp:EventServiceFeature
+      containable:
+        type: evnsrvcp:EventServiceContainable

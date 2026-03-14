@@ -1,0 +1,185 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: MemoryMetrics_caps.yaml
+  namespace: mmrmtrcp
+data_types:
+  ClearCurrentPeriod:
+    description: >-
+      This sets the CurrentPeriod object values to zero.
+    properties:
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+  AlarmTrips:
+    description: >-
+      Alarm trip information about the memory.
+    properties:
+      Temperature:
+        type: boolean
+        description: >-
+          Temperature threshold crossing alarm trip detected status.
+        required: false
+      SpareBlock:
+        type: boolean
+        description: >-
+          Spare block capacity crossing alarm trip detected status.
+        required: false
+      UncorrectableECCError:
+        type: boolean
+        description: >-
+          Uncorrectable data error threshold crossing alarm trip detected status.
+        required: false
+      CorrectableECCError:
+        type: boolean
+        description: >-
+          Correctable data error threshold crossing alarm trip detected status.
+        required: false
+      AddressParityError:
+        type: boolean
+        description: >-
+          Address parity error detected status.
+        required: false
+  CurrentPeriod:
+    description: >-
+      This object contains the Memory metrics since last reset or ClearCurrentPeriod
+      action.
+    properties:
+      BlocksRead:
+        type: float
+        description: >-
+          Number of blocks read since reset.
+        required: false
+      BlocksWritten:
+        type: float
+        description: >-
+          Number of blocks written since reset.
+        required: false
+  HealthData:
+    description: >-
+      This type describes the health information of the memory.
+    properties:
+      RemainingSpareBlockPercentage:
+        type: float
+        description: >-
+          Remaining spare blocks in percentage.
+        required: false
+      LastShutdownSuccess:
+        type: boolean
+        description: >-
+          Status of last shutdown.
+        required: false
+      DataLossDetected:
+        type: boolean
+        description: >-
+          Data loss detection status.
+        required: false
+      PerformanceDegraded:
+        type: boolean
+        description: >-
+          Performance degraded mode status.
+        required: false
+      AlarmTrips:
+        type: AlarmTrips
+        description: >-
+          Alarm trip information about the memory.
+        required: false
+  LifeTime:
+    description: >-
+      This object contains the Memory metrics for the lifetime of the Memory.
+    properties:
+      BlocksRead:
+        type: float
+        description: >-
+          Number of blocks read for the lifetime of the Memory.
+        required: false
+      BlocksWritten:
+        type: float
+        description: >-
+          Number of blocks written for the lifetime of the Memory.
+        required: false
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        description: >-
+          The available OEM specific actions for this resource.
+        required: false
+      '#MemoryMetrics_ClearCurrentPeriod':
+        type: ClearCurrentPeriod
+        description: >-
+          This sets the CurrentPeriod object values to zero.
+        required: false
+node_types:
+  MemoryMetrics:
+    description: >-
+      MemoryMetrics contains usage and health statistics for a single Memory module
+      or device instance.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      BlockSizeBytes:
+        type: float
+        description: >-
+          Block size in bytes.
+        required: false
+      CurrentPeriod:
+        type: CurrentPeriod
+        description: >-
+          This object contains the Memory metrics since last reset or ClearCurrentPeriod
+          action.
+        required: false
+      LifeTime:
+        type: LifeTime
+        description: >-
+          This object contains the Memory metrics for the lifetime of the Memory.
+        required: false
+      HealthData:
+        type: HealthData
+        description: >-
+          This object describes the health information of the memory.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+    capabilities:
+      feature:
+        type: mmrmtrcp:MemoryMetricsFeature
+      containable:
+        type: mmrmtrcp:MemoryMetricsContainable

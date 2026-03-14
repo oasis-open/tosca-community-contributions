@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Message.v1_3_0.yaml
+  namespace: message
+- url: Core.yaml
+  namespace: core
+- url: Message_caps.yaml
+  namespace: mssgcps
+node_types:
+  Message:
+    description: >-
+      The message that the Redfish service returns.
+    derived_from: message:Message
+    capabilities:
+      feature:
+        type: mssgcps:MessageFeature
+      containable:
+        type: mssgcps:MessageContainable

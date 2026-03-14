@@ -1,0 +1,66 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Message_caps.yaml
+  namespace: mssgcps
+node_types:
+  Message:
+    description: >-
+      The message that the Redfish service returns.
+    properties:
+      Message:
+        type: string
+        description: >-
+          The human-readable message.
+        required: false
+      MessageArgs:
+        type: list
+        description: >-
+          An array of message arguments that are substituted for the arguments in
+          the message when looked up in the message registry.
+        required: false
+        entry_schema:
+          type: string
+      MessageId:
+        type: string
+        description: >-
+          The identifier for the message.
+        required: true
+      MessageSeverity:
+        type: resource:Health
+        description: >-
+          The severity of the message.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      RelatedProperties:
+        type: list
+        description: >-
+          A set of properties described by the message.
+        required: false
+        entry_schema:
+          type: string
+      Resolution:
+        type: string
+        description: >-
+          Used to provide suggestions on how to resolve the situation that caused
+          the message.
+        required: false
+      Severity:
+        type: string
+        description: >-
+          The severity of the message.
+        required: false
+    capabilities:
+      feature:
+        type: mssgcps:MessageFeature
+      containable:
+        type: mssgcps:MessageContainable

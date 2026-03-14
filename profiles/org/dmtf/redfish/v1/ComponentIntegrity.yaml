@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ComponentIntegrity.v1_3_2.yaml
+  namespace: cmpnintg
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ComponentIntegrity_caps.yaml
+  namespace: cmpintcp
+node_types:
+  ComponentIntegrity:
+    description: >-
+      The `ComponentIntegrity` resource provides critical and pertinent security information
+      about a specific device, system, software element, or other managed entity.
+    derived_from: cmpnintg:ComponentIntegrity
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: cmpintcp:ComponentIntegrityFeature
+      containable:
+        type: cmpintcp:ComponentIntegrityContainable

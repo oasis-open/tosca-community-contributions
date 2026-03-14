@@ -1,0 +1,215 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: MemoryChunks_caps.yaml
+  namespace: mmrchncp
+- url: MemoryDomain_caps.yaml
+  namespace: mmrdmncp
+- url: PCIeFunction_caps.yaml
+  namespace: pcfnccp
+- url: LogService.yaml
+  namespace: lgsrvc
+- url: LogService_caps.yaml
+  namespace: lgsrvcp
+- url: CXLLogicalDevice_caps.yaml
+  namespace: cxldvccp
+data_types:
+  CXLSemantic:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - CXLio
+        - CXLcache
+        - CXLmem
+  QoS:
+    description: >-
+      The quality of service properties for this CXL logical device.
+    properties:
+      AllocatedBandwidth:
+        type: integer
+        description: >-
+          The bandwidth allocated for this CXL logical device in multiples of 256.
+        required: false
+      LimitPercent:
+        type: integer
+        description: >-
+          The bandwidth limit to this CXL logical device as a percentage.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+  QoSTelemetryCapabilities:
+    description: >-
+      The quality of service telemetry capabilities for a CXL logical device.
+    properties:
+      EgressPortBackpressureSupported:
+        type: boolean
+        description: >-
+          Indicates whether the device supports the CXL Specification-defined 'Egress
+          Port Backpressure' mechanism.
+        required: false
+      TemporaryThroughputReductionSupported:
+        type: boolean
+        description: >-
+          Indicates whether the device supports the CXL Specification-defined 'Temporary
+          Throughput Reduction' mechanism.
+        required: false
+relationship_types:
+  CXLLogicalDeviceDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      MemoryChunks@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      MemoryDomains@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  CXLLogicalDevice:
+    description: >-
+      The schema definition for the CXLLogicalDevice resource.  It represents the
+      properties of a CXL logical device within PCIe device.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Identifiers:
+        type: list
+        description: >-
+          The durable names for the CXL logical device.
+        required: false
+        entry_schema:
+          type: resource:Identifier
+      MemorySizeMiB:
+        type: integer
+        description: >-
+          The memory region size defined in this CXL logical device.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      QoS:
+        type: QoS
+        description: >-
+          The quality of service configuration for this CXL logical device.
+        required: false
+      QoSTelemetryCapabilities:
+        type: QoSTelemetryCapabilities
+        description: >-
+          The quality of service telemetry capabilities for this CXL logical device.
+        required: false
+      SemanticsSupported:
+        type: list
+        description: >-
+          The semantics supported by this CXL logical device.
+        required: false
+        entry_schema:
+          type: CXLSemantic
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Log:
+        node: lgsrvc:LogService
+        capability: lgsrvcp:LogServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the log service associated with this CXL logical device.
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: CXLLogicalDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints associated with this CXL logical device.
+    - MemoryChunks:
+        node: MemoryChunks
+        capability: mmrchncp:MemoryChunksFeature
+        relationship: CXLLogicalDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the memory chunks owned by this CXL logical device.
+    - MemoryDomains:
+        node: MemoryDomain
+        capability: mmrdmncp:MemoryDomainFeature
+        relationship: CXLLogicalDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the memory domains associated with this CXL logical
+          device.
+    - PCIeFunctions:
+        node: PCIeFunction
+        capability: pcfnccp:PCIeFunctionFeature
+        relationship: CXLLogicalDeviceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIe functions assigned to this CXL logical device.
+    capabilities:
+      feature:
+        type: cxldvccp:CXLLogicalDeviceFeature
+      containable:
+        type: cxldvccp:CXLLogicalDeviceContainable

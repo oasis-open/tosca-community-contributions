@@ -1,0 +1,275 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Event_caps.yaml
+  namespace: evntcps
+- url: Event.yaml
+  namespace: event
+- url: LogEntry.yaml
+  namespace: logentry
+- url: ResolutionStep.yaml
+  namespace: rsltnstp
+- url: LogEntry_caps.yaml
+  namespace: lgentcp
+- url: ResolutionStep_caps.yaml
+  namespace: rslstpcp
+data_types:
+  CPER:
+    description: >-
+      Details for a CPER section or record associated with an event.
+    properties:
+      NotificationType:
+        type: string
+        description: >-
+          The CPER Notification Type for a CPER record.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SectionType:
+        type: string
+        description: >-
+          The CPER Section Type.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
+  DiagnosticDataTypes:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Manager
+        - PreOS
+        - OS
+        - OEM
+        - CPER
+        - CPERSection
+  EventRecordActions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: EventRecordOemActions
+        description: >-
+          The available OEM-specific actions for this resource.
+        required: false
+  EventRecordOemActions:
+    description: >-
+      The available OEM-specific actions for this resource.
+node_types:
+  Event:
+    description: >-
+      The Event schema describes the JSON payload received by an event destination,
+      which has subscribed to event notification, when events occur.  This resource
+      contains data about events, including descriptions, severity, and a message
+      identifier to a message registry that can be accessed for further information.
+    properties:
+      Context:
+        type: string
+        description: >-
+          A context can be supplied at subscription time.  This property is the context
+          value supplied by the subscriber.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Events:
+        type: list
+        description: >-
+          Each event in this array has a set of properties that describe the event.  Because
+          this is an array, more than one event can be sent simultaneously.
+        required: true
+        entry_schema:
+          type: EventRecord
+      Events@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+    capabilities:
+      feature:
+        type: evntcps:EventFeature
+      containable:
+        type: evntcps:EventContainable
+  EventRecord:
+    properties:
+      Actions:
+        type: EventRecordActions
+        description: >-
+          The available actions for this resource.
+        required: false
+      AdditionalDataSizeBytes:
+        type: integer
+        description: >-
+          The size of the additional data for this event.
+        required: false
+      AdditionalDataURI:
+        type: string
+        description: >-
+          The URI at which to access the additional data for the event, such as diagnostic
+          data, image captures, or other files.
+        required: false
+      CPER:
+        type: CPER
+        description: >-
+          Details for a CPER section or record associated with this event.
+        required: false
+      Context:
+        type: string
+        description: >-
+          A context can be supplied at subscription time.  This property is the context
+          value supplied by the subscriber.
+        required: false
+      DiagnosticData:
+        type: string
+        description: >-
+          A Base64-encoded set of diagnostic data associated with this event.
+        required: false
+      DiagnosticDataType:
+        type: DiagnosticDataTypes
+        description: >-
+          The type of data available in the DiagnosticData property or retrieved from
+          the URI specified by the AdditionalDataURI property.
+        required: false
+      EventGroupId:
+        type: integer
+        description: >-
+          The identifier that correlates events with the same root cause.  If `0`,
+          no other event is related to this event.
+        required: false
+      EventId:
+        type: string
+        description: >-
+          The unique instance identifier of an event.
+        required: false
+      EventTimestamp:
+        type: string
+        description: >-
+          The time the event occurred.
+        required: false
+      EventType:
+        type: event:EventType
+        description: >-
+          The type of event.
+        required: true
+      MemberId:
+        type: string
+        description: >-
+          The unique identifier for the member within an array.
+        required: true
+      Message:
+        type: string
+        description: >-
+          The human-readable event message.
+        required: false
+      MessageArgs:
+        type: list
+        description: >-
+          An array of message arguments that are substituted for the arguments in
+          the message when looked up in the message registry.
+        required: false
+        entry_schema:
+          type: string
+      MessageId:
+        type: string
+        description: >-
+          The identifier for the message.
+        required: true
+        validation:
+          $matches:
+          - $value
+          - ^[A-Za-z0-9]+\.\d+\.\d+\.[A-Za-z0-9.]+$
+      MessageSeverity:
+        type: resource:Health
+        description: >-
+          The severity of the message in this event.
+        required: false
+      OEMDiagnosticDataType:
+        type: string
+        description: >-
+          The OEM-defined type of data available in the DiagnosticData property or
+          retrieved from the URI specified by the AdditionalDataURI property.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OriginOfCondition:
+        type: odatav4:idRef
+        description: >-
+          A link to the resource or object that originated the condition that caused
+          the event to be generated.
+        required: false
+      Resolution:
+        type: string
+        description: >-
+          Used to provide suggestions on how to resolve the situation that caused
+          the event.
+        required: false
+      Severity:
+        type: string
+        description: >-
+          The severity of the event.
+        required: false
+      SpecificEventExistsInGroup:
+        type: boolean
+        description: >-
+          Indicates this event is equivalent to a more specific event in this Event
+          Group.
+        required: false
+    requirements:
+    - LogEntry:
+        node: logentry:LogEntry
+        capability: lgentcp:LogEntryContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a log entry if an entry was created for this event.
+    - ResolutionSteps:
+        node: rsltnstp:ResolutionStep
+        capability: rslstpcp:ResolutionStepContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          The list of recommended steps to resolve the cause of the event.
+    capabilities:
+      containable:
+        type: evntcps:EventRecordContainable

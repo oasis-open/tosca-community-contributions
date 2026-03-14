@@ -1,0 +1,471 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: RouteEntryCollection.yaml
+  namespace: rtentcl
+- url: VCATEntryCollection.yaml
+  namespace: vctncllc
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Port.yaml
+  namespace: port
+- url: Switch.yaml
+  namespace: switch
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Port_caps.yaml
+  namespace: portcaps
+- url: Switch_caps.yaml
+  namespace: swtchcps
+- url: PortMetrics.yaml
+  namespace: prtmtrcs
+- url: Protocol.yaml
+  namespace: protocol
+- url: PortMetrics_caps.yaml
+  namespace: prtmtrcp
+- url: Protocol_caps.yaml
+  namespace: prtclcps
+- url: RouteEntryCollection_caps.yaml
+  namespace: rtenclcp
+- url: VCATEntryCollection_caps.yaml
+  namespace: vctcllcp
+data_types:
+  ConfiguredNetworkLink:
+    description: >-
+      A set of link settings that a port is configured to use for autonegotiation.
+    properties:
+      ConfiguredLinkSpeedGbps:
+        type: float
+        description: >-
+          The link speed per lane this port is configured to use for autonegotiation.
+        required: false
+      ConfiguredWidth:
+        type: integer
+        description: >-
+          The link width this port is configured to use for autonegotiation in conjunction
+          with the link speed.
+        required: false
+  EthernetProperties:
+    description: >-
+      Ethernet-specific properties for a port.
+    properties:
+      FlowControlConfiguration:
+        type: FlowControl
+        description: >-
+          The locally configured 802.3x flow control setting for this port.
+        required: false
+      FlowControlStatus:
+        type: FlowControl
+        description: >-
+          The 802.3x flow control behavior negotiated with the link partner for this
+          port.
+        required: false
+      SupportedEthernetCapabilities:
+        type: list
+        description: >-
+          The set of Ethernet capabilities that this port supports.
+        required: false
+        entry_schema:
+          type: SupportedEthernetCapabilities
+  FibreChannelProperties:
+    description: >-
+      Fibre Channel-specific properties for a port.
+    properties:
+      FabricName:
+        type: string
+        description: >-
+          The Fibre Channel Fabric Name provided by the switch.
+        required: false
+      NumberDiscoveredRemotePorts:
+        type: integer
+        description: >-
+          The number of ports not on the associated device that the associated device
+          has discovered through this port.
+        required: false
+      PortConnectionType:
+        type: PortConnectionType
+        description: >-
+          The connection type of this port.
+        required: false
+  FlowControl:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - TX
+        - RX
+        - TX_RX
+  LinkConfiguration:
+    description: >-
+      Properties of the link for which this port is configured.
+    properties:
+      AutoSpeedNegotiationCapable:
+        type: boolean
+        description: >-
+          An indication of whether the port is capable of autonegotiating speed.
+        required: false
+      AutoSpeedNegotiationEnabled:
+        type: boolean
+        description: >-
+          Controls whether this port is configured to enable autonegotiating speed.
+        required: false
+      CapableLinkSpeedGbps:
+        type: list
+        description: >-
+          The set of link speed capabilities of this port.
+        required: false
+        entry_schema:
+          type: float
+      ConfiguredNetworkLinks:
+        type: list
+        description: >-
+          The set of link speed and width pairs this port is configured to use for
+          autonegotiation.
+        required: false
+        entry_schema:
+          type: ConfiguredNetworkLink
+  LinkNetworkTechnology:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Ethernet
+        - InfiniBand
+        - FibreChannel
+        - GenZ
+  LinkState:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Enabled
+        - Disabled
+  LinkStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - LinkUp
+        - Starting
+        - Training
+        - LinkDown
+        - NoLink
+  PortConnectionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NotConnected
+        - NPort
+        - PointToPoint
+        - PrivateLoop
+        - PublicLoop
+        - Generic
+        - ExtenderFabric
+  PortMedium:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Electrical
+        - Optical
+  PortType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - UpstreamPort
+        - DownstreamPort
+        - InterswitchPort
+        - ManagementPort
+        - BidirectionalPort
+        - UnconfiguredPort
+  SupportedEthernetCapabilities:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - WakeOnLAN
+        - EEE
+relationship_types:
+  PortDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      AssociatedEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitchPorts@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      ConnectedSwitches@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+interface_types:
+  PortActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets this port.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  Port:
+    description: >-
+      The Port schema contains properties that describe a port of a switch, controller,
+      chassis, or any other device that could be connected to another entity.
+    properties:
+      ActiveWidth:
+        type: integer
+        description: >-
+          The number of active lanes for this interface.
+        required: false
+      CurrentSpeedGbps:
+        type: float
+        description: >-
+          The current speed of this port.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Ethernet:
+        type: EthernetProperties
+        description: >-
+          Ethernet properties for this port.
+        required: false
+      FibreChannel:
+        type: FibreChannelProperties
+        description: >-
+          Fibre Channel properties for this port.
+        required: false
+      GenZ:
+        type: GenZ
+        description: >-
+          Gen-Z specific properties.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InterfaceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the interface is enabled.
+        required: false
+      LinkConfiguration:
+        type: list
+        description: >-
+          The link configuration of this port.
+        required: false
+        entry_schema:
+          type: LinkConfiguration
+      LinkNetworkTechnology:
+        type: LinkNetworkTechnology
+        description: >-
+          The link network technology capabilities of this port.
+        required: false
+      LinkState:
+        type: LinkState
+        description: >-
+          The desired link state for this interface.
+        required: false
+      LinkStatus:
+        type: LinkStatus
+        description: >-
+          The link status for this interface.
+        required: false
+      LinkTransitionIndicator:
+        type: integer
+        description: >-
+          The number of link state transitions for this interface.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the port.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      MaxFrameSize:
+        type: integer
+        description: >-
+          The maximum frame size supported by the port.
+        required: false
+      MaxSpeedGbps:
+        type: float
+        description: >-
+          The maximum speed of this port as currently configured.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PortId:
+        type: string
+        description: >-
+          The label of this port on the physical package for this port.
+        required: false
+      PortMedium:
+        type: PortMedium
+        description: >-
+          The physical connection medium for this port.
+        required: false
+      PortType:
+        type: PortType
+        description: >-
+          The type of this port.
+        required: false
+      SignalDetected:
+        type: boolean
+        description: >-
+          An indication of whether a signal is detected on this interface.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Width:
+        type: integer
+        description: >-
+          The number of lanes, phys, or other physical transport links that this port
+          contains.
+        required: false
+    requirements:
+    - Metrics:
+        node: prtmtrcs:PortMetrics
+        capability: prtmtrcp:PortMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metrics associated with this port.
+    - PortProtocol:
+        node: protocol:Protocol
+        capability: prtclcps:ProtocolContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The protocol being sent over this port.
+    - AssociatedEndpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect through this port.
+    - ConnectedPorts:
+        node: port:Port
+        capability: portcaps:PortFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the remote ports connected to this port.
+    - ConnectedSwitchPorts:
+        node: port:Port
+        capability: portcaps:PortFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the ports that connect to the switch through this port.
+    - ConnectedSwitches:
+        node: switch:Switch
+        capability: swtchcps:SwitchFeature
+        relationship: PortDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the switches that connect to the device through this
+          port.
+    interfaces:
+      Actions:
+        type: PortActions
+    capabilities:
+      feature:
+        type: portcaps:PortFeature
+      containable:
+        type: portcaps:PortContainable
+  GenZ:
+    description: >-
+      This type defines Gen-Z specific port properties.
+    requirements:
+    - LPRT:
+        node: rtentcl:RouteEntryCollection
+        capability: rtenclcp:RouteEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The Linear Packet Relay Table for the port.
+    - MPRT:
+        node: rtentcl:RouteEntryCollection
+        capability: rtenclcp:RouteEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          the Multi-subnet Packet Relay Table for the port.
+    - VCAT:
+        node: vctncllc:VCATEntryCollection
+        capability: vctcllcp:VCATEntryCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          the Virtual Channel Action Table for the port.
+    capabilities:
+      containable:
+        type: portcaps:GenZContainable

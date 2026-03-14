@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ThermalSubsystem.v1_5_0.yaml
+  namespace: thrmsbsy
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ThermalSubsystem_caps.yaml
+  namespace: thrsbscp
+node_types:
+  ThermalSubsystem:
+    description: >-
+      The `ThermalSubsystem` schema contains the definition for the thermal subsystem
+      of a chassis.
+    derived_from: thrmsbsy:ThermalSubsystem
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: thrsbscp:ThermalSubsystemFeature
+      containable:
+        type: thrsbscp:ThermalSubsystemContainable

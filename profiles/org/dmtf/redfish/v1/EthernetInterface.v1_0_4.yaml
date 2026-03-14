@@ -1,0 +1,217 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: VLanNetworkInterface.v1_0_0.yaml
+  namespace: vlnntwin
+- url: IPAddresses.v1_0_0.yaml
+  namespace: ipddrsss
+- url: VLanNetworkInterfaceCollection.yaml
+  namespace: vlntincl
+- url: Core.yaml
+  namespace: core
+- url: VLanNetworkInterfaceCollection_caps.yaml
+  namespace: vlntincc
+- url: EthernetInterface_caps.yaml
+  namespace: ethintcp
+data_types:
+  IPv6AddressPolicyEntry:
+    description: >-
+      A entry in the RFC 6724 Address Selection Policy Table.
+    properties:
+      Prefix:
+        type: string
+        description: >-
+          The IPv6 Address Prefix (as defined in RFC 6724 section 2.1).
+        required: false
+      Precedence:
+        type: float
+        description: >-
+          The IPv6 Precedence (as defined in RFC 6724 section 2.1.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 1
+          - $less_or_equal:
+            - $value
+            - 100
+      Label:
+        type: float
+        description: >-
+          The IPv6 Label (as defined in RFC 6724 section 2.1).
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+  MACAddress:
+    derived_from: string
+    validation:
+      $matches:
+      - $value
+      - ^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$
+node_types:
+  EthernetInterface:
+    description: >-
+      This schema defines a simple ethernet NIC resource.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      UefiDevicePath:
+        type: string
+        description: >-
+          The UEFI device path for this interface.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of a resource and its children.
+        required: false
+      InterfaceEnabled:
+        type: boolean
+        description: >-
+          This indicates whether this interface is enabled.
+        required: false
+      PermanentMACAddress:
+        type: MACAddress
+        description: >-
+          This is the permanent MAC address assigned to this interface (port).
+        required: false
+      MACAddress:
+        type: MACAddress
+        description: >-
+          This is the currently configured MAC address of the (logical port) interface.
+        required: false
+      SpeedMbps:
+        type: float
+        description: >-
+          This is the current speed in Mbps of this interface.
+        required: false
+      AutoNeg:
+        type: boolean
+        description: >-
+          This indicates if the speed and duplex are automatically negotiated and
+          configured on this interface.
+        required: false
+      FullDuplex:
+        type: boolean
+        description: >-
+          This indicates if the interface is in Full Duplex mode or not.
+        required: false
+      MTUSize:
+        type: float
+        description: >-
+          This is the currently configured Maximum Transmission Unit (MTU) in bytes
+          on this interface.
+        required: false
+      HostName:
+        type: string
+        description: >-
+          The DNS Host Name, without any domain information.
+        required: false
+      FQDN:
+        type: string
+        description: >-
+          This is the complete, fully qualified domain name obtained by DNS for this
+          interface.
+        required: false
+      MaxIPv6StaticAddresses:
+        type: float
+        description: >-
+          This indicates the maximum number of Static IPv6 addresses that can be configured
+          on this interface.
+        required: false
+      VLAN:
+        type: vlnntwin:VLAN
+        description: >-
+          If this Network Interface supports more than one VLAN, this property will
+          not be present and the client should look for VLANs collection in the link
+          section of this resource.
+        required: false
+      IPv4Addresses:
+        type: list
+        description: >-
+          The IPv4 addresses assigned to this interface.
+        required: false
+        entry_schema:
+          type: ipddrsss:IPv4Address
+      IPv6AddressPolicyTable:
+        type: list
+        description: >-
+          An array representing the RFC 6724 Address Selection Policy Table.
+        required: false
+        entry_schema:
+          type: IPv6AddressPolicyEntry
+      IPv6Addresses:
+        type: list
+        description: >-
+          This array of objects enumerates all of the currently assigned IPv6 addresses
+          on this interface.
+        required: false
+        entry_schema:
+          type: ipddrsss:IPv6Address
+      IPv6StaticAddresses:
+        type: list
+        description: >-
+          This array of objects represents all of the IPv6 static addresses to be
+          assigned on this interface.
+        required: false
+        entry_schema:
+          type: ipddrsss:IPv6StaticAddress
+      IPv6DefaultGateway:
+        type: string
+        description: >-
+          This is the IPv6 default gateway address that is currently in use on this
+          interface.
+        required: false
+      NameServers:
+        type: list
+        description: >-
+          This represents DNS name servers that are currently in use on this interface.
+        required: false
+        entry_schema:
+          type: string
+    requirements:
+    - VLANs:
+        node: vlntincl:VLanNetworkInterfaceCollection
+        capability: vlntincc:VLanNetworkInterfaceCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          This is a reference to a collection of VLANs and is only used if the interface
+          supports more than one VLANs.
+    capabilities:
+      feature:
+        type: ethintcp:EthernetInterfaceFeature
+      containable:
+        type: ethintcp:EthernetInterfaceContainable

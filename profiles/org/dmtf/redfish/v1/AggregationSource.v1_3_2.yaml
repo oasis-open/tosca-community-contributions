@@ -1,0 +1,309 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Key.yaml
+  namespace: key
+- url: ConnectionMethod.yaml
+  namespace: cnncmthd
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ConnectionMethod_caps.yaml
+  namespace: cnnmthcp
+- url: Resource_caps.yaml
+  namespace: rsrccps
+- url: AggregationSource_caps.yaml
+  namespace: aggsrccp
+- url: KeyCollection.yaml
+  namespace: kycllctn
+- url: Key_caps.yaml
+  namespace: keycaps
+- url: KeyCollection_caps.yaml
+  namespace: kycllcp
+data_types:
+  AggregationType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - NotificationsOnly
+        - Full
+  SNMPAuthenticationProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - CommunityString
+        - HMAC_MD5
+        - HMAC_SHA96
+        - HMAC128_SHA224
+        - HMAC192_SHA256
+        - HMAC256_SHA384
+        - HMAC384_SHA512
+  SNMPEncryptionProtocols:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - None
+        - CBC_DES
+        - CFB128_AES128
+  SNMPSettings:
+    description: >-
+      Settings for an SNMP aggregation source.
+    properties:
+      AuthenticationKey:
+        type: string
+        description: >-
+          The secret authentication key for SNMPv3.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^[ !#-~]+$)|(^Passphrase:[ ^[ !#-~]+$)|(^Hex:[0-9A-Fa-f]{24,96})|(^\*+$)
+      AuthenticationKeySet:
+        type: boolean
+        description: >-
+          Indicates if the AuthenticationKey property is set.
+        required: false
+      AuthenticationProtocol:
+        type: SNMPAuthenticationProtocols
+        description: >-
+          The authentication protocol for SNMPv3.
+        required: false
+      EncryptionKey:
+        type: string
+        description: >-
+          The secret authentication key for SNMPv3.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - (^[A-Za-z0-9]+$)|(^\*+$)
+      EncryptionKeySet:
+        type: boolean
+        description: >-
+          Indicates if the EncryptionKey property is set.
+        required: false
+      EncryptionProtocol:
+        type: SNMPEncryptionProtocols
+        description: >-
+          The encryption protocol for SNMPv3.
+        required: false
+      TrapCommunity:
+        type: string
+        description: >-
+          The SNMP trap community string.
+        required: false
+  UserAuthenticationMethod:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - PublicKey
+        - Password
+relationship_types:
+  AggregationSourceDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ResourcesAccessed@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  AggregationSourceActions:
+    operations:
+      GenerateSSHIdentityKeyPair:
+        description: >-
+          This action generates a new SSH identity key-pair to be used with this aggregation
+          source.  The generated public key is stored in the Key resource referenced
+          by the PublicIdentityKey property in SSHSettings.  Any existing key-pair
+          is deleted and replaced by the new key-pair.
+        inputs:
+          Curve:
+            type: key:ECDSACurveType
+            description: >-
+              The curve to use with the SSH key if the KeyType parameter contains
+              `ECDSA`.
+            required: false
+          KeyLength:
+            type: integer
+            description: >-
+              The length of the SSH key, in bits, if the KeyType parameter contains
+              `RSA`.
+            required: false
+          KeyType:
+            type: key:SSHKeyType
+            description: >-
+              The type of SSH key.
+            required: true
+      RemoveSSHIdentityKeyPair:
+        description: >-
+          This action removes the SSH identity key-pair used with this aggregation
+          source.
+node_types:
+  AggregationSource:
+    description: >-
+      The AggregationSource schema is used to represent the source of information
+      for a subset of the resources provided by a Redfish service.  It can be thought
+      of as a provider of information.  As such, most such interfaces have requirements
+      to support the gathering of information like address and account used to access
+      the information.
+    properties:
+      AggregationType:
+        type: AggregationType
+        description: >-
+          The type of aggregation used towards the aggregation source.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      HostName:
+        type: string
+        description: >-
+          The URI of the system to be accessed.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Password:
+        type: string
+        description: >-
+          The password for accessing the aggregation source.  The value is `null`
+          in responses.
+        required: false
+      SNMP:
+        type: SNMPSettings
+        description: >-
+          SNMP settings of the aggregation source.
+        required: false
+      SSHSettings:
+        type: SSHSettingsType
+        description: >-
+          Settings for an aggregation source using SSH as part of the associated connection
+          method.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UserName:
+        type: string
+        description: >-
+          The user name for accessing the aggregation source.
+        required: false
+    requirements:
+    - ConnectionMethod:
+        node: cnncmthd:ConnectionMethod
+        capability: cnnmthcp:ConnectionMethodFeature
+        relationship: AggregationSourceDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          An array of links to the connection methods used to contact this aggregation
+          source.
+    - ResourcesAccessed:
+        node: resource:Resource
+        capability: rsrccps:ResourceFeature
+        relationship: AggregationSourceDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array links to the resources added to the service through this aggregation
+          source.  It is recommended that this be the minimal number of properties
+          needed to find the resources that would be lost when the aggregation source
+          is deleted.
+    interfaces:
+      Actions:
+        type: AggregationSourceActions
+    capabilities:
+      feature:
+        type: aggsrccp:AggregationSourceFeature
+      containable:
+        type: aggsrccp:AggregationSourceContainable
+  SSHSettingsType:
+    description: >-
+      Settings for an aggregation source using SSH as part of the associated connection
+      method.
+    properties:
+      PresentedPublicHostKeyTimestamp:
+        type: string
+        description: >-
+          The date and time when the key referenced by the PresentedPublicHostKey
+          property was last updated.
+        required: false
+      UserAuthenticationMethod:
+        type: UserAuthenticationMethod
+        description: >-
+          The client user authentication method.
+        required: false
+    requirements:
+    - PresentedPublicHostKey:
+        node: key:Key
+        capability: keycaps:KeyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the last public host key presented by the remote service corresponding
+          to the aggregation source.  A client that trusts this public host key can
+          add the public host key to the TrustedPublicHostKeys collection to allow
+          SSH communication with the aggregation source.
+    - PublicIdentityKey:
+        node: key:Key
+        capability: keycaps:KeyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the public key that is used with the aggregation source when the
+          authentication method is configured to use a public key.  The GenerateSSHIdentityKeyPair
+          and RemoveSSHIdentityKeyPair are used to update the key for this aggregation
+          source.
+    - TrustedPublicHostKeys:
+        node: kycllctn:KeyCollection
+        capability: kycllcp:KeyCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the trusted public host keys of the remote service corresponding
+          to the aggregation source.  These trusted public host keys are used for
+          authentication of the remote service with SSH.  An SSH public host key of
+          the remote service can be added to this collection to allow for public key-based
+          SSH authentication.
+    capabilities:
+      containable:
+        type: aggsrccp:SSHSettingsTypeContainable

@@ -1,0 +1,168 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Core.yaml
+  namespace: core
+- url: ResolutionStep_caps.yaml
+  namespace: rslstpcp
+data_types:
+  Parameters:
+    description: >-
+      The information about a parameter included in a Redfish action for this resource.
+    properties:
+      AllowableValues:
+        type: list
+        description: >-
+          The allowable values for this parameter as applied to this action target.
+        required: false
+        entry_schema:
+          type: string
+      DataType:
+        type: string
+        description: >-
+          The JSON property type for this parameter.
+        required: false
+      Name:
+        type: string
+        description: >-
+          The name of the parameter for this action.
+        required: true
+      ObjectDataType:
+        type: string
+        description: >-
+          The data type of an object-based parameter.
+        required: false
+      Required:
+        type: boolean
+        description: >-
+          An indication of whether the parameter is required to complete this action.
+        required: false
+      MaximumValue:
+        type: float
+        description: >-
+          The maximum supported value for this parameter.
+        required: false
+      MinimumValue:
+        type: float
+        description: >-
+          The minimum supported value for this parameter.
+        required: false
+      ArraySizeMaximum:
+        type: integer
+        description: >-
+          The maximum number of array elements allowed for this parameter.
+        required: false
+      ArraySizeMinimum:
+        type: integer
+        description: >-
+          The minimum number of array elements required for this parameter.
+        required: false
+      AllowableNumbers:
+        type: list
+        description: >-
+          The allowable numeric values or duration values, inclusive ranges of values,
+          and incremental step values for this parameter as applied to this action
+          target.
+        required: false
+        entry_schema:
+          type: string
+      AllowablePattern:
+        type: string
+        description: >-
+          The allowable pattern for this parameter as applied to this action target.
+        required: false
+      AllowableValueDescriptions:
+        type: list
+        description: >-
+          Descriptions of allowable values for this parameter.
+        required: false
+        entry_schema:
+          type: string
+      DefaultValue:
+        type: string
+        description: >-
+          The default value for this parameter.
+        required: false
+      NoDefaultValue:
+        type: boolean
+        description: >-
+          Indicates that there is no default value for this parameter.
+        required: false
+  ResolutionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - ContactVendor
+        - ReplaceComponent
+        - FirmwareUpdate
+        - Reset
+        - PowerCycle
+        - ResetToDefaults
+        - CollectDiagnosticData
+        - OEM
+node_types:
+  ResolutionStep:
+    description: >-
+      This type describes a recommended step of the service-defined resolution.
+    properties:
+      ActionParameters:
+        type: list
+        description: >-
+          The parameters of the action URI for a resolution step.
+        required: false
+        entry_schema:
+          type: Parameters
+      ActionURI:
+        type: string
+        description: >-
+          The action URI for a resolution step.
+        required: false
+      Oem:
+        type: map
+        description: >-
+          The OEM extension property.
+        required: false
+      Priority:
+        type: integer
+        description: >-
+          The priority in the set of resolution steps.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ResolutionType:
+        type: ResolutionType
+        description: >-
+          The type of the resolution step.
+        required: true
+      RetryCount:
+        type: integer
+        description: >-
+          The number of retries for a resolution step.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      RetryIntervalSeconds:
+        type: integer
+        description: >-
+          The interval between retries for a resolution step.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      TargetComponentURI:
+        type: string
+        description: >-
+          The target URI of the component for a resolution step.
+        required: false
+    capabilities:
+      feature:
+        type: rslstpcp:ResolutionStepFeature
+      containable:
+        type: rslstpcp:ResolutionStepContainable

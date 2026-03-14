@@ -1,0 +1,209 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: ManagerNetworkProtocol_caps.yaml
+  namespace: mnntprcp
+data_types:
+  HTTPSProtocol:
+    description: >-
+      The settings for a network protocol associated with a manager.
+    properties:
+      Port:
+        type: integer
+        description: >-
+          The protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the protocol is enabled.
+        required: false
+  NotifyIPv6Scope:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Link
+        - Site
+        - Organization
+  Protocol:
+    description: >-
+      The settings for a network protocol associated with a manager.
+    properties:
+      Port:
+        type: integer
+        description: >-
+          The protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the protocol is enabled.
+        required: false
+  SNMPProtocol:
+    description: >-
+      The settings for a network protocol associated with a manager.
+    properties:
+      Port:
+        type: integer
+        description: >-
+          The protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the protocol is enabled.
+        required: false
+  SSDProtocol:
+    description: >-
+      The settings for a network protocol associated with a manager.
+    properties:
+      NotifyIPv6Scope:
+        type: NotifyIPv6Scope
+        description: >-
+          The IPv6 scope for multicast NOTIFY messages for SSDP.
+        required: false
+      NotifyMulticastIntervalSeconds:
+        type: integer
+        description: >-
+          The time interval, in seconds, between transmissions of the multicast NOTIFY
+          ALIVE message from this service for SSDP.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      NotifyTTL:
+        type: integer
+        description: >-
+          The time-to-live hop count for SSDP multicast NOTIFY messages.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 1
+      Port:
+        type: integer
+        description: >-
+          The protocol port.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      ProtocolEnabled:
+        type: boolean
+        description: >-
+          An indication of whether the protocol is enabled.
+        required: false
+node_types:
+  ManagerNetworkProtocol:
+    description: >-
+      The network service settings for the manager.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FQDN:
+        type: string
+        description: >-
+          The fully qualified domain name for the manager obtained by DNS including
+          the host name and top-level domain name.
+        required: false
+      HTTP:
+        type: Protocol
+        description: >-
+          The settings for this manager's HTTP protocol support.
+        required: false
+      HTTPS:
+        type: HTTPSProtocol
+        description: >-
+          The settings for this manager's HTTPS protocol support.
+        required: false
+      HostName:
+        type: string
+        description: >-
+          The DNS host name of this manager, without any domain information.
+        required: false
+      IPMI:
+        type: Protocol
+        description: >-
+          The settings for this manager's IPMI-over-LAN protocol support.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      KVMIP:
+        type: Protocol
+        description: >-
+          The settings for this manager's KVM-IP protocol support that apply to all
+          system instances controlled by this manager.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      SNMP:
+        type: SNMPProtocol
+        description: >-
+          The settings for this manager's SNMP support.
+        required: false
+      SSDP:
+        type: SSDProtocol
+        description: >-
+          The settings for this manager's SSDP support.
+        required: false
+      SSH:
+        type: Protocol
+        description: >-
+          The settings for this manager's Secure Shell (SSH) protocol support.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the Resource and its subordinate or dependent Resources.
+        required: false
+      Telnet:
+        type: Protocol
+        description: >-
+          The settings for this manager's Telnet protocol support.
+        required: false
+      VirtualMedia:
+        type: Protocol
+        description: >-
+          The settings for this manager's virtual media support that apply to all
+          system instances controlled by this manager.
+        required: false
+    capabilities:
+      feature:
+        type: mnntprcp:ManagerNetworkProtocolFeature
+      containable:
+        type: mnntprcp:ManagerNetworkProtocolContainable

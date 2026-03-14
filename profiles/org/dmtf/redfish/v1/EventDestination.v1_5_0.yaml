@@ -1,0 +1,156 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: EventDestination.yaml
+  namespace: evntdstn
+- url: Event.yaml
+  namespace: event
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: EventDestination_caps.yaml
+  namespace: evndstcp
+data_types:
+  EventDestinationProtocol:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Redfish
+  HttpHeaderProperty:
+    description: >-
+      The value of the HTTP header is the property value.  The header name is the
+      property name.
+  SubscriptionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - RedfishEvent
+        - SSE
+node_types:
+  EventDestination:
+    description: >-
+      An Event Destination desribes the target of an event subscription, including
+      the types of events subscribed and context to provide to the target in the Event
+      payload.
+    properties:
+      Context:
+        type: string
+        description: >-
+          A client-supplied string that is stored with the event destination subscription.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Destination:
+        type: string
+        description: >-
+          The URI of the destination Event Service.
+        required: false
+      EventFormatType:
+        type: evntdstn:EventFormatType
+        description: >-
+          Indicates the content types of the message that will be sent to the EventDestination.
+        required: false
+      EventTypes:
+        type: list
+        description: >-
+          This property contains the types of events that will be sent to the destination.
+        required: false
+        entry_schema:
+          type: event:EventType
+      HttpHeaders:
+        type: list
+        description: >-
+          This is for setting HTTP headers, such as authorization information.  This
+          object will be null or an empty array on a GET.  An empty array is the preferred
+          return value on GET.
+        required: false
+        entry_schema:
+          type: HttpHeaderProperty
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MessageIds:
+        type: list
+        description: >-
+          A list of MessageIds that the service will only send.  If this property
+          is absent or the array is empty, then Events with any MessageId will be
+          sent to the subscriber.
+        required: false
+        entry_schema:
+          type: string
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      OriginResources:
+        type: list
+        description: >-
+          A list of resources for which the service will only send related events.  If
+          this property is absent or the array is empty, then Events originating from
+          any resource will be sent to the subscriber.
+        required: false
+        entry_schema:
+          type: odatav4:idRef
+      OriginResources@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Protocol:
+        type: EventDestinationProtocol
+        description: >-
+          The protocol type of the event connection.
+        required: false
+      RegistryPrefixes:
+        type: list
+        description: >-
+          A list of the Prefixes for the Message Registries that contain the MessageIds
+          that will be sent to this event destination.
+        required: false
+        entry_schema:
+          type: string
+      ResourceTypes:
+        type: list
+        description: >-
+          A list of Resource Type values (Schema names) that correspond to the OriginOfCondition.  The
+          version and full namespace should not be specified.
+        required: false
+        entry_schema:
+          type: string
+      SubordinateResources:
+        type: boolean
+        description: >-
+          By setting this to true and specifying OriginResources, this indicates the
+          subscription will be for events from the OriginsResources specified and
+          also all subordinate resources.  Note that resources associated via the
+          Links section are not considered subordinate.
+        required: false
+      SubscriptionType:
+        type: SubscriptionType
+        description: >-
+          Indicates the subscription type for events.
+        required: true
+    capabilities:
+      feature:
+        type: evndstcp:EventDestinationFeature
+      containable:
+        type: evndstcp:EventDestinationContainable

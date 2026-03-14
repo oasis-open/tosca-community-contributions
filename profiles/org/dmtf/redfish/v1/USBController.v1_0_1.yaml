@@ -1,0 +1,132 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeDevice.yaml
+  namespace: pcdvc
+- url: Processor.yaml
+  namespace: prcssr
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: PCIeDevice_caps.yaml
+  namespace: pcdvccps
+- url: Processor_caps.yaml
+  namespace: prcscps
+- url: PortCollection.yaml
+  namespace: prtcllc
+- url: PortCollection_caps.yaml
+  namespace: prtcllcp
+- url: USBController_caps.yaml
+  namespace: usbccps
+relationship_types:
+  USBControllerDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Processors@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  USBController:
+    description: >-
+      The `USBController` schema defines a Universal Serial Bus controller.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this USB controller.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The product model number of this USB controller.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this USB controller.
+        required: false
+      SKU:
+        type: string
+        description: >-
+          The SKU for this USB controller.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this USB controller.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number of the USB controller.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+    requirements:
+    - Ports:
+        node: prtcllc:PortCollection
+        capability: prtcllcp:PortCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The ports of the USB controller.
+    - PCIeDevice:
+        node: pcdvc:PCIeDevice
+        capability: pcdvccps:PCIeDeviceFeature
+        relationship: USBControllerDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the PCIe device that represents this USB controller.
+    - Processors:
+        node: prcssr:Processor
+        capability: prcscps:ProcessorFeature
+        relationship: USBControllerDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the processors that can utilize this USB controller.
+    capabilities:
+      feature:
+        type: usbccps:USBControllerFeature
+      containable:
+        type: usbccps:USBControllerContainable

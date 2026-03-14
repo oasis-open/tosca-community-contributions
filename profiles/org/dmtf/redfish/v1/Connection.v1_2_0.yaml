@@ -1,0 +1,347 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: EndpointGroup_caps.yaml
+  namespace: endgrpcp
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: Connection_caps.yaml
+  namespace: cnnccps
+- url: MemoryChunks.yaml
+  namespace: mmrychnk
+- url: Volume.yaml
+  namespace: volume
+- url: MemoryChunks_caps.yaml
+  namespace: mmrchncp
+- url: Volume_caps.yaml
+  namespace: vlmcps
+data_types:
+  AccessCapability:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Read
+        - Write
+  AccessState:
+    description: >-
+      Describes the options for the access characteristics of a resource.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Optimized
+        - NonOptimized
+        - Standby
+        - Unavailable
+        - Transitioning
+  CHAPConnectionKey:
+    description: >-
+      The CHAP-specific permission key information for a connection.
+    properties:
+      CHAPPassword:
+        type: string
+        description: >-
+          The password for CHAP authentication.  The value is `null` in responses.
+        required: false
+      CHAPUsername:
+        type: string
+        description: >-
+          The username for CHAP authentication.
+        required: false
+      InitiatorCHAPPassword:
+        type: string
+        description: >-
+          The initiator shared secret for mutual (2-way) CHAP authentication.  The
+          value is `null` in responses.
+        required: false
+      InitiatorCHAPUsername:
+        type: string
+        description: >-
+          The initiator username for mutual (2-way) CHAP authentication.
+        required: false
+      TargetCHAPPassword:
+        type: string
+        description: >-
+          The target shared secret for mutual (2-way) CHAP authentication.  The value
+          is `null` in responses.
+        required: false
+  ConnectionKey:
+    description: >-
+      The permission key information required to access the target resources for a
+      connection.
+    properties:
+      CHAP:
+        type: CHAPConnectionKey
+        description: >-
+          The CHAP-specific permission key information for this connection.
+        required: false
+      DHCHAP:
+        type: DHCHAPKey
+        description: >-
+          The DHCHAP-specific permission key information for this connection.
+        required: false
+      GenZ:
+        type: GenZConnectionKey
+        description: >-
+          The Gen-Z-specific permission key information for this connection.
+        required: false
+  ConnectionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Storage
+        - Memory
+  DHCHAPKey:
+    description: >-
+      The DHCHAP-specific permission key information for this connection.
+    properties:
+      LocalDHCHAPAuthSecret:
+        type: string
+        description: >-
+          The local DHCHAP authentication secret.  The value is `null` in responses.
+        required: false
+      PeerDHCHAPAuthSecret:
+        type: string
+        description: >-
+          The peer DHCHAP authentication secret.  The value is `null` in responses.
+        required: false
+  GenZConnectionKey:
+    description: >-
+      The Gen-Z-specific permission key information for a connection.
+    properties:
+      AccessKey:
+        type: string
+        description: >-
+          The Access Key for this connection.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX]([a-fA-F]|[0-9]){2}$
+      RKeyDomainCheckingEnabled:
+        type: boolean
+        description: >-
+          Indicates whether Region Key domain checking is enabled for this connection.
+        required: false
+      RKeyReadOnlyKey:
+        type: string
+        description: >-
+          The read-only Region Key for this connection.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){4}$
+      RKeyReadWriteKey:
+        type: string
+        description: >-
+          The read-write Region Key for this connection.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^0[xX](([a-fA-F]|[0-9]){2}){4}$
+relationship_types:
+  ConnectionDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      InitiatorEndpointGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      InitiatorEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      TargetEndpointGroups@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      TargetEndpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  Connection:
+    description: >-
+      The Connection schema describes the access permissions endpoints, or groups
+      of endpoints, have with other resources in the service.
+    properties:
+      ConnectionKeys:
+        type: ConnectionKey
+        description: >-
+          The permission keys required to access the specified resources for this
+          connection.
+        required: false
+      ConnectionType:
+        type: ConnectionType
+        description: >-
+          The type of resources this connection specifies.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MemoryChunkInfo:
+        type: list
+        description: >-
+          The set of memory chunks and access capabilities specified for this connection.
+        required: false
+        entry_schema:
+          type: MemoryChunkInfo
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      VolumeInfo:
+        type: list
+        description: >-
+          The set of volumes and access capabilities specified for this connection.
+        required: false
+        entry_schema:
+          type: VolumeInfo
+    requirements:
+    - InitiatorEndpointGroups:
+        node: EndpointGroup
+        capability: endgrpcp:EndpointGroupFeature
+        relationship: ConnectionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the initiator endpoint groups that are associated with
+          this connection.
+    - InitiatorEndpoints:
+        node: Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: ConnectionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the initiator endpoints that are associated with this
+          connection.
+    - TargetEndpointGroups:
+        # node: endpgrp:EndpointGroup
+        capability: core:Feature
+        relationship: ConnectionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the target endpoint groups that are associated with
+          this connection.
+    - TargetEndpoints:
+        # node: endpoint:Endpoint
+        capability: core:Feature
+        relationship: ConnectionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the target endpoints that are associated with this
+          connection.
+    capabilities:
+      feature:
+        type: cnnccps:ConnectionFeature
+      containable:
+        type: cnnccps:ConnectionContainable
+  MemoryChunkInfo:
+    description: >-
+      The combination of permissions and memory chunk information.
+    properties:
+      AccessCapabilities:
+        type: list
+        description: >-
+          Supported IO access capabilities.
+        required: false
+        entry_schema:
+          type: AccessCapability
+      AccessState:
+        type: AccessState
+        description: >-
+          The access state for this connection.
+        required: false
+    requirements:
+    - MemoryChunk:
+        node: mmrychnk:MemoryChunks
+        capability: mmrchncp:MemoryChunksContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The specified memory chunk.
+    capabilities:
+      containable:
+        type: cnnccps:MemoryChunkInfoContainable
+  VolumeInfo:
+    description: >-
+      The combination of permissions and volume information.
+    properties:
+      AccessCapabilities:
+        type: list
+        description: >-
+          Supported IO access capabilities.
+        required: false
+        entry_schema:
+          type: AccessCapability
+      AccessState:
+        type: AccessState
+        description: >-
+          The access state for this connection.
+        required: false
+      LUN:
+        type: integer
+        description: >-
+          The initiator-visible logical unit number (LUN) assigned to this volume.
+        required: false
+    requirements:
+    - Volume:
+        node: volume:Volume
+        capability: vlmcps:VolumeContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The specified volume.
+    capabilities:
+      containable:
+        type: cnnccps:VolumeInfoContainable

@@ -1,0 +1,106 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Bios_caps.yaml
+  namespace: bioscaps
+data_types:
+  ChangePassword:
+    description: >-
+      This action is used to change the BIOS passwords.
+    properties:
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+  ResetBios:
+    description: >-
+      This action is used to reset the BIOS attributes to default.
+    properties:
+      title:
+        type: string
+        description: >-
+          Friendly action name
+        required: false
+      target:
+        type: string
+        description: >-
+          Link to invoke action
+        required: false
+  Attributes: {}
+  Actions:
+    description: >-
+      The available actions for this resource.
+    properties:
+      Oem:
+        type: map
+        required: false
+      '#Bios_ChangePassword':
+        type: ChangePassword
+        description: >-
+          This action is used to change the BIOS passwords.
+        required: false
+      '#Bios_ResetBios':
+        type: ResetBios
+        description: >-
+          This action is used to reset the BIOS attributes to default.
+        required: false
+node_types:
+  Bios:
+    description: >-
+      Bios contains properties surrounding a BIOS Attribute Registry (where the system-specific
+      BIOS attributes are described) and the Actions needed to perform changes to
+      BIOS settings, which typically require a system reset to apply.
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          This is the manufacturer/provider specific extension moniker used to divide
+          the Oem object into sections.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      AttributeRegistry:
+        type: string
+        description: >-
+          The Resource ID of the Attribute Registry for the BIOS Attributes resource.
+        required: false
+      Actions:
+        type: Actions
+        description: >-
+          The available actions for this resource.
+        required: false
+      Attributes:
+        type: Attributes
+        description: >-
+          This is the manufacturer/provider specific list of BIOS attributes.
+        required: false
+    capabilities:
+      feature:
+        type: bioscaps:BiosFeature
+      containable:
+        type: bioscaps:BiosContainable

@@ -1,0 +1,296 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: MetricDefinition.yaml
+  namespace: mtrcdfnt
+- url: TelemetryData.yaml
+  namespace: tlmtrydt
+- url: Resource.yaml
+  namespace: resource
+- url: LogService.yaml
+  namespace: lgsrvc
+- url: MetricDefinitionCollection.yaml
+  namespace: mtrdfncl
+- url: MetricReportDefinitionCollection.yaml
+  namespace: mtrpdfcl
+- url: MetricReportCollection.yaml
+  namespace: mtrrprcl
+- url: TelemetryDataCollection.yaml
+  namespace: tlmdtcl
+- url: TriggersCollection.yaml
+  namespace: trggcllc
+- url: Core.yaml
+  namespace: core
+- url: LogService_caps.yaml
+  namespace: lgsrvcp
+- url: MetricDefinitionCollection_caps.yaml
+  namespace: mtdfclcp
+- url: MetricReportDefinitionCollection_caps.yaml
+  namespace: mtrpdfcc
+- url: MetricReportCollection_caps.yaml
+  namespace: mtrpclcp
+- url: TelemetryDataCollection_caps.yaml
+  namespace: tldtclcp
+- url: TriggersCollection_caps.yaml
+  namespace: trgcllcp
+- url: TelemetryService_caps.yaml
+  namespace: tlmsrvcp
+- url: MetricDefinition_caps.yaml
+  namespace: mtrdfncp
+data_types:
+  CollectTelemetryDataResponse:
+    description: >-
+      The response body for the `CollectTelemetryData` action.
+    properties:
+      TelmetryData:
+        type: list
+        description: >-
+          An array of links to the collected telemetry data.
+        required: true
+        entry_schema:
+          type: string
+  CollectionFunction:
+    description: >-
+      An operation to perform over the sample.
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Average
+        - Maximum
+        - Minimum
+        - Summation
+interface_types:
+  TelemetryServiceActions:
+    operations:
+      ClearMetricReports:
+        description: >-
+          The action to clear the metric reports for this telemetry service.
+      ClearTelemetryData:
+        description: >-
+          The action to clear the telemetry data for this telemetry service.
+      CollectTelemetryData:
+        description: >-
+          The action to collect the telemetry data from a device or service.  When
+          the telemetry data is collected, a new telemetry data resource will be created.
+        inputs:
+          OEMTelemetryDataType:
+            type: string
+            description: >-
+              The OEM-defined type of telemetry data to collect.
+            required: false
+          TargetDevices:
+            type: list
+            description: >-
+              An array of devices from which to collect telemetry data.
+            required: false
+          TelemetryDataType:
+            type: tlmtrydt:TelemetryDataTypes
+            description: >-
+              The type of telemetry data to collect.
+            required: true
+      ResetMetricReportDefinitionsToDefaults:
+        description: >-
+          The action to reset the metric report definitions to factory defaults.
+      ResetTriggersToDefaults:
+        description: >-
+          The action to reset the triggers to factory defaults.
+      SubmitTestMetricReport:
+        description: >-
+          This action generates a metric report.
+        inputs:
+          GeneratedMetricReportValues:
+            type: list
+            description: >-
+              The contents of the `MetricReportValues` in the generated metric report.
+            required: true
+          MetricReportName:
+            type: string
+            description: >-
+              The name of the metric report in generated metric report.
+            required: true
+          MetricReportValues:
+            type: string
+            description: >-
+              The contents of the `MetricReportValues` array in the generated metric
+              report.
+            required: false
+node_types:
+  TelemetryService:
+    description: >-
+      The `TelemetryService` schema describes a telemetry service.  The telemetry
+      service is used for collecting and reporting metric data within the Redfish
+      service.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      MaxReports:
+        type: integer
+        description: >-
+          The maximum number of metric reports that this service supports.
+        required: false
+      MinCollectionInterval:
+        type: string
+        description: >-
+          The minimum time interval between gathering metric data that this service
+          allows.
+        required: false
+        validation:
+          $matches:
+          - $value
+          - ^P(\d+D)?(T(\d+H)?(\d+M)?(\d+(.\d+)?S)?)?$
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      ServiceEnabled:
+        type: boolean
+        description: >-
+          An indication of whether this service is enabled.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      SupportedCollectionFunctions:
+        type: list
+        description: >-
+          The functions that can be performed over each metric.
+        required: false
+        entry_schema:
+          type: CollectionFunction
+      SupportedOEMTelemetryDataTypes:
+        type: list
+        description: >-
+          A list of supported OEM-defined telemetry data types.
+        required: false
+        entry_schema:
+          type: string
+      SupportedTelemetryDataTypes:
+        type: list
+        description: >-
+          A list of supported telemetry data types.
+        required: false
+        entry_schema:
+          type: tlmtrydt:TelemetryDataTypes
+    requirements:
+    - LogService:
+        node: lgsrvc:LogService
+        capability: lgsrvcp:LogServiceContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to a log service that the telemetry service uses.  This service
+          can be a dedicated log service or a pointer to a log service under another
+          resource, such as a manager.
+    - MetricDefinitions:
+        node: mtrdfncl:MetricDefinitionCollection
+        capability: mtdfclcp:MetricDefinitionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of metric definitions.
+    - MetricReportDefinitions:
+        node: mtrpdfcl:MetricReportDefinitionCollection
+        capability: mtrpdfcc:MetricReportDefinitionCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of metric report definitions.
+    - MetricReports:
+        node: mtrrprcl:MetricReportCollection
+        capability: mtrpclcp:MetricReportCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of metric reports.
+    - TelemetryData:
+        node: tlmdtcl:TelemetryDataCollection
+        capability: tldtclcp:TelemetryDataCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of data telemetry.
+    - Triggers:
+        node: trggcllc:TriggersCollection
+        capability: trgcllcp:TriggersCollectionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the collection of triggers that apply to metrics.
+    interfaces:
+      Actions:
+        type: TelemetryServiceActions
+    capabilities:
+      feature:
+        type: tlmsrvcp:TelemetryServiceFeature
+      containable:
+        type: tlmsrvcp:TelemetryServiceContainable
+  MetricValue:
+    description: >-
+      Properties that capture a metric value and other associated information.
+    properties:
+      MetricId:
+        type: string
+        description: >-
+          The metric definitions identifier for this metric.
+        required: false
+      MetricProperty:
+        type: string
+        description: >-
+          The URI for the property from which this metric is derived.
+        required: false
+      MetricValue:
+        type: string
+        description: >-
+          The metric value, as a string.
+        required: false
+      Timestamp:
+        type: string
+        description: >-
+          The date and time when the metric is obtained.  A management application
+          can establish a time series of metric data by retrieving the instances of
+          metric value and sorting them according to their timestamp.
+        required: false
+    requirements:
+    - MetricDefinition:
+        node: mtrcdfnt:MetricDefinition
+        capability: mtrdfncp:MetricDefinitionContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the metric definition for this metric.
+    capabilities:
+      containable:
+        type: tlmsrvcp:MetricValueContainable

@@ -1,0 +1,511 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Resource.yaml
+  namespace: resource
+- url: Outlet.yaml
+  namespace: outlet
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Chassis.yaml
+  namespace: chassis
+- url: PhysicalContext.yaml
+  namespace: physcntx
+- url: Core.yaml
+  namespace: core
+- url: Outlet_caps.yaml
+  namespace: otltcps
+- url: Chassis_caps.yaml
+  namespace: chssscps
+- url: Assembly.yaml
+  namespace: assembly
+- url: PowerSupplyMetrics.yaml
+  namespace: pwrsppmt
+- url: Assembly_caps.yaml
+  namespace: assmcps
+- url: PowerSupplyMetrics_caps.yaml
+  namespace: pwspmtcp
+- url: PowerSupply_caps.yaml
+  namespace: pwrsppcp
+- url: PhysicalContext_caps.yaml
+  namespace: phycntcp
+data_types:
+  EfficiencyRating:
+    description: >-
+      This type describes an efficiency rating for a power supply.
+    properties:
+      EfficiencyPercent:
+        type: float
+        description: >-
+          The rated efficiency of this power supply at the specified load.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+      LoadPercent:
+        type: float
+        description: >-
+          The electrical load for this rating.
+        required: false
+        validation:
+          $and:
+          - $greater_or_equal:
+            - $value
+            - 0
+          - $less_or_equal:
+            - $value
+            - 100
+  InputRange:
+    description: >-
+      This type describes an input range for a power supply.
+    properties:
+      CapacityWatts:
+        type: float
+        description: >-
+          The maximum capacity of this power supply when operating in this input range.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      NominalVoltageType:
+        type: string
+        description: >-
+          The input voltage range.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - AC100To127V
+            - AC100To240V
+            - AC100To277V
+            - AC120V
+            - AC200To240V
+            - AC200To277V
+            - AC208V
+            - AC230V
+            - AC240V
+            - AC240AndDC380V
+            - AC277V
+            - AC277AndDC380V
+            - AC400V
+            - AC480V
+            - DC48V
+            - DC240V
+            - DC380V
+            - DC400V
+            - DC800V
+            - DCNeg48V
+            - DC16V
+            - DC12V
+            - DC9V
+            - DC5V
+            - DC3_3V
+            - DC1_8V
+  LineStatus:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Normal
+        - LossOfInput
+        - OutOfRange
+  PowerSupplyType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - AC
+        - DC
+        - ACorDC
+        - DCRegulator
+relationship_types:
+  PowerSupplyDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerOutlets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      PoweringChassis@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  PowerSupplyActions:
+    operations:
+      Reset:
+        description: >-
+          This action resets the power supply.
+        inputs:
+          ResetType:
+            type: resource:ResetType
+            description: >-
+              The type of reset.
+            required: false
+node_types:
+  PowerSupply:
+    description: >-
+      The `PowerSupply` schema describes a power supply unit.  It also describes the
+      location, such as a slot, socket, or bay, where a unit can be installed, by
+      populating a resource instance with an absent state if a unit is not present.
+    properties:
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      EfficiencyRatings:
+        type: list
+        description: >-
+          The efficiency ratings of this power supply.
+        required: false
+        entry_schema:
+          type: EfficiencyRating
+      ElectricalSourceManagerURIs:
+        type: list
+        description: >-
+          The URIs of the management interfaces for the upstream electrical source
+          connections for this power supply.
+        required: false
+        entry_schema:
+          type: string
+      ElectricalSourceNames:
+        type: list
+        description: >-
+          The names of the upstream electrical sources, such as circuits or outlets,
+          connected to this power supply.
+        required: false
+        entry_schema:
+          type: string
+      FirmwareVersion:
+        type: string
+        description: >-
+          The firmware version for this power supply.
+        required: false
+      HotPluggable:
+        type: boolean
+        description: >-
+          An indication of whether this device can be inserted or removed while the
+          equipment is in operation.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      InputNominalVoltageType:
+        type: string
+        description: >-
+          The nominal voltage type that is detected on the line input to this power
+          supply.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - AC100To127V
+            - AC100To240V
+            - AC100To277V
+            - AC120V
+            - AC200To240V
+            - AC200To277V
+            - AC208V
+            - AC230V
+            - AC240V
+            - AC240AndDC380V
+            - AC277V
+            - AC277AndDC380V
+            - AC400V
+            - AC480V
+            - DC48V
+            - DC240V
+            - DC380V
+            - DC400V
+            - DC800V
+            - DCNeg48V
+            - DC16V
+            - DC12V
+            - DC9V
+            - DC5V
+            - DC3_3V
+            - DC1_8V
+      InputRanges:
+        type: list
+        description: >-
+          The input ranges that the power supply can use.
+        required: false
+        entry_schema:
+          type: InputRange
+      LineInputStatus:
+        type: LineStatus
+        description: >-
+          The status of the line input.
+        required: false
+      Location:
+        type: resource:Location
+        description: >-
+          The location of the power supply.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Manufacturer:
+        type: string
+        description: >-
+          The manufacturer of this power supply.
+        required: false
+      Model:
+        type: string
+        description: >-
+          The model number for this power supply.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OutputNominalVoltageType:
+        type: string
+        description: >-
+          The nominal output voltage type of this power supply.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - AC100To127V
+            - AC100To240V
+            - AC100To277V
+            - AC120V
+            - AC200To240V
+            - AC200To277V
+            - AC208V
+            - AC230V
+            - AC240V
+            - AC240AndDC380V
+            - AC277V
+            - AC277AndDC380V
+            - AC400V
+            - AC480V
+            - DC48V
+            - DC240V
+            - DC380V
+            - DC400V
+            - DC800V
+            - DCNeg48V
+            - DC16V
+            - DC12V
+            - DC9V
+            - DC5V
+            - DC3_3V
+            - DC1_8V
+      OutputRails:
+        type: list
+        description: >-
+          The output power rails provided by this power supply.
+        required: false
+        entry_schema:
+          type: OutputRail
+      PartNumber:
+        type: string
+        description: >-
+          The part number for this power supply.
+        required: false
+      PhaseWiringType:
+        type: string
+        description: >-
+          The number of ungrounded current-carrying conductors (phases) and the total
+          number of conductors (wires) provided for the power supply input connector.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - OnePhase3Wire
+            - TwoPhase3Wire
+            - OneOrTwoPhase3Wire
+            - TwoPhase4Wire
+            - ThreePhase4Wire
+            - ThreePhase5Wire
+      PlugType:
+        type: string
+        description: >-
+          The type of plug according to NEMA, IEC, or regional standards.
+        required: false
+        validation:
+          $valid_values:
+          - $value
+          - - NEMA_5_15P
+            - NEMA_L5_15P
+            - NEMA_5_20P
+            - NEMA_L5_20P
+            - NEMA_L5_30P
+            - NEMA_6_15P
+            - NEMA_L6_15P
+            - NEMA_6_20P
+            - NEMA_L6_20P
+            - NEMA_L6_30P
+            - NEMA_L14_20P
+            - NEMA_L14_30P
+            - NEMA_L15_20P
+            - NEMA_L15_30P
+            - NEMA_L21_20P
+            - NEMA_L21_30P
+            - NEMA_L22_20P
+            - NEMA_L22_30P
+            - California_CS8265
+            - California_CS8365
+            - IEC_60320_C14
+            - IEC_60320_C20
+            - IEC_60309_316P6
+            - IEC_60309_332P6
+            - IEC_60309_363P6
+            - IEC_60309_516P6
+            - IEC_60309_532P6
+            - IEC_60309_563P6
+            - IEC_60309_460P9
+            - IEC_60309_560P9
+            - Field_208V_3P4W_60A
+            - Field_400V_3P5W_32A
+      PowerCapacityWatts:
+        type: float
+        description: >-
+          The maximum capacity of this power supply.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      PowerSupplyType:
+        type: PowerSupplyType
+        description: >-
+          The power supply type (AC or DC).
+        required: false
+      ProductionDate:
+        type: string
+        description: >-
+          The production or manufacturing date of this power supply.
+        required: false
+      Replaceable:
+        type: boolean
+        description: >-
+          An indication of whether this component can be independently replaced as
+          allowed by the vendor's replacement policy.
+        required: false
+      SerialNumber:
+        type: string
+        description: >-
+          The serial number for this power supply.
+        required: false
+      SparePartNumber:
+        type: string
+        description: >-
+          The spare part number for this power supply.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The hardware version of this power supply.
+        required: false
+    requirements:
+    - Assembly:
+        node: assembly:Assembly
+        capability: assmcps:AssemblyContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the assembly associated with this power supply.
+    - Metrics:
+        node: pwrsppmt:PowerSupplyMetrics
+        capability: pwspmtcp:PowerSupplyMetricsContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The link to the power supply metrics resource associated with this power
+          supply.
+    - Outlet:
+        node: outlet:Outlet
+        capability: otltcps:OutletFeature
+        relationship: PowerSupplyDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A link to the outlet connected to this power supply.
+    - PowerOutlets:
+        node: outlet:Outlet
+        capability: otltcps:OutletFeature
+        relationship: PowerSupplyDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the outlets that provide power to this power supply.
+    - PoweringChassis:
+        node: chassis:Chassis
+        capability: chssscps:ChassisFeature
+        relationship: PowerSupplyDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the chassis that are directly powered by this power
+          supply.
+    interfaces:
+      Actions:
+        type: PowerSupplyActions
+    capabilities:
+      feature:
+        type: pwrsppcp:PowerSupplyFeature
+      containable:
+        type: pwrsppcp:PowerSupplyContainable
+  OutputRail:
+    description: >-
+      This type describes an output power rail of a power supply.
+    properties:
+      NominalVoltage:
+        type: float
+        description: >-
+          The nominal voltage of this output power rail.
+        required: false
+    requirements:
+    - PhysicalContext:
+        node: physcntx:PhysicalContext
+        capability: phycntcp:PhysicalContextContainable
+        relationship: core:Contains
+        count_range:
+        - 0
+        - 1
+        description: >-
+          The area or device to which this power rail applies.
+    capabilities:
+      containable:
+        type: pwrsppcp:OutputRailContainable

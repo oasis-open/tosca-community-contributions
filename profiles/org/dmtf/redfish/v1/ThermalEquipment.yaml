@@ -1,0 +1,29 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: ThermalEquipment.v1_2_0.yaml
+  namespace: thrmeqpm
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: ThermalEquipment_caps.yaml
+  namespace: threqpcp
+node_types:
+  ThermalEquipment:
+    description: >-
+      The `ThermalEquipment` schema represents the set of cooling equipment managed
+      by a Redfish service.
+    derived_from: thrmeqpm:ThermalEquipment
+    properties:
+      '@odata_id':
+        type: odatav4:id
+        description: >-
+          The unique identifier for a resource.
+        required: false
+    capabilities:
+      feature:
+        type: threqpcp:ThermalEquipmentFeature
+      containable:
+        type: threqpcp:ThermalEquipmentContainable

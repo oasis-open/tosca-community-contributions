@@ -1,0 +1,20 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Schedule.v1_2_5.yaml
+  namespace: schedule
+- url: Core.yaml
+  namespace: core
+- url: Schedule_caps.yaml
+  namespace: schdlcps
+node_types:
+  Schedule:
+    description: >-
+      Schedules a series of occurrences.
+    derived_from: schedule:Schedule
+    capabilities:
+      feature:
+        type: schdlcps:ScheduleFeature
+      containable:
+        type: schdlcps:ScheduleContainable

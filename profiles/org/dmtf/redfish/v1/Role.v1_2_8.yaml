@@ -1,0 +1,69 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Privileges.yaml
+  namespace: prvlgs
+- url: Resource.yaml
+  namespace: resource
+- url: Core.yaml
+  namespace: core
+- url: Role_caps.yaml
+  namespace: rolecaps
+node_types:
+  Role:
+    description: >-
+      The `Role` schema contains a Redfish role to use in conjunction with a manager
+      account.
+    properties:
+      AssignedPrivileges:
+        type: list
+        description: >-
+          The Redfish privileges for this role.
+        required: false
+        entry_schema:
+          type: prvlgs:PrivilegeType
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IsPredefined:
+        type: boolean
+        description: >-
+          An indication of whether the role is predefined by Redfish or an OEM rather
+          than a client-defined role.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      OemPrivileges:
+        type: list
+        description: >-
+          The OEM privileges for this role.
+        required: false
+        entry_schema:
+          type: string
+      RoleId:
+        type: string
+        description: >-
+          The name of the role.
+        required: true
+    capabilities:
+      feature:
+        type: rolecaps:RoleFeature
+      containable:
+        type: rolecaps:RoleContainable

@@ -1,0 +1,402 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Circuit.yaml
+  namespace: circuit
+- url: Resource.yaml
+  namespace: resource
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Core.yaml
+  namespace: core
+- url: Circuit_caps.yaml
+  namespace: crctcps
+- url: Outlet_caps.yaml
+  namespace: otltcps
+- url: Sensor.yaml
+  namespace: sensor
+data_types:
+  CircuitType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Mains
+        - Branch
+        - Subfeed
+        - Feeder
+  CurrentSensors:
+    description: >-
+      The current sensors for this circuit.
+    properties:
+      Line1:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Line 1 current (A).
+        required: false
+      Line2:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Line 2 current (A).
+        required: false
+      Line3:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Line 3 current (A).
+        required: false
+      Neutral:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          Neutral line current (A).
+        required: false
+  EnergySensors:
+    description: >-
+      The energy readings for this circuit.
+    properties:
+      Line1ToLine2:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 1 to Line 2 energy (kWh) for this circuit.
+        required: false
+      Line1ToNeutral:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 1 to Neutral energy (kWh) for this circuit.
+        required: false
+      Line2ToLine3:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 2 to Line 3 energy (kWh) for this circuit.
+        required: false
+      Line2ToNeutral:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 2 to Neutral energy (kWh) for this circuit.
+        required: false
+      Line3ToLine1:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 3 to Line 1 energy (kWh) for this circuit.
+        required: false
+      Line3ToNeutral:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The Line 3 to Neutral energy (kWh) for this circuit.
+        required: false
+  PowerSensors:
+    description: >-
+      This property contains the power sensors.
+    properties:
+      Line1ToLine2:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 1 to Line 2 power (W) for this circuit.
+        required: false
+      Line1ToNeutral:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 1 to Neutral power (W) for this circuit.
+        required: false
+      Line2ToLine3:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 2 to Line 3 power (W) for this circuit.
+        required: false
+      Line2ToNeutral:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 2 to Neutral power (W) for this circuit.
+        required: false
+      Line3ToLine1:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 3 to Line 1 power (W) for this circuit.
+        required: false
+      Line3ToNeutral:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The Line 3 to Neutral power (W) for this circuit.
+        required: false
+  VoltageSensors:
+    description: >-
+      The voltage readings for this circuit.
+    properties:
+      Line1ToLine2:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 1 to Line 2 voltage (V) for this circuit.
+        required: false
+      Line1ToNeutral:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 1 to Neutral voltage (V) for this circuit.
+        required: false
+      Line2ToLine3:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 2 to Line 3 voltage (V) for this circuit.
+        required: false
+      Line2ToNeutral:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 2 to Neutral voltage (V) for this circuit.
+        required: false
+      Line3ToLine1:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 3 to Line 1 voltage (V) for this circuit.
+        required: false
+      Line3ToNeutral:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The Line 3 to Neutral voltage (V) for this circuit.
+        required: false
+  VoltageType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - AC
+        - DC
+relationship_types:
+  CircuitDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      Outlets@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+interface_types:
+  CircuitActions:
+    operations:
+      BreakerControl:
+        description: >-
+          This action attempts to reset the circuit breaker.
+        inputs:
+          PowerState:
+            type: circuit:PowerState
+            description: >-
+              The desired power state of the circuit if the breaker is reset successfully.
+            required: false
+      PowerControl:
+        description: >-
+          This action turns the circuit on or off.
+        inputs:
+          PowerState:
+            type: circuit:PowerState
+            description: >-
+              The desired power state of the circuit.
+            required: false
+      ResetMetrics:
+        description: >-
+          This action resets metrics related to this circuit.
+node_types:
+  Circuit:
+    description: >-
+      This is the schema definition for an electrical circuit.
+    properties:
+      BreakerState:
+        type: circuit:BreakerStates
+        description: >-
+          The state of the over current protection device.
+        required: false
+      CircuitType:
+        type: CircuitType
+        description: >-
+          The type of circuit.
+        required: false
+      CriticalCircuit:
+        type: boolean
+        description: >-
+          Designates if this is a critical circuit.
+        required: false
+      CurrentAmps:
+        type: sensor:SensorCurrentExcerpt
+        description: >-
+          The current (A) for this single phase circuit.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      ElectricalContext:
+        type: sensor:ElectricalContext
+        description: >-
+          The combination of current-carrying conductors.
+        required: false
+      EnergykWh:
+        type: sensor:SensorEnergykWhExcerpt
+        description: >-
+          The energy (kWh) for this circuit.
+        required: false
+      FrequencyHz:
+        type: sensor:SensorExcerpt
+        description: >-
+          The frequency (Hz) for this circuit.
+        required: false
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      IndicatorLED:
+        type: resource:IndicatorLED
+        description: >-
+          The state of the indicator LED, which identifies the circuit.
+        required: false
+      LocationIndicatorActive:
+        type: boolean
+        description: >-
+          An indicator allowing an operator to physically locate this resource.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      NominalVoltage:
+        type: circuit:NominalVoltageType
+        description: >-
+          The nominal voltage for this circuit.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PhaseWiringType:
+        type: circuit:PhaseWiringType
+        description: >-
+          The number of ungrounded current-carrying conductors (phases) and the total
+          number of conductors (wires).
+        required: false
+      PlugType:
+        type: circuit:PlugType
+        description: >-
+          The type of plug according to NEMA, IEC, or regional standards.
+        required: false
+      PolyPhaseCurrentAmps:
+        type: CurrentSensors
+        description: >-
+          The current readings for this circuit.
+        required: false
+      PolyPhaseEnergykWh:
+        type: EnergySensors
+        description: >-
+          The energy readings for this circuit.
+        required: false
+      PolyPhasePowerWatts:
+        type: PowerSensors
+        description: >-
+          The power readings for this circuit.
+        required: false
+      PolyPhaseVoltage:
+        type: VoltageSensors
+        description: >-
+          The voltage readings for this circuit.
+        required: false
+      PowerCycleDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power on after a PowerControl action to cycle
+          power.  Zero seconds indicates no delay.
+        required: false
+      PowerEnabled:
+        type: boolean
+        description: >-
+          Indicates if the circuit can be powered.
+        required: false
+      PowerOffDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power off after a PowerControl action.  Zero
+          seconds indicates no delay to power off.
+        required: false
+      PowerOnDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power up after a power cycle or a PowerControl
+          action.  Zero seconds indicates no delay to power up.
+        required: false
+      PowerRestoreDelaySeconds:
+        type: float
+        description: >-
+          The number of seconds to delay power on after power has been restored.  Zero
+          seconds indicates no delay.
+        required: false
+      PowerRestorePolicy:
+        type: circuit:PowerRestorePolicyTypes
+        description: >-
+          The desired power state of the circuit when power is restored after a power
+          loss.
+        required: false
+      PowerState:
+        type: resource:PowerState
+        description: >-
+          The power state of the circuit.
+        required: false
+      PowerWatts:
+        type: sensor:SensorPowerExcerpt
+        description: >-
+          The power (W) for this circuit.
+        required: false
+      RatedCurrentAmps:
+        type: float
+        description: >-
+          The rated maximum current allowed for this circuit.
+        required: false
+        validation:
+          $greater_or_equal:
+          - $value
+          - 0
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      Voltage:
+        type: sensor:SensorVoltageExcerpt
+        description: >-
+          The voltage (V) for this single phase circuit.
+        required: false
+      VoltageType:
+        type: VoltageType
+        description: >-
+          The type of voltage applied to the circuit.
+        required: false
+    requirements:
+    - BranchCircuit:
+        node: circuit:Circuit
+        capability: crctcps:CircuitFeature
+        relationship: CircuitDependsOn
+        count_range:
+        - 0
+        - 1
+        description: >-
+          A reference to the branch circuit related to this circuit.
+    - Outlets:
+        node: Outlet
+        capability: otltcps:OutletFeature
+        relationship: CircuitDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of references to the outlets contained by this circuit.
+    interfaces:
+      Actions:
+        type: CircuitActions
+    capabilities:
+      feature:
+        type: crctcps:CircuitFeature
+      containable:
+        type: crctcps:CircuitContainable

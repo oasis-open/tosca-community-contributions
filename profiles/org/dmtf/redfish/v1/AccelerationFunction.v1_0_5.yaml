@@ -1,0 +1,145 @@
+tosca_definitions_version: tosca_2_0
+description: >-
+  Types generated from JSON Schema by any2tosca
+imports:
+- url: Endpoint.yaml
+  namespace: endpoint
+- url: odata-v4.yaml
+  namespace: odatav4
+- url: Resource.yaml
+  namespace: resource
+- url: PCIeFunction.yaml
+  namespace: pcfnctn
+- url: Core.yaml
+  namespace: core
+- url: Endpoint_caps.yaml
+  namespace: endpcps
+- url: PCIeFunction_caps.yaml
+  namespace: pcfnccp
+- url: AccelerationFunction_caps.yaml
+  namespace: accfnccp
+data_types:
+  AccelerationFunctionType:
+    derived_from: string
+    validation:
+      $valid_values:
+      - $value
+      - - Encryption
+        - Compression
+        - PacketInspection
+        - PacketSwitch
+        - Scheduler
+        - AudioProcessing
+        - VideoProcessing
+        - OEM
+relationship_types:
+  AccelerationFunctionDependsOn:
+    derived_from: core:DependsOn
+    properties:
+      Endpoints@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PCIeFunctions@odata_count:
+        type: odatav4:count
+        description: >-
+          The number of items in a collection.
+        required: false
+node_types:
+  AccelerationFunction:
+    description: >-
+      The `AccelerationFunction` schema describes an acceleration function that a
+      processor implements.  This can include functions such as audio processing,
+      compression, encryption, packet inspection, packet switching, scheduling, or
+      video processing.
+    properties:
+      AccelerationFunctionType:
+        type: AccelerationFunctionType
+        description: >-
+          The acceleration function type.
+        required: false
+      Description:
+        type: resource:Description
+        description: >-
+          The description of this resource.  Used for commonality in the schema definitions.
+        required: false
+      FpgaReconfigurationSlots:
+        type: list
+        description: >-
+          An array of the reconfiguration slot identifiers of the FPGA that this acceleration
+          function occupies.
+        required: false
+        entry_schema:
+          type: string
+      Id:
+        type: resource:Id
+        description: >-
+          The unique identifier for this resource within the collection of similar
+          resources.
+        required: true
+      Manufacturer:
+        type: string
+        description: >-
+          The acceleration function code manufacturer.
+        required: false
+      Name:
+        type: resource:Name
+        description: >-
+          The name of the resource or array member.
+        required: true
+      Oem:
+        type: resource:Oem
+        description: >-
+          The OEM extension property.
+        required: false
+      PowerWatts:
+        type: integer
+        description: >-
+          The acceleration function power consumption, in watt units.
+        required: false
+      Status:
+        type: resource:Status
+        description: >-
+          The status and health of the resource and its subordinate or dependent resources.
+        required: false
+      UUID:
+        type: resource:UUID
+        description: >-
+          The UUID for this acceleration function.
+        required: false
+      Version:
+        type: string
+        description: >-
+          The acceleration function version.
+        required: false
+    requirements:
+    - Endpoints:
+        node: endpoint:Endpoint
+        capability: endpcps:EndpointFeature
+        relationship: AccelerationFunctionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the endpoints that connect to this acceleration function.
+    - PCIeFunctions:
+        node: pcfnctn:PCIeFunction
+        capability: pcfnccp:PCIeFunctionFeature
+        relationship: AccelerationFunctionDependsOn
+        count_range:
+        - 0
+        - UNBOUNDED
+        description: >-
+          An array of links to the PCIe functions associated with this acceleration
+          function.
+    capabilities:
+      feature:
+        type: accfnccp:AccelerationFunctionFeature
+      containable:
+        type: accfnccp:AccelerationFunctionContainable
