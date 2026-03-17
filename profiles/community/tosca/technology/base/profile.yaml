@@ -1,0 +1,54 @@
+tosca_definitions_version: tosca_2_0
+
+profile: community.tosca.technology.base:0.1
+
+description: >-
+  TOSCA Base Profile type definitions. This files contains
+  highest-level definitions for technology-specific types. 
+
+imports:
+- profile: community.tosca.core:0.1
+
+artifact_types:
+  Bash:
+    description: >-
+      Bash script. If the "host" property is not set, the script is
+      run locally. If "host" is set the script is executed on that
+      host using an ssh connection.
+    mime_type: application/x-sh
+    file_ext: [sh]
+    properties:
+      host:
+        type: IPv4Socket
+        required: false
+
+interface_types:
+  Standard:
+    operations:
+      create:
+        description: >-
+          Operation to create a node.
+      configure:
+        description: >-
+          Operation to configure a node.
+      start:
+        description: >-
+          Operation to start a node.
+      modify:
+        description: >-
+          Operation to modify a node.
+      stop:
+        description: >-
+          Operation to stop a node.
+      delete:
+        description: >-
+          Operation to delete a node.
+
+node_types:
+  Root:
+    description: >-
+      Common parent type for all technology-specifc and
+      vendor-specific node types.
+    interfaces:
+      Standard:
+        type: Standard
