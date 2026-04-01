@@ -7,44 +7,11 @@ definitions for platforms](inventory.md).
 
 ## Platform Types
 
-This profile consider the following types of platforms:
-
-- *Bare Metal*: A device without operating system software or firmware
-  pre-installed. Instead, this device exposes an interface that allows
-  it to be managed remotely (e.g. an HPE server with an iILO
-  interface) and that allows for remote installation of the operating
-  system or hypervisor software.
-- *Server*: A device with operating system software or firmware
-  pre-installed.
-- *Hypervisor Platform*: a platform that allows for the creation of
-   virtual infrastructure on a server or bare metal device.
-- IaaS (Infrastructure as a Service): A platform that allows on-demand
-  creation of networks, virtual machines and storage in the cloud. 
-- *Container  Platform*: A platform that supports containerized
-  applications. This could be a container orchestration system such as
-  Kubernetes or a server that uses Docker to deploy and run
-  containerized applications.
-- *PaaS (Platform as a Service)*: A platform for developing and
-  deploying apps. It allows developers to push code and the platform
-  handles builds, dependencies, deployment, scaling, etc..  Examples
-  of PaaS include
-  - Heroku
-  - Google App Engine
-  - Microsoft Azure App Service
-  - AWS Elastic Beanstalk
-  - Red Hat OpenShift
-- *SaaS (Software as a Service)*: A platform for renting and using a
-  finished application. Examples of SaaS include: - Gmail - Salesforce
-- *Serverless Platform*: Represents a platform that provides the
-  ephemeral runtime support for serverless functions, such as AWS
-  Lambda, Azure Functions, Google Cloud Functions or OpenFaaS
-
-Based on this classification, the following node type hierarchy is
-proposed:
+The *TOSCA Community Platform Profile* defines the platform types
+shown in the following diagram:
 
 ```mermaid
 classDiagram
-    class Provider
     Platform <|-- ServerPlatform
     Platform <|-- VirtualizationPlatform
     Platform <|-- ContainerPlatform
@@ -53,12 +20,78 @@ classDiagram
     Platform <|-- ServerlessPlatform
 ```
 
+### Server Platforms
+
+The `ServerPlatform` node type can represent the following. Note that
+this list is not meant to be exhaustive:
+
+- *Bare Metal Machine*: A device without operating system software or
+  firmware pre-installed. Instead, this device exposes an interface
+  that allows it to be managed remotely (e.g. an HPE server with an
+  iILO interface) and that allows for remote installation of the
+  operating system or hypervisor software.
+- *Physical Server*: A device with operating system software or
+  firmware pre-installed.
+- *Virtual Machine*: A VM instantiated on a virtualization platform.
+
+### Virtualization Platforms
+
+The `VirtualizationPlatform` node type represents systems or services
+that support the creation of virtual machine instances. This can
+include the following:
+
+- *Hypervisor Platform*: a platform that allows for the creation of
+   virtual infrastructure on a server or bare metal device.
+- *IaaS (Infrastructure as a Service)*: A platform that allows
+  on-demand creation of networks, virtual machines and storage in the
+  cloud.
+
+### Container Platforms
+
+The `ContainerPlatform` node type represents systems that can host
+containerized software. This can include:
+
+- *Docker Servers*: Server platforms that have technologies such as
+   Docker or Docker Compose installed and that can be used to deploy
+   and run containerized applications.
+- *Kubernetes Clusters*: To orchestrator container-based applications
+
+### PaaS Platforms
+
+The `PaaSPlatform` node type represents *Platform as a Service*
+technologies. These are platforms for developing and deploying
+apps. They allow developers to push code and the platform handles
+builds, dependencies, deployment, scaling, etc.
+
+Examples of PaaS include
+- Heroku
+- Google App Engine
+- Microsoft Azure App Service
+- AWS Elastic Beanstalk
+- Red Hat OpenShift
+
+### SaaS Platforms
+
+The `SaasPlatform` node type represents *Software as a Service*
+offerings. These are platforms for renting and using a finished
+application.
+
+Examples of SaaS include:
+- Gmail
+- Salesforce
+
+### Serverless Platforms
+
+The `ServerlessPlatform` node type represents platforms that provide
+the ephemeral runtime support for serverless functions, such as AWS
+Lambda, Azure Functions, Google Cloud Functions or OpenFaaS
+
 ## Layering of Platforms
 
 While platform node types are primarily used to create (abstract)
-representations of available platform resources, these types can also
-be used to *orchestrate* new platform resources. In those cases, newly
-orchestrated platform nodes must be *layered* on top of
+representations of pre-existing platform resources, these types can
+also be used for *orchestrating* new platform resources. In those
+cases, newly orchestrated platform nodes must be *layered* on top of
 already-existing platform nodes. This layering is expressed using a
 `HostedOn` relationship, and and the corresponding platform node types
 must express valid target nodes in their `host` requirement.
@@ -67,134 +100,142 @@ The section describes several examples of platform layering.
 
 ### Virtual Machine on an Infrastructure-as-a-Service Platform
 
-The following figure shows a virtual `ComputePlatform` node (a VM)
-instantiated directly on AWS.
-
-![Virtual Machine on IaaS Platform](images/compute-on-iaas.png)
-
-### IaaS Platform on Compute Platform
-
-In some scenarios, the `HostedOn` relationship can be reversed and the
-Infrastructure-as-a-Service platform can be deployed on a Compute
-platform. This is the case when a Proxmox node is deployed on a
-physical or virtual server as shown in the following figure:
-
-![IaaS Platform on Compute Platform](images/iaas-on-compute.png)
-
-In this scenario, the Proxmox node can in turn be used to *host* other
-(virtual) Compute platforms.
-
-### Kubernetes Cluster on Compute Platform
-
-Another obvious layering scnenario is the deployment of a Kubernetes
-cluster on a Compute platform as shown in the following figure:
-
-![Kubernetes Cluster on Compute Platform](images/cluster-on-compute.png)
-
-### Kubernetes Cluster on Multiple Compute Platforms
-
-Kubernetes clusters typically consist of multiple worker nodes, each
-of which is deployed on a different server. We can model this scenario
-using multiple `HostedOn` relationships, one to each of the Compute
-platforms that hosts a worker node. This scenario is shown in the
-following figure:
-
-![Kubernetes Cluster on Multiple Compute Platforms](images/cluster-on-multiple-compute.png)
-
-### IaaS Platform on Kubernetes Clusters
-
-Kubernetes clusters can be extended with support for Kubevirt which
-allows for the creation and management of virtual machines. This
-effectively turns Kubernetes into an IaaS platform. This can be
-modeled by layering Kubevirt on top of a Kubernetes cluster as shown
+A common use case of platform layering involves the creation of a
+virtual machine on an IaaS platform such as AWS EC2. This scenario can
+be modeled using a `ServerPlatform` node that represents the virtual
+machine and that has a `HostedOn` relationship to a
+`VirtualizationPlatform` node representing AWS. This scenario is shown
 in the following figure:
 
-![IaaS on Kubernetes Cluster on Compute Platform](images/iaas-on-cluster.png)
+![Virtual Machine on IaaS Platform](images/server-on-iaas.png)
 
-Kubevirt can then in turn be used to *host* virtual machines as also
-shown in the figure.
+### IaaS Platform on a Server
 
-#### Kubernetes-Kubevirt Layering Modeling Challenges
+In some scenarios, the `HostedOn` relationship can be reversed and the
+Infrastructure-as-a-Service platform can be deployed on one or more
+servers. For example, this is the case when a Proxmox node is deployed
+on a physical or virtual server. This use case can be modeled using a
+`VirtualizationPlatform` node that represents the Proxmox node and
+that has a `HostedOn` relationship to a `ServerPlatform` node
+representing the server on which Proxmox is installed.  The Proxmox
+node can then in turn be used to *host* other (virtual) server
+platforms.
 
-There are severals challenges with this layering of platform node
-types, particularly regarding the relationship between Kubernetes
-clusters and Kubevirt virtualization platforms:
+The complete scneario is shown in the following figure:
 
-- The abstract model above shows Kubevirt running on top of a
+![IaaS Platform on Server Platform](images/iaas-on-server.png)
+
+### IaaS Platform on a Kubernetes Clusters
+
+A similar scenario involves extending Kubernetes with support for
+virtualization using Kubevirt. Kubevirt allows for the use of
+Kubernetes APIs to create and manage virtual machines on KVM.
+
+This use case can be modeled using a `VirtualizationPlatform` node
+that represents Kubevirt and that has a `HostedOn` relationship to a
+`ContainerPlatform` node that represents the Kubernetes. The Kubevirt
+node can then in turn be used to *host* other virtual server
+platforms.
+
+The complete scneario is shown in the following figure:
+
+![IaaS on Kubernetes Cluster on Server Platform](images/iaas-on-cluster.png)
+
+In practice however, the hosting relationships between the different
+platform nodes are more complex than what is shown in this
+figure. This complexity results from the fact that Kubevirt includes
+two different types of components:
+
+- Virtualization APIs, which are provided by the Kubevirt operator(s)
+  and custom resource definitions. These are deployed on the
   Kubernetes cluster.
-- In practice however, the relationships are more complex, since
-  Kubevirt requires installation of at least two very different
-  types of components:
-  - KVM virtualization, which is installed directly on the underlying
-    ComputePlatform. If the Kubernetes cluster uses multiple worker
-    nodes, then each of those nodes must have KVM.
-  - The Kubevirt operator(s) and custom resource definitions, which
-    are installed on the Kubernetes cluster.
-- To support these different installations, a single HostedOn
-  relationship between the Kubevirt node and the Kubernetes node is
-  insufficient. Additional information is required to identify not
-  just the Kubernetes cluster, but also the ComputePlatform(s) on
-  which the Kubernetes cluster is deployed.
+- Virtualization software, which is provided by KVM and that must be
+  installed directly on the underlying server on which the Kubernetes
+  cluster runs.
 
-The layering approach proposed above needs refinement to accurately
-represent these complex dependencies.
+To support installation of these different components, a single
+HostedOn relationship between the Kubevirt node and the Kubernetes
+node is insufficient. Additional information is required in the
+Kubevirt `VirtualizationPlatform` node to identify not just the
+Kubernetes cluster on which Kubevirt is deployed, but also the
+server(s) on which the Kubernetes cluster itself is deployed.
 
-The following three apporaches have been proposed:
+To accurately represent these dependencies, we use the following
+observation:
 
-1. Introduce Aggregate platform node types: with this approach, a new
-   derived platform node type is introduced that is composed of both a
-   Kubernetes platform as well as a Kubevirt platform. This aggregate
-   node type is HostedOn the same ComputePlatform node(s)
-2. Use properties on the Kubernetes node to indicate whether Kubevirt
-   is supported. With this approach, Kubevirt is no longer modeled as
-   a separate Platform node. Instead, it becomes part of the
-   Kubernetes platform node, and substitution filters are used to
-   select a substituting template that installs Kubevirt if necessary.
-   > With this approach, how do we indicated whether the Kubernetes
-     platform can host ComputePlatform nodes or now (since this
-     capability can not be turned on or off dynamically based on a
-     property value).
+- All platforms can be considered to have not only a *data plane*, but
+  also a *control plane*.
+- For most platforms layering scenarios, modeling the hosting
+  relationships used for the data plane is sufficient since control is
+  typically provided by the same platform that also provides the
+  *hosting*.
+- However, for some platforms (such as Kubevirt), it may be necessary
+  to model deployment of the control plane separately from deployment
+  of the data plan. This is done by defining a second requirement in
+  the `Platform` node type that specifies where control is
+  hosted. This requirement uses the `RunsOn` relationship type rather
+  than the `HostedOn` relationship type.
 
-3. Introduce additional relationships: using this approach, the
-   abstract Kubevirt node is HostedOn on a ComputePlatform node
-   directly, but an additional `ControlledBy` or `ManagedBy`
-   relationship is introduced between the KubeVirt node and the
-   corresponding Kubernetes node.
-4. Another option is that each platform can be considered to have a
-   *control plane* as well as a *data plane*. For most platforms,
-   modeling the hosting relationships used by the data plane is
-   sufficient. However, for some platforms, it may also be necessary
-   to model where the control plane is deployed. Control plane
-   deployment is not modeled using a hosting relationship, but rather
-   using a `RunsOn` relationship.
+  > Is it necessary to have a different relationship type, or is it
+    sufficient for this requirement to have a different name?
+  
+Using this approach, the abstract `VirtualizationPlatform` node that
+represents Kubevirt node has a `HostedOn` relationship to the
+underlying `ServerPlatform` node on which Kubernetes is deployed, and
+it has an additional `RunsOn` relationship to the `ContainerPlatform`
+node representing the Kubernetes cluster. The updated model is shown
+in the following figure:
 
-   ![IaaS on Kubernetes Cluster on Compute Platform](images/iaas-on-cluster-new.png)
+![IaaS on Kubernetes Cluster on Server Platform](images/iaas-on-cluster-new.png)
 
-   > How do we make sure that the Kubevirt nodes are HostedOn the same
-     ComputePlatform nodes as the Kubernetes nodes?
+### Kubernetes Cluster on one or more Servers
 
-## Providers and Credentials
+Another obvious layering scenario is the deployment of a Kubernetes
+cluster on a (physical or virtual) server as shown in the following
+figure:
 
-This profile also defines node types for modeling the *providers* that
-own various platform. The provider is modeled separately from the
-platform itself to allow for the fact that different types of
-platforms may be offered by the same provider.
+![Kubernetes Cluster on Server Platform](images/cluster-on-server.png)
 
-> It is a topic of discussion whether *credentials* to access
-  platforms should be modeled at this level as well, and if so how
-  these credentials should be represented. The discussion below
-  assumes there is a separate node type to represent credentials. The
-  use of a node type (as opposed to a data type or an artifact) is
-  motivated by the fact that credentials may need to be created
-  automatically through *orchestration*.
+This figure shows a single-node Kubernetes cluster that is represented
+by a `ContainerPlatform` node and that has a `HostedOn` relationship
+to a `ServerPlatform` node that represents the server on which the
+cluster is deployed.
 
-The following figure shows how the various platform-related entities
-might interact:
+In production, almost all Kubernetes clusters consist of multiple
+nodes. Multi-node Kubernetes clusters can be modeled using multiple
+`HostedOn` relationships originating from the `ContainerPlatform`
+node, one to each of the `ServerPlatform` nodes that represent the
+servers on which the cluster is deployed.
 
-```mermaid
-classDiagram
-    Platform "0..1" --> "*" Provider:ProvidedBy
-    Platform "*" --> Platform:HostedOn
-    Platform --> Credential:AuthorizedUsing
-    Credential *-- Provider:IssuedBy
-```
+Furthermore, Kubernetes distinguishes between *Control* nodes and
+*Worker* nodes. To indicate which server acts as the control node in
+the Kubernetes cluster, we use the `RunsOn` relationship of the
+`ContainerPlatform` node. The complete model is shown in following
+figure:
+
+![Kubernetes Cluster on Multiple Server Platforms](images/cluster-on-multiple-server.png)
+
+In this figure, `server-1` not only acts as the control node, but it
+also acts as a worker node that can host Kubernetes workloads. To
+model a control node that cannot be used to host workloads, the
+`HostedOn` relationship to the control node is removed as shown in the
+following figure:
+
+![Kubernetes Cluster with Separate Control Node](images/cluster-control-only-server.png)
+
+And finally, Kubernetes clusters are typically deployed in *High
+Availability* mode where multiple servers act as redundant control
+nodes. This scenario can be modeled using multiple `RunsOn`
+relationships as shown in the following figure:
+
+![Kubernetes Cluster with HA Control Nodes](images/cluster-ha-control-on-server.png)
+
+> While we can accurately model the desired configuration, we need to
+  document how these models drive substitution for the
+  `ContainerPlatform` nodes that represent the Kubernetes
+  cluster. Specifically,
+
+> - how is the total number of nodes communicated to the substituting template?
+> - how is the number of control nodes communicated?
+> - how can we communicate whether the control nodes can host workloads?
+
