@@ -218,12 +218,24 @@ figure:
 In this figure, `server-1` not only acts as the control node, but it
 also acts as a worker node that can host Kubernetes workloads. To
 model a control node that cannot be used to host workloads, the
-`HostedOn` relationship should be removed as shown in the following
-figure:
+`HostedOn` relationship to the control node is removed as shown in the
+following figure:
 
-![Kubernetes Cluster on Multiple Server Platforms](images/cluster-on-multiple-server-ha.png)
+![Kubernetes Cluster with Separate Control Node](images/cluster-control-only-server.png)
 
 And finally, Kubernetes clusters are typically deployed in *High
-Availability* mode where multiple servers act as control nodes. This
-scenario can be modeled using multiple `RunsOn` relationships as shown
-in the following figure:
+Availability* mode where multiple servers act as redundant control
+nodes. This scenario can be modeled using multiple `RunsOn`
+relationships as shown in the following figure:
+
+![Kubernetes Cluster with HA Control Nodes](images/cluster-ha-control-on-server.png)
+
+> While we can accurately model the desired configuration, we need to
+  document how these models drive substitution for the
+  `ContainerPlatform` nodes that represent the Kubernetes
+  cluster. Specifically,
+
+> - how is the total number of nodes communicated to the substituting template?
+> - how is the number of control nodes communicated?
+> - how can we communicate whether the control nodes can host workloads?
+
