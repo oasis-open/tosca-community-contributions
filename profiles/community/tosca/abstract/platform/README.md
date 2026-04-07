@@ -255,28 +255,50 @@ diagram:
   `VirtualizationPlatform` node and use a `region` input value for the
   relevant operation inputs.
 
-Unlike the Kubernetes deployment scenarios shown above, the intended
-deployment topology cannot be derived from this model:
+While managed Kubernetes clusters use the same `ContainerPlatform`
+node type as the kubernetes deployments on server platforms, there are
+a number of differences that impact the definition of the
+`ContainerPlatform` node type:
 
-- It does not provide information about the requested number of worker
-  nodes.
-- It does not provide information about the requested number of
-  controller nodes.
+1. Unlike the server platform Kubernetes deployment scenarios shown
+   above, the intended deployment topology cannot be derived from the
+   managed Kubernetes cluster model:
 
-> It appears that managed Kubernetes clusters do not support hosting
-  workloads on the controller nodes.
+   - It does not provide information about the requested number of worker
+     nodes.
+   - It does not provide information about the requested number of
+     controller nodes.
 
-This information must instead be provided using property values
-defined on the `ContainerPlatform` nodes.
+   > It appears that managed Kubernetes clusters do not support hosting
+     workloads on the controller nodes.
 
-Managed Kubernetes clusters typically also include auto-scaling
-functionality where additional nodes can be spun up to handle
-increased load. To support this functionality, it may be necessary to
-introduce additional property values that specify whether auto-scaling
-is enabled and, if so, what the maximum supported number of worker
-node is.
+   This information must instead be provided using property values
+   defined on the `ContainerPlatform` nodes.
 
-> Managed Kubernetes clusters typically also allow users to specify
-  architecture, OS, size, etc. of the worker nodes. The assumption is
-  that this information can be provided using the
-  `implementation-details` property of the abstract nodes.
+2. Managed Kubernetes clusters typically also include auto-scaling
+   functionality where additional nodes can be spun up to handle
+   increased load. To support this functionality, it may be necessary
+   to introduce additional property values that specify whether
+   auto-scaling is enabled and, if so, what the maximum supported
+   number of worker node is.
+
+   > Managed Kubernetes clusters typically also allow users to specify
+     architecture, OS, size, etc. of the worker nodes. The assumption is
+     that this information can be provided using the
+     `implementation-details` property of the abstract nodes.
+
+3. Managed Kubernetes clusters also allow users to specify one or more
+   subnets that should be used for the cluster network, as well as the
+   network technology to be used (Calico, Flannel, etc.). The models
+   for cluster networking should reflect this.
+
+   > This information is likely also relevant for Kubernetes clusters
+     deployed on `ServerPlatform` nodes.
+
+4. Substitution filters in substituting templates for
+   `ContainerPlatform` nodes may need information about the platform
+   on which the container platform is deployed. Not all of this
+   information may be reflected in platform properties. It may be
+   necessary to introduce a function that checks the type of the
+   underlying platform (for example a `$has_type` function that takes
+   a TOSCA Path argument). 
