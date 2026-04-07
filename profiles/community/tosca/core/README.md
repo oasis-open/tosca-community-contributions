@@ -14,37 +14,26 @@ across relationships to the *source* nodes of those relationships.
   of the contained entity (the *source* of the relationship) is
   dictated by the lifecycle of the containing entity (the *target* of
   the relationship). This kind of relationship is provided using the
-  `ContainedBy` relationship type that derives directly from
-  `Root`. Relationships of type `ContainedBy` target capabilities of
-  type `Container` as specified using the `valid_capability_types`
-  keyword in the type definition.
+  `ContainedBy` relationship type. Relationships of type `ContainedBy`
+  target capabilities of type `Container` as specified using the
+  `valid_capability_types` keyword in the type definition.
 - A *dependency* relationship kind that indicates that the state
   and/or configuration of a dependent node (the *source* of the
   relationship) depends on the state and/or configuration of the
   *target* node. This kind of relationship is provided using the
-  `DependsOn` relationship type that derives directly from
-  `Root`. Relationships of type `DependsOn` target capabilities of
-  type `Feature` as specified using the `valid_capability_types`
-  keyword in the type definition.
+  `DependsOn` relationship type. Relationships of type `DependsOn`
+  target capabilities of type `Feature` as specified using the
+  `valid_capability_types` keyword in the type definition.
 - An *association* relationship kind that is provided for
   informational purposes only and no state or configuration
   dependencies exist. This kind of relationship is provided using the
-  `AssociatesWith` relationship type that derives directly from
-  `Root`. Relationships of type `AssociatedWith` target capabilities
-  of type `Partner` as specified using the `valid_capability_types`
-  keyword in the type definition.
+  `AssociatesWith` relationship type. Relationships of type `AssociatedWith`
+  target capabilities of type `Partner` as specified using the
+  `valid_capability_types` keyword in the type definition.
 
-Each of these relationship types derive from a top-level `Root`
-relationship type that is intended to advertize a `Configure`
-interface that is used by all relationship types. Other relationship
-types can be derived from one of the three *base* relationship types.
+Other relationship types can be derived from one of the three *base* relationship types.
 
-```mermaid
-classDiagram
-    Root <|-- ContainedBy 
-    Root <|-- DependsOn 
-    Root <|-- AssociatesWith
-```
+
 
 ## Capability Types
 
@@ -57,11 +46,11 @@ accept different incoming relationship types:
 
 ```mermaid
 erDiagram
-    Contains ||--|| Container : targets
-    Container ||--|{ Contains: accepts
+    ContainedBy ||--|| Container : targets
+    Container ||--|{ ContainedBy: accepts
     DependsOn ||--|| Feature : targets
     Feature ||--|{ DependsOn: accepts
-    Association ||--|| Partner : targets
-    Partner ||--|{ Association: accepts
+    AssociatesWith ||--|| Partner : targets
+    Partner ||--|{ AssociatesWith: accepts
 ```
 

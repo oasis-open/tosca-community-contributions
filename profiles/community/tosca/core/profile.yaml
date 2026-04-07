@@ -65,20 +65,12 @@ data_types:
       $matches: [$value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"]
 
 relationship_types:
-  Root: 
-    description: >-
-      Base relationship type from which all other relationship types
-      derived. This is intended to hold an interface definition that
-      is shared by all relationship types.
-    metadata:
-      relationship_kind: ASSOCIATION
   ContainedBy:
     description: >-
       The ContainedBy type represents a containment relationship
       between two nodes.
     metadata:
       relationship_kind: CONTAINMENT
-    derived_from: Root
     valid_capability_types: [Container]
   DependsOn:
     description: >-
@@ -86,14 +78,12 @@ relationship_types:
     metadata:
       relationship_kind: DEPENDENCY
     valid_capability_types: [Feature]
-    derived_from: Root
   AssociatesWith:
     description: >-
       The AssociatesWith type represents an association relationship
       between two nodes.
     metadata:
       relationship_kind: ASSOCIATION
-    derived_from: Root
     valid_capability_types: [Partner]
 
 capability_types:
