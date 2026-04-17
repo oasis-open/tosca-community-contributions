@@ -49,7 +49,7 @@ def main():
     pErrorReason = ""
 
     # Run the processor
-    processor_command = ["ubicity", "catalog",  "validate", file_path]
+    processor_command = ["ubicity", "csar",  "validate", file_path]
     result = subprocess.run(  
         processor_command,
     stdout=subprocess.PIPE,
