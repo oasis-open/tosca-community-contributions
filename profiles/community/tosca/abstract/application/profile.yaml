@@ -8,6 +8,7 @@ description: >-
   Application abstract node type
 
 imports:
+- profile: community.tosca.core:0.1
 - profile: community.tosca.abstract.base:0.1
 - profile: community.tosca.abstract.platform:0.1
   namespace: platform
@@ -101,7 +102,6 @@ node_types:
         required: true
         type: list
         entry_schema:
-          description:
           type: Process
     capabilities:
       endpoint:

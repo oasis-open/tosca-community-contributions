@@ -4,7 +4,7 @@ description: >-
   Service model for onboarding Kubernetes clusters
 
 imports:
-  - profile: community.tosca.platform:0.1
+  - profile: community.tosca.abstract.platform:0.1
     namespace: plt
 
 service_template:
