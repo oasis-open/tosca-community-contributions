@@ -29,7 +29,7 @@ data_types:
     description: >-
       The Port type defines integer that contain valid ports
     derived_from: integer
-    validation: {$in_range: [$value, [0, 0xFFFF]]}
+    validation: {$in_range: [$value, 0, 65535]}
   IPv4Socket:
     description: >-
       This complex type represents an IPv4 socket (address+port)
@@ -115,8 +115,7 @@ functions:
             description: >-
               The integer to convert to string
         result: string
-        implementation: functions.string:to_string
-        # The implementation string is currently not standard TOSCA
+        implementation: functions/to_string.py
   to_uppercase:
     description: >-
       Convert a string to upper case
@@ -126,8 +125,7 @@ functions:
             description: >-
               The string to convert to upper case.
         result: string
-        implementation: functions.string:to_uppercase
-        # The implementation string is currently not standard TOSCA
+        implementation: functions/to_uppercase.py
   validate_json:
     description: >-
       Check if a string argument contains valid JSON.
@@ -137,13 +135,53 @@ functions:
             description: >-
               The json string to validate.
         result: boolean
-        implementation: functions.json_utils:validate_json
-        # The implementation string is currently not standard TOSCA
+        implementation: functions/validate_json.py
   decode_json:
     signatures:
       - arguments:
           - type: string
             description: >-
               The json string to decode
-        implementation: functions.json_utils:decode_json
-        # The implementation string is currently not standard TOSCA
+        implementation: functions/decode_json.py
+  in_range:
+    description: >
+        This function provide true if first argument (value) is within
+        the range delimited by the second (min) and the third (max)
+        min <= value <= max
+        Arguments shall be integers, floats, strings or versions.
+        In any other case, including errors, it provides false.
+    signatures:
+      - arguments: [integer, integer, integer]
+        result: boolean
+        implementation: functions/in_range.py
+      - arguments: [float, float, float]
+        result: boolean
+        implementation: functions/in_range.py
+      - arguments: [string, string, string]
+        result: boolean
+        implementation: functions/in_range.py
+      - arguments: [version, version, version]
+        result: boolean
+        implementation: functions/in_range.py
+  in_range_strict:
+    description: >
+        This function provide true if first argument (value) is within
+        the range delimited by the second (min) and the third (max)
+        min < value < max
+        Strict comparison is used (i.e. value cannot be equal to
+        interval boundaries)
+        Arguments shall be integers, floats, strings or versions.
+        In any other case, including errors, it provides false.
+    signatures:
+      - arguments: [integer, integer, integer]
+        result: boolean
+        implementation: functions/in_range_strict.py
+      - arguments: [float, float, float]
+        result: boolean
+        implementation: functions/in_range_strict.py
+      - arguments: [string, string, string]
+        result: boolean
+        implementation: functions/in_range_strict.py
+      - arguments: [version, version, version]
+        result: boolean
+        implementation: functions/in_range_strict.py
