@@ -1,5 +1,4 @@
 tosca_definitions_version: tosca_2_0
-# PJ 20205-12-23 spec section 8.5.2 allows node filter in requirement assignment but ubicity gives error
 relationship_types:
   HostedOn:
     description: Relationship type for hosting
