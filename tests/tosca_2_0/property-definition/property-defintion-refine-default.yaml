@@ -1,5 +1,4 @@
 tosca_definitions_version: tosca_2_0
-# PJ 20260113 Ubicity fails first validation when new default applied even when second validation is commented out
 data_types:
   MapOfStrings:
     properties:
