@@ -64,6 +64,20 @@ data_types:
     validation:
       $matches: [$value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"]
 
+artifact_types:
+  Bash:
+    description: >-
+      Artifact type representing a script for the Bash shell
+    mime_type: application/x-sh
+    file_ext: [sh]
+    #properties: TBD (e.g. to specify the shell to use, or the script entry point)
+  Python:
+    description: >-
+      Artifact type representing a Python script
+    mime_type: text/x-python
+    file_ext: [py]
+    #properties: TBD (e.g. to specify the Python version to use, or the script entry point)
+
 relationship_types:
   ContainedBy:
     description: >-
@@ -115,7 +129,10 @@ functions:
             description: >-
               The integer to convert to string
         result: string
-        implementation: functions/to_string.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/to_string.py
   to_uppercase:
     description: >-
       Convert a string to upper case
@@ -125,7 +142,10 @@ functions:
             description: >-
               The string to convert to upper case.
         result: string
-        implementation: functions/to_uppercase.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/to_uppercase.py
   validate_json:
     description: >-
       Check if a string argument contains valid JSON.
@@ -135,14 +155,20 @@ functions:
             description: >-
               The json string to validate.
         result: boolean
-        implementation: functions/validate_json.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/validate_json.py
   decode_json:
     signatures:
       - arguments:
           - type: string
             description: >-
               The json string to decode
-        implementation: functions/decode_json.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/decode_json.py
   in_range:
     description: >
         This function provide true if first argument (value) is within
@@ -153,16 +179,28 @@ functions:
     signatures:
       - arguments: [integer, integer, integer]
         result: boolean
-        implementation: functions/in_range.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range.py
       - arguments: [float, float, float]
         result: boolean
-        implementation: functions/in_range.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range.py
       - arguments: [string, string, string]
         result: boolean
-        implementation: functions/in_range.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range.py
       - arguments: [version, version, version]
         result: boolean
-        implementation: functions/in_range.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range.py
   in_range_strict:
     description: >
         This function provide true if first argument (value) is within
@@ -175,13 +213,25 @@ functions:
     signatures:
       - arguments: [integer, integer, integer]
         result: boolean
-        implementation: functions/in_range_strict.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range_strict.py
       - arguments: [float, float, float]
         result: boolean
-        implementation: functions/in_range_strict.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range_strict.py
       - arguments: [string, string, string]
         result: boolean
-        implementation: functions/in_range_strict.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range_strict.py
       - arguments: [version, version, version]
         result: boolean
-        implementation: functions/in_range_strict.py
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range_strict.py
