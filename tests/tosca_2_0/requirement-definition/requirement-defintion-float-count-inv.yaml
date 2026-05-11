@@ -1,4 +1,5 @@
 tosca_definitions_version: tosca_2_0
+# Pg 2026-05-11 Ubicity accepts float for count values, but count should be integer according to TOSCA 2.0 specification
 relationship_types:
   HostedOn:
     properties:
@@ -38,9 +39,14 @@ node_types:
               - $equal:
                 - $get_property: [SELF, CAPABILITY, os_type]
                 - "Linux"
-              - $in_range:
-                - $get_property: [SELF, CAPABILITY, cpu_cores]
-                - [4, 16]
+                # used $in_range which is not supported in TOSCA 2.0, so we will use $greater_or_equal and $less_or_equal instead
+              - $and:
+                - $greater_or_equal:
+                  - $get_property: [SELF, CAPABILITY, cpu_cores]
+                  - 4
+                - $less_or_equal:
+                  - $get_property: [SELF, CAPABILITY, cpu_cores]
+                  - 16
           # count should be integer, not float
           count_range: [1.0, 2.5]
   
