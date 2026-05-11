@@ -28,8 +28,8 @@ node_types:
           relationship: HostedOn
           capability: Host
 
-
-# tag::s62[]
+# s62 uses $in_range which is not defined in TOSCA 2.0, so we will use $greater_or_equal and $less_or_equal instead
+# tag::s62a[]
 service_template:
   node_templates:
     my-node:
@@ -39,10 +39,13 @@ service_template:
         - host:
             node_filter:
               $and:
-                - $in_range:
+                - $greater_or_equal:
                   - $get_property: [ SELF, CAPABILITY, num-cpus ]
-                  - [ 1, 4 ]
+                  - 1
+                - $less_or_equal:
+                  - $get_property: [ SELF, CAPABILITY, num-cpus ]
+                  - 4
                 - $greater_or_equal:
                   - $get_property: [ SELF, CAPABILITY, mem-size ]
                   - 512 MB 
-# end::s62[]
+# end::s62a[]
