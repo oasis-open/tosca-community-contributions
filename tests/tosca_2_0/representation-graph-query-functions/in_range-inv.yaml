@@ -1,0 +1,10 @@
+tosca_definitions_version: tosca_2_0
+# 2026-05-11 Ubicity accepts $in_range which is not supported in TOSCA 2.0 specification, this should error
+data_types:
+  limited_integer:
+    derived_from: integer
+    validation:
+      # $in_range is not supported in TOSCA 2.0, this should error
+      $in_range:
+        - $value
+        - [ 0, 100 ]

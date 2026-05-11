@@ -38,8 +38,13 @@ node_types:
               - $equal:
                 - $get_property: [SELF, CAPABILITY, os_type]
                 - "Linux"
-              - $in_range:
-                - $get_property: [SELF, CAPABILITY, cpu_cores]
-                - [4, 16]
+              # used $in_range which is not supported in TOSCA 2.0, so we will use $greater_or_equal and $less_or_equal instead
+              - $and:
+                - $greater_or_equal:
+                  - $get_property: [SELF, CAPABILITY, cpu_cores]
+                  - 4
+                - $less_or_equal:
+                  - $get_property: [SELF, CAPABILITY, cpu_cores]
+                  - 16
           count_range: [1, 2]
   

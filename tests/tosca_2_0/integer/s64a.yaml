@@ -1,0 +1,11 @@
+tosca_definitions_version: tosca_2_0
+# s64 used $in-range which is not supported
+# tag::s64a[]
+data_types:
+  UInt16:
+    derived_from: integer
+    validation:
+      $and:
+        - $greater_or_equal: [ $value, 0 ]
+        - $less_or_equal: [ $value, 0xFFFF ]
+# end::s64a[]

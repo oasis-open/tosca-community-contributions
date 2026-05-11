@@ -88,7 +88,12 @@ service_template:
           file: scripts/install_mysql.sh
       count: 1
     node_filter:
-      $in_range:
-        - $get_property: [ SELF, port ]
-        - [ 1024, 65535 ]
+      #  this used $in_range which is not supported in V2.0
+      $and:
+        - $greater_or_equal:
+          - $get_property: [ SELF, port ]
+          - 1024
+        - $less_or_equal:
+          - $get_property: [ SELF, port ]
+          - 65535
 
