@@ -5,6 +5,30 @@ metadata:
   template_name: Inputs and Outputs Example
   template_author: Puccini
 
+# Add node type to replace tosca:Compute 
+capability_types:
+  Host:
+    properties:
+      num_cpus: 
+        type: integer
+      mem_size: 
+        type: integer
+node_types:
+  Compute:
+    properties:
+      num_cpus:
+        type: integer
+      mem_size:
+        # change from scalar-unit.size to integer for V2.0 testing
+        type: integer
+    capabilities:
+      host:
+        type: Host
+    attributes:
+        public_address: 
+          type: string
+  
+
 service_template:
 
   inputs:
@@ -16,11 +40,11 @@ service_template:
       # You can also assign the "value" field here, but it really works identically to "default"
       default: 4
       # Inputs can have constraints
-      validation:
-      # constraints changed to "validation" in TOSCA 2.0
-      - $less_than: 8
+      validation: { $less_than: [ $value , 8 ] }
+
     ram:
-      type: scalar-unit.size
+      # change from scale to integer for V2.0 testing
+      type: integer
       # This property is required and doesn't have "default" (or "value"),
       # So you *must* specify it in the CLI:
       #   puccini-tosca --input ram=1gib ...
@@ -29,12 +53,15 @@ service_template:
   node_templates:
 
     server:
-      type: tosca:Compute
+      type: Compute
+      properties:
+        num_cpus: 4
+        mem_size: 10
       capabilities:
         host:
           properties:
-            num_cpus: { get_input: cores }
-            mem_size: { get_input: ram }
+            num_cpus: { $get_input: cores }
+            mem_size: { $get_input: ram }
       attributes:
         # Let's give the attribute an initial value (see: attributes.yaml)
         # But the idea is that it would be updated by the deployment
@@ -46,4 +73,4 @@ service_template:
     url:
       type: string
       # You can also assign the "default" field here, but it really works identically to "value"
-      value: { concat: [ 'http://', { get_attribute: [ server, public_address ] }, ':8080' ] }
+      value: { $concat: ['http://', { $get_attribute: [ server, public_address ] }, ':8080' ] }
