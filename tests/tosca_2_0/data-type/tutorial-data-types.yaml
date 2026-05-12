@@ -4,6 +4,7 @@ tosca_definitions_version: tosca_2_0
 # - removed json and xml data types (were in TOSCA 1.0 Simple Profile but not in TOSCA 2.0)
 # - temporarily commented scalar types 
 # PJ 2026-01-11: Ubicity gives error CommentedSeq
+# PJ 2026-05-11: Ubicity does nolt allow functions in key names, line 190
 metadata:
 
   template_name: Data Types Example
@@ -79,9 +80,9 @@ node_types:
         type: string
         validation:
         # Constraints changed to "validation" in TOSCA 2.0
-        $length:
-          - $greater_or_equal: 2
-          - $less_or_equal: 5
+          - $and:
+            - $greater_or_equal: [ $length: [$value],2]
+            - $less_or_equal: [ $length: [$value ], 5 ]
 
       # This property is also constrained, but not here: see the data type
       # (You can also add *additional* constraints here if needed; it's logical "and")
@@ -103,7 +104,8 @@ node_types:
           type: float
           validation:
           # Constraints changed to "validation" in TOSCA 2.0
-          - $in_range: [ -1.0, 1.0 ]
+          # but in-range is not defined
+            # $in_range: [ -1.0, 1.0 ]
 
       # Constraints are type-aware, such that comparisons of special type values
       # will be done semantically, e.g. a "scalar-unit":
@@ -111,6 +113,7 @@ node_types:
       #   type: scalar-unit.time
       #   validation:
       #   # Constraints changed to "validation" in TOSCA 2.0
+      # but in-range is not defined
       #   - $in_range: [ 1m, 1h ]
 
       # Another example showing semantic "version" comparison
@@ -118,7 +121,8 @@ node_types:
         type: version
         validation:
         # Constraints changed to "validation" in TOSCA 2.0
-        - $in_range: [ 1.2.3.beta-3, 1.2.3.beta-5 ]
+        # but in-range is not defined 
+        # - $in_range: [ 1.2.3.beta-3, 1.2.3.beta-5 ]
 
       # In Puccini you can also create your own custom constraints
       # See: examples/javascript/constraints.yaml
@@ -149,7 +153,7 @@ data_types:
         type: float
         validation:
         # Constraints changed to "validation" in TOSCA 2.0
-        - $greater_or_equal: 0.0
+          - $greater_or_equal: [ $value, 0.0 ]
       nested_string:
         type: string
         required: false
@@ -161,7 +165,7 @@ data_types:
     description: Lowercase string
     validation:
     # Constraints changed to "validation" in TOSCA 2.0
-    - $matches: '[a-z]*'
+      - $matches: [ $value, '[a-z]*' ]
 
 service_template:
 
@@ -183,11 +187,12 @@ service_template:
         string_map:
           Greeting: Hello
           # Note that map keys could be function calls
-          { concat: [ Recip, ient ] }: Puccini
+          $concat: [ Recip, ient ] : Puccini
 
         lowercase_string_map:
           greeting: Hello
-          { concat: [ recip, ient ] }: Puccini
+          # change function to V2.0 syntax
+          $concat: [ recip, ient ] : Puccini
 
         complex:
           string: Hello, Puccini

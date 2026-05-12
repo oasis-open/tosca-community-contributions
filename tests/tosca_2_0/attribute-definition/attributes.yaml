@@ -1,5 +1,4 @@
 tosca_definitions_version: tosca_2_0
-
 metadata:
 
   template_name: Attributes Example
@@ -17,19 +16,20 @@ node_types:
     # So in some cases you might have to explicitly assign a default
     attributes:
       days:
-        type: list
-        entry_schema: DayOfWeek
+        # in V1.0 this had an entry schemea defintion teh example schema was derived from string which is not allowed in V2.0
+        # so for V2.0 change type to string validated in data-Type defintion
+        type: DayOfWeek
       max_size:
         description: Max size
-        type: scalar-unit.size
+        # changed type for V2.0 testing
+        type: integer
 
 data_types:
 
   DayOfWeek:
     derived_from: string
     # Constraints changed to "validation" in TOSCA 2.0
-    validation:
-      - $valid_values: [ su, mo, tu, we, th, fr, sa ]
+    validation: { $valid_values: [ $value, ["su", "mo", "tu", "we", "th", "fr", "sa"]]}
 
 service_template:
 
@@ -40,12 +40,13 @@ service_template:
       attributes:
         # You can assign initial values to attributes
         # Though it's expected that they may change
-        max_size: 10 gib
+        # Removed gib for V2.0 testing
+        max_size: 10
 
     backup2:
       type: Backup
       attributes:
-        # There is also a long notation that lets you override the description
+        # In V1.0 There was also a long notation that lets you override the description
+        # but that is not allowed in V2.0 attribute assisgnment
         max_size:
-          description: Current max size 
-          value: 10 gib
+          10
