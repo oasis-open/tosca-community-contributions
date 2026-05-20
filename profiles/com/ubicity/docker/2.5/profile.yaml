@@ -1,0 +1,388 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.ubicity.docker:2.5
+
+description: >-
+  Ubicity Docker Profile Type Definitions
+
+imports:
+  - profile: com.ubicity:2.5
+
+artifact_types:
+  DockerImage:
+    description: >-
+      A docker image that needs to be loaded on a remote host.
+    derived_from: Deployment
+    
+node_types:
+  MacVLAN:
+    description: >-
+      Node type for creating a Mac VLAN
+    derived_from: Subnet
+    properties:
+      cidr_block:
+        default: {$get_property: [SELF, RELATIONSHIP, layer, TARGET, RELATIONSHIP, link, TARGET, cidr_block]}
+      gateway:
+        default: {$get_property: [SELF, RELATIONSHIP, layer, TARGET, RELATIONSHIP, link, TARGET, gateway]}
+      ip_range:
+        type: string
+        required: False
+    requirements:
+      - manager:
+          capability: Manager
+          relationship: ManagedBy
+          node: Docker
+          count_range: [1, 1]
+      - layer:
+          capability: Layer
+          relationship: LayeredOn
+          node: Port
+          count_range: [1, 1]
+    artifacts:
+      create:
+        file: artifacts/macvlan/create.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/macvlan/delete.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              name: {$get_property: [SELF, name]}
+              parent_interface: {$get_attribute: [SELF, RELATIONSHIP, layer, TARGET, interface_name]}
+              cidr_block: {$get_property: [SELF, cidr_block]}
+              gateway: {$get_property: [SELF, gateway]}
+              ip_range: {$get_property: [SELF, ip_range]}
+          delete:
+            implementation: delete
+            inputs:
+              name: {$get_attribute: [SELF, name]}
+  MacVLANPort:
+    description: >-
+      Node type for connecting a Docker container to a MacVLAN.
+    derived_from: Port
+    artifacts:
+      add_port:
+        file: artifacts/macvlan_port/add_port.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+      add_target:
+        file: artifacts/docker_container/add_target.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+    requirements:
+      - link:
+          node: MacVLAN
+      - binding:
+          relationship:
+            interfaces:
+              Configure:
+                operations:
+                  add_source:
+                    implementation: add_port
+                    inputs:
+                      network_name:
+                        value: {$get_attribute: [SELF, SOURCE, RELATIONSHIP, link, TARGET, name]}
+                      container_id:
+                        value: {$get_attribute: [SELF, TARGET, container_id]}
+                      ip_address:
+                        value: {$get_property: [SELF, SOURCE, ip_address]}
+                      mac_address:
+                        value: {$get_property: [SELF, SOURCE, mac_address]}
+                  add_target:
+                    implementation: add_target
+                    inputs:
+                      name: {$get_attribute: [SELF, SOURCE, RELATIONSHIP, link, TARGET, name]}
+                      container_id: {$get_attribute: [SELF, TARGET, container_id]}
+                    outputs:
+                      ip_address: [SELF, SOURCE, ip_address]
+                      mac_address: [SELF, SOURCE, mac_address]
+                      interface_name: [SELF, SOURCE, interface_name]
+          node: DockerContainer
+          count_range: [0, 1]
+      - manager:
+          capability: Manager
+          relationship: ManagedBy
+          node: Docker
+          count_range: [1, 1]
+  DockerVolume:
+    description: >-
+      Node type for creating a Docker Volume
+    derived_from: Storage
+    properties:
+      mount_point:
+        type: string
+        required: false
+      driver:
+        type: string
+        default: local
+      labels:
+        type: list
+        entry_schema: string
+        required: false
+    attributes:
+      volume_id:
+        type: string
+    requirements:
+      - manager:
+          capability: Manager
+          relationship: ManagedBy
+          node: Docker
+          count_range: [1, 1]
+    artifacts:
+      create:
+        file: artifacts/docker_volume/create.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/docker_volume/delete.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              volume_name: {$get_property: [SELF, volume_name]}
+              mount_point: {$get_property: [SELF, mount_point]}
+              driver: {$get_property: [SELF, driver]}
+              labels: {$get_property: [SELF, labels]}
+            outputs:
+              Name: [SELF, volume_id]
+              Mountpoint: [SELF, mount_point]
+          delete:
+            implementation: delete
+            inputs:
+              volume_id: {$get_attribute: [SELF, volume_id]}
+  DockerContainer:
+    description: >-
+      Node type for creating and starting a Docker Container
+    derived_from: Software
+    properties:
+      container_name:
+        type: string
+      image:
+        type: string
+      env:
+        type: map
+        entry_schema: string
+        required: False
+      privileged:
+        type: boolean
+        default: False
+      cap_add:
+        type: list
+        entry_schema: string
+        required: False
+      cap_drop:
+        type: list
+        entry_schema: string
+        required: False
+    attributes:
+      container_id:
+        type: string
+    capabilities:
+      bindable:
+        type: Bindable
+    requirements:
+      - host:
+          count_range: [1, 1]
+      - manager:
+          capability: Manager
+          relationship: ManagedBy
+          node: Docker
+          count_range: [1, 1]
+      - volume:
+          capability: Attachable
+          relationship: AttachesTo
+          node: DockerVolume
+          count_range: [0, UNBOUNDED]
+      - link:
+          capability: Linkable
+          node: MacVLANPort
+          count_range: [0, 1]
+          relationship:
+            type: LinksTo
+            interfaces:
+              Configure:
+                operations:
+                  add_target:
+                    implementation: add_target
+                    inputs:
+                      container_id: {$get_attribute: [SELF, SOURCE, container_id]}
+                      name: {$get_attribute: [SELF, TARGET, RELATIONSHIP, link, TARGET, name]}
+                    outputs:
+                      ip_address: [TARGET, ip_address]
+                      mac_address: [TARGET, mac_address]
+                      interface_name: [TARGET, interface_name]
+    artifacts:
+      create:
+        file: artifacts/docker_container/create.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      add_target:
+        file: artifacts/docker_container/add_target.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      stop:
+        file: artifacts/docker_container/stop.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/docker_container/delete.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              container_name: {$get_property: [SELF, container_name]}
+              image: {$get_property: [SELF, image]}
+              volume_mount:
+                value: {$get_attribute: [SELF, RELATIONSHIP, volume, TARGET, volume_id]}
+                required: false
+              mount_point:
+                value: {$get_attribute: [SELF, RELATIONSHIP, volume, TARGET, mount_point]}
+                required: false
+              destination:
+                value: {$get_property: [SELF, RELATIONSHIP, volume, destination]}
+                required: false
+              network_name:
+                value: {$get_attribute: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, link, TARGET, name]}
+                required: false
+              ip_address:
+                value: {$get_property: [SELF, RELATIONSHIP, link, TARGET, ip_address]}
+                required: false
+              mac_address:
+                value: {$get_property: [SELF, RELATIONSHIP, link, TARGET, mac_address]}
+                required: false
+              env: {$get_property: [SELF, env]}
+              privileged: {$get_property: [SELF, privileged]}
+              cap_add: {$get_property: [SELF, cap_add]}
+              cap_drop: {$get_property: [SELF, cap_drop]}
+            outputs:
+              Name: [SELF, container_id]
+          stop:
+            implementation: stop
+            inputs:
+              container_id: {$get_attribute: [SELF, container_id]}
+          delete:
+            implementation: delete
+            inputs:
+              container_id: {$get_attribute: [SELF, container_id]}
+
+  Docker:
+    derived_from: InstallablePackage
+    description: Docker Software
+    properties:
+      name: docker
+      components: stable
+      package_names: [containerd.io docker-ce docker-ce-cli]
+      repository: https://download.docker.com/linux/ubuntu
+      repository_key: https://download.docker.com/linux/ubuntu/gpg
+    artifacts:
+      config:
+        file: artifacts/docker/config.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      start:
+        file: artifacts/docker/start.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      cleanup:
+        file: artifacts/docker/cleanup.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    capabilities:
+      manager:
+        type: Manager
+    interfaces:
+      Standard:
+        operations:
+          configure:
+            implementation: config
+          start:
+            implementation: start
+          delete:
+            inputs:
+              package_names: {$get_property: [SELF, package_names]}
+            implementation:
+              primary: delete
+              dependencies: [cleanup]
+
+  Containerd:
+    derived_from: Software
+    description: Containerd Software
+    capabilities:
+      containerd:
+        type: Feature
+    artifacts:
+      create:
+        file: artifacts/containerd/create.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      config:
+        file: artifacts/containerd/config.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      start:
+        file: artifacts/containerd/start.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      stop:
+        file: artifacts/containerd/stop.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+          configure:
+            implementation: config
+          start:
+            implementation: start
+          stop:
+            implementation: stop

@@ -1,0 +1,160 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.ubicity.net:2.5
+
+description: >-
+  Ubicity Network Profile Type Definitions.
+
+imports:
+  - profile: com.ubicity:2.5
+
+node_types:
+  Network:
+    description: >-
+      Abstract network node. Represents a forwarding domain.
+    derived_from: Root
+    properties:
+      name:
+        type: string
+        required: true
+    capabilities:
+      link:
+        type: Linkable
+  Switch:
+    derived_from: Network
+    properties:
+      vendor:
+        description: Name of the vendor for this switch
+        type: string
+      model:
+        type: string
+        required: true
+        description: Model of the Cisco Catalyst switch (e.g., "C9200L-24T-4G").
+      ios_version:
+        type: string
+        required: false
+        description: Cisco IOS software version installed on the switch.
+      management_ip:
+        type: string
+        required: true
+        description: Management IP address for the switch.
+      admin_user:
+        description: >-
+          Credential for the admin account used to manage this switch.
+        type: Credential
+        required: true
+    capabilities:
+      host:
+        type: Container
+        valid_source_node_types: [VLAN]
+  NetworkInterface:
+    derived_from: Root
+    properties:
+      name:
+        type: string
+    requirements:
+      - network:
+          capability: Linkable
+          relationship: LinksTo
+          node: Network
+          count_range: [1, 1]
+  SwitchInterface:
+    derived_from: NetworkInterface
+    capabilities:
+      host:
+        type: Container
+        valid_source_node_types: [VLANPort]
+    requirements:
+      - network:
+          node: Switch
+  VLAN:
+    derived_from: Network
+    properties:
+      vlan_id:
+        type: integer
+    requirements:
+      - host:
+          capability: Container
+          relationship: ContainedBy
+          node: Switch
+          count_range: [1, 1]
+    artifacts:
+      create:
+        type: Python
+        file: artifacts/vlan/create.py
+      delete:
+        type: Python
+        file: artifacts/vlan/delete.py
+    interfaces:
+      Standard:
+        inputs:
+          management_ip: {$get_property: [SELF, RELATIONSHIP, host, TARGET, management_ip]}
+          admin_user: {$get_property: [SELF, RELATIONSHIP, host, TARGET, admin_user]}
+          vlan_id: {$get_property: [SELF, vlan_id]}
+        create:
+          implementation: create
+          inputs:
+            name: {$get_property: [SELF, name]}
+        delete:
+          implementation: delete
+  VLANPort:
+    derived_from: NetworkInterface
+    properties:
+      mode:
+        type: string
+    requirements:
+      - network:
+          node: VLAN
+      - host:
+          capability: Container
+          relationship: ContainedBy
+          node: SwitchInterface
+          count_range: [1, 1]
+    artifacts:
+      create:
+        type: Python
+        file: artifacts/vlan_port/create.py
+      delete:
+        type: Python
+        file: artifacts/vlan_port/delete.py
+    interfaces:
+      Standard:
+        inputs:
+          management_ip: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, network, TARGET, management_ip]}
+          admin_user: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, network, TARGET, admin_user]}
+        create:
+          implementation: create
+          inputs:
+            mode: {$get_property: [SELF, mode]}
+            name: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+            vlan_id: {$get_property: [SELF, RELATIONSHIP, network, TARGET, vlan_id]}
+        delete:
+          implementation: delete
+          inputs:
+            name: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+            vlan_id: {$get_property: [SELF, RELATIONSHIP, network, TARGET, vlan_id]}
+  RouterInterface:
+    derived_from: NetworkInterface
+    properties:
+      ip_address:
+        type: string
+      subnet_mask:
+        type: string
+    requirements:
+      - network:
+          node: Switch
+    artifacts:
+      config:
+        type: Python
+        file: artifacts/router_interface/config.py
+    interfaces:
+      Standard:
+        inputs:
+          management_ip: {$get_property: [SELF, RELATIONSHIP, network, TARGET, management_ip]}
+          admin_user: {$get_property: [SELF, RELATIONSHIP, network, TARGET, admin_user]}
+        configure:
+          implementation: config
+          inputs:
+            name: {$get_property: [SELF, name]}
+            ip_address: {$get_property: [SELF, ip_address]}
+            subnet_mask: {$get_property: [SELF, subnet_mask]}

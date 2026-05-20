@@ -1,0 +1,54 @@
+Create a VLAN
+Enter global configuration mode:
+plaintext
+Copy code
+configure terminal
+Create the VLAN and assign it a name:
+plaintext
+Copy code
+vlan <vlan_id>
+name <vlan_name>
+Example:
+plaintext
+Copy code
+vlan 10
+name Sales
+3. Assign Ports to the VLAN
+Exit VLAN configuration mode and go to the interface configuration:
+
+plaintext
+Copy code
+interface <interface_id>
+Set the interface to switchport mode (access mode):
+
+plaintext
+Copy code
+switchport mode access
+Assign the interface to the VLAN:
+
+plaintext
+Copy code
+switchport access vlan <vlan_id>
+Example:
+
+plaintext
+Copy code
+interface FastEthernet0/1
+switchport mode access
+
+
+
+enable
+configure terminal
+vlan 10
+name Sales
+vlan 20
+name Engineering
+interface FastEthernet0/1
+switchport mode access
+switchport access vlan 10
+interface FastEthernet0/2
+switchport mode access
+switchport access vlan 20
+end
+write memory

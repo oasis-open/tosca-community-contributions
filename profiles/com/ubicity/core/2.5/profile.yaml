@@ -1,0 +1,151 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.ubicity.core:2.5
+
+description: >-
+  Ubicity Core Profile type definitions. These definitions are shared
+  between profiles of all levels of abstraction.
+
+artifact_types:
+  Python:
+    description: >-
+      Artifact for the interpreted Python language.
+    mime_type: application/x-python
+    file_ext: [py]
+
+functions:
+  unique_name:
+    signatures:
+      - result: string
+        implementation:
+          primary:
+            type: Python
+            file: functions/unique.py
+  validate_json:
+    description: >-
+      Check if a string argument contains valid JSON.
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The json string to validate.
+        result: boolean
+        implementation:
+          primary:
+            type: Python
+            file: functions/json_utils.py
+  decode_json:
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The json string to decode
+        implementation:
+          primary:
+            type: Python
+            file: functions/json_utils.py
+data_types:
+  json:
+    description: >-
+      Defines a string that contain data in the JSON
+      format.
+    derived_from: string
+    validation: {$validate_json: [$value]}
+  Credential:
+    properties:
+      user_name:
+        type: string
+        required: true
+      key_file:
+        type: string
+        required: false
+        description: >-
+          Either key_file or password_file must be provided.
+      password_file:
+        type: string
+        required: false
+        description: >-
+          Either key_file or password_file must be provided.
+  IPv4Socket:
+    properties:
+      ip_address:
+        type: string
+      port:
+        type: integer
+        
+interface_types:
+  Configure:
+    operations:
+      pre_configure_source:
+        description: >-
+          Operation to pre-configure the source endpoint.
+      pre_configure_target:
+        description: >-
+          Operation to pre-configure the target endpoint.
+      post_configure_source:
+        description: >-
+          Operation to post-configure the source endpoint.
+      post_configure_target:
+        description: >-
+          Operation to post-configure the target endpoint.
+      add_target:
+        description: >-
+          Operation to notify the source node of a target node being
+          added via a relationship.
+      add_source:
+        description: >-
+          Operation to notify the target node of a source node which is
+          now available via a relationship.
+      target_changed:
+        description: >-
+          Operation to notify source some property or attribute of the
+          target changed
+      remove_target:
+        description: >-
+          Operation to remove a target node.
+        
+capability_types:
+  Partner:
+    description: >-
+      Base capability type for capabilities that can be targeted by an
+      AssociatesWith relationship.
+    valid_relationship_types: [AssociatesWith]
+  Feature:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      DependsOn relationship. Derived types define
+      application-specific functionality.
+    valid_relationship_types: [DependsOn]
+  Container:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      ContainedBy relationship.  Advertizes the ability to contain one
+      or more other nodes.
+    valid_relationship_types: [ContainedBy]
+    
+relationship_types:
+  Root:
+    kind: ASSOCIATION
+    interfaces:
+      Configure:
+        type: Configure
+  AssociatesWith:
+    description: >-
+      The AssociatesWith type represents an association relationship between
+      two nodes. 
+    kind: ASSOCIATION
+    derived_from: Root
+    valid_capability_types: [Partner]
+  DependsOn:
+    description: >-
+      Generic dependency on a feature
+    kind: DEPENDENCY
+    valid_capability_types: [Feature]
+    derived_from: Root
+  ContainedBy:
+    description: >-
+      The ContainedBy type represents a containment relationship between
+      two nodes.
+    kind: CONTAINMENT
+    derived_from: Root
+    valid_capability_types: [Container]

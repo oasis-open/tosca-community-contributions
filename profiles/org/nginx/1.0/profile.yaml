@@ -1,0 +1,78 @@
+tosca_definitions_version: tosca_2_0
+
+profile: org.nginx:1.0
+
+description: >-
+  TOSCA profile for nginx. Defines node types for the nginx web
+  server and for websites hosted on it.
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+
+node_types:
+  WebServer:
+    description: >-
+      nginx web server software.
+    derived_from: ubct:InstallablePackage
+    properties:
+      name: nginx
+      package_names:
+        value: [nginx]
+    capabilities:
+      data_endpoint:
+        type: ubct:Endpoint
+      manager:
+        type: ubct:Manager
+        valid_source_node_types: [WebSite]
+    artifacts:
+      config:
+        file: artifacts/nginx/webserver/config.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          configure:
+            implementation: config
+
+  WebSite:
+    description: >-
+      Website hosted on an nginx web server.
+    derived_from: ubct:Root
+    properties:
+      name:
+        type: string
+    capabilities:
+      app_endpoint:
+        type: ubct:Endpoint
+    requirements:
+      - manager:
+          capability: ubct:Manager
+          relationship: ubct:ManagedBy
+          node: WebServer
+          count_range: [1, 1]
+    artifacts:
+      start:
+        file: artifacts/nginx/website/start.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/nginx/website/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        inputs:
+          web_site_name: {$get_property: [SELF, name]}
+        operations:
+          start:
+            implementation: start
+          delete:
+            implementation: delete

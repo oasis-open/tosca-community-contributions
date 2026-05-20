@@ -1,0 +1,228 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.proxmox.ve:2.5
+
+description: >-
+  Proxmox Virtual Environment profile
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+  - profile: io.terraform:1.0
+    namespace: tf
+
+data_types:
+  DatastoreIds:
+    description: >-
+      Mapping from content type to data store id (as configured in
+      /etc/pve/storage.cfg on the node)
+    properties:
+      images:
+        description: >-
+          Data store id for VM disks
+        type: string
+      rootdir:
+        description: >-
+          Data store id for LXC root filesystems
+        type: string
+      vztmpl:
+        description: >-
+          Data store id for LXC templates
+        type: string
+      iso:
+        description: >-
+          Data store id for ISO images
+        type: string
+      backup:
+        description: >-
+          Data store id for Backup files (.vma, .tar.gz)
+        type: string
+      snippets:
+        description: >-
+          Data store id for Cloud-init/user-data snippets
+        type: string
+
+artifact_types:
+  QCOW2:
+    description: >-
+      A QCOW image 
+    derived_from: ubct:File
+    
+capability_types:
+  Content:
+    derived_from: ubct:Feature
+
+relationship_types:
+  Stores:
+    derived_from: ubct:DependsOn
+    valid_capability_types: [Content]
+
+node_types:
+  Proxmox:
+    derived_from: ubct:IaasPlatform
+    properties:
+      url:
+        type: string
+      node_name:
+        type: string
+      datastore_ids:
+        type: DatastoreIds
+    requirements:
+      - credential:
+          node: Account
+          count_range: [1, 1]
+  Account:
+    derived_from: ubct:Principal
+    properties:
+      user_name:
+        type: string
+      key_file:
+        type: string
+      api_token_file:
+        type: string
+  Disk:
+    derived_from: ubct:Storage
+    properties:
+      size:
+        type: scalar-unit.size
+    requirements:
+      - image:
+          capability: Content
+          relationship: Stores
+          node: Image
+          count_range: [1, 1]
+  Image:
+    derived_from: ubct:VmImage
+    properties:
+      cloud_image_url:
+        type: string
+        description: >-
+          The URL for the cloud image to retrieve. One of cloud_image_url or
+          local_image_path must be provided.
+        required: false
+      local_image_path:
+        type: string
+        description: >-
+          Path of the file that contains the cloud image. One of
+          cloud_image_url or local_image_path must be provided.
+        required: false
+      tfstate:
+        description: "Required only if cloud_image_url or local_image_path is defined"
+        type: string
+        default: $ubct:unique_name
+      datastore_filename:
+        type: string
+        required: false
+        description: "filename to give to the uploaded/downloaded image if cloud_image_url or local_image_path is defined, else it is the name of the pre-imported image to be used"
+    capabilities:
+      content:
+        type: Content
+    requirements:
+      - host:
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          node: Proxmox
+          count_range: [1, 1]
+    artifacts:
+      create:
+        type: tf:Terraform
+        file: artifacts/image/image.tf
+        properties:
+          action: create
+          tfstate: {$get_property: [SELF, tfstate]}
+      delete:
+        type: tf:Terraform
+        file: artifacts/image/image.tf
+        properties:
+          action: delete
+          tfstate: {$get_property: [SELF, tfstate]}
+    interfaces:
+      Standard:
+        inputs:
+          cloud_image_url: {$get_property: [SELF, cloud_image_url]}
+          local_image_path: {$get_property: [SELF, local_image_path]}
+          url: {$get_property: [SELF, RELATIONSHIP, host, TARGET, url]}
+          user_name: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, user_name]}
+          key_file: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, key_file]}
+          api_token_file: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, api_token_file]}
+          node_name: {$get_property: [SELF, RELATIONSHIP, host, TARGET, node_name]}
+          datastore_ids: {$get_property: [SELF, RELATIONSHIP, host, TARGET, datastore_ids]}
+          datastore_filename: {$get_property: [SELF, datastore_filename]}
+        operations:
+          create:
+            implementation: create
+            outputs:
+              id: [SELF, id]
+          delete:
+            implementation: delete
+  Compute:
+    derived_from: ubct:VirtualCompute
+    properties:
+      # Custom APT repo
+      apt_source:
+        type: string
+        description: >-
+          APT source line to be added to APT sources list via Cloudinit, e.g.: 
+          deb [trusted=yes] https://example.com bookworm main
+        # TODO: make it optional but ask Chris how to ask if property is defined, else put a default value in Thales service template
+        required: false
+      tfstate:
+        type: string
+        default: $ubct:unique_name
+    capabilities:
+      host:
+        properties:
+          disk_size:
+            default: {$get_property: [SELF, RELATIONSHIP, storage, TARGET, size]}
+    requirements:
+      - key:
+          count_range: [1, 1]
+      - host:
+          node: Proxmox
+      - storage:
+          node: Disk
+          count_range: [1, 1]
+    artifacts:
+      create:
+        type: tf:Terraform
+        file: artifacts/compute/compute.tf
+        properties:
+          action: create
+          tfstate: {$get_property: [SELF, tfstate]}
+      delete:
+        type: tf:Terraform
+        file: artifacts/compute/compute.tf
+        properties:
+          action: delete
+          tfstate: {$get_property: [SELF, tfstate]}
+      cloudinit:
+        type: ubct:File
+        file: artifacts/compute/cloudinit.tpl
+    interfaces:
+      Standard:
+        inputs:
+          compute_name: {$get_property: [SELF, name]}
+          hostname: {$get_property: [SELF, hostname]}
+          domainname: {$get_property: [SELF, domainname]}
+          nameservers: {$get_property: [SELF, nameservers]}
+          datastore_ids: {$get_property: [SELF, RELATIONSHIP, host, TARGET, datastore_ids]}
+          image_id: {$get_attribute: [SELF, RELATIONSHIP, storage, TARGET, RELATIONSHIP, image, TARGET, id]}
+          public_key_file: {$get_attribute: [SELF, RELATIONSHIP, key, TARGET, public_key_file]}
+          url: {$get_property: [SELF, RELATIONSHIP, host, TARGET, url]}
+          user_name: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, user_name]}
+          proxmox_key_file: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, key_file]}
+          api_token_file: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, api_token_file]}
+          node_name: {$get_property: [SELF, RELATIONSHIP, host, TARGET, node_name]}
+          mem_size: {$scalar_value: [{$get_property: [SELF, CAPABILITY, host, mem_size]}, MiB]}
+          disk_size: {$scalar_value: [{$get_property: [SELF, CAPABILITY, host, disk_size]}, GiB]}
+          num_cpus: {$get_property: [SELF, CAPABILITY, host, num_cpus]}
+          cloudinit_template_file: {$get_artifact: [SELF, cloudinit]}
+        operations:
+          create:
+            implementation: create
+            outputs:
+              public_address: [SELF, public_address]
+          delete:
+            implementation:
+              primary: delete
+              dependencies: [remove_host_key]

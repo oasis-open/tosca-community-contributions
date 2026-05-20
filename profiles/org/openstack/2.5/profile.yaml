@@ -1,0 +1,325 @@
+tosca_definitions_version: tosca_2_0
+
+profile: org.openstack:2.5
+
+description: >-
+  TOSCA Type Definitions for Openstack Objects. This is a "Device
+  View" profile (meaning it defines technology-specific and
+  vendor-specific entities).
+    
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+
+node_types:
+  OpenstackCli:
+    derived_from: ubct:PipPackage
+    description: >-
+      Starting with version 6.3, the openstack client no longer
+      supports server-side key generation. Pin to version 6.2 for now
+      until we have a chance to fix this.
+    properties:
+      package_names:
+#        - python-openstackclient==6.2.0
+        - python-openstackclient
+        - os_virtual_interfacesv2_python_novaclient_ext
+      virtual_env: ~/venv/os
+    capabilities:
+      management:
+        type: ubct:Manager
+  Region:
+    derived_from: ubct:IaasPlatform
+    capabilities:
+      host:
+        valid_source_node_types:
+          - Compute
+          - Network
+          - KeyPair
+          - Image
+    requirements:
+      - manager:
+          node: OpenstackCli
+          count_range: [1, 1]
+      - credential:
+          node: Project
+          count_range: [1, 1]
+  Project:
+    derived_from: ubct:Principal
+    description: >-
+      Openstack account. Stores credentials to access OpenStack
+      resources.
+    properties:
+      clouds_file:
+        type: string
+        description: >-
+          Path to the clouds.yaml file containing OpenStack credentials
+          (e.g. ~/.config/openstack/clouds.yaml)
+      cloud:
+        type: string
+        description: >-
+          Name of the cloud entry within the clouds.yaml file
+    capabilities:
+      credential:
+        valid_source_node_types:
+          - Region
+    requirements:
+      - manager:
+          node: OpenstackCli
+          count_range: [1, 1]
+  KeyPair:
+    derived_from: ubct:KeyPair
+    requirements: # Need to probably change?
+      - host:
+          node: Region
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          os_clouds_file: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, clouds_file]}
+          os_cloud: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, cloud]}
+          region_name: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+          virtual_env: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+        operations:
+          start:
+            inputs:
+              key_name: {$get_attribute: [SELF, key_name]}
+              public_key_file: {$get_attribute: [SELF, public_key_file]}
+            implementation:
+              primary:
+                file: artifacts/keypair/start.sh
+                type: ubct:Bash
+          delete:
+            implementation:
+              # Override implementation in Ubicity profile
+              primary:
+                file: artifacts/keypair/delete.sh
+                type: ubct:Bash
+  Image:
+    derived_from: ubct:VmImage
+    description: >-
+      An OpenStack Glance image. The "id" attribute holds the image
+      UUID. Glance images are region-scoped.
+    requirements:
+      - host:
+          capability: ubct:Container
+          node: Region
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+
+  Compute:
+    derived_from: ubct:VirtualCompute
+    description: >-
+      Openstack Compute instance
+    attributes:
+      uuid:
+        type: string
+      public_address:
+        type: string
+      private_address:
+        type: string
+    requirements:
+      - key:
+          node: KeyPair
+          count_range: [1, 1]
+      - image:
+          node: Image
+      - link:
+          node: Port
+          count_range: [0, 4]
+      - host:
+          node: Region
+    interfaces:
+      Standard:
+        inputs:
+          os_clouds_file: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, clouds_file]}
+          os_cloud: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, cloud]}
+          region_name: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+          virtual_env: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+        operations:
+          create:
+            inputs:
+              server_name: {$get_property: [SELF, name]}
+              key_name: {$get_attribute: [SELF, RELATIONSHIP, key, TARGET, key_name]}
+              image_id:
+                required: false
+                value: {$get_attribute: [SELF, RELATIONSHIP, image, TARGET, id]}
+              ports: {$get_attribute: [SELF, RELATIONSHIP, link, TARGET, uuid]}
+            outputs:
+              id:         [SELF, uuid]
+              public_ip:  [SELF, public_address]
+              private_ip: [SELF, private_address]
+            implementation:
+              primary:
+                file: artifacts/compute/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              os_server_id: {$get_attribute: [SELF, uuid]}
+            implementation:
+              primary:
+                file: artifacts/compute/delete.sh
+                type: ubct:Bash
+              dependencies: [remove_host_key]
+  Port:
+    derived_from: ubct:Port
+    properties:
+      admin_state_up: 
+        type: boolean
+        required: false
+    attributes:
+      uuid: 
+        type: string
+    artifacts:
+      add_target:
+        file: artifacts/compute/add_target.sh
+        type: ubct:Bash
+        properties:
+          host:     {$get_attribute: [SELF, RELATIONSHIP, binding, TARGET, CAPABILITY, endpoint, address]}
+          user:     {$get_attribute: [SELF, RELATIONSHIP, binding, TARGET, sudo_user]}
+    requirements:
+      - link:
+          node: Subnet
+      - binding:
+          node: Compute
+          relationship:
+            interfaces:
+              Configure:
+                operations:
+                  add_target:
+                    implementation: add_target
+                    inputs:
+                      mac_address: {$get_attribute: [SOURCE, mac_address]}
+                    outputs:
+                      interface_name: [SOURCE, interface_name]
+    interfaces:
+      Standard:
+        inputs:
+          os_clouds_file: {$get_property: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, network, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, clouds_file]}
+          os_cloud: {$get_property: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, network, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, cloud]}
+          region_name: {$get_property: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, network, TARGET, RELATIONSHIP, host, TARGET, name]}
+          virtual_env: {$get_property: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, network, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+        operations:
+          create:
+            inputs:
+              port_name: {$get_property: [SELF, name]}
+              subnet_id: {$get_attribute: [SELF, RELATIONSHIP, link, TARGET, uuid]}
+              network_id: {$get_attribute: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, network, TARGET, uuid]}
+              server_id: {$get_attribute: [SELF, RELATIONSHIP, binding, TARGET, uuid]}
+              ip_address: {$get_attribute: [SELF, ip_address]}
+              mac_address: {$get_attribute: [SELF, mac_address]}
+              cloud_provider: {$get_property: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, network, TARGET, RELATIONSHIP, host, TARGET, provider]}
+            outputs:
+              id: [SELF, uuid]
+              ip_address: [SELF, ip_address]
+              mac_address: [SELF, mac_address]
+            implementation:
+              primary:
+                file: artifacts/port/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              port_id: {$get_attribute: [SELF, uuid]}
+            implementation:
+              primary:
+                file: artifacts/port/delete.sh
+                type: ubct:Bash
+  Network:
+    derived_from: ubct:Network
+    properties:
+      cidr_block:
+        required: true
+      admin_state_up:
+        type: boolean
+        required: false
+      provider_type:
+        type: string
+        default: vlan
+    attributes:
+      uuid:
+        type: string
+    requirements:
+      - host:
+          node: Region
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          os_clouds_file: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, clouds_file]}
+          os_cloud: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, cloud]}
+          region_name: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+          virtual_env: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+        operations:
+          create:
+            inputs:
+              network_name: {$get_property: [SELF, name]}
+              os_network_admin_state_up: {$get_property: [SELF, admin_state_up]}
+              provider_type: {$get_property: [SELF, provider_type]}
+              cloud_provider: {$get_property: [SELF, RELATIONSHIP, host, TARGET, provider]}
+            outputs:
+              id: [SELF, uuid]
+            implementation:
+              primary:
+                file: artifacts/network/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              os_network_id:
+                required: True
+                value: {$get_attribute: [SELF, uuid]}
+            implementation:
+              primary:
+                file: artifacts/network/delete.sh
+                type: ubct:Bash
+
+  Subnet:
+    derived_from: ubct:Subnet
+    properties:
+      enable_dhcp: 
+        type: boolean
+        required: true
+      ip_version:
+        type: integer
+        required: false
+    attributes:
+      uuid: 
+        type: string
+    capabilities:
+      route_target:
+        type: ubct:RouteTarget
+    requirements:
+      - network:
+          node: Network
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          os_clouds_file: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, clouds_file]}
+          os_cloud: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, cloud]}
+          region_name: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, host, TARGET, name]}
+          virtual_env: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+        operations:
+          create:
+            inputs:
+              os_subnet_name: {$get_property: [SELF, name]}
+              os_subnet_cidr: {$get_property: [SELF, cidr_block]}
+              os_subnet_enable_dhcp: {$get_property: [SELF, enable_dhcp]}
+              os_subnet_network_id: {$get_attribute: [SELF, RELATIONSHIP, network, TARGET, uuid]}
+            outputs:
+              id: [SELF, uuid]
+            implementation:
+              primary:
+                file: artifacts/subnet/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              os_subnet_id: {$get_attribute: [SELF, uuid]}
+            implementation:
+              primary:
+                file: artifacts/subnet/delete.sh
+                type: ubct:Bash
