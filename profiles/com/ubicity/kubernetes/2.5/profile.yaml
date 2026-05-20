@@ -1,0 +1,724 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.ubicity.kubernetes:2.5
+
+description: >-
+  TOSCA profile for installing and operating Kubernetes clusters.
+  Distinct from io.kubernetes (which models the Kubernetes API
+  resources). This profile provides node types for the Kubectl CLI,
+  the abstract KubernetesController/KubernetesWorker base types, and
+  concrete distributions (k3s, k0s, MicroK8s, kubeadm, minikube) as
+  well as a base type for cloud-managed clusters (EKS/AKS/GKE).
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+  - profile: com.ubicity.docker:2.5
+    namespace: docker
+
+capability_types:
+  Kubernetes:
+    description: >-
+      Advertizes the ability to act as a Kubernetes cluster that
+      hosts Kubernetes workloads.
+    derived_from: ubct:Container
+  Master:
+    description: >-
+      Advertizes the ability to act as a Kubernetes controller that
+      worker nodes can join.
+    derived_from: ubct:Feature
+
+relationship_types:
+  JoinedTo:
+    description: >-
+      Relationship from a Kubernetes worker node to its controller.
+    derived_from: ubct:DependsOn
+    valid_capability_types: [Master]
+
+node_types:
+  Kubectl:
+    derived_from: ubct:InstallablePackage
+    description: >-
+      An installation of the kubectl CLI tool.
+    properties:
+      name: kubernetes
+      package_names: [kubectl]
+      repository: https://pkgs.k8s.io/core:/stable:/v1.30/deb/
+      suite: /
+      repository_key: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
+    capabilities:
+      manager:
+        description: >-
+          Ability to manage Kubernetes clusters.
+        type: ubct:Manager
+
+  KubernetesCluster:
+    description: >-
+      Abstract base type for any Kubernetes cluster onto which
+      Kubernetes API resources (Pod, Service, Deployment, Namespace,
+      etc.) can be deployed. Concrete subtypes cover the two
+      realizations: KubernetesController (self-installed on a
+      Compute host) and ManagedKubernetes (provisioned by a cloud
+      provider such as EKS, AKS, or GKE). Both flavors are managed
+      via the kubectl CLI once the cluster exists.
+    derived_from: ubct:Root
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+        required: false
+      vault:
+        type: string
+        description: >-
+          Vault in which to store the kubeconfig file.
+        default: '~/vault'
+      kubeconfig:
+        type: string
+        required: false
+        description: >-
+          Path to the kubeconfig file. If not specified, a file is
+          created in the vault directory.
+    attributes:
+      kubeconfig:
+        type: string
+        description: >-
+          Path to the kubeconfig file for accessing the cluster.
+    capabilities:
+      host:
+        type: Kubernetes
+    requirements:
+      - manager:
+          capability: ubct:Manager
+          relationship: ubct:ManagedBy
+          node: Kubectl
+          count_range: [1, 1]
+
+  KubernetesController:
+    description: >-
+      A Kubernetes cluster installed on a Compute host.
+    derived_from: KubernetesCluster
+    properties:
+      public_address:
+        type: string
+        default: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, public_address]}
+    attributes:
+      join_token:
+        type: string
+    capabilities:
+      master:
+        type: Master
+    requirements:
+      - host:
+          capability: ubct:OperatingSystem
+          relationship: ubct:HostedOn
+          node: ubct:Compute
+          count_range: [1, 1]
+
+  KubernetesWorker:
+    description: >-
+      The KubernetesWorker node type represents a worker node that
+      joins an existing Kubernetes cluster.
+    derived_from: ubct:Software
+    requirements:
+      - cluster:
+          capability: Master
+          relationship: JoinedTo
+          node: KubernetesController
+          count_range: [1, 1]
+          description: The Kubernetes controller this worker joins
+
+  K3sController:
+    description: >-
+      The K3s node type represents an installation of a K3s
+      Kubernetes cluster.
+    derived_from: KubernetesController
+    artifacts:
+      create:
+        file: artifacts/k3s_controller/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      config:
+        file: artifacts/k3s_controller/config.sh
+        type: ubct:Bash
+      stop:
+        file: artifacts/k3s_controller/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete_config:
+        file: artifacts/k3s_controller/delete_config.sh
+        type: ubct:Bash
+      delete:
+        file: artifacts/k3s_controller/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+          configure:
+            inputs:
+              host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, public_address]}
+              user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+              vault: {$get_property: [SELF, vault]}
+            outputs:
+              kubeconfig: [SELF, kubeconfig]
+              version: [SELF, version]
+              join_token: [SELF, join_token]
+            implementation: config
+          stop:
+            implementation: stop
+          delete:
+            inputs:
+              kubeconfig: {$get_attribute: [SELF, kubeconfig]}
+            implementation:
+              primary: delete
+              dependencies: [delete_config]
+
+  Minikube:
+    description: >-
+      The Minikube node type represents an installation of a Minikube
+      Kubernetes cluster.
+    derived_from: KubernetesController
+    artifacts:
+      create:
+        file: artifacts/minikube/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      start:
+        file: artifacts/minikube/start.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      get_config:
+        file: artifacts/minikube/get_config.sh
+        type: ubct:Bash
+      stop:
+        file: artifacts/minikube/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete_config:
+        file: artifacts/minikube/delete_config.sh
+        type: ubct:Bash
+      delete:
+        file: artifacts/minikube/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    requirements:
+      - containerd:
+          capability: ubct:Feature
+          relationship: ubct:DependsOn
+          node: docker:Containerd
+          count_range: [1, 1]
+          description: Minikube uses containerd as the container runtime
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+          start:
+            inputs:
+              host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, public_address]}
+              user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+              vault: {$get_property: [SELF, vault]}
+              public_address: {$get_attribute: [SELF, public_address]}
+            outputs:
+              kubeconfig: [SELF, kubeconfig]
+              version: [SELF, version]
+            implementation:
+              primary: get_config
+              dependencies: [start]
+          stop:
+            implementation: stop
+          delete:
+            inputs:
+              kubeconfig: {$get_attribute: [SELF, kubeconfig]}
+            implementation:
+              primary: delete
+              dependencies: [delete_config]
+
+  K3sWorker:
+    description: >-
+      The K3sWorker node type represents a K3s agent node that joins
+      an existing K3s cluster.
+    derived_from: KubernetesWorker
+    requirements:
+      - cluster:
+          capability: Master
+          relationship: JoinedTo
+          node: K3sController
+          count_range: [1, 1]
+    artifacts:
+      worker_create:
+        file: artifacts/k3s_worker/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_stop:
+        file: artifacts/k3s_worker/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_delete:
+        file: artifacts/k3s_worker/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              controller_address: {$get_attribute: [SELF, RELATIONSHIP, cluster, TARGET, public_address]}
+              join_token: {$get_attribute: [SELF, RELATIONSHIP, cluster, TARGET, join_token]}
+            implementation: worker_create
+          stop:
+            implementation: worker_stop
+          delete:
+            implementation: worker_delete
+
+  K0sController:
+    description: >-
+      The K0s node type represents an installation of a k0s
+      Kubernetes cluster.
+    derived_from: KubernetesController
+    artifacts:
+      create:
+        file: artifacts/k0s_controller/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      start:
+        file: artifacts/k0s_controller/start.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      get_config:
+        file: artifacts/k0s_controller/get_config.sh
+        type: ubct:Bash
+      stop:
+        file: artifacts/k0s_controller/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete_config:
+        file: artifacts/k0s_controller/delete_config.sh
+        type: ubct:Bash
+      delete:
+        file: artifacts/k0s_controller/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+          start:
+            inputs:
+              host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, public_address]}
+              user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+              vault: {$get_property: [SELF, vault]}
+            outputs:
+              kubeconfig: [SELF, kubeconfig]
+              version: [SELF, version]
+              join_token: [SELF, join_token]
+            implementation:
+              primary: get_config
+              dependencies: [start]
+          stop:
+            implementation: stop
+          delete:
+            inputs:
+              kubeconfig: {$get_attribute: [SELF, kubeconfig]}
+            implementation:
+              primary: delete
+              dependencies: [delete_config]
+
+  K0sWorker:
+    description: >-
+      The K0sWorker node type represents a K0s worker node that joins
+      an existing K0s cluster.
+    derived_from: KubernetesWorker
+    requirements:
+      - cluster:
+          capability: Master
+          relationship: JoinedTo
+          node: K0sController
+          count_range: [1, 1]
+    artifacts:
+      worker_create:
+        file: artifacts/k0s_worker/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_start:
+        file: artifacts/k0s_worker/start.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_stop:
+        file: artifacts/k0s_worker/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_delete:
+        file: artifacts/k0s_worker/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              join_token: {$get_attribute: [SELF, RELATIONSHIP, cluster, TARGET, join_token]}
+            implementation: worker_create
+          start:
+            implementation: worker_start
+          stop:
+            implementation: worker_stop
+          delete:
+            implementation: worker_delete
+
+  MicroK8sController:
+    description: >-
+      The MicroK8s node type represents an installation of a MicroK8s
+      Kubernetes cluster.
+    derived_from: KubernetesController
+    artifacts:
+      create:
+        file: artifacts/microk8s_controller/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      config:
+        file: artifacts/microk8s_controller/config.sh
+        type: ubct:Bash
+      stop:
+        file: artifacts/microk8s_controller/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete_config:
+        file: artifacts/microk8s_controller/delete_config.sh
+        type: ubct:Bash
+      delete:
+        file: artifacts/microk8s_controller/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+          configure:
+            inputs:
+              host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, public_address]}
+              user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+              vault: {$get_property: [SELF, vault]}
+            outputs:
+              kubeconfig: [SELF, kubeconfig]
+              version: [SELF, version]
+              join_token: [SELF, join_token]
+            implementation: config
+          stop:
+            implementation: stop
+          delete:
+            inputs:
+              kubeconfig: {$get_attribute: [SELF, kubeconfig]}
+            implementation:
+              primary: delete
+              dependencies: [delete_config]
+
+  MicroK8sWorker:
+    description: >-
+      The MicroK8sWorker node type represents a MicroK8s node that joins
+      an existing MicroK8s cluster.
+    derived_from: KubernetesWorker
+    requirements:
+      - cluster:
+          capability: Master
+          relationship: JoinedTo
+          node: MicroK8sController
+          count_range: [1, 1]
+    artifacts:
+      worker_create:
+        file: artifacts/microk8s_worker/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_start:
+        file: artifacts/microk8s_worker/start.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_stop:
+        file: artifacts/microk8s_worker/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_delete:
+        file: artifacts/microk8s_worker/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: worker_create
+          start:
+            inputs:
+              join_token: {$get_attribute: [SELF, RELATIONSHIP, cluster, TARGET, join_token]}
+            implementation: worker_start
+          stop:
+            implementation: worker_stop
+          delete:
+            implementation: worker_delete
+
+  KubeadmController:
+    description: >-
+      Kubernetes cluster deployed using kubeadm. The create artifact
+      installs containerd, kubelet, kubeadm, and kubectl, then runs
+      kubeadm init to bootstrap the control plane.
+    derived_from: KubernetesController
+    properties:
+      pod_cidr:
+        type: string
+        required: false
+        default: 10.244.0.0/16
+        description: >-
+          CIDR block for the pod network. Defaults to the Flannel
+          default.
+    artifacts:
+      create:
+        file: artifacts/kubeadm_controller/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      config:
+        file: artifacts/kubeadm_controller/config.sh
+        type: ubct:Bash
+      stop:
+        file: artifacts/kubeadm_controller/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete_config:
+        file: artifacts/kubeadm_controller/delete_config.sh
+        type: ubct:Bash
+      delete:
+        file: artifacts/kubeadm_controller/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              name:
+                value: {$get_property: [SELF, name]}
+              version:
+                required: false
+                value: {$get_property: [SELF, version]}
+              pod_cidr:
+                required: false
+                value: {$get_property: [SELF, pod_cidr]}
+              api_server_address:
+                required: false
+                value: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, private_address]}
+              api_server_public_address:
+                required: false
+                value: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, public_address]}
+            implementation: create
+          configure:
+            inputs:
+              host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, public_address]}
+              user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+              vault: {$get_property: [SELF, vault]}
+            outputs:
+              kubeconfig: [SELF, kubeconfig]
+              version: [SELF, version]
+              join_token: [SELF, join_token]
+            implementation: config
+          stop:
+            implementation: stop
+          delete:
+            inputs:
+              kubeconfig: {$get_attribute: [SELF, kubeconfig]}
+            implementation:
+              primary: delete
+              dependencies: [delete_config]
+
+  KubeadmWorker:
+    description: >-
+      Kubernetes worker node deployed using kubeadm. The create artifact
+      installs containerd, kubelet, and kubeadm, then joins the cluster
+      using the join command from the controller.
+    derived_from: KubernetesWorker
+    requirements:
+      - cluster:
+          capability: Master
+          relationship: JoinedTo
+          node: KubeadmController
+          count_range: [1, 1]
+    artifacts:
+      worker_create:
+        file: artifacts/kubeadm_worker/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_stop:
+        file: artifacts/kubeadm_worker/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      worker_delete:
+        file: artifacts/kubeadm_worker/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              version:
+                required: false
+                value: {$get_attribute: [SELF, RELATIONSHIP, cluster, TARGET, version]}
+              join_token: {$get_attribute: [SELF, RELATIONSHIP, cluster, TARGET, join_token]}
+            implementation: worker_create
+          stop:
+            implementation: worker_stop
+          delete:
+            implementation: worker_delete
+
+  Kubernetes:
+    derived_from: ubct:InstallablePackage
+    description: >-
+      Node type that represents the Kubernetes Software components
+      installed via apt.
+    properties:
+      name: kubernetes
+      package_names: [kubelet kubeadm kubectl]
+      repository: https://pkgs.k8s.io/core:/stable:/v1.30/deb/
+      suite: /
+      repository_key: https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key
+    requirements:
+      - containerd:
+          capability: ubct:Feature
+          relationship: ubct:DependsOn
+          node: docker:Containerd
+
+  ManagedKubernetes:
+    derived_from: KubernetesCluster
+    description: >-
+      A managed Kubernetes cluster provisioned by a cloud provider
+      (e.g. EKS, AKS, GKE).
+    properties:
+      number_of_workers:
+        type: integer
+        description: >-
+          Number of worker nodes in the default node pool.
+        validation:
+          $greater_than: [$value, 0]
+      worker_machine_type:
+        type: string
+        required: false
+        description: >-
+          VM size or instance type for worker nodes (e.g.
+          "t3.medium", "Standard_D2s_v3", "e2-medium"). If not
+          specified, the cloud provider selects a default.
+      worker_disk_size:
+        type: scalar-unit.size
+        required: false
+        description: >-
+          Disk size per worker node.
+      worker_os_architecture:
+        type: string
+        required: false
+        default: x86_64
+        description: >-
+          CPU architecture for worker nodes.
+        validation:
+          $valid_values: [$value, [x86_64, arm64]]
+      max_pods_per_node:
+        type: integer
+        required: false
+        description: >-
+          Maximum number of pods that can be scheduled on each node.
+      private_cluster:
+        type: boolean
+        required: false
+        default: false
+        description: >-
+          If true, the cluster API endpoint is not publicly
+          accessible.
+      autoscaling:
+        type: boolean
+        required: false
+        default: false
+        description: >-
+          Enable node autoscaling for the default node pool.
+      min_nodes:
+        type: integer
+        required: false
+        description: >-
+          Minimum number of nodes when autoscaling is enabled.
+      max_nodes:
+        type: integer
+        required: false
+        description: >-
+          Maximum number of nodes when autoscaling is enabled.
+      network_policy:
+        type: string
+        required: false
+        description: >-
+          Network policy provider (e.g. calico, cilium). If not
+          specified, the cloud provider's default is used.
+    attributes:
+      endpoint:
+        type: string
+        description: >-
+          URL of the Kubernetes API server endpoint.

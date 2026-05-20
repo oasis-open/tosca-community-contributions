@@ -1,0 +1,52 @@
+tosca_definitions_version: tosca_2_0
+
+profile: org.libvirt:1.0
+
+description: >-
+  TOSCA libvirt profile. Defines the KVM hypervisor and libvirt
+  management layer that underpin Linux virtualization platforms
+  (KubeVirt, oVirt, OpenNebula, CloudStack, etc.).
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+
+node_types:
+  Kvm:
+    derived_from: ubct:InstallablePackage
+    description: >-
+      Installation of KVM and libvirt on a Linux host. Provides a
+      HyperVisor capability that virtualization platforms can host
+      on.
+    properties:
+      name: kvm
+      package_names:
+        - qemu-kvm
+        - libvirt-daemon-system
+        - libvirt-clients
+        - bridge-utils
+        - cpu-checker
+        - virtinst
+    capabilities:
+      hypbervisor: ubct:HyperVisor
+    artifacts:
+      config:
+        file: artifacts/kvm/config.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      stop:
+        file: artifacts/kvm/stop.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+          configure:
+            implementation: config
+          stop:
+            implementation: stop

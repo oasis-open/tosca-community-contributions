@@ -1,0 +1,928 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.amazon.aws:2.5
+
+description: >-
+  TOSCA Type Definitions for AWS Objects. This is a "Device View"
+  profile (meaning it defines technology-specific and vendor-specific
+  entities).
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+  - profile: com.ubicity.kubernetes:2.5
+    namespace: kube
+
+data_types:
+  Route:
+    properties:
+      destination_cidr:
+        type: string
+      target_gateway_id:
+        type: string
+        required: false
+      target_interface_id:
+        type: string
+        required: false
+  DeviceIndex:
+    derived_from: integer
+    validation:
+      $greater_or_equal: [$value, 0] # perhaps -1?
+
+capability_types:
+  AssociationTarget:
+    description: >-
+      Target of an association relationship
+
+relationship_types:
+  AssociatedWith:
+    derived_from: ubct:Root
+    valid_capability_types: [AssociationTarget]
+    attributes:
+      association_id:
+        type: string
+      
+node_types:
+  AwsCli:
+    derived_from: ubct:Software
+    capabilities:
+      management:
+        type: ubct:Manager
+    artifacts:
+      create:
+        file: artifacts/aws_cli/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/aws_cli/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create: create
+          delete: delete
+  Account:
+    derived_from: ubct:Principal
+    description: >-
+      AWS account. Stores credentials to access AWS resources.
+    properties:
+      name:
+        type: string
+        description: >-
+          Name for this account
+      credentials_file:
+        type: string
+        description: >-
+          Path to the AWS credentials file (e.g. ~/.aws/credentials)
+      profile:
+        type: string
+        required: false
+        description: >-
+          Named profile within the credentials file. Defaults to [default].
+    capabilities:
+      credential:
+        valid_source_node_types:
+          - Region
+    requirements:
+      - manager:
+          node: AwsCli
+          count_range: [1, 1]
+  Region:
+    derived_from: ubct:IaasPlatform
+    capabilities:
+      host:
+        valid_source_node_types:
+          - VirtualPrivateCloud
+          - Compute
+          - ElasticIp
+          - KeyPair
+          - Eks
+          - Ami
+    requirements:
+      - manager:
+          node: AwsCli
+          count_range: [1, 1]
+      - credential:
+          node: Account
+          count_range: [1, 1]
+  VirtualPrivateCloud:
+    derived_from: ubct:Network
+    description: >-
+      A virtual private cloud (VPC) is a virtual network dedicated to
+      an AWS account. It is logically isolated from other virtual
+      networks in the AWS Cloud. A VPC spans all of the Availability
+      Zones in the Region. A VPC can support one or more subnets in
+      each Availability Zone.
+    properties:
+      cidr_block:
+        required: true
+    attributes:
+      vpc_id:
+        type: string
+    capabilities:
+      host:
+        type: ubct:Container
+        valid_source_node_types: [Subnet, SecurityGroup, InternetGateway, RouteTable, Eks]
+    requirements:
+      - host:
+          node: Region
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            description: >-
+              The name of the AWS region in which to create the VPC
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          create:
+            inputs:
+              aws_vpc_name: {$get_property: [SELF, name]}
+              aws_cidr_block: {$get_property: [SELF, cidr_block]}
+            outputs:
+              vpc_id: [SELF, vpc_id]
+            implementation:
+              primary:
+                file: artifacts/vpc/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aws_vpc_id:
+                required: True
+                value: {$get_attribute: [SELF, vpc_id]}
+            implementation:
+              primary:
+                file: artifacts/vpc/delete.sh
+                type: ubct:Bash
+  Subnet:
+    derived_from: ubct:Subnet
+    properties:
+      map_public_ip:
+        type: boolean
+        required: false
+    attributes:
+      subnet_id:
+        type: string
+    capabilities:
+      route_target:
+        type: ubct:RouteTarget
+    requirements:
+      - route_table:
+          capability: ubct:Feature
+          relationship: ubct:DependsOn
+          node: RouteTable
+          count_range: [0, 1]
+      - vpc:
+          node: VirtualPrivateCloud
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            description: Region name in which to create this subnet
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          create:
+            inputs:
+              aws_cidr_block:
+                required: True
+                value: {$get_property: [SELF, cidr_block]}
+              aws_vpc_id:
+                required: True
+                value: {$get_attribute: [SELF, RELATIONSHIP, vpc, TARGET, vpc_id]}
+              aws_map_public_ip:
+                required: False
+                value: {$get_property: [SELF, map_public_ip]}
+              aws_route_table_id:
+                required: False
+                value: {$get_attribute: [SELF, RELATIONSHIP, route_table, TARGET, route_table_id]}
+            outputs:
+              subnet_id: [SELF, subnet_id]
+            implementation:
+              primary:
+                file: artifacts/subnet/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aws_subnet_id:
+                required: True
+                value: {$get_attribute: [SELF, subnet_id]}
+            implementation:
+              primary:
+                file: artifacts/subnet/delete.sh
+                type: ubct:Bash
+  ElasticIp:
+    derived_from: ubct:Root
+    attributes:
+      ip_address:
+        type: string
+      elastic_ip_id:
+        type: string
+    capabilities:
+      target:
+        type: AssociationTarget
+    requirements:
+      - host:
+          node: Region
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            description: Region name in which to create this subnet
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          create:
+            outputs:
+              elastic_ip_id: [SELF, elastic_ip_id]
+              ip_address: [SELF, ip_address]
+            implementation:
+              primary:
+                file: artifacts/elastic_ip/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aws_elastic_ip_id:
+                required: True
+                value: {$get_attribute: [SELF, elastic_ip_id]}
+            implementation:
+              primary:
+                file: artifacts/elastic_ip/delete.sh
+                type: ubct:Bash
+  KeyPair:
+    derived_from: ubct:KeyPair
+    attributes:
+      key_id:
+        type: string
+        description: >-
+          Key ID for this KeyPair.
+    requirements: # Need to probably change?
+      - host:
+          node: Region
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            description: >-
+              The name of the AWS region in which to create the KeyPair.
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          start:
+            inputs:
+              key_name: {$get_attribute: [SELF, key_name]}
+              public_key_file: {$get_attribute: [SELF, public_key_file]}
+            outputs:
+              key_id: [SELF, key_id]
+            implementation:
+              primary:
+                file: artifacts/keypair/start.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aws_key_id: {$get_attribute: [SELF, key_id]}
+            implementation:
+              # Override implementation in Ubicity profile
+              primary:
+                file: artifacts/keypair/delete.sh
+                type: ubct:Bash
+
+  SecurityGroup:
+    derived_from: ubct:SecurityGroup
+    description: >-
+      AWS Security Group
+    properties:
+      description:
+        required: true
+    attributes:
+      group_id:
+        type: string
+    requirements:
+      - vpc:
+          description: >-
+            Virtual Private Cloud to which this security group
+            applies. If no VPC is provided, then the "default" VPC is
+            assumed.
+          node: VirtualPrivateCloud
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [0, 1]
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            required: false
+            description: The region in which to create this Security Group
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          create:
+            inputs:
+              aws_group_name:
+                required: True
+                value: {$get_property: [SELF, name]}
+              aws_group_description:
+                required: True
+                value: {$get_property: [SELF, description]}
+              aws_vpc_id:
+                required: False
+                value: {$get_attribute: [SELF, RELATIONSHIP, vpc, TARGET, vpc_id]}
+              aws_ingress_rules:
+                required: False
+                value: {$get_property: [SELF, ingress_rules]}
+              aws_egress_rules:
+                required: False
+                value: {$get_property: [SELF, egress_rules]}
+            outputs:
+              group_id: [SELF, group_id]
+            implementation:
+              primary:
+                file: artifacts/security-group/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aws_group_id:
+                required: True
+                value: {$get_attribute: [SELF, group_id]}
+            implementation:
+              primary:
+                file: artifacts/security-group/delete.sh
+                type: ubct:Bash
+  InternetGateway:
+    derived_from: ubct:Root
+    attributes:
+      igw_id:
+        type: string
+    capabilities:
+      target:
+        type: ubct:RouteTarget
+    requirements:
+      - vpc:
+          node: VirtualPrivateCloud
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            description: Region name in which to create this internet gateway
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          create:
+            outputs:
+              aws_igw_id: [SELF, igw_id]
+            implementation:
+              primary:
+                file: artifacts/internet-gateway/create.sh
+                type: ubct:Bash
+          start:
+            inputs:
+              aws_igw_id:
+                required: True
+                value: {$get_attribute: [SELF, igw_id]}
+              aws_vpc_id:
+                required: True
+                value: {$get_attribute: [SELF, RELATIONSHIP, vpc, TARGET, vpc_id]}
+            implementation:
+              primary:
+                file: artifacts/internet-gateway/start.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aws_vpc_id:
+                required: True
+                value: {$get_attribute: [SELF, RELATIONSHIP, vpc, TARGET, vpc_id]}
+              aws_igw_id:
+                required: True
+                value: {$get_attribute: [SELF, igw_id]}
+            implementation:
+              primary:
+                file: artifacts/internet-gateway/delete.sh
+                type: ubct:Bash
+  RouteTable:
+    derived_from: ubct:Root
+    properties:
+      routes:
+        type: list
+        required: false
+        entry_schema: Route
+    attributes:
+      route_table_id:
+        type: string
+    capabilities:
+      route_table:
+        type: ubct:Feature
+    requirements:
+      - gateway:
+          capability: ubct:RouteTarget
+          node: InternetGateway
+          relationship: ubct:RoutesTo
+          count_range: [0, 1]
+      - vpc:
+          node: VirtualPrivateCloud
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            description: Region name in which to create this internet gateway
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          create:
+            inputs:
+              aws_vpc_id:
+                required: True
+                value: {$get_attribute: [SELF, RELATIONSHIP, vpc, TARGET, vpc_id]}
+              aws_routes:
+                required: False
+                value: {$get_property: [SELF, routes]}
+            outputs:
+              aws_route_table_id: [SELF, route_table_id]
+            implementation:
+              primary:
+                file: artifacts/route-table/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aws_route_table_id:
+                required: True
+                value: {$get_attribute: [SELF, route_table_id]}
+            implementation:
+              primary:
+                file: artifacts/route-table/delete.sh
+                type: ubct:Bash
+  Ami:
+    derived_from: ubct:VmImage
+    description: >-
+      An AWS AMI (Amazon Machine Image). The image's "id" attribute
+      holds the ami-xxxxxxxx identifier and is region-scoped.
+    requirements:
+      - host:
+          node: Region
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+  Compute:
+    derived_from: ubct:VirtualCompute
+    description: >-
+      AWS Compute instance.
+    attributes:
+      instance_id:
+        type: string
+    artifacts:
+      add_target:
+        file: artifacts/compute/add_target.sh
+        type: ubct:Bash
+        properties:
+          host:     {$get_attribute: [SELF, CAPABILITY, endpoint, address]}
+          user:     {$get_attribute: [SELF, sudo_user]}
+    requirements:
+      - key:
+          node: KeyPair
+          count_range: [1, 1]
+      - image:
+          node: Ami
+      - link:
+          description: >
+            Expresses the relationship between Compute and
+            NetworkInterface nodes. Effectively it indicates that the
+            Compute will be attached to one or more specific
+            NetworkInterface node instances.
+          node: NetworkInterface
+          relationship:
+            interfaces:
+              Configure:
+                operations:
+                  add_target:
+                    implementation: add_target
+                    inputs:
+                      mac_address: {$get_attribute: [SELF, TARGET, mac_address]}
+                    outputs:
+                      interface_name: [SELF, TARGET, interface_name]
+          count_range: [0, 4]
+      - host:
+          node: Region
+      - security:
+          node: SecurityGroup
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            description: The AWS Region in which to create this instance
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          create:
+            inputs:
+              server_name:
+                required: false
+                value: {$get_property: [SELF, name]}
+              hostname:
+                required: false
+                value: {$get_property: [SELF, hostname]}
+              aws_key_name:
+                required: true
+                value: {$get_attribute: [SELF, RELATIONSHIP, key, TARGET, key_name]}
+              image_id:
+                required: false
+                value: {$get_attribute: [SELF, RELATIONSHIP, image, TARGET, id]}
+              aws_network_interfaces:
+                required: false
+                value: {$get_attribute: [SELF, RELATIONSHIP, link, TARGET, interface_id]}
+              aws_security_group_id:
+                required: False
+                value: {$get_attribute: [SELF, RELATIONSHIP, security, TARGET, group_id]}
+            outputs:
+              instance_id: [SELF, instance_id]
+              public_ip:     [SELF, public_address]
+              private_ip:    [SELF, private_address]
+              attachment_id: [SELF, RELATIONSHIP, link, TARGET, attachment_id]
+              device_index:  [SELF, RELATIONSHIP, link, TARGET, device_index]
+            implementation:
+              primary:
+                file: artifacts/compute/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aws_instance_id:
+                required: True
+                value: {$get_attribute: [SELF, instance_id]}
+            implementation:
+              primary:
+                file: artifacts/compute/delete.sh
+                type: ubct:Bash
+              dependencies: [remove_host_key]
+  NetworkInterface:
+    derived_from: ubct:Port
+    properties:
+      device_index: 
+        type: DeviceIndex
+        required: false
+    attributes:
+      interface_id: 
+        type: string
+      attachment_id: 
+        type: string
+    artifacts:
+      add_target:
+        file: artifacts/compute/add_target.sh
+        type: ubct:Bash
+        properties:
+          host:     {$get_attribute: [SELF, RELATIONSHIP, binding, TARGET, CAPABILITY, endpoint, address]}
+          user:     {$get_attribute: [SELF, RELATIONSHIP, binding, TARGET, sudo_user]}
+    requirements:
+      - link:
+          node: Subnet
+      - binding:
+          node: Compute
+          relationship:
+            interfaces:
+              Configure:
+                operations:
+                  add_source:
+                    implementation:
+                      primary:
+                        file: artifacts/interface/attach.sh
+                        type: ubct:Bash
+                    inputs:
+                      aws_region_name:
+                        description: >-
+                          The region in which to create this Network
+                          Interface
+                        value: {$get_property: [TARGET, RELATIONSHIP, host, TARGET, name]}
+                      aws_interface_id:
+                        description: >-
+                          The id of this interface
+                        value: {$get_attribute: [SOURCE, interface_id]}
+                      aws_device_index:
+                        description: >-
+                          The index of this interface
+                        value: {$get_attribute: [SOURCE, device_index]}
+                      aws_instance_id:
+                        value:  {$get_attribute: [TARGET, instance_id]}
+                    outputs:
+                      attachment_id: [SOURCE, attachment_id]
+                  add_target:
+                    implementation: add_target
+                    inputs:
+                      mac_address: {$get_attribute: [SOURCE, mac_address]}
+                    outputs:
+                      interface_name: [SOURCE, interface_name]
+      - security:
+          capability: ubct:SecurityGuard
+          node: SecurityGroup
+          relationship: ubct:ProtectedBy
+          count_range: [0, 1]
+      - address: 
+          description: >
+            Specifies the elastic IP address to associate with this
+            network interface.
+          capability: AssociationTarget
+          relationship:
+            type: AssociatedWith
+            interfaces:
+              Configure:
+                operations:
+                  pre_configure_source:
+                    inputs:
+                      aws_region_name:
+                        description: >-
+                          The region in which to create this Network
+                          Interface
+                        value: {$get_property: [TARGET, RELATIONSHIP, host, TARGET, name]}
+                      aws_interface_id:
+                        description: >-
+                          The id of the interface that is associated with
+                          the elastic IP address
+                        value: {$get_attribute: [SOURCE, interface_id]}
+                      aws_elastic_ip_id:
+                        description: >-
+                          The id of the elastic IP address with which this
+                          interface is associated
+                        value: {$get_attribute: [TARGET, elastic_ip_id]}
+                    outputs:
+                      association_id: [SELF, association_id]
+                    implementation:
+                      primary:
+                        file: artifacts/interface/pre_configure_source.sh
+                        type: ubct:Bash
+          count_range: [0, 1]
+          node: ElasticIp
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            description: The region in which to create this Network Interface
+            value: {$get_property: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, vpc, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          create:
+            inputs:
+              aws_subnet_id:
+                required: True
+                value: {$get_attribute: [SELF, RELATIONSHIP, link, TARGET, subnet_id]}
+              aws_security_group_id:
+                required: False
+                value: {$get_attribute: [SELF, RELATIONSHIP, security, TARGET, group_id]}
+            outputs:
+              interface_id: [SELF, interface_id]
+              ip_address: [SELF, ip_address]
+              mac_address: [SELF, mac_address]
+            implementation:
+              primary:
+                file: artifacts/interface/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aws_interface_id:
+                required: True
+                value: {$get_attribute: [SELF, interface_id]}
+              aws_attachment_id:
+                required: True
+                value: {$get_attribute: [SELF, attachment_id]}
+            implementation:
+              primary:
+                file: artifacts/interface/delete.sh
+                type: ubct:Bash
+              dependencies:
+                - file: artifacts/interface/detach.sh
+                  type: ubct:Bash
+
+  Eks:
+    derived_from: kube:ManagedKubernetes
+    description: >-
+      Amazon Elastic Kubernetes Service (EKS) managed cluster.
+    properties:
+      cluster_role_arn:
+        type: string
+        description: >-
+          ARN of the IAM role that provides permissions for the
+          Kubernetes control plane.
+      node_role_arn:
+        type: string
+        description: >-
+          ARN of the IAM role for the managed node group.
+      ami_type:
+        type: string
+        required: false
+        description: >-
+          AMI type for worker nodes (e.g. AL2_x86_64, AL2_ARM_64,
+          BOTTLEROCKET_x86_64, BOTTLEROCKET_ARM_64).
+      capacity_type:
+        type: string
+        required: false
+        default: ON_DEMAND
+        description: >-
+          Capacity type for the node group.
+        validation:
+          $valid_values: [$value, [ON_DEMAND, SPOT]]
+      endpoint_public_access:
+        type: boolean
+        required: false
+        default: true
+        description: >-
+          Whether the cluster API server endpoint is publicly
+          accessible.
+      endpoint_private_access:
+        type: boolean
+        required: false
+        default: false
+        description: >-
+          Whether the cluster API server endpoint is accessible from
+          within the VPC.
+      service_ipv4_cidr:
+        type: string
+        required: false
+        description: >-
+          CIDR block for Kubernetes service IP addresses.
+    attributes:
+      subnet_ids:
+        type: string
+        description: >-
+          Comma-separated subnet IDs used by the cluster, resolved
+          during creation.
+    requirements:
+      - host:
+          capability: ubct:Container
+          node: Region
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+      - vpc:
+          description: >-
+            VPC in which to deploy the EKS cluster. If not specified,
+            the default VPC is used.
+          capability: ubct:Container
+          node: VirtualPrivateCloud
+          relationship: ubct:ContainedBy
+          count_range: [0, 1]
+      - subnet:
+          description: >-
+            Subnets for the EKS cluster. At least two subnets in
+            different availability zones are recommended.
+          capability: ubct:Linkable
+          node: Subnet
+          relationship: ubct:LinksTo
+          count_range: [0, UNBOUNDED]
+      - security:
+          capability: ubct:SecurityGuard
+          node: SecurityGroup
+          relationship: ubct:ProtectedBy
+          count_range: [0, 1]
+    interfaces:
+      Standard:
+        inputs:
+          aws_region_name:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+          aws_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          aws_profile:
+            required: false
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, profile]}
+        operations:
+          create:
+            inputs:
+              eks_cluster_name:
+                value: {$get_property: [SELF, name]}
+              eks_version:
+                required: false
+                value: {$get_property: [SELF, version]}
+              eks_cluster_role_arn:
+                value: {$get_property: [SELF, cluster_role_arn]}
+              eks_endpoint_public_access:
+                required: false
+                value: {$get_property: [SELF, endpoint_public_access]}
+              eks_endpoint_private_access:
+                required: false
+                value: {$get_property: [SELF, endpoint_private_access]}
+              eks_service_ipv4_cidr:
+                required: false
+                value: {$get_property: [SELF, service_ipv4_cidr]}
+              eks_subnet_ids:
+                required: false
+                value: {$get_attribute: [SELF, RELATIONSHIP, subnet, TARGET, subnet_id]}
+              eks_security_group_id:
+                required: false
+                value: {$get_attribute: [SELF, RELATIONSHIP, security, TARGET, group_id]}
+            outputs:
+              subnet_ids: [SELF, subnet_ids]
+            implementation:
+              primary:
+                file: artifacts/eks/create.sh
+                type: ubct:Bash
+          configure:
+            inputs:
+              vault:
+                value: {$get_property: [SELF, vault]}
+              kubeconfig:
+                required: false
+                value: {$get_property: [SELF, kubeconfig]}
+              eks_cluster_name:
+                value: {$get_property: [SELF, name]}
+              eks_node_count:
+                value: {$get_property: [SELF, number_of_workers]}
+              eks_node_role_arn:
+                value: {$get_property: [SELF, node_role_arn]}
+              eks_subnet_ids:
+                value: {$get_attribute: [SELF, subnet_ids]}
+              eks_instance_type:
+                required: false
+                value: {$get_property: [SELF, worker_machine_type]}
+              eks_disk_size:
+                required: false
+                value: {$get_property: [SELF, worker_disk_size]}
+              eks_ami_type:
+                required: false
+                value: {$get_property: [SELF, ami_type]}
+              eks_capacity_type:
+                required: false
+                value: {$get_property: [SELF, capacity_type]}
+              eks_max_pods_per_node:
+                required: false
+                value: {$get_property: [SELF, max_pods_per_node]}
+              eks_autoscaling:
+                required: false
+                value: {$get_property: [SELF, autoscaling]}
+              eks_min_nodes:
+                required: false
+                value: {$get_property: [SELF, min_nodes]}
+              eks_max_nodes:
+                required: false
+                value: {$get_property: [SELF, max_nodes]}
+            outputs:
+              kubeconfig: [SELF, kubeconfig]
+              endpoint:   [SELF, endpoint]
+            implementation:
+              primary:
+                file: artifacts/eks/config.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              eks_cluster_name:
+                value: {$get_property: [SELF, name]}
+              kubeconfig:
+                required: false
+                value: {$get_attribute: [SELF, kubeconfig]}
+            implementation:
+              primary:
+                file: artifacts/eks/delete.sh
+                type: ubct:Bash
+
