@@ -164,7 +164,6 @@ node_types:
         description: >-
           APT source line to be added to APT sources list via Cloudinit, e.g.: 
           deb [trusted=yes] https://example.com bookworm main
-        # TODO: make it optional but ask Chris how to ask if property is defined, else put a default value in Thales service template
         required: false
       tfstate:
         type: string

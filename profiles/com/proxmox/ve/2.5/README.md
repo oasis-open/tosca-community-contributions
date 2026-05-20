@@ -2,9 +2,6 @@
 
 # Proxmox Virtual Environment Profile
 
-**Thales: this is a modified version of Ubicity's Proxmox VE Profile in https://github.com/ubicity-corp/tosca-profiles/tree/master/com/proxmox/ve/1.0**
-
-
 TOSCA node types for orchestrating infrastructure on a Proxmox Virtual
 Environment.
 
