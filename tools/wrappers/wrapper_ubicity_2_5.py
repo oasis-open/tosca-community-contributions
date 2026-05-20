@@ -43,21 +43,33 @@ def main():
     tosca_meta_file_path = None
     file_dir = os.path.dirname(file_path)
 
+    # Ubicity requires TOSCA.meta file for yaml files
+    if file_ext == '.yaml':
+        file_name = os.path.basename(file_path)
+        tosca_meta_file_path = os.path.join(file_dir, "TOSCA.meta")
+        with open(tosca_meta_file_path, 'w') as file:
+            file.write("CSAR-Version: 2.0\n")
+            file.write("Created-By: Ubicity Corp.\n")
+            file.write(f"Entry-Definitions: {file_name}\n")
+
     # Initialize variables
     pSuccess = False
     pError = False
     pErrorReason = ""
 
     # Run the processor
-    processor_command = ["ubicity", "csar",  "validate", file_path]
-    result = subprocess.run(  
+    processor_command = ["ubicity", "csar",  "validate", file_dir]
+    result = subprocess.run(
         processor_command,
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE,
     text=True
     )
 
-    
+    # Clean up TOSCA.meta if it was created
+    if tosca_meta_file_path:
+        os.remove(tosca_meta_file_path)
+
     # Condition if the TOSCA file was processed successfully
     if ((result.returncode == 0)):
         pSuccess = True
