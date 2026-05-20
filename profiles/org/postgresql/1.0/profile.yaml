@@ -1,0 +1,119 @@
+tosca_definitions_version: tosca_2_0
+
+profile: org.postgresql:1.0
+
+description: >-
+  TOSCA profile for PostgreSQL. Defines node types for the PostgreSQL
+  database management system, logical databases, and database user
+  accounts.
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+
+node_types:
+  Dbms:
+    description: >-
+      PostgreSQL Database Management System software.
+    derived_from: ubct:InstallablePackage
+    properties:
+      port:
+        type: integer
+        required: false
+        description: The PostgreSQL server port.
+        default: 5432
+      package_names:
+        value: [postgresql]
+    capabilities:
+      manager:
+        type: ubct:Manager
+        valid_source_node_types: [Database, User]
+
+  User:
+    description: >-
+      PostgreSQL user account.
+    derived_from: ubct:Root
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+    capabilities:
+      credential:
+        type: ubct:Credential
+    requirements:
+      - manager:
+          capability: ubct:Manager
+          relationship: ubct:ManagedBy
+          node: Dbms
+          count_range: [1, 1]
+    artifacts:
+      create:
+        file: artifacts/postgres/user/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/postgres/user/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        inputs:
+          postgres_username: {$get_property: [SELF, name]}
+        operations:
+          create:
+            implementation: create
+            inputs:
+              postgres_password: {$get_property: [SELF, password]}
+          delete:
+            implementation: delete
+
+  Database:
+    description: >-
+      Logical database hosted by a PostgreSQL DBMS.
+    derived_from: ubct:Root
+    properties:
+      name:
+        type: string
+    capabilities:
+      store:
+        type: ubct:Store
+    requirements:
+      - manager:
+          capability: ubct:Manager
+          relationship: ubct:ManagedBy
+          node: Dbms
+          count_range: [1, 1]
+      - credential:
+          capability: ubct:Credential
+          relationship: ubct:AuthorizedUsing
+          node: User
+          count_range: [1, 1]
+    artifacts:
+      create:
+        file: artifacts/postgres/database/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/postgres/database/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        inputs:
+          postgres_database_name: {$get_property: [SELF, name]}
+        operations:
+          create:
+            implementation: create
+            inputs:
+              postgres_username: {$get_property: [SELF, RELATIONSHIP, credential, TARGET, name]}
+          delete:
+            implementation: delete

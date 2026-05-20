@@ -1,0 +1,148 @@
+tosca_definitions_version: tosca_2_0
+
+profile: io.kubevirt:2.5
+
+description: >-
+  TOSCA KubeVirt Profile. Defines the KubeVirt virtualization platform
+  (an installation of KubeVirt on a Kubernetes cluster) together with
+  the resources — virtual machines, tooling — that can be provisioned
+  on it.
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+  - profile: com.ubicity.kubernetes:2.5
+    namespace: kube
+  - profile: io.kubernetes:3.0
+    namespace: k8s
+
+node_types:
+  Kubevirt:
+    derived_from: ubct:IaasPlatform
+    description: >-
+      The Kubevirt node type represents an installation of KubeVirt on
+      a Kubernetes cluster. It turns the cluster into a virtualization
+      platform capable of hosting virtual machines as Kubernetes custom
+      resources.
+    properties:
+      provider:
+        type: string
+        default: kubevirt
+      version:
+        type: string
+        required: false
+    capabilities:
+      manageable: ubct:Manageable
+    requirements:
+      # KubeVirt inherits authentication from its hosting Kubernetes
+      # cluster (via kubeconfig) rather than from a Principal.
+      - credential:
+          count_range: [0, 0]
+      - host:
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          node: kube:KubernetesController
+          count_range: [1, 1]
+    artifacts:
+      create:
+        file: artifacts/kubevirt/create.sh
+        type: ubct:Bash
+      delete:
+        file: artifacts/kubevirt/delete.sh
+        type: ubct:Bash
+    interfaces:
+      Standard:
+        inputs:
+          kubeconfig: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, kubeconfig]}
+        operations:
+          create:
+            implementation: create
+            inputs:
+              version: {$get_property: [SELF, version]}
+              kubernetes_version: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, version]}
+            outputs:
+              version: [SELF, version]
+          delete:
+            implementation: delete
+            inputs:
+              version: {$get_attribute: [SELF, version]}
+
+  Virtctl:
+    derived_from: ubct:Software
+    description: >-
+      The Virtctl node type represents an installation of the virtctl
+      CLI tool used to interact with KubeVirt virtual machines.
+    properties:
+      version:
+        type: string
+        required: false
+        default: {$get_attribute: [SELF, RELATIONSHIP, kubevirt, TARGET, version]}
+    requirements:
+      - kubevirt:
+          capability: ubct:Manageable
+          relationship: ubct:Manages
+          node: Kubevirt
+          count_range: [1, 1]
+    artifacts:
+      create:
+        file: artifacts/virtctl/create.sh
+        type: ubct:Bash
+      delete:
+        file: artifacts/virtctl/delete.sh
+        type: ubct:Bash
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              version: {$get_property: [SELF, version]}
+            outputs:
+              version: [SELF, version]
+          delete:
+            implementation: delete
+
+  Compute:
+    derived_from: ubct:VirtualCompute
+    description: >-
+      A virtual machine hosted on a KubeVirt platform. Modeled as a
+      Kubernetes custom resource backed by the cluster's KubeVirt
+      installation.
+    requirements:
+      - host:
+          node: Kubevirt
+      - namespace:
+          capability: k8s:Scope
+          relationship: k8s:ScopedBy
+          node: k8s:Namespace
+          count_range: [0, 1]
+    artifacts:
+      create:
+        file: artifacts/compute/create.sh
+        type: ubct:Bash
+      delete:
+        file: artifacts/compute/delete.sh
+        type: ubct:Bash
+    interfaces:
+      Standard:
+        inputs:
+          vm_name: {$get_property: [SELF, name]}
+          kubeconfig: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, host, TARGET, kubeconfig]}
+          context:
+            type: string
+            required: false
+          namespace:
+            value: {$get_property: [SELF, RELATIONSHIP, namespace, TARGET, metadata, name]}
+            required: false
+        operations:
+          create:
+            inputs:
+              public_key_file: {$get_attribute: [SELF, RELATIONSHIP, key, TARGET, public_key_file]}
+            outputs:
+              public_address: [SELF, public_address]
+              node_port: [SELF, CAPABILITY, endpoint, address, port]
+            implementation: create
+          delete:
+            implementation:
+              primary: delete
+              dependencies: [remove_host_key]

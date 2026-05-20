@@ -1,0 +1,40 @@
+tosca_definitions_version: tosca_2_0
+
+profile: io.terraform:1.0
+
+description: >-
+  TOSCA Terraform profile. Defines the Terraform artifact type used to
+  drive infrastructure-as-code workflows, and the Terraform node type
+  for installing the Terraform CLI on a host.
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+
+artifact_types:
+  Terraform:
+    description: >-
+      Terraform configuration file.
+    properties:
+      action:
+        description: >-
+          Terraform action to be performed.
+        type: string
+        validation:
+          $valid_values: [$value, [create, modify, delete]]
+      tfstate:
+        description: >-
+          Unique name to identify Terraform state.
+        type: string
+
+node_types:
+  Terraform:
+    derived_from: ubct:InstallablePackage
+    description: >-
+      An installation of the Terraform CLI from HashiCorp's apt
+      repository.
+    properties:
+      name: terraform
+      package_names: [terraform]
+      repository: https://apt.releases.hashicorp.com
+      repository_key: https://apt.releases.hashicorp.com/gpg
