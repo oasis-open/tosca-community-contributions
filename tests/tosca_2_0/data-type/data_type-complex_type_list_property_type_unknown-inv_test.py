@@ -11,7 +11,15 @@ here = os.path.dirname(os.path.abspath(__file__))
 # and that the extension is .yaml
 tosca_file_path = here + '/' + Path(__file__).stem.split("_test")[0] + ".yaml"
 
-wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
+def _find_wrapper():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while d != os.path.dirname(d):
+        candidate = os.path.join(d, 'tools/wrappers/wrapper.py')
+        if os.path.isfile(candidate):
+            return candidate
+        d = os.path.dirname(d)
+    raise FileNotFoundError('wrapper.py not found')
+wrapper_path = _find_wrapper()
 
 class TestWrapperProgram(unittest.TestCase):
     def test_wrapper_with_yaml(self):

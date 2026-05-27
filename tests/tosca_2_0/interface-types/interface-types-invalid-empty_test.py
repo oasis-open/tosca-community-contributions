@@ -7,7 +7,15 @@ import pytest
 
 here = os.path.dirname(os.path.abspath(__file__))
 tosca_file_path = here + '/interface-types-invalid-empty.yaml'
-wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
+def _find_wrapper():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while d != os.path.dirname(d):
+        candidate = os.path.join(d, 'tools/wrappers/wrapper.py')
+        if os.path.isfile(candidate):
+            return candidate
+        d = os.path.dirname(d)
+    raise FileNotFoundError('wrapper.py not found')
+wrapper_path = _find_wrapper()
 
 @pytest.mark.empty
 class TestWrapperProgram(unittest.TestCase):
