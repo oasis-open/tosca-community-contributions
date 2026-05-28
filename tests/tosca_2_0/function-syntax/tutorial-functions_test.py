@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 
 here = os.path.dirname(os.path.abspath(__file__))
-tosca_file_path = here + '/functions.yaml'
+tosca_file_path = here + '/tutorial-functions.yaml'
 def _find_wrapper():
     d = os.path.dirname(os.path.abspath(__file__))
     while d != os.path.dirname(d):
