@@ -58,7 +58,6 @@ node_types:
           capability: Host
           relationship: HostedOn
 
-
 service_template:
   substitution_mappings:
     node_type: Client
@@ -75,12 +74,11 @@ service_template:
       requirements:
         - host: compute
 
-
     compute:
       type: Compute
       directives: [select]
       node_filter:
         $greater_or_equal:
-          - $get_property: [SELF, properties, num_cpus]
+          - $get_property: [SELF, num_cpus]
           - 4
 
