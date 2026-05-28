@@ -21,7 +21,7 @@ data_types:
       bps: 1 # bits per second
       Bps: 8 # bytes per second
     prefixes: *ISO80000
-    validation: { $greater_or_equal: [ $value, 0.0 ] }
+    validation: { $greater_or_equal: [ $value, 0.0 bps ] }
 
   Frequency:
     description: Replacement for "scalar-unit.frequency"
@@ -30,7 +30,7 @@ data_types:
     units:
       Hz: 1
     prefixes: *ISO80000
-    validation: { $greater_or_equal: [ $value, 0.0 ] }
+    validation: { $greater_or_equal: [ $value, 0.0 Hz ] }
 
   Size:
     description: Replacement for "scalar-unit.size"
@@ -39,7 +39,7 @@ data_types:
     units:
       B: 1 # bytes
     prefixes: *ISO80000
-    validation: { $greater_or_equal: [ $value, 0 ] }
+    validation: { $greater_or_equal: [ $value, 0 B ] }
 
   Time:
     description: Replacement for "scalar-unit.time"
@@ -54,5 +54,5 @@ data_types:
       m:  60
       h:  3600
       d:  86400
-    validation: { $greater_or_equal: [ $value, 0.0 ] }
+    validation: { $greater_or_equal: [ $value, 0.0 s ] }
 # end::s70[]
