@@ -68,5 +68,5 @@ service_template:
       interfaces:
         standard:
           operations:
-            configure:
+            configure: {}
 # end::s48[]

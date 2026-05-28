@@ -15,4 +15,4 @@ metadata:
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 interface_types:
-  tosca.example.interfaces.MyInterface:
+  tosca.example.interfaces.MyInterface: {}

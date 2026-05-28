@@ -16,4 +16,4 @@ metadata:
   oasis.testAssertion.tags.conformancetarget: Parser-Validator
 
 capability_types:
-  tosca.test.capabilities.MyCapabilityNoOptional:
+  tosca.test.capabilities.MyCapabilityNoOptional: {}
