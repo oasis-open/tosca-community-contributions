@@ -1,4 +1,10 @@
 tosca_definitions_version: tosca_2_0
+artifact_types:
+  Python:
+    description: >-
+      Artifact type representing a Python script
+    mime_type: text/x-python
+    file_ext: [py]
 # See Issue #297 PJ 2024-09-11
 # tag::s17[]
 functions:
@@ -9,13 +15,19 @@ functions:
         validation: { $greater_or_equal: [ $value, 0 ] }
       result:
         type: float
-      implementation: scripts/sqrt.py
+      implementation:
+        primary:
+          type: Python
+          file: scripts/sqrt.py
     - arguments:
       - type: float
         validation: { $greater_or_equal: [ $value, 0.0 ] }
       result:
         type: float
-      implementation: scripts/sqrt.py
+      implementation:
+        primary:
+          type: Python
+          file: scripts/sqrt.py
     description: >
       This is a square root function that defines two signatures:
       the argument is either integer or float and the function

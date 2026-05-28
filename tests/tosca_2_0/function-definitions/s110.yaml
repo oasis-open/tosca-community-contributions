@@ -1,4 +1,10 @@
 tosca_definitions_version: tosca_2_0
+artifact_types:
+  Python:
+    description: >-
+      Artifact type representing a Python script
+    mime_type: text/x-python
+    file_ext: [py]
 # tag::s110[]
 data_types:
   MyType1:
@@ -30,5 +36,8 @@ functions:
       variadic: true
       result: 
         type: MyTypeRez
-      implementation: scripts/my.py
+      implementation:
+        primary:
+          type: Python
+          file: scripts/my.py
 # end::s110[]
