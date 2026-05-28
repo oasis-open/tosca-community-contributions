@@ -4,6 +4,7 @@ relationship_types:
     description: Connects to a target
 #TODO: Why doesn't the configure interface used below need a type definition?
 service_template:
+  node_templates: {}
 # tag::s99[]
   relationship_templates:
     my-connection:
