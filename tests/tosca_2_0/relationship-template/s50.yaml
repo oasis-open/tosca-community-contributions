@@ -6,6 +6,7 @@ relationship_types:
       location:
         type: string
 service_template:
+  node_templates: {}
 # tag::s50[]
   relationship_templates:
     storage-attachment:

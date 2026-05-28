@@ -1,4 +1,10 @@
 tosca_definitions_version: tosca_2_0
+artifact_types:
+  Bash:
+    description: >-
+      Artifact type representing a script for the Bash shell
+    mime_type: application/x-sh
+    file_ext: [sh]
 capability_types:
   Host: {}
   DatabaseEndpoint:
@@ -71,9 +77,16 @@ service_template:
       interfaces:
         WpStandard:
           operations:
-            create: wordpress_install.sh
-            configure: 
-              implementation: wordpress_configure.sh            
+            create:
+              implementation:
+                primary:
+                  type: Bash
+                  file: wordpress_install.sh
+            configure:
+              implementation:
+                primary:
+                  type: Bash
+                  file: wordpress_configure.sh
               inputs:
                 host-dbms-admin-credential:
                   $get_property:

@@ -3,13 +3,19 @@ import subprocess
 import unittest
 import os
 from pathlib import Path
-import pytest
 
 here = os.path.dirname(os.path.abspath(__file__))
-tosca_file_path = here + '/subsittution-mappings-empty-inv.yaml'
-wrapper_path = here + '/../../../tools/wrappers/wrapper.py'
+tosca_file_path = here + '/' + Path(__file__).stem.split("_test")[0] + ".yaml"
+def _find_wrapper():
+    d = os.path.dirname(os.path.abspath(__file__))
+    while d != os.path.dirname(d):
+        candidate = os.path.join(d, 'tools/wrappers/wrapper.py')
+        if os.path.isfile(candidate):
+            return candidate
+        d = os.path.dirname(d)
+    raise FileNotFoundError('wrapper.py not found')
+wrapper_path = _find_wrapper()
 
-@pytest.mark.empty
 class TestWrapperProgram(unittest.TestCase):
     def test_wrapper_with_yaml(self):
         command = f'python3 {wrapper_path} {tosca_file_path}'

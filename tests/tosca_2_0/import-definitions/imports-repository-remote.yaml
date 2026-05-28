@@ -20,7 +20,7 @@ repositories:
     url: https://github.com/oasis-open/tosca-test-assertions/raw/master
 
 imports:
-  - url: tests/tosca_2_0/dependencies/my-types/my-types.yml
+  - url: tests/tosca_2_0/import-definitions/dependencies/my-types/my-types.yml
     repository: my_repository
 
 service_template:

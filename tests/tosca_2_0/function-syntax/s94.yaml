@@ -16,7 +16,7 @@ service_template:
       type: Compute
 # tag::s94[]
       properties:
-        prop1:
+        prop1: ""
         $$myid1: myval1
         myid2: $$myval2
         $$myid3: $$myval3
