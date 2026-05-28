@@ -40,8 +40,8 @@ service_template:
       client: [ loadbalancer, client ]
     requirements:
       # Expose the requirements of our software components
-      admin_host: [ admin, host ]
-      db_host: [ db, host ]
+      - admin_host: [ admin, host ]
+      - db_host: [ db, host ]
     properties:
       version: [ admin, component_version ]
     attributes:
