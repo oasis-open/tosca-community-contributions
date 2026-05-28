@@ -27,6 +27,6 @@ data_types:
   #Scalars can be derived 
   Mass_limited:
     derived_from: Mass
-    validation: { $less_or_equal: [$value, 10 Kg]  } # max 10 kg
+    validation: { $less_or_equal: [$value, 10 kg]  } # max 10 kg
 
 

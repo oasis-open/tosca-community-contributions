@@ -5,6 +5,7 @@ relationship_types:
       connect-speed:
         type: integer
 service_template:
+  node_templates: {}
 # tag::s41[]
   relationship_templates:
     my-connects-to:

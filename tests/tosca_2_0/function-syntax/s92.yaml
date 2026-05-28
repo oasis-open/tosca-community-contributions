@@ -1,4 +1,10 @@
 tosca_definitions_version: tosca_2_0
+artifact_types:
+  Bash:
+    description: >-
+      Artifact type representing a script for the Bash shell
+    mime_type: application/x-sh
+    file_ext: [sh]
 data_types:
   ContextInfo:
     properties:
@@ -19,7 +25,10 @@ functions:
         - type: ContextInfo
         result:
           type: string
-        implementation: scripts/get_context.sh
+        implementation:
+          primary:
+            type: Bash
+            file: scripts/get_context.sh
 service_template:
   node_templates:
     my-server:

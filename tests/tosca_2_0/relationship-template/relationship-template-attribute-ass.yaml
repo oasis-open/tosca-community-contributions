@@ -18,6 +18,7 @@ relationship_types:
       control:
         type: Standard
 service_template:
+  node_templates: {}
   relationship_templates:
     storage-attachment:
       type: AttachesTo

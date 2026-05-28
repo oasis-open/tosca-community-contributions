@@ -1,4 +1,10 @@
 tosca_definitions_version: tosca_2_0
+artifact_types:
+  Python:
+    description: >-
+      Artifact type representing a Python script
+    mime_type: text/x-python
+    file_ext: [py]
 data_types:
   MyType:
     properties:
@@ -15,5 +21,8 @@ functions:
             type: list
             entry_schema: MyType
         result: string
-        implementation: scripts/complex.py
+        implementation:
+          primary:
+            type: Python
+            file: scripts/complex.py
 # end::s114[]

@@ -28,52 +28,36 @@ def _parse_version(value):
         return None
 
 
-def in_range(value: Any, low: Any, high: Any) -> bool:
+def in_range(args) -> bool:
+    """Returns True if low <= value <= high.
+
+    Supported types: int, float, str, datetime / ISO timestamp string,
+    semantic version string.
     """
-    Returns True if low <= value <= high.
+    value, low, high = args[0], args[1], args[2]
 
-    Supported types:
-    - int
-    - float
-    - str
-    - datetime / ISO timestamp string
-    - semantic version string
-
-    Returns False if:
-    - incompatible types
-    - invalid interval
-    - parsing error
-    """
-
-    # Reject reversed interval
     try:
         if low > high:
             return False
     except Exception:
         return False
 
-    # Numeric comparison
     if all(isinstance(x, (int, float)) for x in (value, low, high)):
         return low <= value <= high
 
-    # Timestamp comparison
     v_ts = _parse_timestamp(value)
     l_ts = _parse_timestamp(low)
     h_ts = _parse_timestamp(high)
-
     if all(x is not None for x in (v_ts, l_ts, h_ts)):
         return l_ts <= v_ts <= h_ts
 
-    # Semantic version comparison
     if HAS_PACKAGING:
         v_ver = _parse_version(value)
         l_ver = _parse_version(low)
         h_ver = _parse_version(high)
-
         if all(x is not None for x in (v_ver, l_ver, h_ver)):
             return l_ver <= v_ver <= h_ver
 
-    # String comparison fallback
     if all(isinstance(x, str) for x in (value, low, high)):
         return low <= value <= high
 

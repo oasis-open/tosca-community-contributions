@@ -8,6 +8,11 @@ interface_types:
           wp-zip:
             type: string
 artifact_types:
+  Bash:
+    description: >-
+      Artifact type representing a script for the Bash shell
+    mime_type: application/x-sh
+    file_ext: [sh]
   WpZip:
     description: WordPress zip file
 
@@ -26,7 +31,10 @@ service_template:
         WpStandard:
           operations:
             create:
-              implementation: wordpress_install.sh
+              implementation:
+                primary:
+                  type: Bash
+                  file: wordpress_install.sh
               inputs:
                 wp-zip: { $get_artifact: [ SELF, zip ] }
       artifacts:

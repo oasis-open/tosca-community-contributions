@@ -81,7 +81,7 @@ service_template:
       interfaces:
         standard:
           operations:
-            configure:
+            configure: {}
       artifacts:
         install_script:
           type: shell_script
