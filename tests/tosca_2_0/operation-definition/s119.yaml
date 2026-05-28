@@ -1,4 +1,10 @@
 tosca_definitions_version: tosca_2_0
+artifact_types:
+  Bash:
+    description: >-
+      Artifact type representing a script for the Bash shell
+    mime_type: application/x-sh
+    file_ext: [sh]
 interface_types:
   StandardInterfaceType:
     description: Interface for configuring a service
@@ -19,5 +25,9 @@ service_template:
       interfaces:
         standard:
           operations:
-            start: scripts/start_server.sh
+            start:
+              implementation:
+                primary:
+                  type: Bash
+                  file: scripts/start_server.sh
 # end::s119[]

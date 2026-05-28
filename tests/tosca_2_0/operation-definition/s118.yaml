@@ -1,4 +1,20 @@
 tosca_definitions_version: tosca_2_0
+artifact_types:
+  Bash:
+    description: >-
+      Artifact type representing a script for the Bash shell
+    mime_type: application/x-sh
+    file_ext: [sh]
+  Python:
+    description: >-
+      Artifact type representing a Python script
+    mime_type: text/x-python
+    file_ext: [py]
+  RPM:
+    description: >-
+      Artifact type representing an RPM package
+    mime_type: application/x-rpm
+    file_ext: [rpm]
 interface_types:
   ConfigureInterfaceType:
     description: Interface for configuring a service
@@ -20,10 +36,15 @@ service_template:
         configure:
           operations:
             pre-configure-source:
-              implementation: 
-                primary: scripts/pre_configure_source.sh
-                dependencies: 
-                - scripts/setup.sh
-                - binaries/library.rpm
-                - scripts/register.py
+              implementation:
+                primary:
+                  type: Bash
+                  file: scripts/pre_configure_source.sh
+                dependencies:
+                  - type: Bash
+                    file: scripts/setup.sh
+                  - type: RPM
+                    file: binaries/library.rpm
+                  - type: Python
+                    file: scripts/register.py
 # end::s118[]
