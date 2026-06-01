@@ -1,0 +1,55 @@
+tosca_definitions_version: tosca_2_0
+
+profile: org.wordpress:1.0
+
+description: >-
+  TOSCA profile for WordPress. Defines a node type for a WordPress
+  website hosted on an nginx web server.
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+  - profile: org.nginx:1.0
+    namespace: nginx
+
+node_types:
+  Wordpress:
+    description: >-
+      A WordPress website. Derives from the nginx WebSite node type:
+      a WordPress installation is itself a website served by an nginx
+      web server. The create operation downloads the WordPress
+      tarball and extracts it into the web server's document root.
+    derived_from: nginx:WebSite
+    properties:
+      name:
+        default: wordpress
+      wordpress_url:
+        type: string
+        required: false
+        default: https://wordpress.org/latest.tar.gz
+        description: >-
+          URL of the WordPress release tarball to download and install.
+          Defaults to the latest release. Override to pin a specific
+          version (e.g. https://wordpress.org/wordpress-6.5.tar.gz).
+    artifacts:
+      create:
+        file: artifacts/wordpress/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/wordpress/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, manager, TARGET, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              wordpress_url: {$get_property: [SELF, wordpress_url]}
+            implementation: create
+          delete:
+            implementation: delete

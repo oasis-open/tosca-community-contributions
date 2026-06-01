@@ -1,0 +1,1096 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.ubicity:2.5
+
+description: >-
+  Ubicity Profile Type Definitions
+
+imports:
+  - profile: com.ubicity.core:2.5
+
+data_types:
+  PortDef:
+    derived_from: integer
+    description: A network port number in the range 1-65535.
+    validation:
+      $and:
+        - $greater_or_equal: [$value, 1]
+        - $less_or_equal: [$value, 65535]
+  SecurityGroupRule:
+    description: >-
+      A single firewall rule. Vendor profiles may derive richer rule
+      types that add provider-specific fields (e.g. priority, source
+      security group references, prefix lists).
+    properties:
+      name:
+        type: string
+        required: false
+      protocol:
+        type: string
+        description: >-
+          Network protocol (e.g. tcp, udp, icmp). Use "-1" or leave
+          unset to match all protocols.
+        required: false
+      port:
+        type: PortDef
+        description: >-
+          The destination port that the rule applies to.
+        required: false
+      cidr:
+        type: string
+        description: >-
+          Source CIDR (for ingress rules) or destination CIDR (for
+          egress rules) in CIDR notation.
+        required: false
+      description:
+        type: string
+        required: false
+
+interface_types:
+  Standard:
+    operations:
+      create:
+        description: >-
+          Operation to create a node.
+      configure:
+        description: >-
+          Operation to configure a node.
+      start:
+        description: >-
+          Operation to start a node.
+      modify:
+        description: >-
+          Operation to modify a node.
+      stop:
+        description: >-
+          Operation to stop a node.
+      delete:
+        description: >-
+          Operation to delete a node.
+  Patch:
+    operations:
+      patch:
+        description: >-
+          Apply OS patches.
+      reboot:
+        description: >-
+          Reboot the device.
+      wait:
+        description: >-
+          Wait for device to come back online after reboot.
+        
+artifact_types:
+  File:
+    description: >-
+      Generic file artifact.
+  Deployment:
+    description: >-
+      File that needs to be deployed to a specific location.
+    derived_from: File
+    properties:
+      host:
+        type: IPv4Socket
+        required: false
+      directory:
+        type: string
+        required: true
+      user:
+        type: Credential
+        required: false
+  Tar:
+    description: >-
+      Tar ball that needs to be deployed to a specific location and
+      untarred.
+    derived_from: Deployment
+  Bash:
+    description: >-
+      Bash script. If the "host" property is not set, the script is
+      run locally. If "host" is set the script is executed on that
+      host using an ssh connection.
+    mime_type: application/x-sh
+    file_ext: [sh]
+    properties:
+      host:
+        type: IPv4Socket
+        required: false
+      user:
+        type: Credential
+        required: false
+  Ansible:
+    description: >-
+      Ansible playbook. If the "host" property is not set, the
+      playbook is run locally. If "host" is set the playbook is
+      executed on that host using an ssh connection.
+    properties:
+      host:
+        type: IPv4Socket
+        required: false
+      user:
+        type: Credential
+        required: false
+capability_types:
+  Observable:
+    description: >-
+      Advertizes the ability to be monitored.
+    derived_from: Feature
+  Manager:
+    description: >-
+      The ability to act as a manager for the node that targets this
+      capability.
+    derived_from: Feature
+  Manageable:
+    description: >-
+      The ability to be managed by the node that targets this
+      capability.
+    derived_from: Feature
+  Endpoint:
+    description: >
+      Feature accessed across a network connection.
+    derived_from: Feature
+    properties:
+      protocol:
+        type: string
+        description: >
+          The name of the protocol (i.e., the protocol prefix) that
+          the endpoint accepts (any OSI Layer 4-7 protocols) Examples:
+          http, https, ftp, tcp, udp, etc.
+        default: tcp
+      address:
+        type: IPv4Socket
+        description: >-
+          This is the IP address info as propagated up by the
+          containing node.
+        required: false
+  Runtime:
+    description: >-
+      Advertizes the ability to act as a runtime execution environment
+      for a software package.
+    derived_from: Container
+    properties:
+      cpu_architecture:
+        description: >-
+          CPU architecture for which this software package was created.
+        type: string
+        required: false
+      num_cpus: 
+        description: >-
+          Number of (actual or virtual) CPU cores available to the runtime
+          node.
+        type: integer
+        required: false
+        validation:
+          $greater_or_equal: [$value, 1]
+      cpu_frequency:
+        description: >-
+          Specifies the operating frequency of one (1) CPU as provided
+          by the property 'num_cpus'.
+        type: scalar-unit.frequency
+        required: false
+        validation:
+          $greater_or_equal: [$value, 0.1 GHz]
+      mem_size: 
+        description: >-
+          Size of memory available to applications hosted on this
+          runtime.
+        type: scalar-unit.size
+        required: false
+        validation:
+          $greater_or_equal: [$value, 0 MB]
+      disk_size:
+        description: >-
+          Size of the local disk available to applications running on
+          the Compute node (default unit is MB).
+        type: scalar-unit.size
+        required: false
+        validation:
+          $greater_or_equal: [$value, 0 MB]
+  OperatingSystem:
+    description: >-
+      Advertizes the ability to act as a runtime execution environment
+      for installable software packages.
+    derived_from: Runtime
+    properties:
+      os:
+        type: string
+        description: >
+          The Operating System type on which to install this software
+          package.  Examples of valid values include: linux, aix, mac,
+          windows, etc.
+        required: false
+      distribution:
+        type: string
+        description: >
+          The Operating System distribution.  Examples of valid values
+          for an operating system “type” of “Linux” would include:
+          debian, fedora, rhel and ubuntu.
+        required: false
+      version:
+        type: version
+        description: >
+          The Operating System version.
+        required: false
+  Bindable:
+    description: >-
+      Ability for a host accept a binding from a network port.
+    derived_from: Feature
+  Linkable:
+    description: >-
+      Ability for a network to accept connections from hosts.
+    derived_from: Feature
+  Attachable:
+    description: >-
+      Ability for storage to be attached.
+    derived_from: Feature
+  HyperVisor:
+    description: >-
+      Capability that enables a node to act as a hypervisor.
+    derived_from: Container
+  Store:
+    derived_from: Container
+    description: >-
+      Advertizes the ability to persistently store content.
+  Credential:
+    description: >-
+      Advertizes the ability to act as a credential.
+    derived_from: Feature
+  SecurityGuard:
+    description: >-
+      Advertizes the ability to control what gets in and out. This
+      capability is exposed by security groups.
+    derived_from: Feature
+  Layer:
+    description: >-
+      Advertizes the ability to support a higher layer networking
+      protocol.
+    derived_from: Container
+  RouteTarget:
+    description: >-
+      Advertizes the ability to be referenced as the destination of
+      a route.
+    derived_from: Feature
+  VmImageSource:
+    description: >-
+      Advertizes a VM disk image / machine image that can be used to
+      create VirtualCompute instances.
+    derived_from: Feature
+  ContainerImageSource:
+    description: >-
+      Advertizes an OCI / Docker container image that can be used to
+      instantiate container workloads.
+    derived_from: Feature
+
+relationship_types:
+  HostedOn:
+    description: >-
+      The HostedOn type represents a containment relationship between
+      a component and its runtime.
+    derived_from: ContainedBy
+    valid_capability_types: [Runtime]
+  ConnectsTo:
+    derived_from: DependsOn
+    description: >-
+      This type represents a network connection relationship between
+      two nodes.
+    valid_capability_types: [Endpoint]
+  ManagedBy:
+    description: >-
+      Relationship to a manager
+    derived_from: DependsOn
+    valid_capability_types: [Manager]
+  Manages:
+    description: >-
+      Relationship from a manager
+    derived_from: DependsOn
+    valid_capability_types: [Manageable]
+  VirtualizedUsing:
+    description: >-
+      Relationship to a hypervisor
+    derived_from: ContainedBy
+    valid_capability_types: [HyperVisor]
+  Monitors:
+    description: >-
+      Monitoring relationship to an observable node.
+    derived_from: DependsOn
+    valid_capability_types: [Observable]
+  BindsTo:
+    description: >
+      This type represents a network association relationship between Port
+      and Compute node types.
+    derived_from: DependsOn
+    valid_capability_types: [Bindable]
+  LinksTo:
+    description: >
+      This relationship type represents an association relationship between
+      Port and Network node types.
+    derived_from: DependsOn
+    valid_capability_types: [Linkable]
+  AttachesTo:
+    description: >
+      This relationship type represents an association relationship to
+      storage.
+    derived_from: DependsOn
+    valid_capability_types: [Attachable]
+    properties:
+      destination:
+        type: string
+  AuthorizedUsing:
+    description: >-
+      Relationship to a credential that authorizes the source node of
+      the relationship.
+    derived_from: DependsOn
+    valid_capability_types: [Credential]
+  ProtectedBy:
+    description: >-
+      Relationship to a security guard that restricts access.
+    derived_from: DependsOn
+    valid_capability_types: [SecurityGuard]
+  LayeredOn:
+    description: >-
+      Relationship to a lower layer in a networking stack
+    derived_from: ContainedBy
+    valid_capability_types: [Layer]
+  RoutesTo:
+    description: >-
+      Relationship used by a route to reference a route target
+      (i.e. the destination of the route)
+    derived_from: DependsOn
+    valid_capability_types: [RouteTarget]
+  StoredIn:
+    description: >-
+      Relationship between an entity and another entity that stores
+      the entity.
+    derived_from: ContainedBy
+    valid_capability_types: [Store]
+  CreatedFrom:
+    description: >-
+      The source node is instantiated from the template (image)
+      advertised by the target.
+    derived_from: DependsOn
+    valid_capability_types: [VmImageSource, ContainerImageSource]
+
+node_types:
+  Root:
+    interfaces:
+      Standard:
+        type: Standard
+  Principal:
+    description: >-
+      An authenticated identity (user, account, service principal, or API
+      token holder) that holds credentials and is authorized to manage
+      resources on a platform.
+    capabilities:
+      credential:
+        type: Credential
+    requirements:
+      - manager:
+          capability: Manager
+          relationship: ManagedBy
+          count_range: [0, 1]
+  IaasPlatform:
+    derived_from: Root
+    description: >-
+      A deployment target for virtual infrastructure. Refers to a
+      logical or physical destination where virtualized workloads such
+      as virtual machines, cloud instances, or virtual storage are
+      deployed and executed. TODO: eliminate this node type. This
+      information should be stored instead in the TOSCA Community
+      Platform node type.
+    properties:
+      provider:
+        type: string
+      name:
+        type: string
+      location:
+        type: string
+        required: false
+    capabilities:
+      host:
+        type: HyperVisor
+    requirements:
+      - manager:
+          capability: Manager
+          relationship: ManagedBy
+          count_range: [0, 1]
+      - credential:
+          capability: Credential
+          relationship: AuthorizedUsing
+          node: Principal
+          count_range: [0, 1]
+  KeyPair:
+    derived_from: Root
+    properties:
+      key_name:
+        type: string
+        description: >-
+          Key Name for this KeyPair.
+        required: false
+      vault:
+        type: string
+        description: >-
+          Vault in which to store the key
+        default: '~/vault'
+      key_type:
+        type: string
+        description: >-
+          SSH key type (e.g. rsa, ecdsa, ed25519)
+        default: rsa
+      key_bits:
+        type: integer
+        description: >-
+          Number of bits in the key
+        default: 4096
+      key_format:
+        type: string
+        description: >-
+          Key format (e.g. PEM, RFC4716)
+        default: PEM
+    attributes:
+      key_file:
+        type: string
+        description: >-
+          File that stores the private key for this KeyPair.
+      public_key_file:
+        description: >-
+          File that stores the public key for this KeyPair.
+        type: string
+    capabilities:
+      credential:
+        type: Credential
+    artifacts:
+      create:
+        type: Bash
+        file: artifacts/keypair/create.sh
+      delete:
+        type: Bash
+        file: artifacts/keypair/delete.sh
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              key_name: {$get_property: [SELF, key_name]}
+              vault: {$get_property: [SELF, vault]}
+              key_type: {$get_property: [SELF, key_type]}
+              key_bits: {$get_property: [SELF, key_bits]}
+              key_format: {$get_property: [SELF, key_format]}
+            outputs:
+              key_name: [SELF, key_name]
+              key_file: [SELF, key_file]
+              public_key_file: [SELF, public_key_file]
+            implementation: create
+          delete:
+            inputs:
+              key_name: {$get_attribute: [SELF, key_name]}
+              key_file: {$get_attribute: [SELF, key_file]}
+              public_key_file: {$get_attribute: [SELF, public_key_file]}
+            implementation: delete
+  Compute:
+    derived_from: Root
+    description: >-
+      Ubicity Compute instance.
+    properties:
+      name:
+        type: string
+        description: >-
+          The name by which the Orchestration platform identifies this
+          compute instance.
+      public_address:
+        type: string
+        description: >-
+          The primary public IP address that orchestrators may use to
+          access the Compute node.
+        required: false
+      hostname:
+        type: string
+        description: >-
+          The hostname for this compute instance.
+        required: false
+      domainname:
+        type: string
+        description: >-
+          The domainname for this compute instance.
+        required: false
+      nameservers:
+        type: list
+        entry_schema: string
+        required: false
+      sudo_user:
+        description: >-
+          Credential for the default (sudo) user account created for
+          this compute instance.
+        type: Credential
+        required: true
+    attributes:
+      private_address:
+        type: string
+        description: >-
+          The primary private IP address assigned by the cloud
+          provider that applications may use to access the Compute
+          node.
+      cpu_utilization:
+        type: integer
+        description: >-
+          Current CPU utilization as reported by a monitoring system.
+    capabilities:
+      host:
+        type: OperatingSystem
+      endpoint:
+        type: Endpoint
+        properties:
+          protocol: ssh
+          address:
+            default:
+              ip_address: {$get_attribute: [SELF, public_address]}
+              port: 22
+      observable:
+        type: Observable
+      binding:
+        type: Bindable
+    artifacts:
+      config:
+        file: artifacts/compute/config.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, sudo_user]}
+      patch:
+        file: artifacts/compute/patch.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, sudo_user]}
+      reboot:
+        file: artifacts/compute/reboot.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, sudo_user]}
+      wait:
+        file: artifacts/compute/wait.sh
+        type: Bash
+    requirements:
+      - key:
+          description: >-
+            Expresses the relationship between Compute and the key
+            pair
+          capability: Credential
+          relationship: AuthorizedUsing
+          node: KeyPair
+          count_range: [0, 1]
+      - link:
+          description: >
+            Expresses the relationship between Compute and
+            the network.
+          capability: Linkable
+          relationship: LinksTo
+          count_range: [0, UNBOUNDED]
+      - storage:
+          capability: Attachable
+          relationship: AttachesTo
+          count_range: [0, UNBOUNDED]
+      - security:
+          capability: SecurityGuard
+          relationship: ProtectedBy
+          count_range: [0, 1]
+    interfaces:
+      Standard:
+        operations:
+          configure:
+            implementation: config
+      patch:
+        type: Patch
+        operations:
+          patch:
+            implementation: patch
+          reboot:
+            implementation: reboot
+          wait:
+            implementation: wait
+            inputs:
+              host: {$get_attribute: [SELF, public_address]}
+  VirtualCompute:
+    derived_from: Compute
+    description: >-
+      Ubicity Base Cloud Compute instance.
+    properties:
+      sudo_user:
+        default:
+          user_name: ubuntu
+          key_file: {$get_attribute: [SELF, RELATIONSHIP, key, TARGET, key_file]}
+    artifacts:
+      add_host_key:
+        file: artifacts/virtual_compute/add_host_key.sh
+        type: Bash
+      remove_host_key:
+        file: artifacts/virtual_compute/remove_host_key.sh
+        type: Bash
+    requirements:
+      - key:
+          # Key is mandatory for virtual computes
+          count_range: [1, 1]
+      - host:
+          capability: HyperVisor
+          relationship: VirtualizedUsing
+          count_range: [1, 1]
+      - image:
+          capability: VmImageSource
+          relationship: CreatedFrom
+          node: VmImage
+          count_range: [0, 1]
+    interfaces:
+      Standard:
+        operations:
+          create:
+            inputs:
+              host_num_cpus:
+                required: false
+                value: {$get_property: [SELF, CAPABILITY, host, num_cpus]}
+              host_cpu_frequency:
+                required: false
+                value: {$get_property: [SELF, CAPABILITY, host, cpu_frequency]}
+              host_disk_size:
+                required: false
+                value: {$get_property: [SELF, CAPABILITY, host, disk_size]}
+              host_mem_size:
+                required: false
+                value: {$get_property: [SELF, CAPABILITY, host, mem_size]}
+              os_architecture:
+                required: false
+                value: {$get_property: [SELF, CAPABILITY, host, cpu_architecture]}
+              os_type:
+                required: false
+                value: {$get_property: [SELF, CAPABILITY, host, os]}
+              os_distribution:
+                required: false
+                value: {$get_property: [SELF, CAPABILITY, host, distribution]}
+              os_version:
+                required: false
+                value: {$get_property: [SELF, CAPABILITY, host, version]}
+          configure:
+            inputs:
+              host: {$get_attribute: [SELF, CAPABILITY, endpoint, address]}
+            implementation:
+              primary: config
+              dependencies: [add_host_key]
+          delete:
+            inputs:
+              host: {$get_attribute: [SELF, CAPABILITY, endpoint, address]}
+  PhysicalCompute:
+    derived_from: Compute
+    description: >-
+      Physical Compute instance.
+    properties:
+      public_address:
+        required: true
+    artifacts:
+      add_target:
+        file: artifacts/physical_compute/add_target.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, sudo_user]}
+    requirements:
+      - link:
+          node: Port
+          relationship:
+            interfaces:
+              Configure:
+                operations:
+                  add_target:
+                    implementation: add_target
+                    inputs:
+                      ip_address: {$get_attribute: [SELF, TARGET, ip_address]}
+                    outputs:
+                      interface_name: [SELF, TARGET, interface_name]
+                      mac_address: [SELF, TARGET, mac_address]
+          count_range: [0, 4]
+  Storage:
+    description: >-
+      Node type for storage
+    derived_from: Root
+    properties:
+      volume_name:
+        type: string
+        required: false
+    capabilities:
+      attachment:
+        type: Attachable
+  ComputeMonitor:
+    derived_from: Root
+    attributes:
+      monitor_id:
+        type: string
+    requirements:
+      - monitor:
+          capability: Observable
+          relationship: Monitors
+          node: Compute
+          count_range: [1,1]
+    artifacts:
+      start:
+        file: artifacts/compute_monitor/start.sh
+        type: Bash
+      stop:
+        file: artifacts/compute_monitor/stop.sh
+        type: Bash
+      monitor:
+        file: artifacts/compute_monitor/monitor.py
+        type: Python
+    interfaces:
+      Standard:
+        operations:
+          start:
+            implementation: start
+            inputs:
+              name: {$get_attribute: [SELF, RELATIONSHIP, monitor, TARGET, name]}
+              host: {$get_attribute: [SELF, RELATIONSHIP, monitor, TARGET, public_address]}
+              node_id: {$get_attribute: [SELF, RELATIONSHIP, monitor, TARGET, ID]}
+              monitor: {$get_artifact: [SELF, monitor]}
+              virtual_env:
+                type: string
+                value: ~/Workspace/ubicity/env
+            outputs:
+              monitor_id: [SELF, monitor_id]
+          stop:
+            implementation: stop
+            inputs:
+              monitor_id: {$get_attribute: [SELF, monitor_id]}
+  LinuxAccount:
+    derived_from: Root
+    properties:
+      name:
+        type: string
+      supplementary_groups:
+        type: list
+        entry_schema: string
+        required: false
+      home_directory:
+        type: string
+        required: false
+      system_user:
+        type: boolean
+        default: false
+      shell:
+        type: string
+        required: false
+      sudo_no_password:
+        type: boolean
+        default: false
+    attributes:
+      uid:
+        type: integer
+      group_name:
+        type: string
+    capabilities:
+      credential:
+        type: Credential
+    requirements:
+      - host:
+          capability: OperatingSystem
+          relationship: HostedOn
+          node: Compute
+          count_range: [0, 1]
+    artifacts:
+      create:
+        file: artifacts/linux_account/create.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/linux_account/delete.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              name: {$get_property: [SELF, name]}
+              supplementary_groups: {$get_property: [SELF, supplementary_groups]}
+              home_directory: {$get_property: [SELF, home_directory]}
+              system_user: {$get_property: [SELF, system_user]}
+              shell: {$get_property: [SELF, shell]}
+              sudo_no_password: {$get_property: [SELF, sudo_no_password]}
+            outputs:
+              uid: [SELF, uid]
+              group_name: [SELF, group_name]
+          delete:
+            implementation: delete
+            inputs:
+              name: {$get_property: [SELF, name]}
+              
+  Port:
+    derived_from: Root
+    properties:
+      name: 
+        type: string
+        required: true
+      ip_address:
+        type: string
+        required: false
+      mac_address:
+        type: string
+        required: false
+    attributes:
+      interface_name:
+        type: string
+    capabilities:
+      layer:
+        type: Layer
+      link:
+        type: Linkable
+    requirements:
+      - link: 
+          description: >
+            Links the port to a subnet. 
+          capability: Linkable
+          relationship: LinksTo
+          count_range: [1, 1]
+          node: Subnet
+      - binding:
+          description: >
+            Binds the port to a running compute or container instance.
+          capability: Bindable
+          relationship: BindsTo
+          count_range: [0, 1]
+  Subnet:
+    derived_from: Root
+    properties:
+      name:
+        type: string
+        required: true
+      cidr_block:
+        type: string
+        required: true
+      gateway:
+        type: string
+        required: false
+    capabilities:
+      link:
+        type: Linkable
+  Network:
+    derived_from: Root
+    description: >-
+      A logical layer-3 network that contains one or more subnets.
+      Vendor profiles derive concrete network types (e.g. AWS
+      VirtualPrivateCloud, Azure VNet, GCP Network, OpenStack
+      Network) from this base.
+    properties:
+      name:
+        type: string
+        required: true
+      cidr_block:
+        type: string
+        required: false
+        description: >-
+          The address range for this network in CIDR notation. Some
+          platforms set the CIDR on the network itself (AWS VPC,
+          Azure VNet, OpenStack Network); others define it only at
+          the subnet level (GCP), in which case this property is
+          left unset.
+    capabilities:
+      host:
+        type: Container
+  SecurityGroup:
+    derived_from: Root
+    description: >-
+      A named set of ingress and egress rules that protect the nodes
+      attached to it. Vendor profiles derive concrete types (e.g.
+      AWS SecurityGroup, Azure Nsg, GCP FirewallRules, OpenStack
+      SecurityGroup) from this base.
+    properties:
+      name:
+        type: string
+        required: true
+      description:
+        type: string
+        required: false
+      ingress_rules:
+        type: list
+        entry_schema: SecurityGroupRule
+        required: false
+      egress_rules:
+        type: list
+        entry_schema: SecurityGroupRule
+        required: false
+    capabilities:
+      security:
+        type: SecurityGuard
+  VmImage:
+    derived_from: Root
+    description: >-
+      A VM disk image / machine image used to create VirtualCompute
+      instances. Vendor profiles derive concrete types (e.g. AWS
+      AMI, Azure managed image, GCP image, OpenStack Glance image,
+      Proxmox VM template) from this base.
+    properties:
+      name:
+        type: string
+        required: true
+      description:
+        type: string
+        required: false
+      architecture:
+        type: string
+        description: >-
+          CPU architecture supported by this image (e.g. x86_64, arm64).
+        required: false
+      os_family:
+        type: string
+        description: >-
+          OS family (e.g. linux, windows).
+        required: false
+      os_version:
+        type: string
+        description: >-
+          OS distribution release (e.g. 22.04, 2022).
+        required: false
+    attributes:
+      id:
+        type: string
+        description: >-
+          Provider-specific identifier (AMI ID, GCP image self-link,
+          Azure resource ID, OpenStack UUID, etc.) populated by the
+          vendor type's create or discover lifecycle.
+    capabilities:
+      image:
+        type: VmImageSource
+  ContainerImage:
+    derived_from: Root
+    description: >-
+      An OCI / Docker container image used to instantiate container
+      workloads (Docker containers, Kubernetes pods, KubeVirt
+      containerDisk-backed VMs).
+    properties:
+      name:
+        type: string
+        description: >-
+          Image name (e.g. "nginx", "library/postgres").
+        required: true
+      tag:
+        type: string
+        description: >-
+          Image tag (e.g. "1.25", "latest").
+        required: false
+      digest:
+        type: string
+        description: >-
+          Image digest (e.g. "sha256:abc...").
+        required: false
+      registry:
+        type: string
+        description: >-
+          Registry hostname (e.g. "docker.io", "ghcr.io"). Defaults
+          to the platform's default registry when unset.
+        required: false
+      architecture:
+        type: string
+        description: >-
+          Image architecture (e.g. "linux/amd64", "linux/arm64").
+        required: false
+    attributes:
+      id:
+        type: string
+        description: >-
+          Resolved canonical reference (typically registry/repo@digest)
+          populated by the vendor type's discover lifecycle.
+    capabilities:
+      image:
+        type: ContainerImageSource
+  Software:
+    derived_from: Root
+    requirements:
+      - host:
+          capability: OperatingSystem
+          relationship: HostedOn
+          node: Compute
+          count_range: [0, 1]
+  InstallablePackage:
+    derived_from: Software
+    properties:
+      name:
+        type: string
+      repository:
+        type: string
+        required: False
+      repository_key:
+        type: string
+        required: False
+      suite:
+        type: string
+        required: False
+      components:
+        type: string
+        required: False
+      package_names:
+        type: list
+        entry_schema: string
+    artifacts:
+      create:
+        file: artifacts/installable_package/create.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/installable_package/delete.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              name: {$get_property: [SELF, name]}
+              repository: {$get_property: [SELF, repository]}
+              repository_key: {$get_property: [SELF, repository_key]}
+              suite: {$get_property: [SELF, suite]}
+              components: {$get_property: [SELF, components]}
+              package_names: {$get_property: [SELF, package_names]}
+          delete:
+            implementation: delete
+            inputs:
+              package_names: {$get_property: [SELF, package_names]}
+
+  PipPackage:
+    derived_from: Software
+    properties:
+      package_names:
+        type: list
+        entry_schema: string
+      virtual_env:
+        type: string
+        required: true
+    artifacts:
+      create:
+        file: artifacts/pip_package/create.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/pip_package/delete.sh
+        type: Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              virtual_env: {$get_property: [SELF, virtual_env]}
+              package_names: {$get_property: [SELF, package_names]}
+          delete:
+            implementation: delete
+            inputs:
+              virtual_env: {$get_property: [SELF, virtual_env]}
+              package_names: {$get_property: [SELF, package_names]}

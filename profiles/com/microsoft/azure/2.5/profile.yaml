@@ -1,0 +1,705 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.microsoft.azure:2.5
+
+description: >-
+  TOSCA Type Definitions for Microsoft Azure resources.
+
+  Azure organizes resources into four management scopes: management
+  groups (containers for multiple subscriptions), subscriptions
+  (billing and access boundary), resource groups (logical containers
+  for related resources), and resources (individual service instances
+  such as virtual machines or storage accounts). Management groups are
+  not modeled in this profile.
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+  - profile: com.ubicity.kubernetes:2.5
+    namespace: kube
+
+data_types:
+
+  SecurityGroupRule:
+    derived_from: ubct:SecurityGroupRule
+    description: >-
+      Azure NSG rule. Adds a priority (100-4096) on top of the
+      foundation rule shape.
+    properties:
+      priority:
+        type: integer
+        validation: {$and: [{$greater_or_equal: [$value, 100]}, {$less_or_equal: [$value, 4096]}]}
+
+capability_types:
+  Owner:
+  Address:
+
+relationship_types:
+  BelongsTo:
+    derived_from: ubct:Root
+    valid_capability_types: [ Owner ]
+  AddressedBy:
+    derived_from: ubct:Root
+    valid_capability_types: [ Address ]
+
+node_types:
+
+  Subscription:
+    derived_from: ubct:Principal
+    description: >-
+      An Azure subscription, accessed via a service principal. A
+      subscription defines a billing and access boundary for Azure
+      resources and can have limits or quotas on the amount of resources
+      that can be created. Credentials are stored as a file that exports
+      the AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID, and
+      AZURE_SUBSCRIPTION_ID environment variables.
+    properties:
+      credentials_file:
+        type: string
+        description: >-
+          Path to a file that exports Azure service principal environment
+          variables (AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_TENANT_ID,
+          AZURE_SUBSCRIPTION_ID)
+    capabilities:
+      credential:
+        valid_source_node_types:
+          - Region
+      owner:
+        type: Owner
+    requirements:
+      - manager:
+          node: AzureCli
+          count_range: [1, 1]
+
+  AzureCli:
+    derived_from: ubct:PipPackage
+    description: >-
+      The Azure CLI (az), installed as a Python package in a virtualenv.
+    properties:
+      package_names:
+        - azure-cli
+      virtual_env: ~/venv/azure
+    capabilities:
+      management:
+        type: ubct:Manager
+
+  Region:
+    derived_from: ubct:IaasPlatform
+    description: >-
+      A region is set of datacenters deployed within a latency-defined
+      perimeter and connected through a dedicated regional low-latency
+      network.
+    properties:
+      name:
+        type: string
+      geography:
+        type: string
+        description: >-
+          A geography is an area of the world containing at least one
+          Azure region. Geographies define a discrete market that
+          preserve data residency and compliance boundaries.
+          Geographies allow customers with specific data-residency and
+          compliance needs to keep their data and applications
+          close. Geographies are fault-tolerant to withstand complete
+          region failure through their connection to our dedicated
+          high-capacity networking infrastructure.
+    capabilities:
+      host:
+        valid_source_node_types:
+          - ResourceGroup
+          - VirtualMachine
+          - VNet
+          - PublicIP
+          - Nsg
+          - Aks
+          - Image
+    requirements:
+      - manager:
+          node: AzureCli
+          count_range: [1, 1]
+      - credential:
+          node: Subscription
+          count_range: [1, 1]
+
+  ResourceGroup:
+    derived_from: ubct:Root
+    description: >-
+      A resource group is a logical container into which Azure resources
+      are deployed and managed together. All resources in a group share
+      the same lifecycle and can be managed, deployed, and deleted as a
+      unit. A resource group has a location used to store its metadata,
+      but the resources it contains may reside in any region.
+    properties:
+      name:
+        type: string
+    capabilities:
+      owner:
+        type: Owner
+    requirements:
+      - account:
+          capability: Owner
+          node: Subscription
+          relationship: BelongsTo
+          count_range: [1, 1]
+      - region:
+          capability: ubct:Container
+          node: Region
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          virtual_env:
+            value: {$get_property: [SELF, RELATIONSHIP, region, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+          az_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, region, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          az_group_name:
+            required: True
+            value: {$get_property: [SELF, name]}
+        operations:
+          create:
+            inputs:
+              az_region_name:
+                required: True
+                value: {$get_property: [SELF, RELATIONSHIP, region, TARGET, name]}
+            implementation:
+              primary:
+                file: artifacts/resource_group/create.sh
+                type: ubct:Bash
+          delete:
+            implementation:
+              primary:
+                file: artifacts/resource_group/delete.sh
+                type: ubct:Bash
+
+  VNet:
+    derived_from: ubct:Network
+    description: >-
+      A Virtual Network
+    properties:
+      cidr_block:
+        required: true
+    capabilities:
+      host:
+        type: ubct:Container
+        valid_source_node_types:
+          - Subnet
+          - Aks
+    requirements:
+      - host:
+          capability: ubct:Container
+          node: Region
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+      - group:
+          capability: Owner
+          node: ResourceGroup
+          relationship: BelongsTo
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          virtual_env:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+          az_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          az_vnet_name:
+            required: True
+            value: {$get_property: [SELF, name]}
+          az_group_name:
+            required: True
+            value: {$get_property: [SELF, RELATIONSHIP, group, TARGET, name]}
+        operations:
+          create:
+            inputs:
+              az_region_name:
+                required: True
+                value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+              az_cidr_block:
+                required: True
+                value: {$get_property: [SELF, cidr_block]}
+            implementation:
+              primary:
+                file: artifacts/vnet/create.sh
+                type: ubct:Bash
+          delete:
+            implementation:
+              primary:
+                file: artifacts/vnet/delete.sh
+                type: ubct:Bash
+
+  Subnet:
+    derived_from: ubct:Subnet
+    description: >-
+      A Subnet
+    requirements:
+      - vnet:
+          capability: ubct:Container
+          node: VNet
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+      - group:
+          capability: Owner
+          node: ResourceGroup
+          relationship: BelongsTo
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          virtual_env:
+            value: {$get_property: [SELF, RELATIONSHIP, vnet, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+          az_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, vnet, TARGET, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          az_subnet_name:
+            required: True
+            value: {$get_property: [SELF, name]}
+          az_vnet_name:
+            required: True
+            value: {$get_property: [SELF, RELATIONSHIP, vnet, TARGET, name]}
+          az_group_name:
+            required: True
+            value: {$get_property: [SELF, RELATIONSHIP, group, TARGET, name]}
+        operations:
+          create:
+            inputs:
+              az_cidr_block:
+                required: True
+                value: {$get_property: [SELF, cidr_block]}
+            implementation:
+              primary:
+                file: artifacts/subnet/create.sh
+                type: ubct:Bash
+          delete:
+            implementation:
+              primary:
+                file: artifacts/subnet/delete.sh
+                type: ubct:Bash
+
+  PublicIP:
+    derived_from: ubct:Root
+    description: >-
+      A public IP address
+    properties:
+      name:
+        type: string
+      version:
+        type: string
+        default: IPv4
+        validation: {$valid_values: [$value, [IPv4, IPv6]]}
+    attributes:
+      ip_address:
+        type: string
+    capabilities:
+      address:
+        type: Address
+    requirements:
+      - host:
+          capability: ubct:Container
+          node: Region
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+      - group:
+          capability: Owner
+          node: ResourceGroup
+          relationship: BelongsTo
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          virtual_env:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+          az_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          az_public_ip_name:
+            required: True
+            value: {$get_property: [SELF, name]}
+          az_group_name:
+            required: True
+            value: {$get_property: [SELF, RELATIONSHIP, group, TARGET, name]}
+        operations:
+          create:
+            inputs:
+              az_region_name:
+                required: True
+                value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+              az_version:
+                required: True
+                value: {$get_property: [SELF, version]}
+            outputs:
+              az_ip_address: [ SELF, ip_address ]
+            implementation:
+              primary:
+                file: artifacts/public_ip/create.sh
+                type: ubct:Bash
+          delete:
+            implementation:
+              primary:
+                file: artifacts/public_ip/delete.sh
+                type: ubct:Bash
+
+  Nsg:
+    derived_from: ubct:SecurityGroup
+    description: >-
+      A Network Security Group
+    properties:
+      ingress_rules:
+        entry_schema: SecurityGroupRule
+      egress_rules:
+        entry_schema: SecurityGroupRule
+    requirements:
+      - host:
+          capability: ubct:Container
+          node: Region
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+      - group:
+          capability: Owner
+          node: ResourceGroup
+          relationship: BelongsTo
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          virtual_env:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+          az_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          az_nsg_name:
+            required: True
+            value: {$get_property: [SELF, name]}
+          az_group_name:
+            required: True
+            value: {$get_property: [SELF, RELATIONSHIP, group, TARGET, name]}
+        operations:
+          create:
+            inputs:
+              az_region_name:
+                required: True
+                value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+              az_ingress_rules:
+                required: False
+                value: {$get_property: [SELF, ingress_rules]}
+              az_egress_rules:
+                required: False
+                value: {$get_property: [SELF, egress_rules]}
+            implementation:
+              primary:
+                file: artifacts/nsg/create.sh
+                type: ubct:Bash
+          delete:
+            implementation:
+              primary:
+                file: artifacts/nsg/delete.sh
+                type: ubct:Bash
+
+  Nic:
+    derived_from: ubct:Port
+    description: >-
+      A Network Interface
+    requirements:
+      - link:
+          node: Subnet
+          count_range: [1, 1]
+      - security:
+          capability: ubct:SecurityGuard
+          relationship: ubct:ProtectedBy
+          node: Nsg
+          count_range: [0, 1]
+      - group:
+          capability: Owner
+          node: ResourceGroup
+          relationship: BelongsTo
+          count_range: [1, 1]
+      - address:
+          capability: Address
+          node: PublicIP
+          relationship: AddressedBy
+          count_range: [0, 1]
+    interfaces:
+      Standard:
+        inputs:
+          virtual_env:
+            value: {$get_property: [SELF, RELATIONSHIP, group, TARGET, RELATIONSHIP, region, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+          az_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, group, TARGET, RELATIONSHIP, region, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          az_nic_name:
+            required: True
+            value: {$get_property: [SELF, name]}
+          az_group_name:
+            required: True
+            value: {$get_property: [SELF, RELATIONSHIP, group, TARGET, name]}
+        operations:
+          create:
+            inputs:
+              az_subnet_name:
+                required: True
+                value: {$get_property: [SELF, RELATIONSHIP, link, TARGET, name]}
+              az_vnet_name:
+                required: True
+                value: {$get_property: [SELF, RELATIONSHIP, link, TARGET, RELATIONSHIP, vnet, TARGET, name]}
+              az_public_ip_address:
+                required: False
+                value: {$get_property: [SELF, RELATIONSHIP, address, TARGET, name]}
+              az_security_group_name:
+                required: False
+                value: {$get_property: [SELF, RELATIONSHIP, security, TARGET, name]}
+            implementation:
+              primary:
+                file: artifacts/nic/create.sh
+                type: ubct:Bash
+          delete:
+            implementation:
+              primary:
+                file: artifacts/nic/delete.sh
+                type: ubct:Bash
+
+  Image:
+    derived_from: ubct:VmImage
+    description: >-
+      An Azure VM image. The "id" attribute holds either a marketplace
+      URN (e.g. "Canonical:UbuntuServer:22.04-LTS:latest") or a
+      managed-image resource ID, which Azure CLI accepts via the
+      `--image` argument.
+    requirements:
+      - host:
+          capability: ubct:Container
+          node: Region
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+      - group:
+          capability: Owner
+          node: ResourceGroup
+          relationship: BelongsTo
+          count_range: [0, 1]
+
+  VirtualMachine:
+    derived_from: ubct:VirtualCompute
+    description: >-
+      Azure VM Instance
+    properties:
+      name:
+        type: string
+        required: true
+      zone:
+        type: integer
+        description: >-
+          Availability zone number (1, 2, or 3) within the region.
+        required: false
+        validation: {$valid_values: [$value, [1, 2, 3]]}
+    requirements:
+      - image:
+          node: Image
+      - link:
+          node: Nic
+          count_range: [0, 2]
+      - host:
+          node: Region
+          count_range: [1, 1]
+      - group:
+          capability: Owner
+          node: ResourceGroup
+          relationship: BelongsTo
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          virtual_env:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+          az_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          az_group_name:
+            required: True
+            value: {$get_property: [SELF, RELATIONSHIP, group, TARGET, name]}
+          az_region_name:
+            required: True
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+          az_instance_name:
+            required: false
+            value: {$get_property: [SELF, name]}
+          az_ssh_user:
+            required: true
+            value: {$get_property: [SELF, sudo_user, user_name]}
+          az_ssh_public_key_file:
+            required: false
+            value: {$get_attribute: [SELF, RELATIONSHIP, key, TARGET, public_key_file]}
+        operations:
+          create:
+            inputs:
+              az_image:
+                required: false
+                value: {$get_attribute: [SELF, RELATIONSHIP, image, TARGET, id]}
+              az_vm_size:
+                type: string
+                required: false
+              az_network_interfaces:
+                required: false
+                value: {$get_property: [SELF, RELATIONSHIP, link, TARGET, name]}
+              az_zone:
+                required: false
+                value: {$get_property: [SELF, zone]}
+            outputs:
+              public_ip:  [ SELF, public_address ]
+              private_ip: [ SELF, private_address ]
+            implementation:
+              primary:
+                file: artifacts/virtual_machine/create.sh
+                type: ubct:Bash
+          delete:
+            implementation:
+              primary:
+                file: artifacts/virtual_machine/delete.sh
+                type: ubct:Bash
+
+  Aks:
+    derived_from: kube:ManagedKubernetes
+    description: >-
+      Azure Kubernetes Service (AKS) managed cluster.
+    properties:
+      dns_prefix:
+        type: string
+        description: >-
+          DNS prefix for the cluster FQDN.
+      tier:
+        type: string
+        required: false
+        default: Free
+        description: >-
+          AKS pricing tier.
+        validation:
+          $valid_values: [$value, [Free, Standard, Premium]]
+      os_sku:
+        type: string
+        required: false
+        description: >-
+          OS SKU for worker nodes (e.g. Ubuntu, AzureLinux).
+      vm_set_type:
+        type: string
+        required: false
+        default: VirtualMachineScaleSets
+        description: >-
+          Agent pool VM set type.
+        validation:
+          $valid_values: [$value, [VirtualMachineScaleSets, AvailabilitySet]]
+      load_balancer_sku:
+        type: string
+        required: false
+        default: Standard
+        description: >-
+          Load balancer SKU for the cluster.
+        validation:
+          $valid_values: [$value, [Standard, Basic]]
+      network_plugin:
+        type: string
+        required: false
+        default: azure
+        description: >-
+          Network plugin for pod networking.
+        validation:
+          $valid_values: [$value, [azure, kubenet, none]]
+    requirements:
+      - host:
+          capability: ubct:Container
+          node: Region
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+      - group:
+          capability: Owner
+          node: ResourceGroup
+          relationship: BelongsTo
+          count_range: [1, 1]
+      - vnet:
+          description: >-
+            VNet for the AKS cluster. If not specified, AKS creates
+            its own virtual network.
+          capability: ubct:Container
+          node: VNet
+          relationship: ubct:ContainedBy
+          count_range: [0, 1]
+      - subnet:
+          description: >-
+            Subnet for AKS cluster nodes.
+          capability: ubct:Linkable
+          node: Subnet
+          relationship: ubct:LinksTo
+          count_range: [0, 1]
+    interfaces:
+      Standard:
+        inputs:
+          virtual_env:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, manager, TARGET, virtual_env]}
+          az_credentials_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, credentials_file]}
+          az_group_name:
+            required: true
+            value: {$get_property: [SELF, RELATIONSHIP, group, TARGET, name]}
+          az_region_name:
+            required: true
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+        operations:
+          create:
+            inputs:
+              vault:
+                value: {$get_property: [SELF, vault]}
+              kubeconfig:
+                required: false
+                value: {$get_property: [SELF, kubeconfig]}
+              aks_cluster_name:
+                value: {$get_property: [SELF, name]}
+              aks_version:
+                required: false
+                value: {$get_property: [SELF, version]}
+              aks_node_count:
+                value: {$get_property: [SELF, number_of_workers]}
+              aks_vm_size:
+                required: false
+                value: {$get_property: [SELF, worker_machine_type]}
+              aks_disk_size:
+                required: false
+                value: {$get_property: [SELF, worker_disk_size]}
+              aks_dns_prefix:
+                value: {$get_property: [SELF, dns_prefix]}
+              aks_tier:
+                required: false
+                value: {$get_property: [SELF, tier]}
+              aks_os_sku:
+                required: false
+                value: {$get_property: [SELF, os_sku]}
+              aks_network_plugin:
+                required: false
+                value: {$get_property: [SELF, network_plugin]}
+              aks_load_balancer_sku:
+                required: false
+                value: {$get_property: [SELF, load_balancer_sku]}
+              aks_vnet_subnet_id:
+                required: false
+                value: {$get_property: [SELF, RELATIONSHIP, subnet, TARGET, name]}
+              aks_private_cluster:
+                required: false
+                value: {$get_property: [SELF, private_cluster]}
+              aks_max_pods_per_node:
+                required: false
+                value: {$get_property: [SELF, max_pods_per_node]}
+              aks_autoscaling:
+                required: false
+                value: {$get_property: [SELF, autoscaling]}
+              aks_min_nodes:
+                required: false
+                value: {$get_property: [SELF, min_nodes]}
+              aks_max_nodes:
+                required: false
+                value: {$get_property: [SELF, max_nodes]}
+            outputs:
+              kubeconfig: [SELF, kubeconfig]
+              endpoint:   [SELF, endpoint]
+            implementation:
+              primary:
+                file: artifacts/aks/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              aks_cluster_name:
+                value: {$get_property: [SELF, name]}
+            implementation:
+              primary:
+                file: artifacts/aks/delete.sh
+                type: ubct:Bash

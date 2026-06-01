@@ -1,0 +1,182 @@
+tosca_definitions_version: tosca_2_0
+
+profile: sh.helm:3.0
+
+description: >-
+  TOSCA Helm profile. Defines node types for installing the Helm CLI,
+  registering Helm repositories, and deploying Helm charts to a
+  Kubernetes cluster.
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+  - profile: com.ubicity.kubernetes:2.5
+    namespace: kube
+  - profile: io.kubernetes:3.0
+    namespace: k8s
+
+artifact_types:
+  HelmChart:
+    description: >-
+      Helm Chart artifact.
+
+node_types:
+  Helm:
+    derived_from: ubct:Software
+    description: >-
+      The Helm node type represents an installation of the Helm CLI.
+    properties:
+      helm_version:
+        type: string
+        required: false
+    capabilities:
+      help:
+        type: ubct:Feature
+        description: >-
+          Ability to manage Helm-packaged deployments on clusters.
+    requirements:
+      - kubectl:
+          capability: ubct:Feature
+          relationship: ubct:DependsOn
+          node: kube:Kubectl
+          count_range: [1, 1]
+          description: Helm depends on Kubectl
+    artifacts:
+      create:
+        file: artifacts/helm/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+      delete:
+        file: artifacts/helm/delete.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              helm_version: {$get_property: [SELF, helm_version]}
+            outputs:
+              helm_version: [SELF, helm_version]
+          delete:
+            implementation: delete
+
+  HelmRepo:
+    derived_from: ubct:Software
+    description: >-
+      The HelmRepo node type represents a Helm repository that is made
+      available to a local Helm installation.
+    properties:
+      repo_name:
+        type: string
+      repo_url:
+        type: string
+    capabilities:
+      store: ubct:Store
+    requirements:
+      - helm:
+          capability: ubct:Feature
+          relationship: ubct:DependsOn
+          node: Helm
+          count_range: [1, 1]
+          description: HelmRepo depends on Helm
+    artifacts:
+      create:
+        file: artifacts/helm_repo/create.sh
+        type: ubct:Bash
+        properties:
+          host: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, CAPABILITY, endpoint, address]}
+          user: {$get_attribute: [SELF, RELATIONSHIP, host, TARGET, sudo_user]}
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              repo_name: {$get_property: [SELF, repo_name]}
+              repo_url: {$get_property: [SELF, repo_url]}
+
+  HelmApp:
+    derived_from: ubct:Root
+    description: >-
+      A Helm release deployed to a Kubernetes cluster.
+    properties:
+      deployment_name:
+        type: string
+      chart:
+        type: string
+      repo_url:
+        type: string
+        required: false
+      values:
+        description: >-
+          Set chart values. If both "values" and "values_file" are
+          specified and overlap, "values" overrides values from the
+          values file.
+        type: map
+        entry_schema: string
+        required: false
+      values_file:
+        description: >-
+          YAML file with chart values.
+        type: string
+        required: false
+    requirements:
+      - helm:
+          capability: ubct:Feature
+          relationship: ubct:DependsOn
+          node: Helm
+          count_range: [1, 1]
+      - cluster:
+          capability: kube:Kubernetes
+          relationship: ubct:ContainedBy
+          node: kube:KubernetesController
+          count_range: [1, 1]
+      - namespace:
+          capability: k8s:Scope
+          relationship: k8s:ScopedBy
+          node: k8s:Namespace
+          count_range: [0, 1]
+      - repo:
+          capability: ubct:Store
+          relationship: ubct:StoredIn
+          node: HelmRepo
+          count_range: [0, 1]
+    artifacts:
+      create:
+        file: artifacts/helm_app/create.sh
+        type: ubct:Bash
+    interfaces:
+      Standard:
+        operations:
+          create:
+            implementation: create
+            inputs:
+              deployment_name: {$get_property: [SELF, deployment_name]}
+              chart: {$get_property: [SELF, chart]}
+              context:
+                type: string
+                required: false
+              kubeconfig: {$get_property: [SELF, RELATIONSHIP, cluster, TARGET, kubeconfig]}
+              repo_url:
+                value: {$get_property: [SELF, repo_url]}
+                description: Either repo_url or repo_name has to be provided
+                required: false
+              repo_name:
+                value: {$get_property: [SELF, RELATIONSHIP, repo, TARGET, repo_name]}
+                description: Either repo_url or repo_name has to be provided
+                required: false
+              values:
+                value: {$get_property: [SELF, values]}
+                required: false
+              values_file:
+                value: {$get_property: [SELF, values_file]}
+                required: false
+              namespace:
+                value: {$get_property: [SELF, RELATIONSHIP, namespace, TARGET, metadata, name]}
+                required: false

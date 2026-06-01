@@ -1,0 +1,514 @@
+tosca_definitions_version: tosca_2_0
+
+profile: com.google.cloud:2.5
+
+description: >-
+  TOSCA Type Definitions for Common Google Cloud Objects
+
+imports:
+  - profile: com.ubicity:2.5
+    namespace: ubct
+  - profile: com.ubicity.kubernetes:2.5
+    namespace: kube
+
+node_types:
+
+  GCloudCli:
+    derived_from: ubct:InstallablePackage
+    description: >-
+      The Google Cloud CLI (gcloud), installed via the Google Cloud
+      SDK apt repository.
+    properties:
+      package_names:
+        - google-cloud-cli
+      repository: https://packages.cloud.google.com/apt
+      repository_key: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      suite: cloud-sdk
+    capabilities:
+      management:
+        type: ubct:Manager
+
+  Project:
+    derived_from: ubct:Principal
+    description: >-
+      A Google Cloud project is the top-level organizational container for
+      GCP resources. Service account credentials are project-scoped and
+      apply across all regions.
+    properties:
+      name:
+        type: string
+        description: The GCP project ID
+      account:
+        type: string
+        description: The GCP service account email address
+      key_file:
+        type: string
+        description: Path to the GCP service account key file (JSON)
+    capabilities:
+      credential:
+        valid_source_node_types:
+          - Zone
+          - Network
+    requirements:
+      - manager:
+          node: GCloudCli
+          count_range: [1, 1]
+
+  Zone:
+    derived_from: ubct:IaasPlatform
+    description: >-
+      A zone is a deployment area within a region. Zones are isolated
+      from each other within a region and are identified by a name such
+      as us-central1-a.
+    properties:
+      zone_name:
+        type: string
+      region:
+        type: string
+        description: The GCP region this zone belongs to (e.g. us-central1)
+    capabilities:
+      host:
+        valid_source_node_types:
+          - Instance
+          - Gke
+    requirements:
+      - manager:
+          node: GCloudCli
+          count_range: [1, 1]
+      - credential:
+          node: Project
+          count_range: [1, 1]
+
+  Network:
+    derived_from: ubct:Network
+    description: >-
+      A GCP VPC network. Networks are global (project-scoped) resources,
+      not region-scoped.
+    properties:
+      name:
+        validation: {$matches: [$value, '(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)']}
+    attributes:
+      uuid:
+        type: string
+    capabilities:
+      host:
+        type: ubct:Container
+        valid_source_node_types:
+          - FirewallRules
+          - Subnet
+          - Gke
+    requirements:
+      - credential:
+          capability: ubct:Credential
+          node: Project
+          relationship: ubct:AuthorizedUsing
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          gcp_key_file:
+            description: Path to the GCP service account key file (JSON)
+            value: {$get_property: [SELF, RELATIONSHIP, credential, TARGET, key_file]}
+          gcp_account:
+            description: The Google Cloud Platform account
+            value: {$get_property: [SELF, RELATIONSHIP, credential, TARGET, account]}
+          gcp_project:
+            description: The Google Cloud Platform project
+            value: {$get_property: [SELF, RELATIONSHIP, credential, TARGET, name]}
+        operations:
+          create:
+            inputs:
+              gcp_network_name:
+                required: True
+                value: {$get_property: [SELF, name]}
+            outputs:
+              network_id: [SELF, uuid]
+            implementation:
+              primary:
+                file: artifacts/network/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              gcp_network_name:
+                required: True
+                value: {$get_property: [SELF, name]}
+            implementation:
+              primary:
+                file: artifacts/network/delete.sh
+                type: ubct:Bash
+
+  Subnet:
+    derived_from: ubct:Subnet
+    description: >-
+      A GCP subnet. Subnets are region-scoped and belong to a VPC network.
+    properties:
+      region:
+        type: string
+        description: The GCP region in which to create this subnet (e.g. us-central1)
+    attributes:
+      subnet_id:
+        type: string
+    requirements:
+      - network:
+          node: Network
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          gcp_key_file:
+            description: Path to the GCP service account key file (JSON)
+            value: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, credential, TARGET, key_file]}
+          gcp_account:
+            description: The Google Cloud Platform account
+            value: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, credential, TARGET, account]}
+          gcp_project:
+            description: The Google Cloud Platform project
+            value: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, credential, TARGET, name]}
+          gcp_region_name:
+            description: Region name in which to create this subnet
+            value: {$get_property: [SELF, region]}
+        operations:
+          create:
+            inputs:
+              gcp_subnet_name:
+                required: True
+                value: {$get_attribute: [SELF, name]}
+              gcp_cidr_block:
+                required: True
+                value: {$get_property: [SELF, cidr_block]}
+              gcp_vpc_name:
+                required: True
+                value: {$get_attribute: [SELF, RELATIONSHIP, network, TARGET, name]}
+            outputs:
+              subnet_id: [ SELF, subnet_id ]
+            implementation:
+              primary:
+                file: artifacts/subnet/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              gcp_subnet_name:
+                required: True
+                value: {$get_property: [SELF, name]}
+            implementation:
+              primary:
+                file: artifacts/subnet/delete.sh
+                type: ubct:Bash
+
+  FirewallRules:
+    derived_from: ubct:SecurityGroup
+    description: >-
+      Google Cloud Firewall Rules. Firewall rules are global (project-scoped)
+      and associated with a VPC network.
+    attributes:
+      group_id:
+        type: string
+    requirements:
+      - network:
+          node: Network
+          capability: ubct:Container
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+    interfaces:
+      Standard:
+        inputs:
+          gcp_key_file:
+            description: Path to the GCP service account key file (JSON)
+            value: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, credential, TARGET, key_file]}
+          gcp_account:
+            description: The Google Cloud Platform account
+            value: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, credential, TARGET, account]}
+          gcp_project:
+            description: The Google Cloud Platform project
+            value: {$get_property: [SELF, RELATIONSHIP, network, TARGET, RELATIONSHIP, credential, TARGET, name]}
+        operations:
+          create:
+            inputs:
+              gcp_vpc_name:
+                required: True
+                value: {$get_attribute: [SELF, RELATIONSHIP, network, TARGET, name]}
+              gcp_ingress_rules:
+                required: False
+                value: {$get_property: [SELF, ingress_rules]}
+              gcp_egress_rules:
+                required: False
+                value: {$get_property: [SELF, egress_rules]}
+            implementation:
+              primary:
+                file: artifacts/firewall-rules/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              gcp_ingress_rules:
+                required: False
+                value: {$get_property: [SELF, ingress_rules]}
+              gcp_egress_rules:
+                required: False
+                value: {$get_property: [SELF, egress_rules]}
+            implementation:
+              primary:
+                file: artifacts/firewall-rules/delete.sh
+                type: ubct:Bash
+
+  Image:
+    derived_from: ubct:VmImage
+    description: >-
+      A GCP Compute Engine image. The "family" and "project"
+      properties identify the image source; gcloud resolves them at
+      create time to pick the latest image in the family. Public
+      images (e.g. Ubuntu, Debian) live in vendor projects
+      ("ubuntu-os-cloud", "debian-cloud"); custom images live in
+      your own project.
+    properties:
+      family:
+        type: string
+        description: >-
+          Image family identifier (e.g. "ubuntu-2204-lts",
+          "debian-12").
+        required: false
+      project:
+        type: string
+        description: >-
+          Project hosting the image.
+        required: false
+
+  Instance:
+    derived_from: ubct:VirtualCompute
+    description: >-
+      GCP Instance
+    properties:
+      name:
+        type: string
+        required: true
+    attributes:
+      instance_id:
+        type: string
+    requirements:
+      - image:
+          node: Image
+      - dependency:
+          capability: ubct:Feature
+          relationship: ubct:DependsOn
+          node: FirewallRules
+          count_range: [0, 1]
+      - host:
+          node: Zone
+      - link:
+          description: >
+            Expresses the relationship between Instance and Subnet nodes.
+            Each link becomes a network interface (NIC). If omitted, the
+            instance is created in the default VPC.
+          capability: ubct:Linkable
+          relationship: ubct:LinksTo
+          count_range: [0, 8]
+          node: Subnet
+    interfaces:
+      Standard:
+        inputs:
+          gcp_key_file:
+            description: Path to the GCP service account key file (JSON)
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, key_file]}
+          gcp_account:
+            description: The Google Cloud Platform account
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, account]}
+          gcp_project:
+            description: The Google Cloud Platform project
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, name]}
+          gcp_zone_name:
+            description: The GCP Zone in which to create this instance
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, zone_name]}
+        operations:
+          create:
+            inputs:
+              gcp_server_name:
+                required: true
+                value: {$get_property: [SELF, name]}
+              gcp_subnet_names:
+                required: false
+                value: {$get_property: [SELF, RELATIONSHIP, link, TARGET, name]}
+              gcp_ssh_user:
+                required: true
+                value: {$get_property: [SELF, sudo_user, user_name]}
+              gcp_ssh_public_key_file:
+                required: true
+                value: {$get_attribute: [SELF, RELATIONSHIP, key, TARGET, public_key_file]}
+              machine_type:
+                type: string
+                required: false
+              gcp_image_family:
+                required: false
+                value: {$get_property: [SELF, RELATIONSHIP, image, TARGET, family]}
+              gcp_image_project:
+                required: false
+                value: {$get_property: [SELF, RELATIONSHIP, image, TARGET, project]}
+            outputs:
+              instance_id: [ SELF, instance_id ]
+              public_ip:   [ SELF, public_address ]
+              private_ip:  [ SELF, private_address ]
+            implementation:
+              primary:
+                file: artifacts/instance/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              gcp_server_name:
+                required: True
+                value: {$get_attribute: [SELF, name]}
+            implementation:
+              primary:
+                file: artifacts/instance/delete.sh
+                type: ubct:Bash
+
+  Gke:
+    derived_from: kube:ManagedKubernetes
+    description: >-
+      Google Kubernetes Engine (GKE) managed cluster.
+    properties:
+      release_channel:
+        type: string
+        required: false
+        default: REGULAR
+        description: >-
+          Release channel for automatic version management.
+        validation:
+          $valid_values: [$value, [RAPID, REGULAR, STABLE]]
+      image_type:
+        type: string
+        required: false
+        description: >-
+          Node image type (e.g. COS_CONTAINERD, UBUNTU_CONTAINERD).
+      disk_type:
+        type: string
+        required: false
+        description: >-
+          Disk type for worker nodes.
+        validation:
+          $valid_values: [$value, [pd-standard, pd-ssd, pd-balanced]]
+      spot:
+        type: boolean
+        required: false
+        default: false
+        description: >-
+          Use Spot VMs for worker nodes.
+      workload_identity:
+        type: boolean
+        required: false
+        default: true
+        description: >-
+          Enable Workload Identity for secure access to Google Cloud
+          services from pods.
+      dataplane_v2:
+        type: boolean
+        required: false
+        default: false
+        description: >-
+          Enable GKE Dataplane V2 (Cilium-based networking).
+    requirements:
+      - host:
+          capability: ubct:Container
+          node: Zone
+          relationship: ubct:ContainedBy
+          count_range: [1, 1]
+      - network:
+          description: >-
+            VPC network for the GKE cluster. If not specified, the
+            default network is used.
+          capability: ubct:Container
+          node: Network
+          relationship: ubct:ContainedBy
+          count_range: [0, 1]
+      - subnet:
+          description: >-
+            Subnet for the GKE cluster nodes.
+          capability: ubct:Linkable
+          node: Subnet
+          relationship: ubct:LinksTo
+          count_range: [0, 1]
+    interfaces:
+      Standard:
+        inputs:
+          gcp_key_file:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, key_file]}
+          gcp_account:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, account]}
+          gcp_project:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, RELATIONSHIP, credential, TARGET, name]}
+          gcp_zone_name:
+            value: {$get_property: [SELF, RELATIONSHIP, host, TARGET, zone_name]}
+        operations:
+          create:
+            inputs:
+              vault:
+                value: {$get_property: [SELF, vault]}
+              kubeconfig:
+                required: false
+                value: {$get_property: [SELF, kubeconfig]}
+              gke_cluster_name:
+                value: {$get_property: [SELF, name]}
+              gke_version:
+                required: false
+                value: {$get_property: [SELF, version]}
+              gke_node_count:
+                value: {$get_property: [SELF, number_of_workers]}
+              gke_machine_type:
+                required: false
+                value: {$get_property: [SELF, worker_machine_type]}
+              gke_disk_size:
+                required: false
+                value: {$get_property: [SELF, worker_disk_size]}
+              gke_disk_type:
+                required: false
+                value: {$get_property: [SELF, disk_type]}
+              gke_image_type:
+                required: false
+                value: {$get_property: [SELF, image_type]}
+              gke_release_channel:
+                required: false
+                value: {$get_property: [SELF, release_channel]}
+              gke_spot:
+                required: false
+                value: {$get_property: [SELF, spot]}
+              gke_workload_identity:
+                required: false
+                value: {$get_property: [SELF, workload_identity]}
+              gke_dataplane_v2:
+                required: false
+                value: {$get_property: [SELF, dataplane_v2]}
+              gke_private_cluster:
+                required: false
+                value: {$get_property: [SELF, private_cluster]}
+              gke_network:
+                required: false
+                value: {$get_property: [SELF, RELATIONSHIP, network, TARGET, name]}
+              gke_subnet:
+                required: false
+                value: {$get_property: [SELF, RELATIONSHIP, subnet, TARGET, name]}
+              gke_max_pods_per_node:
+                required: false
+                value: {$get_property: [SELF, max_pods_per_node]}
+              gke_autoscaling:
+                required: false
+                value: {$get_property: [SELF, autoscaling]}
+              gke_min_nodes:
+                required: false
+                value: {$get_property: [SELF, min_nodes]}
+              gke_max_nodes:
+                required: false
+                value: {$get_property: [SELF, max_nodes]}
+            outputs:
+              kubeconfig: [SELF, kubeconfig]
+              endpoint:   [SELF, endpoint]
+            implementation:
+              primary:
+                file: artifacts/gke/create.sh
+                type: ubct:Bash
+          delete:
+            inputs:
+              gke_cluster_name:
+                value: {$get_property: [SELF, name]}
+            implementation:
+              primary:
+                file: artifacts/gke/delete.sh
+                type: ubct:Bash
