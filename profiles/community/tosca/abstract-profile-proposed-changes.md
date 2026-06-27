@@ -1,10 +1,13 @@
 # Proposed Enhancements to the TOSCA Community Abstract Profiles
 
-**Status:** Discussion draft
+**Status:** Discussion draft — updated with the outcomes of the 2026-06-24
+TOSCA Community meeting (pending review by Roberto)
 **Audience:** TOSCA Community
 **Purpose:** Capture a concrete set of proposed enhancements to the community
-abstract profiles, together with the problems uncovered while prototyping them,
-so they can be discussed and resolved before the changes are adopted.
+abstract profiles, together with the problems uncovered while prototyping them
+and the decisions reached during community discussion.
+
+**Related documents:** [README](README.md) · [prior-art](prior-art.md) · [design-guide](design-guide.md) · [meeting-history](governance/meeting-history.md) · [decision-log](governance/decision-log.md) · [open-issues](governance/open-issues.md)
 
 ---
 
@@ -129,12 +132,20 @@ structure (address + port). A virtualization / API platform is contacted via a
 **URL** (scheme, host, optional port, path) that `IPv4Socket` cannot represent —
 so it falls back to an opaque `string`.
 
-So the real question is not merely "pick one type," but **how to model these two
-connection paradigms cleanly** — e.g. a single management-endpoint type
-(a URI-like type that can represent both a socket and a URL), versus distinct,
-explicitly named properties per paradigm. Whatever is chosen, it should
-probably live on a common ancestor (e.g. `Platform`) rather than being
-redefined per subtype.
+So the real question is not merely "pick one type," but how to model these two
+connection paradigms: a single management-endpoint type that generalizes both
+(a URI-like type for socket and URL), versus distinct, explicitly named
+properties per derived platform type.
+
+**Discussion outcome (TOSCA Community meeting, 2026-06-24).** Rather than force
+a single, one-size-fits-all `mgmt-address` onto the base `Platform` node type,
+the community agreed to keep the management-address **property name and type
+specific to each derived platform type**. A `ServerPlatform` is reached at a
+network socket and uses a structured socket type; an API-style platform
+(virtualization / container) is reached at a URL and uses a `string` — or, where
+more structure is warranted, a `JSON` object with a platform-specific format.
+Constraining this on the base type was considered and rejected as too rigid for
+the range of platforms involved.
 
 ### Problem 2 — Inconsistent typing of `credential` (`string` vs `Credential`)
 
@@ -163,12 +174,17 @@ path to the artifact).
 
 So this is the same modeling tension as Problem 1: the mix is not simply
 sloppiness, it reflects two real authentication paradigms (a structured login
-vs. an opaque token/config artifact). The design question is whether to capture
-that explicitly — for example an **abstract `Credential` supertype with concrete
-subtypes** (`UsernameKeyCredential`, `TokenFileCredential`, a
-kubeconfig-specific credential, …) referenced wherever a credential is needed —
-rather than alternating between a single concrete `Credential` type and an
-untyped `string`.
+vs. an opaque token/config artifact).
+
+**Discussion outcome (TOSCA Community meeting, 2026-06-24).** As with the
+management address, the community agreed **not** to harmonize `credential` on
+the base `Platform` node type, and instead to let each derived platform type
+declare the credential property name and type that fits its authentication
+model: a structured `Credential` for login-based servers, and a `string` (or a
+`JSON` object with a platform-specific format) for the opaque token/config
+artifacts used by cloud and cluster platforms (kubeconfig, AWS credentials file,
+Proxmox API token). A single abstract base credential property was considered
+and rejected in favor of platform-specific properties.
 
 ### Problem 3 — No formal release process for the community profiles
 
@@ -195,24 +211,31 @@ documented compatibility/deprecation policy) is a prerequisite for the
 community abstract profiles to serve as a shared foundation that other profiles
 can depend on.
 
+**Discussion outcome (TOSCA Community meeting, 2026-06-24).** The community
+agreed this is a real risk worth addressing. Near term, the current `0.1`
+version is kept as-is; once `0.1` is considered stable it will be **frozen**,
+and subsequent changes will go into a new version. The community will begin
+planning version tracking and a formal release process that publishes immutable
+release artifacts — building CSAR files as release artifacts (mirroring
+Ubicity's existing onboarding workflow) was raised as one candidate mechanism,
+to be refined.
+
 ---
 
-## 4. Questions for the community
+## 4. Decisions and open questions
 
-1. **`mgmt-address` typing** — given that a server is reached at a socket
-   (address+port) while an API platform is reached at a URL, do we model a
-   single management-endpoint type that generalizes both (e.g. a URI-like
-   type), or distinct properties per paradigm? Where should the property live
-   (e.g. on `Platform`)?
-2. **`credential` typing** — given that host access uses a structured login
-   while API access uses an opaque token/config artifact (kubeconfig, AWS
-   credentials file, Proxmox API token), do we introduce an abstract
-   `Credential` supertype with concrete subtypes, or keep a concrete
-   `Credential` for logins and a `string` for token artifacts? What is the
-   canonical shape of the structured credential type?
-3. **Single source of truth for shared types** — should `Credential`,
+1. **`mgmt-address` typing** — *Resolved (2026-06-24):* keep the property name
+   and type specific to each derived platform type — a structured socket for
+   servers, a `string` or platform-specific `JSON` for URL-addressed API
+   platforms. Do not hoist a single `mgmt-address` onto the base `Platform`.
+2. **`credential` typing** — *Resolved (2026-06-24):* likewise platform-specific
+   — a structured `Credential` for login-based servers, a `string`/`JSON` for
+   opaque token/config artifacts. No base-level harmonization.
+3. **Single source of truth for shared types** — *Open:* should `Credential`,
    `IPv4Socket`, etc. be owned solely by `community.tosca.core`, with other
-   profiles importing rather than redefining them?
-4. **Release process** — what versioning and release mechanism will the
-   community adopt so that profiles importing the community profiles are not
-   exposed to a moving `master`?
+   profiles importing rather than redefining them? (Tied to the release-process
+   item below.)
+4. **Release process** — *In progress (2026-06-24):* keep `0.1` for now; freeze
+   it once stable; plan version tracking and a formal release process that
+   publishes immutable release artifacts (CSAR files raised as a candidate
+   mechanism).
