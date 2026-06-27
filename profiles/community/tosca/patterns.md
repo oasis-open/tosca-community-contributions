@@ -1,7 +1,10 @@
 # TOSCA Profile Design Patterns
 
-Ubicity uses a several design patterns to help guide the development
-of TOSCA profiles. These patterns are described in this document.
+**Related documents:** [README](README.md) · [inventory](inventory.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](governance/meeting-history.md) · [decision-log](governance/decision-log.md) · [open-issues](governance/open-issues.md)
+
+The TOSCA Community uses several design patterns to help guide the
+development of TOSCA profiles. These patterns are described in this
+document.
 
 ## Component/Port Pattern
 
@@ -16,7 +19,7 @@ node types:
 - Requirements: for dependencies of one component on functionality
   exposed by other components.
 
-The Ubicity Component/Port pattern defines *common* categories of
+The Component/Port pattern defines *common* categories of
 functionality that are typically exposed by all components. It then
 attempts to define *common* capability types and *common* relationship
 types to represent each of these categories of functionality. Note
@@ -58,7 +61,7 @@ categories of functionality are shown in the following picture:
 
   > This pattern needs further work
 
-As stated earlier, Ubicity uses this pattern to define common
+As stated earlier, the TOSCA Community uses this pattern to define common
 capability types and common relationship types for these various
 categories of functionality. These types are discussed next.
 

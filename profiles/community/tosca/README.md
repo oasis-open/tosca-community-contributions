@@ -1,5 +1,7 @@
 # TOSCA Community Profiles
 
+**Related documents:** [inventory](inventory.md) · [patterns](patterns.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](governance/meeting-history.md) · [decision-log](governance/decision-log.md) · [open-issues](governance/open-issues.md)
+
 This directory contains TOSCA profiles that are created by the TOSCA
 Community&mdash;an informal group of TOSCA implementors and TOSCA
 users that meet periodically and collaborate on TOSCA profiles and
