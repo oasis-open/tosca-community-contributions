@@ -1,7 +1,7 @@
 # TOSCA Community — Decision Log
 
 **Status:** Working log, maintained by the chair
-**Related documents:** [README](../README.md) · [inventory](../inventory.md) · [patterns](../patterns.md) · [abstract-profile-proposed-changes](../abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [open-issues](open-issues.md)
+**Related documents:** [README](../README.md) · [prior-art](../prior-art.md) · [design-guide](../design-guide.md) · [abstract-profile-proposed-changes](../abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [open-issues](open-issues.md)
 
 Decisions and agreements reached in the weekly TOSCA Community meetings.
 Meetings are referenced as **M0** (kickoff) through **M38** (2026-06-24); see

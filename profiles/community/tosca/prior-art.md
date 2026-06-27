@@ -1,6 +1,6 @@
 # Inventory of TOSCA Types
 
-**Related documents:** [README](README.md) · [patterns](patterns.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](governance/meeting-history.md) · [decision-log](governance/decision-log.md) · [open-issues](governance/open-issues.md)
+**Related documents:** [README](README.md) · [design-guide](design-guide.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](governance/meeting-history.md) · [decision-log](governance/decision-log.md) · [open-issues](governance/open-issues.md)
 
 TOSCA Community Profiles will be based on TOSCA type definitions that
 have been created in the context of various TOSCA implementation

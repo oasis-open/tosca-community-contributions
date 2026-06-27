@@ -1,7 +1,7 @@
 # TOSCA Community — Open Issues Tracker
 
 **Status:** Working tracker, maintained by the chair
-**Related documents:** [README](../README.md) · [inventory](../inventory.md) · [patterns](../patterns.md) · [abstract-profile-proposed-changes](../abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md)
+**Related documents:** [README](../README.md) · [prior-art](../prior-art.md) · [design-guide](../design-guide.md) · [abstract-profile-proposed-changes](../abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md)
 
 Unresolved questions and work-in-progress from the weekly TOSCA Community
 meetings. Meeting references (**M0**–**M38**) follow the numbering in
@@ -20,9 +20,9 @@ Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 | I2 | **Generic networking / subnet model** for container networks is missing. | 🔴 | Chris | Propose a generic subnet model. |
 | I3 | **Managed-cluster topology loss** — relationship types don't capture worker-node counts, HA controllers, or auto-scaling for managed clusters (EKS, GKE). | 🔴 | Chris/Roberto | Decide new properties vs. separate abstract node types per deployment scenario. |
 | I4 | **Abstract-types vs. minimal-types** philosophy — when to introduce a new derived type vs. drive substitution from property values. | 🟡 | Community | Settle case-by-case via worked examples; leaning toward property-based substitution. |
-| I15 | **Shared relationship/capability types across abstraction levels** (from `README.md`) — do requirement/capability mapping rules require relationship and capability types to be shared across System/Admin/Device-View profiles? If so, organize them in a shared profile. Related to I1. | 🔵 | Community | Confirm the mapping rules in the spec; decide on a shared profile. |
-| I16 | **Component/Port modeling best practices** (from `patterns.md`) — (a) specify `valid_capability_types` vs. `valid_relationship_types` (or both)? (b) derive new relationship/capability types vs. specialize via `valid_source_node_types`/`valid_target_node_types`? (c) how deep should the type hierarchies go? Related to I4. | 🔴 | Community | Agree guidelines; document in `patterns.md`. |
-| I17 | **Formalize monitoring & security in the Component/Port pattern** (from `patterns.md`) — the monitoring pattern was discussed in the TC but never formalized; the security pattern needs work. | 🔴 | Community | Define the capability/relationship types. |
+| I15 | **Shared relationship/capability types across abstraction levels** (from `design-guide.md`) — do requirement/capability mapping rules require relationship and capability types to be shared across System/Admin/Device-View profiles? If so, organize them in a shared profile. Related to I1. | 🔵 | Community | Confirm the mapping rules in the spec; decide on a shared profile. |
+| I16 | **Component/Port modeling best practices** (from `design-guide.md`) — (a) specify `valid_capability_types` vs. `valid_relationship_types` (or both)? (b) derive new relationship/capability types vs. specialize via `valid_source_node_types`/`valid_target_node_types`? (c) how deep should the type hierarchies go? Related to I4. | 🔴 | Community | Agree guidelines; document in `design-guide.md`. |
+| I17 | **Formalize monitoring & security in the Component/Port pattern** (from `design-guide.md`) — the monitoring pattern was discussed in the TC but never formalized; the security pattern needs work. | 🔴 | Community | Define the capability/relationship types. |
 
 ## Specification gaps (TOSCA 2.0 → 2.01 errata)
 
@@ -32,8 +32,8 @@ Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 | I6 | **Metadata support for TOSCA entities** (operation definitions, notifications, annotations) is missing; currently worked around with properties. | 🔵 | TC | Defer to a future spec version. |
 | I7 | **Is an artifact type mandatory** for operation implementations in TOSCA 2.0? Disagreement (Roberto: not required; Chris/Calin: should be). | 🔵 | Calin | Resolve via GitHub discussion / errata. |
 | I12 | **Static substitution-mapping limitations** — cannot express dynamic worker-node placement; node filters are the short-term workaround. | 🔵 | TC | Consider a language extension; track against 2.1. |
-| I13 | **`type-of-node` / "hash type" function** — a built-in to check a target host's platform type for valid substitutions (cf. Tal's Puccini implementation; also raised in `README.md`). | 🔵 | Chris | Spell out syntax/use cases; propose for the spec. |
-| I14 | **Dynamic attachment of implementation artifacts** (from `README.md`) — TOSCA has no construct to attach implementation artifacts (Ansible/Terraform/Bash) to device-view types without deriving new types, risking profile proliferation. | 🔵 | TC | Consider a language construct; track against a future spec version. |
+| I13 | **`type-of-node` / "hash type" function** — a built-in to check a target host's platform type for valid substitutions (cf. Tal's Puccini implementation; also raised in `design-guide.md`). | 🔵 | Chris | Spell out syntax/use cases; propose for the spec. |
+| I14 | **Dynamic attachment of implementation artifacts** (from `design-guide.md`) — TOSCA has no construct to attach implementation artifacts (Ansible/Terraform/Bash) to device-view types without deriving new types, risking profile proliferation. | 🔵 | TC | Consider a language construct; track against a future spec version. |
 
 ## Artifacts, functions & portability
 

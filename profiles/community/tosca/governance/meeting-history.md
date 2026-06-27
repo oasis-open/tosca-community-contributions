@@ -2,7 +2,7 @@
 
 **Status:** Working summary, maintained by the chair
 **Scope:** Synthesis of the weekly TOSCA Community meeting summaries
-**Related documents:** [README](../README.md) · [inventory](../inventory.md) · [patterns](../patterns.md) · [abstract-profile-proposed-changes](../abstract-profile-proposed-changes.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
+**Related documents:** [README](../README.md) · [prior-art](../prior-art.md) · [design-guide](../design-guide.md) · [abstract-profile-proposed-changes](../abstract-profile-proposed-changes.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
 
 ---
 
