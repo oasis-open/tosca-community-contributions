@@ -1,0 +1,61 @@
+# TOSCA Community — Open Issues Tracker
+
+**Status:** Working tracker, maintained by the chair
+**Companion documents:** [meeting-history.md](meeting-history.md) ·
+[decision-log.md](decision-log.md) ·
+[abstract-profile-proposed-changes.md](abstract-profile-proposed-changes.md)
+
+Unresolved questions and work-in-progress from the weekly TOSCA Community
+meetings. Meeting references (**M0**–**M38**) follow the numbering in
+[meeting-history.md](meeting-history.md). Once an item is settled it moves to
+the [decision-log.md](decision-log.md).
+
+Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
+
+---
+
+## Profiles & types
+
+| # | Issue | Status | Owner | Next step |
+|---|-------|--------|-------|-----------|
+| I1 | **Single source of truth for shared types.** Should `Credential`, `IPv4Socket`, etc. be owned solely by `community.tosca.core`, with other profiles importing rather than redefining them? Duplicate definitions are incompatible under TOSCA nominal typing. (Q3 of the abstract-profile doc.) | 🔴 | Community | Decide ownership; depends on a release process (I8). |
+| I2 | **Generic networking / subnet model** for container networks is missing. | 🔴 | Chris | Propose a generic subnet model. |
+| I3 | **Managed-cluster topology loss** — relationship types don't capture worker-node counts, HA controllers, or auto-scaling for managed clusters (EKS, GKE). | 🔴 | Chris/Roberto | Decide new properties vs. separate abstract node types per deployment scenario. |
+| I4 | **Abstract-types vs. minimal-types** philosophy — when to introduce a new derived type vs. drive substitution from property values. | 🟡 | Community | Settle case-by-case via worked examples; leaning toward property-based substitution. |
+
+## Specification gaps (TOSCA 2.0 → 2.01 errata)
+
+| # | Issue | Status | Owner | Next step |
+|---|-------|--------|-------|-----------|
+| I5 | **Property refinement in data types** is not properly supported by the spec/processor (the value is overridden rather than augmented). | 🔵 | Calin/TC | Add to the 2.01 errata list. |
+| I6 | **Metadata support for TOSCA entities** (operation definitions, notifications, annotations) is missing; currently worked around with properties. | 🔵 | TC | Defer to a future spec version. |
+| I7 | **Is an artifact type mandatory** for operation implementations in TOSCA 2.0? Disagreement (Roberto: not required; Chris/Calin: should be). | 🔵 | Calin | Resolve via GitHub discussion / errata. |
+| I12 | **Static substitution-mapping limitations** — cannot express dynamic worker-node placement; node filters are the short-term workaround. | 🔵 | TC | Consider a language extension; track against 2.1. |
+| I13 | **`type-of-node` / "hash type" function** — a built-in to check a target host's platform type for valid substitutions (cf. Tal's Puccini implementation). | 🔵 | Chris | Spell out syntax/use cases; propose for the spec. |
+
+## Artifacts, functions & portability
+
+| # | Issue | Status | Owner | Next step |
+|---|-------|--------|-------|-----------|
+| I9 | **Portability of community artifacts** — Python-based implementations aren't portable across orchestrators. Direction: reference implementations + JSON stdin/stdout protocol; separate definitions from implementations (`integrations/`). | 🟡 | Chris/Tal | Document the protocol; build out the integrations directory. |
+| I10 | **Input/output handling for Bash (and Python)** — finalize conventions (single JSON env var vs. separate vars; base64 encoding; logging vs. output separation). | 🟡 | Chris/Roberto/Marcel | Converge on the GitHub discussion. |
+
+## Release & process
+
+| # | Issue | Status | Owner | Next step |
+|---|-------|--------|-------|-----------|
+| I8 | **No formal release process** for the community profiles (no tags, releases, automation, or versioning policy). Makes importing profiles brittle and blocks external ecosystems from depending on them. | 🟡 | Community | Freeze `0.1`; define version tracking + immutable release artifacts (CSAR candidate). See abstract-profile doc, Problem 3. |
+| I11 | **Contribution-load distribution.** The large majority of action items fall to the chair, with Roberto the main second contributor — a throughput and continuity (bus-factor) risk. | 🔴 | Community | Distribute ownership of specific profiles/examples/tooling across contributors. |
+
+## Collaborations to advance
+
+| # | Item | Status | Notes |
+|---|------|--------|-------|
+| C1 | **Westminster — Swarmchestrate** (Jay, Prachi): OpenAPI→TOSCA tooling and cloud/edge/fog orchestration. | 🟡 | Coordinate the K8s profile work. |
+| C2 | **Stuttgart — Marcel**: EDMM, Ansible/Terraform translation, infrastructure extraction. | 🟡 | Compare translation approaches. |
+| C3 | **Telefonica — Mohamed**: TOSCA adoption in related projects. | 🔵 | Follow up via Jay. |
+| C4 | **OPAF / OPAS**, **DMTF Redfish**: control-systems modeling and Redfish→TOSCA generation. | 🟡 | Possible Brazil PoC demo (August). |
+
+---
+
+*Resolved items are recorded in [decision-log.md](decision-log.md).*
