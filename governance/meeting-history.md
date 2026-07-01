@@ -2,7 +2,7 @@
 
 **Status:** Working summary, maintained by the chair
 **Scope:** Synthesis of the weekly TOSCA Community meeting summaries
-**Related documents:** [README](../README.md) · [prior-art](../prior-art.md) · [design-guide](../design-guide.md) · [abstract-profile-proposed-changes](../abstract-profile-proposed-changes.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
+**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/prior-art.md) · [design-guide](../profiles/community/tosca/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/abstract-profile-proposed-changes.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
 
 ---
 
@@ -11,10 +11,10 @@
 This document summarizes the weekly TOSCA Community calls (Wednesdays). It is
 derived from the per-meeting summaries. A few notes on the source material:
 
-- Meetings are referenced as **M0** (the first, kickoff meeting) through **M38**,
-  following the order of the summaries. The summaries carry no explicit dates;
-  the ordering is sequential, and **M38 corresponds to the 2026-06-24 meeting**,
-  which anchors the timeline.
+- Meetings are referenced as **M0** (the first, kickoff meeting) through **M39**,
+  following the order of the summaries. The early summaries carry no explicit
+  dates; the ordering is sequential, and **M38 = 2026-06-24** and
+  **M39 = 2026-07-01** anchor the recent timeline.
 - Cadence is roughly weekly, with a holiday break around **M14–M15** and a
   return in January at **M16**. That places the kickoff in approximately
   **September 2025**.
@@ -58,13 +58,23 @@ simplification to file references; abstraction-level **directory restructuring**
 JSON-env-var artifact I/O; relationship-type simplification; and translation
 tooling (Redfish, OpenAPI→TOSCA).
 
-### Phase 5 — Contribution, standardization, and release (M30–M38)
+### Phase 5 — Contribution, standardization, and release (M30–M39)
 TOSCA 2.0 **errata (2.01)** list; `name` property; **Python/bash artifact types**;
 function-signature standardization and **portability** (reference
 implementations, JSON stdin/stdout protocol, WASM); contributing the Ubicity
-profiles upstream; and finally **M38 (2026-06-24)**: the decision that
+profiles upstream; and **M38 (2026-06-24)**: the decision that
 credential/management-address properties are **specific to each derived platform
 type**, plus the **release-process** discussion.
+
+**M39 (2026-07-01)** turned those threads into decisions: proceed with a PR
+adding platform-specific connection properties (management address, credential
+file, config/access file) to the abstract platform types (Chris); adopt the
+**TOSCA v1.3 2-arg `in_range` signature** to ease v1.3→v2.0 upgrades (Roberto to
+PR); and adopt a **simple release process** — a GitHub workflow packaging CSAR
+artifacts, starting with a `0.1` release — while **keeping the flat directory
+structure** (version subdirectories were considered and rejected). The community
+also reviewed the new governance docs and agreed to move them to the repository
+top level.
 
 ---
 
@@ -78,7 +88,7 @@ type**, plus the **release-process** discussion.
 | **Artifacts & functions** | Bash/Python artifact types; JSON env-var I/O; standardize on a single-module / matching-name / single-arg approach; community impls as reference implementations + JSON stdin/stdout protocol; `integrations/` directory. |
 | **Spec gaps → errata** | Implementation surfaced TOSCA 2.0 gaps: metadata support, property refinement in data types, artifact-type-mandatory ambiguity, substitution-mapping limits, a proposed `type-of-node` function — feeding a 2.01 errata effort and resumed TC language meetings. |
 | **Tooling** | Puccini (TOSCA 2.0 support), OpenAPI→TOSCA generators, Redfish/AnyTOSCA and Ansible translators, visualization (Winery, Inria CloudNet, Mermaid). |
-| **Release process** | Surfaced late (M38): no tags/releases today → keep `0.1`, freeze it, then version tracking + release artifacts. Still open. |
+| **Release process** | Surfaced at M38; at **M39** the community adopted a simple process — a GitHub workflow packaging CSAR artifacts and a `0.1` release, keeping the flat directory structure (version subdirectories rejected). |
 
 ---
 
@@ -114,6 +124,6 @@ type**, plus the **release-process** discussion.
   than language changes (with errata handled separately).
 - The **abstract-profile credential/mgmt-address work** that culminated at M38 is
   documented in detail in
-  [abstract-profile-proposed-changes.md](../abstract-profile-proposed-changes.md).
+  [abstract-profile-proposed-changes.md](../profiles/community/tosca/abstract-profile-proposed-changes.md).
 - Process observations (e.g. contribution-load distribution) are tracked as
   action items in [open-issues.md](open-issues.md).

@@ -1,7 +1,7 @@
 # TOSCA Community — Open Issues Tracker
 
 **Status:** Working tracker, maintained by the chair
-**Related documents:** [README](../README.md) · [prior-art](../prior-art.md) · [design-guide](../design-guide.md) · [abstract-profile-proposed-changes](../abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md)
+**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/prior-art.md) · [design-guide](../profiles/community/tosca/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md)
 
 Unresolved questions and work-in-progress from the weekly TOSCA Community
 meetings. Meeting references (**M0**–**M38**) follow the numbering in
@@ -41,14 +41,16 @@ Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 |---|-------|--------|-------|-----------|
 | I9 | **Portability of community artifacts** — Python-based implementations aren't portable across orchestrators. Direction: reference implementations + JSON stdin/stdout protocol; separate definitions from implementations (`integrations/`). | 🟡 | Chris/Tal | Document the protocol; build out the integrations directory. |
 | I10 | **Input/output handling for Bash (and Python)** — finalize conventions (single JSON env var vs. separate vars; base64 encoding; logging vs. output separation). | 🟡 | Chris/Roberto/Marcel | Converge on the GitHub discussion. |
-| I18 | **`in_range` signature should match TOSCA v1.3** — `community.tosca.core`'s `in_range` currently takes three arguments `(value, min, max)`; it should be changed to mimic the TOSCA v1.3 `in_range`, which takes two arguments `(value, range)` where `range` is `[min, max]`. Matching v1.3 also simplifies upgrading templates from TOSCA v1.3 to v2.0. | 🔴 | Community | Update the `in_range` function declaration (and its callers) to the 2-arg range form. |
+
+*I18 (`in_range` signature) was decided at M39 — see decision-log **D8**; Roberto to submit the PR.*
 
 ## Release & process
 
 | # | Issue | Status | Owner | Next step |
 |---|-------|--------|-------|-----------|
-| I8 | **No formal release process** for the community profiles (no tags, releases, automation, or versioning policy). Makes importing profiles brittle and blocks external ecosystems from depending on them. | 🟡 | Community | Freeze `0.1`; define version tracking + immutable release artifacts (CSAR candidate); may require version-specific profile subdirectories. See abstract-profile doc, Problem 3. |
+| I8 | **Release process (in progress).** M39 adopted a simple process — a GitHub workflow packaging CSAR release artifacts, a `0.1` release once current changes land, **keeping the flat directory structure** (version-specific subdirectories were considered and rejected). See decision-log **R3**. | 🟡 | Chris | Implement the GitHub release workflow; cut `0.1` in the coming weeks. |
 | I11 | **Contribution-load distribution.** The large majority of action items fall to the chair, with Roberto the main second contributor — a throughput and continuity (bus-factor) risk. | 🔴 | Community | Distribute ownership of specific profiles/examples/tooling across contributors. |
+| I19 | **Add test information to the governance docs** (Roberto, M39) — reference/describe the community test suite in the governance documentation. | 🔴 | Community | Add a test overview to the governance docs. |
 
 ## Collaborations to advance
 

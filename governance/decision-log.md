@@ -1,10 +1,10 @@
 # TOSCA Community — Decision Log
 
 **Status:** Working log, maintained by the chair
-**Related documents:** [README](../README.md) · [prior-art](../prior-art.md) · [design-guide](../design-guide.md) · [abstract-profile-proposed-changes](../abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [open-issues](open-issues.md)
+**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/prior-art.md) · [design-guide](../profiles/community/tosca/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [open-issues](open-issues.md)
 
 Decisions and agreements reached in the weekly TOSCA Community meetings.
-Meetings are referenced as **M0** (kickoff) through **M38** (2026-06-24); see
+Meetings are referenced as **M0** (kickoff) through **M39** (2026-07-01); see
 [meeting-history.md](meeting-history.md) for the numbering scheme. "Where"
 points to the meeting where the decision was made or last confirmed.
 
@@ -18,6 +18,7 @@ points to the meeting where the decision was made or last confirmed.
 | P2 | After TOSCA v2, prioritize **adoption** (profiles, examples, tooling) over new language functionality. | M5 |
 | P3 | Resume the TOSCA TC language meetings (errata / 2.0.1 / 2.1) — initially targeted for January; later a TC meeting targeted for late March / early April. | M13, M24 |
 | P4 | Start a **TOSCA 2.0 errata (2.01)** issue list and investigate the OASIS errata process. | M31 |
+| P5 | **Move the governance docs to the repository top level** (out of `profiles/community/tosca/governance/`); add test information to the governance docs. | M39 |
 
 ## Profile architecture & organization
 
@@ -41,6 +42,7 @@ points to the meeting where the decision was made or last confirmed.
 | N5 | Separate **control plane vs. data plane** in platform nodes; introduce a "control runs on" relationship targeting the execution-environment capability. | M18, M28 |
 | N6 | Simplify base relationship types: **remove the root relationship type**; harmonize "hosted on"/"runs on"; keep "interacts with" in the application profile. | M28 |
 | N7 | **Credential / mgmt-address properties are specific to each derived platform type** — not harmonized on the base `Platform` type. (Details in the abstract-profile doc.) | M38 |
+| N8 | Proceed with a **PR adding platform-specific connection properties** to the abstract platform types — management address, credential file, and config/access file — realizing the M38 platform-specific decision. (Chris) | M39 |
 
 ## Data types, artifacts & functions
 
@@ -53,6 +55,7 @@ points to the meeting where the decision was made or last confirmed.
 | D5 | Standardize on a **single Python module with function names matching TOSCA declarations** and a single positional argument; document a **JSON stdin/stdout protocol**. | M34 |
 | D6 | Treat community-provided implementations as **reference implementations**; separate definitions from implementations and provide per-orchestrator examples (an `integrations/` directory). | M34 |
 | D7 | Use a **simple file-reference credential data type** (a map of name + file/reference) rather than embedding secrets. | M22 |
+| D8 | Re-add `in_range` to `community.tosca.core` (removed as a built-in in TOSCA 2.0) using the **TOSCA v1.3 2-arg `(value, range)` signature** (not the 3-arg `value, min, max` form), to ease v1.3→v2.0 template upgrades; ensure consistency with other function implementations. (Roberto to PR) | M39 |
 
 ## Modeling approach (Kubernetes / examples)
 
@@ -69,6 +72,7 @@ points to the meeting where the decision was made or last confirmed.
 |---|----------|-------|
 | R1 | Keep the community profiles at **version `0.1`** for now; **freeze `0.1`** once stable, then plan future versions. | M38 |
 | R2 | Begin planning **version tracking and a formal release process** that publishes immutable release artifacts (building CSAR files raised as a candidate mechanism). | M38 |
+| R3 | Adopt a **simple release process**: a GitHub workflow that packages profiles as **CSAR release artifacts**, starting with a **`0.1`** release once current changes land. **Keep the flat directory structure** — version-specific subdirectories were considered and rejected. | M39 |
 
 ---
 
