@@ -55,7 +55,7 @@ points to the meeting where the decision was made or last confirmed.
 | D5 | Standardize on a **single Python module with function names matching TOSCA declarations** and a single positional argument; document a **JSON stdin/stdout protocol**. | M34 |
 | D6 | Treat community-provided implementations as **reference implementations**; separate definitions from implementations and provide per-orchestrator examples (an `integrations/` directory). | M34 |
 | D7 | Use a **simple file-reference credential data type** (a map of name + file/reference) rather than embedding secrets. | M22 |
-| D8 | Re-add `in_range` to `community.tosca.core` (removed as a built-in in TOSCA 2.0) using the **TOSCA v1.3 2-arg `(value, range)` signature** (not the 3-arg `value, min, max` form), to ease v1.3→v2.0 template upgrades; ensure consistency with other function implementations. (Roberto to PR) | M39 |
+| D8 | Re-add `in_range` to `community.tosca.core` (removed as a built-in in TOSCA 2.0) using the **TOSCA v1.3 2-arg `(value, range)` signature** (not the 3-arg `value, min, max` form), to ease v1.3→v2.0 template upgrades; ensure consistency with other function implementations (addresses OASIS #301). (Roberto to PR) | M39 |
 
 ## Modeling approach (Kubernetes / examples)
 

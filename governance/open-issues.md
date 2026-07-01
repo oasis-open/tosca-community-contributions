@@ -52,6 +52,27 @@ Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 | I11 | **Contribution-load distribution.** The large majority of action items fall to the chair, with Roberto the main second contributor — a throughput and continuity (bus-factor) risk. | 🔴 | Community | Distribute ownership of specific profiles/examples/tooling across contributors. |
 | I19 | **Add test information to the governance docs** (Roberto, M39) — reference/describe the community test suite in the governance documentation. | 🔴 | Community | Add a test overview to the governance docs. |
 
+## Upstream OASIS repo — non-test issues
+
+Big-ticket item(s) combed from the OASIS
+`oasis-open/tosca-community-contributions` GitHub issue tracker, excluding the
+spec test-coverage backlog. Numbers are GitHub issue numbers.
+
+| # | Issue | Status | Owner | Next step |
+|---|-------|--------|-------|-----------|
+| I20 | **Repo checkout fails on Windows** (OASIS #292) — a path containing a colon (`examples/1.3/.../org.tmforum:1.0`) is invalid on NTFS, so `git clone` fails without `git config core.protectNTFS false`. Blocks all Windows contributors. | 🔴 | Community | Rename the colon-bearing path(s) to be cross-platform; document the naming constraint. |
+
+*Reconciled / already tracked:*
+- OASIS **#50** (TOSCA Implementation Landscape) is already tracked in
+  [`resources/known-implementations.md`](../resources/known-implementations.md).
+- OASIS **#301** ("spec examples use `$in_range`, which does not exist") is the
+  same issue as **D8 / I18** — re-adding `in_range` to `community.tosca.core`
+  with the TOSCA v1.3 signature addresses it.
+- OASIS **#106** ("is `basic-template.yml` a valid service template?") is a
+  smaller example-cleanup item (operation inputs as parameter assignments vs.
+  property definitions; integer vs. version values) — correct or remove the
+  example.
+
 ## Collaborations to advance
 
 | # | Item | Status | Notes |
