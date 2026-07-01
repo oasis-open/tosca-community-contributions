@@ -41,13 +41,13 @@ Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 |---|-------|--------|-------|-----------|
 | I9 | **Portability of community artifacts** — Python-based implementations aren't portable across orchestrators. Direction: reference implementations + JSON stdin/stdout protocol; separate definitions from implementations (`integrations/`). | 🟡 | Chris/Tal | Document the protocol; build out the integrations directory. |
 | I10 | **Input/output handling for Bash (and Python)** — finalize conventions (single JSON env var vs. separate vars; base64 encoding; logging vs. output separation). | 🟡 | Chris/Roberto/Marcel | Converge on the GitHub discussion. |
-| I18 | **`in_range` signature should match TOSCA v1.3** — `community.tosca.core`'s `in_range` currently takes three arguments `(value, min, max)`; it should be changed to mimic the TOSCA v1.3 `in_range`, which takes two arguments `(value, range)` where `range` is `[min, max]`. | 🔴 | Community | Update the `in_range` function declaration (and its callers) to the 2-arg range form. |
+| I18 | **`in_range` signature should match TOSCA v1.3** — `community.tosca.core`'s `in_range` currently takes three arguments `(value, min, max)`; it should be changed to mimic the TOSCA v1.3 `in_range`, which takes two arguments `(value, range)` where `range` is `[min, max]`. Matching v1.3 also simplifies upgrading templates from TOSCA v1.3 to v2.0. | 🔴 | Community | Update the `in_range` function declaration (and its callers) to the 2-arg range form. |
 
 ## Release & process
 
 | # | Issue | Status | Owner | Next step |
 |---|-------|--------|-------|-----------|
-| I8 | **No formal release process** for the community profiles (no tags, releases, automation, or versioning policy). Makes importing profiles brittle and blocks external ecosystems from depending on them. | 🟡 | Community | Freeze `0.1`; define version tracking + immutable release artifacts (CSAR candidate). See abstract-profile doc, Problem 3. |
+| I8 | **No formal release process** for the community profiles (no tags, releases, automation, or versioning policy). Makes importing profiles brittle and blocks external ecosystems from depending on them. | 🟡 | Community | Freeze `0.1`; define version tracking + immutable release artifacts (CSAR candidate); may require version-specific profile subdirectories. See abstract-profile doc, Problem 3. |
 | I11 | **Contribution-load distribution.** The large majority of action items fall to the chair, with Roberto the main second contributor — a throughput and continuity (bus-factor) risk. | 🔴 | Community | Distribute ownership of specific profiles/examples/tooling across contributors. |
 
 ## Collaborations to advance
