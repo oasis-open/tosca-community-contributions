@@ -3,10 +3,10 @@
 **Status:** Working log, maintained by the chair
 **Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/prior-art.md) · [design-guide](../profiles/community/tosca/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [open-issues](open-issues.md)
 
-Decisions and agreements reached in the weekly TOSCA Community meetings.
-Meetings are referenced as **M0** (kickoff) through **M39** (2026-07-01); see
-[meeting-history.md](meeting-history.md) for the numbering scheme. "Where"
-points to the meeting where the decision was made or last confirmed.
+Decisions and agreements reached in the weekly TOSCA Community meetings. Older
+meetings are referenced by number (**M0** kickoff onward); recent meetings by
+**date** (see [meeting-history.md](meeting-history.md)). "Where" points to the
+meeting where the decision was made or last confirmed.
 
 ---
 
@@ -65,6 +65,7 @@ points to the meeting where the decision was made or last confirmed.
 | K2 | Explore **both** substitution-mapping and capability-type approaches via different examples before committing — Chris on substitution mapping, Tal on capability types. | M4–M8 |
 | K3 | For dynamic worker-node placement, use **label-based node filters** short-term; consider a language extension long-term. | M12, M13 |
 | K4 | Defer auto-scaling/HA modeling for managed clusters; prioritize a "number of worker nodes" property and a generic subnet model. | M29 |
+| K5 | **Validate the abstract profiles by building substituting templates that exercise them**, starting with the (auto-generated) **Kubernetes** profile; Westminster (Prachi/Jay) to contribute example templates. | 2026-07-08 |
 
 ## Release & versioning
 
@@ -73,6 +74,7 @@ points to the meeting where the decision was made or last confirmed.
 | R1 | Keep the community profiles at **version `0.1`** for now; **freeze `0.1`** once stable, then plan future versions. | M38 |
 | R2 | Begin planning **version tracking and a formal release process** that publishes immutable release artifacts (building CSAR files raised as a candidate mechanism). | M38 |
 | R3 | Adopt a **simple release process**: a GitHub workflow that packages profiles as **CSAR release artifacts**, starting with a **`0.1`** release once current changes land. **Keep the flat directory structure** — version-specific subdirectories were considered and rejected. | M39 |
+| R4 | **Set up the community release workflow by adapting an existing, proven CSAR-build + signing workflow** rather than authoring one from scratch. Target a **stable `0.1` of the core profile by ~2026-07-15**. | 2026-07-08 |
 
 ---
 

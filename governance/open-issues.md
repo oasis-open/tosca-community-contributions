@@ -4,9 +4,9 @@
 **Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/prior-art.md) · [design-guide](../profiles/community/tosca/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md)
 
 Unresolved questions and work-in-progress from the weekly TOSCA Community
-meetings. Meeting references (**M0**–**M38**) follow the numbering in
-[meeting-history.md](meeting-history.md). Once an item is settled it moves to
-the [decision-log.md](decision-log.md).
+meetings. Older meetings are referenced by number; recent meetings by **date**
+(see [meeting-history.md](meeting-history.md)). Once an item is settled it moves
+to the [decision-log.md](decision-log.md).
 
 Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 
@@ -23,6 +23,7 @@ Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 | I15 | **Shared relationship/capability types across abstraction levels** (from `design-guide.md`) — do requirement/capability mapping rules require relationship and capability types to be shared across System/Admin/Device-View profiles? If so, organize them in a shared profile. Related to I1. | 🔵 | Community | Confirm the mapping rules in the spec; decide on a shared profile. |
 | I16 | **Component/Port modeling best practices** (from `design-guide.md`) — (a) specify `valid_capability_types` vs. `valid_relationship_types` (or both)? (b) derive new relationship/capability types vs. specialize via `valid_source_node_types`/`valid_target_node_types`? (c) how deep should the type hierarchies go? Related to I4. | 🔴 | Community | Agree guidelines; document in `design-guide.md`. |
 | I17 | **Formalize monitoring & security in the Component/Port pattern** (from `design-guide.md`) — the monitoring pattern was discussed in the TC but never formalized; the security pattern needs work. | 🔴 | Community | Define the capability/relationship types. |
+| I21 | **Substituting templates that exercise the abstract profiles** — validate the abstract platform/data types end-to-end via substitution, starting with the (auto-generated) Kubernetes profile. (decision-log **K5**) | 🟡 | Chris / Westminster | Chris builds the Kubernetes substitution template; Prachi creates a simple example use case. |
 
 ## Specification gaps (TOSCA 2.0 → 2.01 errata)
 
@@ -42,13 +43,13 @@ Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 | I9 | **Portability of community artifacts** — Python-based implementations aren't portable across orchestrators. Direction: reference implementations + JSON stdin/stdout protocol; separate definitions from implementations (`integrations/`). | 🟡 | Chris/Tal | Document the protocol; build out the integrations directory. |
 | I10 | **Input/output handling for Bash (and Python)** — finalize conventions (single JSON env var vs. separate vars; base64 encoding; logging vs. output separation). | 🟡 | Chris/Roberto/Marcel | Converge on the GitHub discussion. |
 
-*I18 (`in_range` signature) was decided at M39 — see decision-log **D8**; Roberto to submit the PR.*
+*I18 (`in_range` signature) was decided at M39 — see decision-log **D8**. As of 2026-07-08 the PR is still pending (Roberto out that day); the abstract-profile property work (**N8**) is sequenced behind its merge.*
 
 ## Release & process
 
 | # | Issue | Status | Owner | Next step |
 |---|-------|--------|-------|-----------|
-| I8 | **Release process (in progress).** M39 adopted a simple process — a GitHub workflow packaging CSAR release artifacts, a `0.1` release once current changes land, **keeping the flat directory structure** (version-specific subdirectories were considered and rejected). See decision-log **R3**. | 🟡 | Chris | Implement the GitHub release workflow; cut `0.1` in the coming weeks. |
+| I8 | **Release process (in progress).** M39 adopted a simple process — a GitHub workflow packaging CSAR release artifacts, a `0.1` release, **flat directory structure** (subdirectories rejected). 2026-07-08: adapt an existing, proven release workflow into the community repo. See decision-log **R3 / R4**. | 🟡 | Chris | Copy + adapt the workflow; cut a stable `0.1` of core by ~2026-07-15. |
 | I11 | **Contribution-load distribution.** The large majority of action items fall to the chair, with Roberto the main second contributor — a throughput and continuity (bus-factor) risk. | 🔴 | Community | Distribute ownership of specific profiles/examples/tooling across contributors. |
 | I19 | **Add test information to the governance docs** (Roberto, M39) — reference/describe the community test suite in the governance documentation. | 🔴 | Community | Add a test overview to the governance docs. |
 
@@ -77,7 +78,7 @@ spec test-coverage backlog. Numbers are GitHub issue numbers.
 
 | # | Item | Status | Notes |
 |---|------|--------|-------|
-| C1 | **Westminster — Swarmchestrate** (Jay, Prachi): OpenAPI→TOSCA tooling and cloud/edge/fog orchestration. | 🟡 | Coordinate the K8s profile work. |
+| C1 | **Westminster — Swarmchestrate** (Jay, Prachi): OpenAPI→TOSCA tooling and cloud/edge/fog orchestration. 2026-07-08: now incorporating the **Kubernetes profiles**; Prachi to build a simple example template (Prachi + Jay meet 2026-07-13 on deployment); Prachi raised producing profiles for her own work. | 🟡 | Chris to help with implementation artifacts; see I21. |
 | C2 | **Stuttgart — Marcel**: EDMM, Ansible/Terraform translation, infrastructure extraction. | 🟡 | Compare translation approaches. |
 | C3 | **Telefonica — Mohamed**: TOSCA adoption in related projects. | 🔵 | Follow up via Jay. |
 | C4 | **OPAF / OPAS**, **DMTF Redfish**: control-systems modeling and Redfish→TOSCA generation. | 🟡 | Possible Brazil PoC demo (August). |

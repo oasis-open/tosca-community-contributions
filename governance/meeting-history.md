@@ -11,10 +11,10 @@
 This document summarizes the weekly TOSCA Community calls (Wednesdays). It is
 derived from the per-meeting summaries. A few notes on the source material:
 
-- Meetings are referenced as **M0** (the first, kickoff meeting) through **M39**,
-  following the order of the summaries. The early summaries carry no explicit
-  dates; the ordering is sequential, and **M38 = 2026-06-24** and
-  **M39 = 2026-07-01** anchor the recent timeline.
+- Early meetings are referenced as **M0** (the first, kickoff meeting) onward,
+  following the order of the summaries, which carry no explicit dates. Recent
+  meetings are referenced by **actual date** where known — **2026-06-24** (M38),
+  **2026-07-01** (M39), **2026-07-08**, and onward.
 - Cadence is roughly weekly, with a holiday break around **M14–M15** and a
   return in January at **M16**. That places the kickoff in approximately
   **September 2025**.
@@ -61,7 +61,7 @@ tooling (Redfish, OpenAPI→TOSCA).
 ### Phase 5 — Contribution, standardization, and release (M30–M39)
 TOSCA 2.0 **errata (2.01)** list; `name` property; **Python/bash artifact types**;
 function-signature standardization and **portability** (reference
-implementations, JSON stdin/stdout protocol, WASM); contributing the Ubicity
+implementations, JSON stdin/stdout protocol, WASM); contributing existing
 profiles upstream; and **M38 (2026-06-24)**: the decision that
 credential/management-address properties are **specific to each derived platform
 type**, plus the **release-process** discussion.
@@ -76,6 +76,20 @@ structure** (version subdirectories were considered and rejected). The community
 also reviewed the new governance docs and agreed to move them to the repository
 top level.
 
+**2026-07-08** was an execution check-in. Roberto was out (medical appointment)
+but expected to submit the `in_range` signature PR that day; Chris will add the
+platform connection properties to the abstract platform types in the community
+repo once it merges (sequencing the N8 work behind D8). For release, the
+community will **adapt an existing, proven release workflow** (CSAR build +
+signing) into the community repo and cut a **stable `0.1` of the core profile by
+~2026-07-15**. A
+new thrust opened: build **substituting templates that exercise the abstract
+profiles**, starting with the (auto-generated) **Kubernetes** profile —
+Westminster (Prachi, Jay) will incorporate the Kubernetes profiles and produce a
+simple example template (Prachi and Jay meet 2026-07-13 on deployment; Chris to
+help with implementation artifacts). Marcel reported his Netherlands dissertation
+work is nearing a first paper draft (~a year to completion).
+
 ---
 
 ## Cross-cutting themes
@@ -88,7 +102,7 @@ top level.
 | **Artifacts & functions** | Bash/Python artifact types; JSON env-var I/O; standardize on a single-module / matching-name / single-arg approach; community impls as reference implementations + JSON stdin/stdout protocol; `integrations/` directory. |
 | **Spec gaps → errata** | Implementation surfaced TOSCA 2.0 gaps: metadata support, property refinement in data types, artifact-type-mandatory ambiguity, substitution-mapping limits, a proposed `type-of-node` function — feeding a 2.01 errata effort and resumed TC language meetings. |
 | **Tooling** | Puccini (TOSCA 2.0 support), OpenAPI→TOSCA generators, Redfish/AnyTOSCA and Ansible translators, visualization (Winery, Inria CloudNet, Mermaid). |
-| **Release process** | Surfaced at M38; at **M39** the community adopted a simple process — a GitHub workflow packaging CSAR artifacts and a `0.1` release, keeping the flat directory structure (version subdirectories rejected). |
+| **Release process** | Surfaced at M38; at **M39** adopted a simple process — a GitHub workflow packaging CSAR artifacts and a `0.1` release, flat directory structure (version subdirectories rejected). **2026-07-08:** adapt an existing, proven release workflow into the community repo; target a stable `0.1` of core by ~2026-07-15. |
 
 ---
 
