@@ -10,10 +10,10 @@ Follows up on the 2026-07-08 action items. Issue references point to
 ---
 
 ## 1. Action-item review — 10 min
-- **`in_range` PR — merged** (Roberto, *D8 / I18*, PR #348) — the 2-arg
-  `(value, [min, max])` signature landed, plus **`in_range_strict`** (open
-  interval) and integer/float/string/timestamp/version overloads. Confirm and
-  note the expanded scope.
+- **`in_range` — done** (Roberto, *D8 / I18*, PR #348, merged 2026-07-15) — the
+  2-arg `(value, [min, max])` signature was applied to **both `in_range` and
+  `in_range_strict`**, with integer/float/string/timestamp/version overloads.
+  Roberto's action item is complete.
 - **Abstract-profile properties** (Chris, *N8*) — now **unblocked** by the
   `in_range` merge: add the platform connection properties (management address,
   credential file, config/access file) to the community abstract platform types.
