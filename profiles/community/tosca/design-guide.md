@@ -232,6 +232,14 @@ not have any constructs to support such dynamic behavior.
   capability types. Profile-specific types should derive from one of
   the base types defined in the base profile.
 
+  > **Tracked as issue I15**, and related to I1 (single source of truth
+  > for shared types). If the mapping rules do require type
+  > compatibility, the shared top-level relationship and capability
+  > types belong in `community.tosca.core` — which already owns the
+  > three base relationship/capability kinds — so that System View,
+  > Administrator View, and Device View profiles all derive from a
+  > single source.
+
 ### Profile Organization
 
 The approach recommended in this section has resulted in a set of
@@ -368,6 +376,15 @@ node types:
 - Requirements: for dependencies of one component on functionality
   exposed by other components.
 
+**Naming principle.** Capability type names should describe the
+*functionality a component exposes*; relationship type names should
+describe the *semantics of the dependency* — the intent of the source
+node toward the target — and not the mechanism used to realize it.
+Intent-revealing names (`Monitors`, `ManagedBy`, `RegistersWith`,
+`HostedOn`) are preferred over mechanism-flavored names (`ConnectsTo`,
+`BindsTo`, `LinksTo`). This keeps service templates readable: the reader
+should understand *why* two nodes are related from the type name alone.
+
 The Component/Port pattern defines *common* categories of
 functionality that are typically exposed by all components. It then
 attempts to define *common* capability types and *common* relationship
@@ -389,9 +406,8 @@ categories of functionality are shown in the following picture:
   have their own *runtime environment requirement*.
 - **Core functionality**: the main function of a TOSCA node is to
   provide a specific set of features or functionality to other
-  nodes. This is expressed using a *core functionality
-  capability**. Other nodes will define requirements for this
-  functionality.
+  nodes. This is expressed using a *core functionality capability*.
+  Other nodes will define requirements for this functionality.
 - **Management**: many TOSCA nodes are matched with a corresponding
   management tool. This relationship is expressed as a *management
   requirement* of the managed TOSCA node rather than as a *management
@@ -399,57 +415,96 @@ categories of functionality are shown in the following picture:
   management tool is used to configure the TOSCA node, the management
   tool must be deployed before the managed node can be fully deployed.
   Note that for management tools, the management functions are exposed
-  as their *core functionality capability*.
+  as their *core functionality capability*. Because management is
+  modeled as a requirement of the managed node, a *reverse* "manages"
+  capability/relationship on the management tool is **not** needed and
+  should be avoided — it duplicates the same dependency in the opposite
+  direction.
 - **Monitoring**: many TOSCA nodes are matched with a corresponding
-  monitoring tool. This relationship is expressed as a *monitoring*
-  capability of the monitored node.
+  monitoring tool. The monitored node exposes an *observability
+  capability*; the monitoring tool declares a *monitoring requirement*
+  that targets it. This is a *dependency* relationship (the monitored
+  node must be deployed and observable before monitoring can attach),
+  so the monitoring relationship derives from `DependsOn`. Modeling
+  observability as a capability of the *monitored* node — rather than as
+  a capability of the monitoring tool — keeps the direction consistent
+  with management: the touch point lives on the node being acted upon.
 
-  > This pattern was discussed in the TOSCA TC but never formalized.
+  > **Proposed resolution for issue I17.** Formalizes the monitoring
+  > pattern that was discussed in the TOSCA TC but never written down.
 
-- **Security**: access to TOSCA nodes may need to be secured.
+- **Security**: securing access to a node is not one concern but
+  several, each modeled with its own capability/relationship pair:
+  - *Perimeter protection* — a node exposes a capability indicating it
+    can be fronted by a security control (firewall, gateway); the
+    protected node declares a requirement targeting it.
+  - *Credentials / authorization* — a node exposes a capability
+    representing credentials it can be accessed with; consumers declare
+    an authorization requirement against it.
+  - *Identity / registration / trust* — a node (a registry or trust
+    store) exposes a registration capability; devices and services
+    declare a *registration requirement* (e.g. `RegistersWith`) so that
+    their signed requests can later be verified by relying parties.
 
-  > This pattern needs further work
+  > **Proposed resolution for issue I17.** Replaces "this pattern needs
+  > further work" by splitting security into perimeter, credentials, and
+  > identity/trust sub-patterns.
+
+**The category list is open-ended.** The categories above are the
+*common* ones, not an exhaustive set. Other recurring cross-cutting
+categories follow the same pattern and may warrant their own common
+capability and relationship types — for example *provisioning* (a node
+built from an image or package source), *networking* (attachment to
+hosts and networks), and *routing* (directing traffic to a target). New
+categories should be introduced deliberately, documented here, and given
+capability and relationship types that follow the naming principle
+above.
 
 As stated earlier, the TOSCA Community uses this pattern to define common
 capability types and common relationship types for these various
 categories of functionality. These types are discussed next.
 
 ### Best Practices
-Best practices questions:
 
-- Specific relationship types may need to get matched with specific
-  capability types. This constraint can be specified:
-  - Just in the relationship type using the `valid_capability_types`
-    keyword.
-  - Just in the capability type using the `valid_relationship_types`
-    keyword.
-  - In both places.
+> **Proposed resolutions for issue I16.** The three questions below were
+> previously open; the recommendations are proposed for community
+> ratification. Related to I4 (abstract-vs-minimal types).
 
-  Which one is the best way to go?
+**1. Where should the capability↔relationship constraint be declared —
+`valid_capability_types`, `valid_relationship_types`, or both?**
 
-- How deep do we make the relationship type and capability type
-  hierarchies? Or, said a different way, when is it appropriate to
-  define new derived relationship and/or capability types? We should
-  consider the following scenarios:
+Declare it in **one** place, not both. The recommended convention:
 
-   1. Derived type names can more clearly indicate the intended
-      function of the relationship or capability and improve
-      *readability* of profiles and templates.
-   2. Additional properties and/or attributes need to be defined for
-      relationships or capabilities.
-   3. Additional inputs and/or operation implementations need to be
-      defined for relationship interfaces.
-   4. Additional interfaces need to be defined on relationships.
+- Put `valid_relationship_types` **only on the three base capability
+  types** (`Container`, `Feature`, `Partner`), where it enforces the
+  containment / dependency / association *kind* gate.
+- Put `valid_capability_types` **on relationship types** to point each
+  relationship at the specific capability it targets.
 
-- If specific capabilities are needed, and specific relationships to
-  those capabilities are needed, there are two ways to define these:
+Restating both on every derived type is redundant, and — under TOSCA's
+nominal typing — invites the two lists to drift out of sync.
 
-   1. We can create derived capability types and associated
-      relationship types and use those types in requirement and
-      capability definitions.
-   2. We can use the base types as-is, and *specialize* how they can
-      be used in capability and requirement definitions using the
-      `valid_source_node_types` and `valid_target_node_types`
-      keywords.
+**2. When should a new derived relationship or capability type be
+defined, versus reusing a base type?**
 
-  Which one is the best way to go?
+Derive a new type when at least one of these holds:
+
+1. A **semantically clearer name** improves the readability of profiles
+   and templates (the name reveals intent that the base type does not).
+2. **Additional properties or attributes** are needed on the
+   relationship or capability.
+3. **Additional inputs or operation implementations** are needed on a
+   relationship interface.
+4. **Additional interfaces** are needed on the relationship.
+
+If none of these apply — the type would differ only in which nodes it
+connects — do **not** derive a new type.
+
+**3. If a specific capability and a specific relationship to it are
+needed, derive new types or specialize the base types in place?**
+
+Follow from question 2: if a case in (1)–(4) applies, derive the types.
+Otherwise, reuse the base types and constrain them at the point of use
+with `valid_source_node_types` / `valid_target_node_types` in the
+capability and requirement definitions. This keeps the type hierarchies
+shallow and avoids a proliferation of near-identical types.

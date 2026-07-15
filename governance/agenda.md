@@ -39,7 +39,18 @@ Follows up on the 2026-07-15 action items. Issue references point to
   broader community contributions. Readout from the GitHub discussion; steer
   toward a decision.
 
-## 5. Open items & AOB — 10 min
+## 5. Component/Port modeling resolutions — 10 min · *I16 / I17*
+- Proposed resolutions are now drafted in `design-guide.md` and `core/README.md`:
+  - **Naming principle** — relationship names express *semantics* (intent), not
+    *mechanism* (`ConnectsTo`/`BindsTo` → intent-revealing names).
+  - **I16** — declare the capability↔relationship constraint in one place;
+    derive-vs-specialize rule.
+  - **I17** — formalized monitoring (observability capability + `DependsOn`);
+    security split into perimeter / credentials / identity-trust (`RegistersWith`).
+  - Category list made explicitly open-ended (adds provisioning, networking, routing).
+- Review and ratify, or send back for edits.
+
+## 6. Open items & AOB — 10 min
 - Single source of truth for shared types (*I1 / I15*); execution-location gap
   (*I23*) and other errata (*I5, I7, I13, I14*); Windows checkout failure
   (*I20*); contribution-load / second owners (*I11*); Tal's alternative
@@ -48,4 +59,4 @@ Follows up on the 2026-07-15 action items. Issue references point to
 ---
 
 **Decisions sought:** merge the core data types (#2); cut the `0.1` (#3);
-direction on profile organization (#4).
+direction on profile organization (#4); ratify the Component/Port resolutions (#5).
