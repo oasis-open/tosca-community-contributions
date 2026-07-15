@@ -51,31 +51,36 @@ With the workflow ready, decide **what the stable `0.1` ships**:
 
 **Decision sought:** the `0.1` profile set.
 
-## 3. Review the technology profiles — `k8s` vs `kubernetes` vs `io.kubernetes:3.0` — 10 min · feeds #2
+## 3. Kubernetes modeling — keep hand-authored `technology.kubernetes` alongside the auto-generated `k8s`? — 10 min · feeds #2
 
-Three Kubernetes-related profiles overlap in confusing ways; clarify and decide
-which to keep/publish:
+Both profiles model Kubernetes **resources**, but with different philosophies —
+and current usage cuts against the obvious assumption that the generated profile
+supersedes the hand-authored one:
 
-- **`community.tosca.technology.k8s:0.1`** — the auto-generated **Kubernetes API
-  resource model** (~324 types: Deployment, DaemonSet, Service, …; split
-  `core`/`apps`/`storage`/`networking`/`rbac`).
-- **`io.kubernetes:3.0`** — a **near-duplicate** of `technology.k8s` (same
-  generated model; only the profile name and a few namespace references differ).
-  Lives outside `profiles/community/tosca/`, so it is not a `0.1` candidate, but
-  the duplication is a maintenance concern.
-- **`community.tosca.technology.kubernetes:0.1`** — a **different, higher-level**
-  profile (~50 hand-authored types) that models Kubernetes as a **deployment
-  platform** on the abstract-platform model.
+- **`community.tosca.technology.kubernetes:0.1`** (hand-authored, ~50 types) — a
+  curated resource hierarchy (`Resource` → cluster/namespaced →
+  `Pod`/`Deployment`/`Service`/`ConfigMap`/`Role`/…) with TOSCA **relationships
+  and service-topology** semantics (design-time validation, visualization — the
+  value-add its README argues). **Used** by
+  `examples/substitutions/microservice/`.
+- **`community.tosca.technology.k8s:0.1`** (auto-generated, ~324 types) — a 1:1
+  mirror of the Kubernetes OpenAPI. Comprehensive but flat, no topology
+  semantics, and **imported by nothing** in the community set.
+- **`io.kubernetes:3.0`** — the same generated model as `k8s` under another name;
+  **used** by the vendor-side profiles (`com.ubicity.kubernetes`, `sh.helm`,
+  `io.kubevirt`), and lives outside `profiles/community/tosca/`.
 
-**For discussion:**
+**The question:** the generated model gives comprehensive API coverage but no
+topology; the hand-authored one gives topology + substitution (TOSCA's
+differentiator) but is curated and incomplete. Which does the community carry —
+the topology-rich `technology.kubernetes`, the comprehensive `k8s`, or both
+(e.g. `kubernetes` layering topology over the generated types)? Usage today
+favors `technology.kubernetes` (a working example; `technology.k8s` has no
+importers). This is a concrete instance of the recurring minimal/curated-vs-
+generated modeling tension.
 
-- The `k8s` / `kubernetes` names hide a real difference in level (API resources
-  vs. platform abstraction) — rename for clarity?
-- `technology.k8s` and `io.kubernetes:3.0` are the same generated model under
-  two names — pick one canonical home and drop or reconcile the other.
-- Which of these belong in `0.1`? (ties to #2)
-
-**Decision sought:** the canonical Kubernetes profile(s) and their naming.
+**Decision sought:** which Kubernetes profile(s) the community keeps and
+publishes.
 
 ## 4. Cut the stable `0.1` — 10 min · *R1 / R3 / R4 / I8*
 - Once the scope (#2) is set, push the `v0.1` tag → the workflow builds/signs
