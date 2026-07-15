@@ -1,7 +1,5 @@
 tosca_definitions_version: tosca_2_0
-
 profile: community.tosca.core:0.1
-
 description: >-
   TOSCA Community Core Profile type definitions. These definitions are
   intended to be shared between profiles of all levels of abstraction.
@@ -29,7 +27,7 @@ data_types:
     description: >-
       The Port type defines integer that contain valid ports
     derived_from: integer
-    validation: {$in_range: [$value, 0, 65535]}
+    validation: {$in_range: [$value, [0, 65535]]}
   IPv4Socket:
     description: >-
       This complex type represents an IPv4 socket (address+port)
@@ -118,11 +116,11 @@ capability_types:
       Base capability type for capabilities that can be targeted by an
       AssociatesWith relationship.
     valid_relationship_types: [AssociatesWith]
-    
+
 functions:
   to_string:
     description: >-
-      Convert an integer to string 
+      Convert an integer to string
     signatures:
       - arguments:
           - type: integer
@@ -171,31 +169,54 @@ functions:
             file: functions/decode_json.py
   in_range:
     description: >
-        This function provide true if first argument (value) is within
-        the range delimited by the second (min) and the third (max)
+        This function provides true if the first argument (value) is within
+        the range specified by the second argument.
+        The range argument shall be a two-item list [min, max].
         min <= value <= max
-        Arguments shall be integers, floats, strings or versions.
+        Arguments shall be integers, floats, strings, timestamps
+        or versions.
         In any other case, including errors, it provides false.
     signatures:
-      - arguments: [integer, integer, integer]
+      - arguments:
+          - type: integer
+          - type: list
+            entry_schema: integer
         result: boolean
         implementation:
           primary:
             type: Python
             file: functions/in_range.py
-      - arguments: [float, float, float]
+      - arguments:
+          - type: float
+          - type: list
+            entry_schema: float
         result: boolean
         implementation:
           primary:
             type: Python
             file: functions/in_range.py
-      - arguments: [string, string, string]
+      - arguments:
+          - type: string
+          - type: list
+            entry_schema: string
         result: boolean
         implementation:
           primary:
             type: Python
             file: functions/in_range.py
-      - arguments: [version, version, version]
+      - arguments:
+          - type: timestamp
+          - type: list
+            entry_schema: timestamp
+        result: boolean
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range.py
+      - arguments:
+          - type: version
+          - type: list
+            entry_schema: version
         result: boolean
         implementation:
           primary:
@@ -203,33 +224,56 @@ functions:
             file: functions/in_range.py
   in_range_strict:
     description: >
-        This function provide true if first argument (value) is within
-        the range delimited by the second (min) and the third (max)
+        This function provides true if the first argument (value) is within
+        the range specified by the second argument.
+        The range argument shall be a two-item list [min, max].
         min < value < max
         Strict comparison is used (i.e. value cannot be equal to
         interval boundaries)
-        Arguments shall be integers, floats, strings or versions.
+        Arguments shall be integers, floats, strings, timestamps
+        or versions.
         In any other case, including errors, it provides false.
     signatures:
-      - arguments: [integer, integer, integer]
+      - arguments:
+          - type: integer
+          - type: list
+            entry_schema: integer
         result: boolean
         implementation:
           primary:
             type: Python
             file: functions/in_range_strict.py
-      - arguments: [float, float, float]
+      - arguments:
+          - type: float
+          - type: list
+            entry_schema: float
         result: boolean
         implementation:
           primary:
             type: Python
             file: functions/in_range_strict.py
-      - arguments: [string, string, string]
+      - arguments:
+          - type: string
+          - type: list
+            entry_schema: string
         result: boolean
         implementation:
           primary:
             type: Python
             file: functions/in_range_strict.py
-      - arguments: [version, version, version]
+      - arguments:
+          - type: timestamp
+          - type: list
+            entry_schema: timestamp
+        result: boolean
+        implementation:
+          primary:
+            type: Python
+            file: functions/in_range_strict.py
+      - arguments:
+          - type: version
+          - type: list
+            entry_schema: version
         result: boolean
         implementation:
           primary:
