@@ -10,11 +10,13 @@ Follows up on the 2026-07-08 action items. Issue references point to
 ---
 
 ## 1. Action-item review — 10 min
-- **`in_range` PR** (Roberto, *D8 / I18*) — did the TOSCA v1.3 2-arg
-  `(value, range)` signature PR land? Merge status.
-- **Abstract-profile properties** (Chris, *N8*) — platform connection
-  properties (management address, credential file, config/access file) added to
-  the community abstract platform types once `in_range` merged.
+- **`in_range` PR — merged** (Roberto, *D8 / I18*, PR #348) — the 2-arg
+  `(value, [min, max])` signature landed, plus **`in_range_strict`** (open
+  interval) and integer/float/string/timestamp/version overloads. Confirm and
+  note the expanded scope.
+- **Abstract-profile properties** (Chris, *N8*) — now **unblocked** by the
+  `in_range` merge: add the platform connection properties (management address,
+  credential file, config/access file) to the community abstract platform types.
 - **Release workflow set up** (Chris, *R4 / I8*) — an existing, proven release
   workflow (CSAR build + signing) copied + adapted into the community repo.
 

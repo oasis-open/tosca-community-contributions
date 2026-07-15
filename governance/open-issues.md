@@ -43,7 +43,7 @@ Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 | I9 | **Portability of community artifacts** — Python-based implementations aren't portable across orchestrators. Direction: reference implementations + JSON stdin/stdout protocol; separate definitions from implementations (`integrations/`). | 🟡 | Chris/Tal | Document the protocol; build out the integrations directory. |
 | I10 | **Input/output handling for Bash (and Python)** — finalize conventions (single JSON env var vs. separate vars; base64 encoding; logging vs. output separation). | 🟡 | Chris/Roberto/Marcel | Converge on the GitHub discussion. |
 
-*I18 (`in_range` signature) was decided at M39 — see decision-log **D8**. As of 2026-07-08 the PR is still pending (Roberto out that day); the abstract-profile property work (**N8**) is sequenced behind its merge.*
+*I18 (`in_range` signature) was decided at M39 (decision-log **D8**) and **merged 2026-07-15 (PR #348)** — the 2-arg `(value, [min, max])` signature, plus `in_range_strict` (open interval) and integer/float/string/timestamp/version overloads. This **unblocks** the N8 abstract-profile property work.*
 
 ## Release & process
 
