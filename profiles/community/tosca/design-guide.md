@@ -1,6 +1,6 @@
 # TOSCA Community Profile Design Guide
 
-**Related documents:** [README](README.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](governance/meeting-history.md) · [decision-log](governance/decision-log.md) · [open-issues](governance/open-issues.md)
+**Related documents:** [README](README.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
 
 This guide describes the modeling methodology and design patterns the
 TOSCA Community uses when developing community profiles: the Model
