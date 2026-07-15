@@ -1,6 +1,6 @@
 # TOSCA Community Profiles
 
-**Related documents:** [design-guide](design-guide.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](governance/meeting-history.md) · [decision-log](governance/decision-log.md) · [open-issues](governance/open-issues.md)
+**Related documents:** [design-guide](design-guide.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
 
 This directory contains TOSCA profiles that are created by the TOSCA
 Community&mdash;an informal group of TOSCA implementors and TOSCA
@@ -46,10 +46,10 @@ guide](design-guide.md).
 - **[abstract-profile-proposed-changes.md](abstract-profile-proposed-changes.md)**
   &mdash; a specific proposal to extend the abstract platform and data
   profiles (management address, credentials, and related issues).
-- **[governance/](governance/)** &mdash; community-process documents:
-  the [meeting history](governance/meeting-history.md), the [decision
-  log](governance/decision-log.md), and the [open-issues
-  tracker](governance/open-issues.md).
+- **[governance/](../../../governance/)** &mdash; community-process documents:
+  the [meeting history](../../../governance/meeting-history.md), the [decision
+  log](../../../governance/decision-log.md), and the [open-issues
+  tracker](../../../governance/open-issues.md).
 
 ## Profiles
 
