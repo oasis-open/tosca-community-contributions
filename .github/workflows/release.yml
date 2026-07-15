@@ -1,0 +1,59 @@
+name: TOSCA Community profiles release
+
+# Cut a release by pushing a semver tag (e.g. v0.1) or running this workflow
+# manually. It builds a CSAR for each community.tosca.* profile, signs them with
+# Sigstore keyless signing, and opens a DRAFT GitHub Release for review before
+# publishing.
+#
+# This is a public repository, so the release-asset download URLs work without
+# authentication -- no assets-API URL table is needed (unlike private repos).
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+-rc.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+
+permissions:
+  contents: write
+  id-token: write  # Required for Sigstore keyless signing (OIDC).
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Build CSARs
+        run: bash ./tools/scripts/build_csars.sh
+
+      - name: Sign and checksum
+        shell: bash
+        run: |
+          cd /tmp/csars
+          # Checksum manifest over all CSARs.
+          sha256sum *.csar > checksums.txt
+          # Sigstore keyless signing; --bundle writes the verification bundle.
+          cosign sign-blob --yes checksums.txt --bundle checksums.txt.bundle
+          for file in *.csar; do
+            cosign sign-blob --yes "$file" --bundle "$file".bundle
+          done
+
+      - name: Create draft GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          draft: true
+          # /tmp/csars is where build_csars.sh writes.
+          files: |
+            /tmp/csars/*.csar
+            /tmp/csars/checksums.txt
+            /tmp/csars/*.bundle
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
