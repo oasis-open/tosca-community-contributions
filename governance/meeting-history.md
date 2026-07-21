@@ -90,6 +90,25 @@ simple example template (Prachi and Jay meet 2026-07-13 on deployment; Chris to
 help with implementation artifacts). Marcel reported his Netherlands dissertation
 work is nearing a first paper draft (~a year to completion).
 
+**2026-07-15** (Chris, Roberto). `in_range` / `in_range_strict` are merged, now
+with a **timestamp** signature (Roberto). The community **release workflow** was
+reviewed — GitHub Actions, tag-triggered (`v*`), packaging each
+`community.tosca.*` profile into a signed CSAR via a `TOSCA.meta`-driven build
+script (entry-definitions can point at plain TOSCA files, no service template
+needed). On the **`0.1` scope (R5)**: ship **`core` + the five `abstract.*`
+profiles (six files)**; the technology-specific profiles are held as not yet
+mature. **Kubernetes (K6):** delete the hand-authored `technology.kubernetes`
+and keep the **auto-generated** profile (more complete, from the OpenAPI),
+relocating the manual profile's README into the community repo — Tal is building
+a similar auto-generation by a different method, so multiple modeling approaches
+stay open. **Core data types (D9):** add a standard library (email, URL, FQDN,
+IPv4 with constraints) — Roberto to PR, and **`0.1` is held until it lands**.
+Also: Chris to add the platform connection properties (management address) to the
+abstract types (N8) for review next week; start a **GitHub discussion** on
+profile organization (`community/tosca` vs `io.kubernetes` naming); and a noted
+TOSCA gap — no standard way to describe an operation's **execution location** in
+service templates.
+
 ---
 
 ## Cross-cutting themes
@@ -102,7 +121,7 @@ work is nearing a first paper draft (~a year to completion).
 | **Artifacts & functions** | Bash/Python artifact types; JSON env-var I/O; standardize on a single-module / matching-name / single-arg approach; community impls as reference implementations + JSON stdin/stdout protocol; `integrations/` directory. |
 | **Spec gaps → errata** | Implementation surfaced TOSCA 2.0 gaps: metadata support, property refinement in data types, artifact-type-mandatory ambiguity, substitution-mapping limits, a proposed `type-of-node` function — feeding a 2.01 errata effort and resumed TC language meetings. |
 | **Tooling** | Puccini (TOSCA 2.0 support), OpenAPI→TOSCA generators, Redfish/AnyTOSCA and Ansible translators, visualization (Winery, Inria CloudNet, Mermaid). |
-| **Release process** | Surfaced at M38; at **M39** adopted a simple process — a GitHub workflow packaging CSAR artifacts and a `0.1` release, flat directory structure (version subdirectories rejected). **2026-07-08:** adapt an existing, proven release workflow into the community repo; target a stable `0.1` of core by ~2026-07-15. |
+| **Release process** | Surfaced at M38; at **M39** adopted a simple process — a GitHub workflow packaging CSAR artifacts and a `0.1` release, flat directory structure (version subdirectories rejected). **2026-07-08:** adapt an existing, proven release workflow into the community repo; target a stable `0.1` of core by ~2026-07-15. **2026-07-15:** workflow reviewed and in place; `0.1` scoped to `core` + five `abstract.*` (technology profiles held), and held until the new core data types (D9) land. |
 
 ---
 
