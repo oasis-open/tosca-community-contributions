@@ -1,7 +1,7 @@
 # TOSCA Community — Proposed Agenda (2026-07-22)
 
 **Status:** Draft agenda for 2026-07-22, following 2026-07-15
-**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/prior-art.md) · [design-guide](../profiles/community/tosca/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
+**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/docs/prior-art.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
 
 Follows up on the 2026-07-15 action items. Issue references point to
 [open-issues.md](open-issues.md); decision references to
@@ -36,8 +36,11 @@ Follows up on the 2026-07-15 action items. Issue references point to
 
 ## 4. Profile organization / naming — 10 min · *I22*
 - `community/tosca` vs reverse-DNS (`io.kubernetes`); team-designed profiles vs
-  broader community contributions. Readout from the GitHub discussion; steer
-  toward a decision.
+  broader community contributions. Walk the options + trade-offs in
+  [`profile-naming.md`](../profiles/community/tosca/docs/profile-naming.md); note the
+  duplicate Kubernetes copies (`io.kubernetes:3.0` vs
+  `community.tosca.technology.k8s:0.1`) and the `io.kubevirt`/`sh.helm`
+  dependents; steer toward a decision.
 
 ## 5. Component/Port modeling resolutions — 10 min · *I16 / I17*
 - Proposed resolutions are now drafted in `design-guide.md` and `core/README.md`:

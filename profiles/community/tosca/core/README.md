@@ -82,7 +82,7 @@ its management and monitoring touch points, its security and trust
 surface, and so on. These categories, and the common capability and
 relationship types recommended for each, are described by the
 Component/Port pattern in the
-[design guide](../design-guide.md#componentport-pattern). New derived
+[design guide](../docs/design-guide.md#componentport-pattern). New derived
 capability types should be slotted into one of those categories rather
 than introduced ad hoc, so the type library stays a catalog rather than
 a loose collection.
