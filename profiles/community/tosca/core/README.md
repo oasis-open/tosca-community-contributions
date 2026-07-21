@@ -24,16 +24,35 @@ across relationships to the *source* nodes of those relationships.
   `DependsOn` relationship type. Relationships of type `DependsOn`
   target capabilities of type `Feature` as specified using the
   `valid_capability_types` keyword in the type definition.
-- An *association* relationship kind that is provided for
-  informational purposes only and no state or configuration
-  dependencies exist. This kind of relationship is provided using the
-  `AssociatesWith` relationship type. Relationships of type `AssociatedWith`
-  target capabilities of type `Partner` as specified using the
-  `valid_capability_types` keyword in the type definition.
+- An *association* relationship kind that records a relationship
+  between two nodes that carries **no lifecycle, state, or
+  configuration dependency** — the association is informational and
+  neither node's deployment depends on the other. This kind of
+  relationship is provided using the `AssociatesWith` relationship
+  type. Relationships of type `AssociatesWith` target capabilities of
+  type `Partner` as specified using the `valid_capability_types`
+  keyword in the type definition.
+
+  > **Guard against misuse.** If a relationship *does* carry a
+  > deployment or configuration dependency (for example, a cloud
+  > resource that must exist before another node can be associated with
+  > it), it is a *dependency*, not an *association*, and should derive
+  > from `DependsOn` — even when the domain colloquially calls it an
+  > "association." Reserve `AssociatesWith` for genuinely
+  > dependency-free links.
 
 Other relationship types can be derived from one of the three *base* relationship types.
 
+### Naming derived relationship types
 
+Derived relationship type names should express the **semantics** of the
+relationship — the *intent* of the source node toward the target — and
+**not** the wiring mechanism used to realize it. Prefer intent-revealing
+names (`Monitors`, `ManagedBy`, `RegistersWith`, `HostedOn`) over
+mechanism-flavored names (`ConnectsTo`, `BindsTo`, `LinksTo`). A reader
+of a service template should be able to tell *why* two nodes are related
+from the relationship type name alone, without knowing how the
+connection is physically established.
 
 ## Capability Types
 
@@ -53,4 +72,18 @@ erDiagram
     AssociatesWith ||--|| Partner : targets
     Partner ||--|{ AssociatesWith: accepts
 ```
+
+### Organizing derived capability types
+
+Capability types derived from `Feature` and `Container` tend to fall
+into a small number of recurring **functional categories** — the
+runtime environment a node offers, the core functionality it exposes,
+its management and monitoring touch points, its security and trust
+surface, and so on. These categories, and the common capability and
+relationship types recommended for each, are described by the
+Component/Port pattern in the
+[design guide](../design-guide.md#componentport-pattern). New derived
+capability types should be slotted into one of those categories rather
+than introduced ad hoc, so the type library stays a catalog rather than
+a loose collection.
 

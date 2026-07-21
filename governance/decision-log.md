@@ -56,6 +56,7 @@ meeting where the decision was made or last confirmed.
 | D6 | Treat community-provided implementations as **reference implementations**; separate definitions from implementations and provide per-orchestrator examples (an `integrations/` directory). | M34 |
 | D7 | Use a **simple file-reference credential data type** (a map of name + file/reference) rather than embedding secrets. | M22 |
 | D8 | Re-add `in_range` to `community.tosca.core` (removed as a built-in in TOSCA 2.0) using the **TOSCA v1.3 2-arg `(value, [min, max])` signature** (not the 3-arg `value, min, max` form), to ease v1.3→v2.0 template upgrades; ensure consistency with other function implementations (addresses OASIS #301). **Done — merged 2026-07-15 (PR #348, Roberto)**: the same 2-arg signature was applied to **both `in_range` and `in_range_strict`** (open interval `min < value < max`), with overloads for integer / float / string / timestamp / version. | M39; merged 2026-07-15 |
+| D9 | Add a **standard-library set of core data types** to `community.tosca.core` — email address, URL, FQDN, IPv4 (with constraints) — for consistent data-type descriptions across profiles. (Roberto to PR.) | 2026-07-15 |
 
 ## Modeling approach (Kubernetes / examples)
 
@@ -66,6 +67,7 @@ meeting where the decision was made or last confirmed.
 | K3 | For dynamic worker-node placement, use **label-based node filters** short-term; consider a language extension long-term. | M12, M13 |
 | K4 | Defer auto-scaling/HA modeling for managed clusters; prioritize a "number of worker nodes" property and a generic subnet model. | M29 |
 | K5 | **Validate the abstract profiles by building substituting templates that exercise them**, starting with the (auto-generated) **Kubernetes** profile; Westminster (Prachi/Jay) to contribute example templates. | 2026-07-08 |
+| K6 | **Kubernetes profiles — keep the auto-generated, delete the manual.** The auto-generated Kubernetes profile (from the OpenAPI) is more complete than the earlier hand-authored `community.tosca.technology.kubernetes`; delete the manual one and keep the generated one, **relocating the manual profile's README content** into the community repo. (Tal is building a similar auto-generation via a different method; keep room for multiple modeling approaches.) | 2026-07-15 |
 
 ## Release & versioning
 
@@ -75,6 +77,7 @@ meeting where the decision was made or last confirmed.
 | R2 | Begin planning **version tracking and a formal release process** that publishes immutable release artifacts (building CSAR files raised as a candidate mechanism). | M38 |
 | R3 | Adopt a **simple release process**: a GitHub workflow that packages profiles as **CSAR release artifacts**, starting with a **`0.1`** release once current changes land. **Keep the flat directory structure** — version-specific subdirectories were considered and rejected. | M39 |
 | R4 | **Set up the community release workflow by adapting an existing, proven CSAR-build + signing workflow** rather than authoring one from scratch. Target a **stable `0.1` of the core profile by ~2026-07-15**. | 2026-07-08 |
+| R5 | **`0.1` ships `core` + the five `abstract.*` profiles (six TOSCA files).** The technology-specific profiles are held back — not yet mature enough for release. Cutting `0.1` also waits on the new core data types (D9). | 2026-07-15 |
 
 ---
 
