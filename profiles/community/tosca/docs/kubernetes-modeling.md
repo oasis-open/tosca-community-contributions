@@ -11,13 +11,14 @@ The auto-generated resource profile is `community.tosca.technology.k8s`; the
 hand-authored `community.tosca.technology.kubernetes` profile is slated for
 consolidation (governance issues K6 / I21).
 
-**Related documents:** [README](../README.md) · [design-guide](design-guide.md) · [prior-art](prior-art.md) · [kubernetes-type-inventory](kubernetes-type-inventory.md) · [meeting-history](../../../../governance/meeting-history.md) · [open-issues](../../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [design-guide](design-guide.md) · [prior-art](prior-art.md) · [meeting-history](../../../../governance/meeting-history.md) · [open-issues](../../../../governance/open-issues.md)
 
 ---
 
 This document captures the community's rationale and design thinking for
 modeling Kubernetes services with TOSCA. It builds on and extends existing
-[TOSCA type definitions for Kubernetes](kubernetes-type-inventory.md).
+TOSCA type definitions for Kubernetes, surveyed in [prior-art.md](prior-art.md)
+(see the Micado, Yorc, Ubicity, Puccini, and Turandot sections).
 
 ## Why TOSCA for Deploying Services on Kubernetes
 
