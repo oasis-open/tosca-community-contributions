@@ -1,36 +1,60 @@
 tosca_definitions_version: tosca_2_0
 
+description: >-
+  Substituting service template for MicroService nodes, implemented with
+  the auto-generated community.tosca.technology.k8s profile. Each
+  MicroService is realized as four Kubernetes resources: a ServiceAccount,
+  a Pod (one container), a Deployment that controls the Pod, and a Service
+  that exposes it. Rebuilt from main.yaml.old, which used the hand-authored
+  community.tosca.technology.kubernetes profile.
+
 imports:
   - profile: community.tosca.abstract.application:0.1
     namespace: app
-  - profile: community.tosca.technology.kubernetes:0.1
+  - profile: community.tosca.technology.k8s:0.1
     namespace: k8s
-
-description: >-
-  Substituting service template for MicroService nodes
+  - profile: community.tosca.core:0.1
+    namespace: core
 
 node_types:
+
+  # A Pod whose single container is configured from the microservice's own
+  # port (as the PORT env var) plus the addresses of the peer microservices
+  # it interacts with (as <PEER>_SERVICE_ADDR env vars).
+  Pod:
+    derived_from: k8s:Pod
+    properties:
+      container-port:
+        type: core:Port
+    requirements:
+      - endpoint:
+          node: Service
+          capability: app:Endpoint
+          relationship: app:InteractsWith
+          count_range: [0, UNBOUNDED]
+
+  # A Service that advertises the microservice's endpoint and publishes its
+  # address as a "<NAME>_SERVICE_ADDR" environment variable that peer
+  # microservices consume through their Pod's endpoint requirement.
   Service:
     derived_from: k8s:Service
     properties:
       label:
         type: string
       address:
-        type: k8s:EnvironmentVariable
+        type: k8s:EnvVar
         value:
           name:
             $concat:
-              - $app:to_uppercase: [{$get_property: [SELF, label]}]
+              - {$core:to_uppercase: [{$get_property: [SELF, label]}]}
               - _SERVICE_ADDR
-          value: {$app:to_string: [{$get_property: [SELF, CAPABILITY, endpoint, port]}]}
-  Deployment:
-    derived_from: k8s:Deployment
-    requirements:
-      - endpoint:
-          node: Service
-          count_range: [0, UNBOUNDED]
-          
+          value: {$core:to_string: [{$get_property: [SELF, CAPABILITY, endpoint, port]}]}
+    capabilities:
+      endpoint:
+        type: app:Endpoint
+
 service_template:
+
   substitution_mappings:
     node_type: app:MicroService
     properties:
@@ -42,42 +66,81 @@ service_template:
     capabilities:
       endpoint: [service, endpoint]
     requirements:
+      # Fan the abstract platform requirement out to every resource's cluster
+      # requirement (inherited from k8s:Resource).
       - runs-on:
-          - [service-account, host] 
-          - [deployment, host] 
-          - [service, host] 
-      - [endpoint, UNBOUNDED]: [deployment, endpoint]
+          - [service-account, cluster]
+          - [pod, cluster]
+          - [deployment, cluster]
+          - [service, cluster]
+      # Peer-microservice interactions are consumed by the Pod (to build the
+      # *_SERVICE_ADDR env vars).
+      - [endpoint, UNBOUNDED]: [pod, endpoint]
+
   inputs:
     name:
       type: string
     port:
-      type: k8s:core:port
+      type: core:Port
     target-port:
-      type: k8s:core:port
+      type: core:Port
     port-name:
       type: string
-      required: False
+      required: false
     protocol:
       type: string
-      required: False
+      required: false
+
   node_templates:
+
     service-account:
       type: k8s:ServiceAccount
-    deployment:
-      type: Deployment
       properties:
-        env:
-          $concat:
-            - - name: PORT
-                value: {$app:to_string: [{$get_property: [SELF, container-port]}]}
-            - $get_property: [SELF, RELATIONSHIP, endpoint, TARGET, address]
+        metadata:
+          name: {$get_input: name}
+
+    pod:
+      type: Pod
+      properties:
         container-port: {$get_input: target-port}
+        metadata:
+          labels:
+            app: {$get_input: name}
+        spec:
+          serviceAccountName: {$get_property: [SELF, RELATIONSHIP, runsAs, TARGET, metadata, name]}
+          containers:
+            - name: {$get_input: name}
+              ports:
+                - containerPort: {$get_input: target-port}
+              env:
+                $concat:
+                  - - name: PORT
+                      value: {$core:to_string: [{$get_property: [SELF, container-port]}]}
+                  - $get_property: [SELF, RELATIONSHIP, endpoint, TARGET, address]
       requirements:
-        - runs-as: service-account
+        - runsAs: service-account
+
+    deployment:
+      type: k8s:Deployment
+      properties:
+        metadata:
+          name: {$get_input: name}
+      requirements:
+        - pod: pod
+
     service:
       type: Service
       properties:
         label: {$get_input: name}
+        metadata:
+          name: {$get_input: name}
+        spec:
+          type: ClusterIP
+          ports:
+            - port: {$get_input: port}
+              targetPort: {$core:to_string: [{$get_input: target-port}]}
+              name: {$get_input: port-name}
+              protocol: {$get_input: protocol}
       capabilities:
         endpoint:
           properties:
@@ -86,5 +149,4 @@ service_template:
             name: {$get_input: port-name}
             protocol: {$get_input: protocol}
       requirements:
-        - pod: deployment
-        
+        - pod: pod
