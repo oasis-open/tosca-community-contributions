@@ -2,7 +2,7 @@ tosca_definitions_version: tosca_2_0
 
 description: >-
   Substituting service template for MicroService nodes, implemented with
-  the auto-generated community.tosca.technology.k8s profile. Each
+  the auto-generated io.kubernetes:1.35 profile. Each
   MicroService is realized as four Kubernetes resources: a ServiceAccount,
   a Pod (one container), a Deployment that controls the Pod, and a Service
   that exposes it. Rebuilt from main.yaml.old, which used the hand-authored
@@ -11,7 +11,7 @@ description: >-
 imports:
   - profile: community.tosca.abstract.application:0.1
     namespace: app
-  - profile: community.tosca.technology.k8s:0.1
+  - profile: io.kubernetes:1.35
     namespace: k8s
   - profile: community.tosca.core:0.1
     namespace: core
@@ -138,7 +138,7 @@ service_template:
           type: ClusterIP
           ports:
             - port: {$get_input: port}
-              targetPort: {$core:to_string: [{$get_input: target-port}]}
+              targetPort: {$get_input: target-port}
               name: {$get_input: port-name}
               protocol: {$get_input: protocol}
       capabilities:
