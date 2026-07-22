@@ -99,17 +99,31 @@ profiles (`io.kubernetes`, `io.kubevirt`, `sh.helm`).
 - The boundary ("opinionated/team-designed" vs. "technology/contributed") can be
   fuzzy in edge cases and will need judgment calls.
 
-## Proposed direction (to react to, not a foregone conclusion)
+## Proposed direction
 
-Adopt **Option C** with an explicit rule: *team-designed, opinionated profiles →
-`community.tosca.*`; technology/vendor/generated/contributed profiles →
-reverse-DNS.* Independently of the rule, **collapse the duplicate Kubernetes
-resource profile to one name** and repoint `io.kubevirt` and `sh.helm`.
+**Naming.** Adopt **Option C** — `community.tosca.*` for the team-designed
+`core`/`abstract.*` layer, reverse-DNS for technology/generated/contributed
+profiles. Applied to the case above: **keep the reverse-DNS `io.kubernetes`
+name** for the generated Kubernetes resource profile, **retire the
+`community.tosca.technology.k8s` copy**, and repoint the dependents
+(`io.kubevirt`, `sh.helm`). *(Chair's preference.)*
+
+**Versioning.** Version the generated profile by the **Kubernetes distribution
+version it was generated from**, not an arbitrary profile number — e.g.
+`io.kubernetes:1.35` (generated from the Kubernetes 1.35 OpenAPI) rather than
+`io.kubernetes:3.0`. This makes the version self-documenting — you can tell which
+Kubernetes API the profile renders — and directly answers the "version
+semantics" objection to reverse-DNS names (raised under Option B). *(Chair's
+preference.)*
 
 ## Questions for the group
 
-1. Which convention — A, B, or C?
-2. If C, where exactly is the line, and where does the generated Kubernetes
-   resource profile fall?
-3. For the duplicate: which of the two names do we keep, and who owns the
-   repoint of the dependents?
+1. **Naming:** keep `io.kubernetes` (reverse-DNS) and retire
+   `community.tosca.technology.k8s`? *(Chair's preference: yes.)*
+2. **Versioning:** adopt the Kubernetes-distribution version as the profile
+   version (e.g. `io.kubernetes:1.35`)? And how do we version post-processing /
+   modeling changes that don't change the API version — a patch suffix
+   (`1.35.1`), or a separate track?
+3. **Repoint:** `io.kubevirt` and `sh.helm` (and any service templates) import
+   `io.kubernetes:3.0` today — who owns updating them to the chosen name and
+   version?

@@ -41,6 +41,9 @@ Follows up on the 2026-07-15 action items. Issue references point to
   duplicate Kubernetes copies (`io.kubernetes:3.0` vs
   `community.tosca.technology.k8s:0.1`) and the `io.kubevirt`/`sh.helm`
   dependents; steer toward a decision.
+- **Chair's preference:** keep the reverse-DNS **`io.kubernetes`** name (retire
+  the `community.tosca.technology.k8s` copy), and **version by the Kubernetes
+  distribution** used to generate it (e.g. `io.kubernetes:1.35`, not `:3.0`).
 
 ## 5. Component/Port modeling resolutions — 10 min · *I16 / I17*
 - Proposed resolutions are now drafted in `design-guide.md` and `core/README.md`:
