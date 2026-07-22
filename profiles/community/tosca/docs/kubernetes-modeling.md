@@ -177,6 +177,77 @@ tooling challenges.
 6. Do we need to support dynamic behavior in service relationships.
 7. How does Nephio capture service relationships.
 
+## Application-Level Coupling and the Substitution Seam
+
+Kubernetes and TOSCA both express *coupling* between resources, but at different
+levels and by different means. Making the two meet cleanly is a recurring design
+question when realizing an abstract application as Kubernetes resources.
+
+### How Kubernetes coupling maps to TOSCA requirements
+
+Kubernetes couples resources through several *implicit* conventions — you infer
+"what is wired to what" by matching strings across separate manifests. TOSCA
+replaces each with an *explicit* typed topology edge, and the Kubernetes profile
+then **back-generates** the Kubernetes wiring from that edge:
+
+| Kubernetes coupling | Example | TOSCA edge | How the profile realizes it |
+|---|---|---|---|
+| **Label selector** | a `Service`/`Deployment` selects Pods via `spec.selector: {app: X}` | `Exposes` / `Controls` (→ `Workload`) | `selector` / `matchLabels` default to the target Pod's `metadata.labels` |
+| **Name reference** | a Pod names its `spec.serviceAccountName`; a resource its namespace | `RunsAs` (→ `Identity`); `ScopedBy` (→ `Scope`) | the name field defaults to the target's `metadata.name` |
+| **DNS / env var** | a service reaches a peer via `PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550` | `InteractsWith` (→ `Endpoint`) | the consuming Pod's container `env` is built from each peer's published address |
+
+The explicit edge is the single source of truth; the selector, the name, or the
+env var is *generated* from it. This is what makes the topology legible and
+checkable at design time — you state the graph instead of reconstructing it from
+matching strings.
+
+### Open question: where should application-level interaction live?
+
+The first two rows above are **resource-to-resource** coupling — a Kubernetes
+resource wired to another Kubernetes resource — and the `io.kubernetes` profile
+models them directly (`ScopedBy` / `RunsAs` / `Controls` / `Exposes`).
+
+The third row is different in kind. "Microservice A talks to microservice B" is a
+**system-view** relationship between *applications* (`InteractsWith` on an
+`Endpoint`), not between Kubernetes resources. Yet its Kubernetes realization —
+the peer's address injected into the consumer's container `env` — is authored on
+the *Pod*. To generate that `env`, the Pod needs an `InteractsWith` requirement to
+the peer's Service, so `{$get_property: [SELF, RELATIONSHIP, endpoint, TARGET,
+address]}` resolves. That forces a microservice-realization profile to **derive
+`k8s:Pod` and add an application-level `endpoint` requirement** — putting a
+system-view relationship on a device-view type, which the design guide cautions
+against.
+
+The pressure comes from two TOSCA facts:
+
+1. **Requirements are declared on node *types*, not added per node template** — so
+   the peer relationship can't just be attached in the substituting template; it
+   needs a derived type to carry it.
+2. **The substitution boundary hides the outer node's relationships** — the inner
+   Pod cannot see the abstract `MicroService`'s `endpoint` requirement, so the
+   interaction has to be re-expressed on a node *inside* the substitution.
+
+Options:
+
+- **A — extend the Kubernetes types** (the current approach). Put `endpoint` on a
+  derived `Pod`/`Service`. Works and keeps the topology explicit, but mixes
+  abstraction levels and makes every realization profile re-extend the base types.
+- **B — keep interaction purely at the `MicroService` level** and have the
+  substitution translate it into env vars *without* an `endpoint` requirement on
+  the Pod. Blocked today: a substituting template has no way to read the
+  substituted node's relationships and turn them into container `env`; the fallback
+  is passing peer addresses as plain inputs, which discards the topology edge.
+- **C — push the injection into the orchestrator.** Model the interaction only
+  between abstract `MicroService` nodes and have the engine inject the resolved
+  peer addresses during substitution. Cleanest layering, but needs engine support
+  that does not exist.
+
+The question generalizes beyond microservices: it recurs whenever a *system-view*
+relationship between abstract components must be realized as *configuration* on a
+lower-level resource (env vars, connection strings, credentials). Settling it —
+even on **A** as a pragmatic convention — would give a consistent answer instead
+of an ad-hoc one per profile.
+
 ## Managing Cluster-Wide Resources
 
 Some Kubernetes resources (e.g., Cluster Roles) are defined
