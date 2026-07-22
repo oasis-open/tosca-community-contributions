@@ -1,84 +1,61 @@
-# TOSCA Community — Proposed Agenda (2026-07-22)
+# TOSCA Community — Proposed Agenda (2026-07-29)
 
-**Status:** Draft agenda for 2026-07-22, following 2026-07-15
-**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/docs/prior-art.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
+**Status:** Draft agenda for 2026-07-29, following 2026-07-22
+**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/docs/prior-art.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [profile-naming](../profiles/community/tosca/docs/profile-naming.md) · [kubernetes-modeling](../profiles/community/tosca/docs/kubernetes-modeling.md) · [open-issues](open-issues.md)
 
-Follows up on the 2026-07-15 action items. Issue references point to
-[open-issues.md](open-issues.md); decision references to
-[decision-log.md](decision-log.md).
+Follows up on the 2026-07-22 action items. Issue references point to
+[open-issues.md](open-issues.md).
 
 ---
 
 ## 1. Action-item review — 10 min
-- **Core data types PR** (Roberto, *D9*) — new `community.tosca.core` types
-  (email, URL, FQDN, IPv4 with constraints); submitted? This **gates the `0.1`**
-  (see #2–3).
-- **Kubernetes consolidation** (Chris, *K6 / I21*) — manual
-  `technology.kubernetes` deleted, the auto-generated profile kept, README
-  relocated; the `microservice` example repointed to the kept profile.
-- **Abstract-profile properties** (Chris, *N8*) — platform connection properties
-  (management address, credential file, config/access file) added; ready to
-  review.
-- **`in_range` test cases** (Chris) — run for `in_range` / `in_range_strict`
-  including the new timestamp signature; results.
-- **Profile-organization discussion** (Chris, *I22*) — GitHub discussion started
-  (`community/tosca` vs `io.kubernetes`); any early input.
+- **Core data types** (Roberto, *D9*) — email, FQDN, and HTTP URL types **merged**
+  into `core`; the `0.1` gate is cleared (see #2).
+- **Kubernetes consolidation** (Chris, *K6 / I21 / I22*) — **done**: a single
+  Kubernetes resource profile, `io.kubernetes:1.35`; the `technology.k8s` and
+  hand-authored `technology.kubernetes` copies deleted; `technology/README.md`
+  points to the kept profile; the `microservice` example repointed. Confirm closed.
+- **Abstract-profile platform properties** (Chris, *N8*) — connection properties
+  (management address, credential file, config/access file) for how an
+  orchestrator reaches a platform; status.
+- **Tal's OpenAPI→TOSCA generator** (Roberto) — a submission location suggested;
+  is the PR in, and when do we review it (see #5)?
 
-## 2. Review Roberto's core data-types PR — 15 min · *D9* — **the `0.1` gate**
-- Walk through the proposed types (email, URL, FQDN, IPv4 + constraints) and
-  merge, so a standard data-type library is in `core` before the release.
-
-## 3. Cut the `0.1` release — 10 min · *R1 / R3 / R4 / R5 / I8*
-- Once the data types (D9) land, cut `0.1` = **`core` + the five `abstract.*`
-  profiles** (six files); the technology profiles are held (R5).
+## 2. Cut the `0.1` release — 15 min · *R1 / R3 / R4 / R5 / I8* — **the main item**
+- With the core data types merged (#1), cut `0.1` = **`core` + the five
+  `abstract.*` profiles**; the technology profiles are held (R5).
 - Push the `v0.1` tag → the workflow builds/signs and opens a draft → review +
-  publish.
+  publish. This gives the community a stable baseline to work from.
 
-## 4. Profile organization / naming — 10 min · *I22*
-- `community/tosca` vs reverse-DNS (`io.kubernetes`); team-designed profiles vs
-  broader community contributions. Walk the options + trade-offs in
-  [`profile-naming.md`](../profiles/community/tosca/docs/profile-naming.md); note the
-  duplicate Kubernetes copies (`io.kubernetes:3.0` vs
-  `community.tosca.technology.k8s:0.1`) and the `io.kubevirt`/`sh.helm`
-  dependents; steer toward a decision.
-- **Chair's preference:** keep the reverse-DNS **`io.kubernetes`** name (retire
-  the `community.tosca.technology.k8s` copy), and **version by the Kubernetes
-  distribution** used to generate it (e.g. `io.kubernetes:1.35`, not `:3.0`).
+## 3. Kubernetes profile testing & feedback — 10 min
+- First feedback from **Prachi and Jay** testing `io.kubernetes:1.35`; issues,
+  gaps, and what to fix before broader use.
 
-## 5. Component/Port modeling resolutions — 10 min · *I16 / I17*
-- Proposed resolutions are now drafted in `design-guide.md` and `core/README.md`:
-  - **Naming principle** — relationship names express *semantics* (intent), not
-    *mechanism* (`ConnectsTo`/`BindsTo` → intent-revealing names).
-  - **I16** — declare the capability↔relationship constraint in one place;
-    derive-vs-specialize rule.
-  - **I17** — formalized monitoring (observability capability + `DependsOn`);
-    security split into perimeter / credentials / identity-trust (`RegistersWith`).
-  - Category list made explicitly open-ended (adds provisioning, networking, routing).
-- Review and ratify, or send back for edits.
+## 4. Kubernetes application-level modeling — 10 min
+- Open design question in
+  [`kubernetes-modeling.md`](../profiles/community/tosca/docs/kubernetes-modeling.md):
+  where **application-level** (microservice-to-microservice) interaction should
+  live, given the substitution boundary and that requirements are declared on
+  types. Walk the options and gather direction.
 
-## 6. Kubernetes profile & modeling review — 10 min
-- **Profile:** `io.kubernetes` finished its v1.3→v2.0 conversion and was renamed
-  and versioned to `io.kubernetes:1.35` (see #4); the community copy at
-  `profiles/io/kubernetes/1.35` now imports `community.tosca.technology.base`
-  instead of the Ubicity profiles. Note the dangling `base:Kubernetes` /
-  `base:KubernetesCluster` — the `cluster` requirement needs those defined in
-  `technology.base`.
-- **Microservice example:** rebuilt on the generated k8s types (namespace-scoped
-  ServiceAccount, Pod, Deployment that controls the Pod, Service that exposes it);
-  currently blocked validating on the `IntOrString` gap (a `$function` value can't
-  satisfy an `IntOrString` field — only literals do).
-- **Design questions:** `docs/kubernetes-modeling.md` now documents the
-  Kubernetes-coupling → TOSCA-requirement mapping and the open question of where
-  application-level (microservice-to-microservice) interaction should live (the
-  abstraction-level tension). Walk it and gather direction.
+## 5. Tal's alternative Kubernetes generation — 5 min
+- Review Tal's separate automated OpenAPI-to-TOSCA approach and where it lands in
+  the repo; schedule a PR walkthrough in a future meeting. Keep room for multiple
+  modeling approaches.
+
+## 6. Component/Port modeling resolutions — 10 min · *I16 / I17*
+- Carry-over: ratify the drafted resolutions in `design-guide.md` /
+  `core/README.md` — intent-based relationship naming; where to declare the
+  capability↔relationship constraint; formalized monitoring (observability +
+  `DependsOn`) and security (perimeter / credentials / identity-trust).
 
 ## 7. Open items & AOB — 10 min
-- Single source of truth for shared types (*I1 / I15*); execution-location gap
-  (*I23*) and other errata (*I5, I7, I13, I14*); Windows checkout failure
-  (*I20*); contribution-load / second owners (*I11*); Tal's alternative
-  Kubernetes auto-generation (incorporate when ready).
+- OPAS / Margo end-to-end demo (container-based deployment to edge devices) —
+  schedule for a future meeting.
+- Single source of truth for shared types (*I1 / I15*); errata (*I5, I7, I13,
+  I14, I23*); Windows checkout failure (*I20*); contribution-load / second
+  owners (*I11*).
 
 ---
 
-**Decisions sought:** merge the core data types (#2); cut the `0.1` (#3);
-direction on profile organization (#4); ratify the Component/Port resolutions (#5).
+**Decisions sought:** cut the `0.1` (#2); ratify the Component/Port resolutions (#6).
