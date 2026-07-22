@@ -1,7 +1,9 @@
 # Profile Organization and Naming
 
-**Status:** Discussion draft (2026-07-21), for review at the 2026-07-22 TOSCA
-Community meeting — issue I22
+**Status:** Resolved at the 2026-07-22 TOSCA Community meeting — issue I22. The
+group ratified keeping `io.kubernetes` (reverse-DNS) and retiring the
+`community.tosca.technology.k8s` duplicate; that duplicate has now been deleted.
+The discussion below is retained as the rationale of record.
 **Audience:** TOSCA Community
 **Purpose:** Decide when profiles should use the `community.tosca.*` namespace
 versus reverse-DNS names (e.g. `io.kubernetes`), and clarify the boundary between
@@ -17,22 +19,25 @@ each applies.
 
 ## The concrete case that forces the question
 
-The auto-generated Kubernetes **resource** profile lives in the repository
+The auto-generated Kubernetes **resource** profile used to live in the repository
 **twice, under two different names**, from the same generated source:
 
 | Path | Advertised profile name | Scheme |
 |---|---|---|
 | `profiles/io/kubernetes/1.35` | `io.kubernetes:1.35` | reverse-DNS |
-| `profiles/community/tosca/technology/k8s` | `community.tosca.technology.k8s:0.1` | `community.tosca.*` |
+| `profiles/community/tosca/technology/k8s` (deleted) | `community.tosca.technology.k8s:0.1` | `community.tosca.*` |
 
 The `io.kubernetes` copy has since been renamed from `3.0` to `1.35` (versioned by
 the Kubernetes distribution it was generated from) and adapted to import the
 community base profiles rather than the Ubicity ones; its dependents were
-repointed. The duplication with `community.tosca.technology.k8s` still stands.
+repointed. Following the 2026-07-22 decision, the
+`community.tosca.technology.k8s` copy (and the older hand-authored
+`community.tosca.technology.kubernetes`) have been deleted, leaving
+`io.kubernetes:1.35` as the single Kubernetes resource profile.
 
 More broadly, the repo carries a `community.tosca.*` hierarchy (`core`,
-`abstract.*`, `technology.base` / `technology.k8s`) alongside reverse-DNS
-profiles (`io.kubernetes`, `io.kubevirt`, `sh.helm`).
+`abstract.*`, `technology.base`) alongside reverse-DNS profiles
+(`io.kubernetes`, `io.kubevirt`, `sh.helm`).
 
 **Two reasons this needs a decision, not just a preference:**
 
@@ -123,8 +128,9 @@ preference.)*
 
 ## Questions for the group
 
-1. **Naming:** keep `io.kubernetes` (reverse-DNS) and retire
-   `community.tosca.technology.k8s`? *(Chair's preference: yes.)*
+1. **Naming:** ~~keep `io.kubernetes` (reverse-DNS) and retire
+   `community.tosca.technology.k8s`?~~ **Decided 2026-07-22:** yes — kept
+   `io.kubernetes`, deleted the `community.tosca.technology.k8s` duplicate.
 2. **Versioning:** the Kubernetes-distribution version has been adopted
    (`io.kubernetes:1.35`). Open sub-question: how do we version post-processing /
    modeling changes that don't change the API version — a patch suffix

@@ -1,16 +1,17 @@
 # Modeling Kubernetes Services with TOSCA
 
-**Status:** Design rationale and open questions (2026-07-21) — carried over from
-the hand-authored Kubernetes profile README so it survives the profile's
-consolidation.
+**Status:** Design rationale and open questions — carried over from the
+hand-authored Kubernetes profile README so it survives the profile's
+consolidation (completed 2026-07-22).
 **Audience:** TOSCA Community
 **Purpose:** Capture *why* TOSCA is useful for Kubernetes, the objectives and
 design approaches for modeling Kubernetes services, how Kubernetes coupling maps
 onto TOSCA requirements, the cluster-wide-resource patterns, and the open
-questions — independent of any single Kubernetes profile. The auto-generated
-resource profile is `community.tosca.technology.k8s`; the hand-authored
-`community.tosca.technology.kubernetes` profile is slated for consolidation
-(governance issues K6 / I21).
+questions — independent of any single Kubernetes profile. The community's single
+Kubernetes resource profile is now the auto-generated `io.kubernetes:1.35`; the
+earlier `community.tosca.technology.k8s` and hand-authored
+`community.tosca.technology.kubernetes` copies were consolidated away (governance
+issues K6 / I21 / I22).
 
 **Related documents:** [README](../README.md) · [design-guide](design-guide.md) · [prior-art](prior-art.md) · [meeting-history](../../../../governance/meeting-history.md) · [open-issues](../../../../governance/open-issues.md)
 
