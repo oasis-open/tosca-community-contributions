@@ -5,11 +5,12 @@ the hand-authored Kubernetes profile README so it survives the profile's
 consolidation.
 **Audience:** TOSCA Community
 **Purpose:** Capture *why* TOSCA is useful for Kubernetes, the objectives and
-design approaches for modeling Kubernetes services, the open questions, and the
-cluster-wide-resource patterns — independent of any single Kubernetes profile.
-The auto-generated resource profile is `community.tosca.technology.k8s`; the
-hand-authored `community.tosca.technology.kubernetes` profile is slated for
-consolidation (governance issues K6 / I21).
+design approaches for modeling Kubernetes services, how Kubernetes coupling maps
+onto TOSCA requirements, the cluster-wide-resource patterns, and the open
+questions — independent of any single Kubernetes profile. The auto-generated
+resource profile is `community.tosca.technology.k8s`; the hand-authored
+`community.tosca.technology.kubernetes` profile is slated for consolidation
+(governance issues K6 / I21).
 
 **Related documents:** [README](../README.md) · [design-guide](design-guide.md) · [prior-art](prior-art.md) · [meeting-history](../../../../governance/meeting-history.md) · [open-issues](../../../../governance/open-issues.md)
 
@@ -33,7 +34,7 @@ cases:
 
 1. *Service Visualization*: TOSCA provides solution architects with a
    powerful tool for designing applications by visualizing
-   interactions between microservices, a critial feature for
+   interactions between microservices, a critical feature for
    designing complex applications.
 2. *Design-Time Validation*: Using TOSCA for modeling Kubernetes
    services provides the ability to validate topological relationships
@@ -83,7 +84,7 @@ the following two (seemingly competing) objectives:
    must support **top-down** service designs that abstract away
    non-essential details to maintain a clear focus on microservice
    interactions.
-2. On the other hand, TOSCA must also maintaining the ability to
+2. On the other hand, TOSCA must also maintain the ability to
    express low-level Kubernetes concepts and support **bottom-up**
    designs that align with Kubernetes resources, as losing this
    functionality could create obstacles for existing Kubernetes users.
@@ -149,41 +150,7 @@ Using this approach, all definitions required to deploy TOSCA services
 on Kubernetes are in one place, simplifying design and reducing
 tooling challenges.
 
-### Questions
-
-1. Service meshes can be added to any microservices-based
-   application. How do we represent in the TOSCA service template
-   whether the Kubernetes service needs a service mesh or not?
-   Different node types in the MicroServices profile? Different
-   `MicroService` node properties?
-2. Different types of service meshes can be added (e.g., Istio,
-   Linkerd, etc.). How do we represent which service mesh is used?
-   Different node types in the MicroServices profile? Different
-   `MicroService` node properties?
-3. Configuring network security and network policies requires a CNI
-   like Cillium. How do we represent which CNI is used? Is this
-   modeled as part of Platform node type?
-4. Do we need to define a standard architecture for applications to
-   avoid variability in configuring connectivity information? For
-   example, in the example manifest file for the Online Boutique, we
-   can figure out which services interact with which other services
-   based on the values of environment variables. Environment value
-   configurations are specific to the application and not understood
-   by Kubernetes, requiring custom mechanisms for TOSCA templates to
-   represent them. Do we need to come up with a *standard* approach
-   for representing this?
-5. What other common approaches are typically used for configuring
-   communication between microservices?
-6. Do we need to support dynamic behavior in service relationships.
-7. How does Nephio capture service relationships.
-
-## Application-Level Coupling and the Substitution Seam
-
-Kubernetes and TOSCA both express *coupling* between resources, but at different
-levels and by different means. Making the two meet cleanly is a recurring design
-question when realizing an abstract application as Kubernetes resources.
-
-### How Kubernetes coupling maps to TOSCA requirements
+## From Kubernetes Coupling to TOSCA Requirements
 
 Kubernetes couples resources through several *implicit* conventions — you infer
 "what is wired to what" by matching strings across separate manifests. TOSCA
@@ -201,59 +168,12 @@ env var is *generated* from it. This is what makes the topology legible and
 checkable at design time — you state the graph instead of reconstructing it from
 matching strings.
 
-### Open question: where should application-level interaction live?
-
-The first two rows above are **resource-to-resource** coupling — a Kubernetes
-resource wired to another Kubernetes resource — and the `io.kubernetes` profile
-models them directly (`ScopedBy` / `RunsAs` / `Controls` / `Exposes`).
-
-The third row is different in kind. "Microservice A talks to microservice B" is a
-**system-view** relationship between *applications* (`InteractsWith` on an
-`Endpoint`), not between Kubernetes resources. Yet its Kubernetes realization —
-the peer's address injected into the consumer's container `env` — is authored on
-the *Pod*. To generate that `env`, the Pod needs an `InteractsWith` requirement to
-the peer's Service, so `{$get_property: [SELF, RELATIONSHIP, endpoint, TARGET,
-address]}` resolves. That forces a microservice-realization profile to **derive
-`k8s:Pod` and add an application-level `endpoint` requirement** — putting a
-system-view relationship on a device-view type, which the design guide cautions
-against.
-
-The pressure comes from two TOSCA facts:
-
-1. **Requirements are declared on node *types*, not added per node template** — so
-   the peer relationship can't just be attached in the substituting template; it
-   needs a derived type to carry it.
-2. **The substitution boundary hides the outer node's relationships** — the inner
-   Pod cannot see the abstract `MicroService`'s `endpoint` requirement, so the
-   interaction has to be re-expressed on a node *inside* the substitution.
-
-Options:
-
-- **A — extend the Kubernetes types** (the current approach). Put `endpoint` on a
-  derived `Pod`/`Service`. Works and keeps the topology explicit, but mixes
-  abstraction levels and makes every realization profile re-extend the base types.
-- **B — keep interaction purely at the `MicroService` level** and have the
-  substitution translate it into env vars *without* an `endpoint` requirement on
-  the Pod. Blocked today: a substituting template has no way to read the
-  substituted node's relationships and turn them into container `env`; the fallback
-  is passing peer addresses as plain inputs, which discards the topology edge.
-- **C — push the injection into the orchestrator.** Model the interaction only
-  between abstract `MicroService` nodes and have the engine inject the resolved
-  peer addresses during substitution. Cleanest layering, but needs engine support
-  that does not exist.
-
-The question generalizes beyond microservices: it recurs whenever a *system-view*
-relationship between abstract components must be realized as *configuration* on a
-lower-level resource (env vars, connection strings, credentials). Settling it —
-even on **A** as a pragmatic convention — would give a consistent answer instead
-of an ad-hoc one per profile.
-
 ## Managing Cluster-Wide Resources
 
 Some Kubernetes resources (e.g., Cluster Roles) are defined
 cluster-wide and can be shared and accessed by all Kubernetes services
 deployed on the cluster. This section discusses how to model cluster-wide
-resources using TOSCA. 
+resources using TOSCA.
 Two potential methods are described:
 
 1. Create-if-not-exists
@@ -287,7 +207,7 @@ TOSCA service template. Cluster-wide resources would be handled as follows:
   templates that represent (shared) cluster-wide resources.
 
 - These node templates use the `count` keyword to specify the number
-  of node representations that need to be instatiated based on the
+  of node representations that need to be instantiated based on the
   template.
 
 - When a Kubernetes services needs a new cluster-wide resource, it
@@ -298,3 +218,83 @@ TOSCA service template. Cluster-wide resources would be handled as follows:
 
 The user's modeling needs should influence the approach chosen, and
 the TOSCA Kubernetes Profile should ideally support both approaches.
+
+## Open Questions
+
+### Microservice modeling
+
+1. Service meshes can be added to any microservices-based
+   application. How do we represent in the TOSCA service template
+   whether the Kubernetes service needs a service mesh or not?
+   Different node types in the MicroServices profile? Different
+   `MicroService` node properties?
+2. Different types of service meshes can be added (e.g., Istio,
+   Linkerd, etc.). How do we represent which service mesh is used?
+   Different node types in the MicroServices profile? Different
+   `MicroService` node properties?
+3. Configuring network security and network policies requires a CNI
+   like Cillium. How do we represent which CNI is used? Is this
+   modeled as part of Platform node type?
+4. Do we need to define a standard architecture for applications to
+   avoid variability in configuring connectivity information? For
+   example, in the example manifest file for the Online Boutique, we
+   can figure out which services interact with which other services
+   based on the values of environment variables. Environment value
+   configurations are specific to the application and not understood
+   by Kubernetes, requiring custom mechanisms for TOSCA templates to
+   represent them. Do we need to come up with a *standard* approach
+   for representing this?
+5. What other common approaches are typically used for configuring
+   communication between microservices?
+6. Do we need to support dynamic behavior in service relationships?
+7. How does Nephio capture service relationships?
+
+### Where application-level interaction should live
+
+Of the coupling kinds in
+[*From Kubernetes Coupling to TOSCA Requirements*](#from-kubernetes-coupling-to-tosca-requirements),
+the label-selector and name-reference rows are **resource-to-resource** coupling
+— a Kubernetes resource wired to another Kubernetes resource — and the
+`io.kubernetes` profile models them directly (`ScopedBy` / `RunsAs` / `Controls`
+/ `Exposes`).
+
+The DNS/env row is different in kind. "Microservice A talks to microservice B" is
+a **system-view** relationship between *applications* (`InteractsWith` on an
+`Endpoint`), not between Kubernetes resources. Yet its Kubernetes realization —
+the peer's address injected into the consumer's container `env` — is authored on
+the *Pod*. To generate that `env`, the Pod needs an `InteractsWith` requirement to
+the peer's Service, so `{$get_property: [SELF, RELATIONSHIP, endpoint, TARGET,
+address]}` resolves. That forces a microservice-realization profile to **derive
+`k8s:Pod` and add an application-level `endpoint` requirement** — putting a
+system-view relationship on a device-view type, which the design guide cautions
+against.
+
+The pressure comes from two TOSCA facts:
+
+1. **Requirements are declared on node *types*, not added per node template** — so
+   the peer relationship can't just be attached in the substituting template; it
+   needs a derived type to carry it.
+2. **The substitution boundary hides the outer node's relationships** — the inner
+   Pod cannot see the abstract `MicroService`'s `endpoint` requirement, so the
+   interaction has to be re-expressed on a node *inside* the substitution.
+
+Options:
+
+- **A — extend the Kubernetes types** (the current approach). Put `endpoint` on a
+  derived `Pod`/`Service`. Works and keeps the topology explicit, but mixes
+  abstraction levels and makes every realization profile re-extend the base types.
+- **B — keep interaction purely at the `MicroService` level** and have the
+  substitution translate it into env vars *without* an `endpoint` requirement on
+  the Pod. Blocked today: a substituting template has no way to read the
+  substituted node's relationships and turn them into container `env`; the fallback
+  is passing peer addresses as plain inputs, which discards the topology edge.
+- **C — push the injection into the orchestrator.** Model the interaction only
+  between abstract `MicroService` nodes and have the engine inject the resolved
+  peer addresses during substitution. Cleanest layering, but needs engine support
+  that does not exist.
+
+This question generalizes beyond microservices: it recurs whenever a *system-view*
+relationship between abstract components must be realized as *configuration* on a
+lower-level resource (env vars, connection strings, credentials). Settling it —
+even on **A** as a pragmatic convention — would give a consistent answer instead
+of an ad-hoc one per profile.
