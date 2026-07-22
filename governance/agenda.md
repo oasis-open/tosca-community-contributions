@@ -56,7 +56,23 @@ Follows up on the 2026-07-15 action items. Issue references point to
   - Category list made explicitly open-ended (adds provisioning, networking, routing).
 - Review and ratify, or send back for edits.
 
-## 6. Open items & AOB — 10 min
+## 6. Kubernetes profile & modeling review — 10 min
+- **Profile:** `io.kubernetes` finished its v1.3→v2.0 conversion and was renamed
+  and versioned to `io.kubernetes:1.35` (see #4); the community copy at
+  `profiles/io/kubernetes/1.35` now imports `community.tosca.technology.base`
+  instead of the Ubicity profiles. Note the dangling `base:Kubernetes` /
+  `base:KubernetesCluster` — the `cluster` requirement needs those defined in
+  `technology.base`.
+- **Microservice example:** rebuilt on the generated k8s types (namespace-scoped
+  ServiceAccount, Pod, Deployment that controls the Pod, Service that exposes it);
+  currently blocked validating on the `IntOrString` gap (a `$function` value can't
+  satisfy an `IntOrString` field — only literals do).
+- **Design questions:** `docs/kubernetes-modeling.md` now documents the
+  Kubernetes-coupling → TOSCA-requirement mapping and the open question of where
+  application-level (microservice-to-microservice) interaction should live (the
+  abstraction-level tension). Walk it and gather direction.
+
+## 7. Open items & AOB — 10 min
 - Single source of truth for shared types (*I1 / I15*); execution-location gap
   (*I23*) and other errata (*I5, I7, I13, I14*); Windows checkout failure
   (*I20*); contribution-load / second owners (*I11*); Tal's alternative

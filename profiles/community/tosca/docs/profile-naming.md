@@ -22,8 +22,13 @@ The auto-generated Kubernetes **resource** profile lives in the repository
 
 | Path | Advertised profile name | Scheme |
 |---|---|---|
-| `profiles/io/kubernetes/3.0` | `io.kubernetes:3.0` | reverse-DNS |
+| `profiles/io/kubernetes/1.35` | `io.kubernetes:1.35` | reverse-DNS |
 | `profiles/community/tosca/technology/k8s` | `community.tosca.technology.k8s:0.1` | `community.tosca.*` |
+
+The `io.kubernetes` copy has since been renamed from `3.0` to `1.35` (versioned by
+the Kubernetes distribution it was generated from) and adapted to import the
+community base profiles rather than the Ubicity ones; its dependents were
+repointed. The duplication with `community.tosca.technology.k8s` still stands.
 
 More broadly, the repo carries a `community.tosca.*` hierarchy (`core`,
 `abstract.*`, `technology.base` / `technology.k8s`) alongside reverse-DNS
@@ -33,12 +38,12 @@ profiles (`io.kubernetes`, `io.kubevirt`, `sh.helm`).
 
 1. **Nominal typing makes the duplicate a hazard.** Two profiles with identical
    content but different names define *distinct, incompatible* types. A template
-   importing `io.kubernetes:3.0` gets different types than one importing
+   importing `io.kubernetes:1.35` gets different types than one importing
    `community.tosca.technology.k8s:0.1` — they will not interoperate. The
    duplicate should collapse to a single name.
 2. **A name already has dependents.** `profiles/io/kubevirt/2.5` and
-   `profiles/sh/helm/3.0` both import `io.kubernetes:3.0`. Whichever name we drop,
-   its importers must be repointed.
+   `profiles/sh/helm/3.0` import the profile (now repointed to
+   `io.kubernetes:1.35`). Whichever name the group keeps, importers follow it.
 
 ## Option A — `community.tosca.*` for everything
 
@@ -120,10 +125,10 @@ preference.)*
 
 1. **Naming:** keep `io.kubernetes` (reverse-DNS) and retire
    `community.tosca.technology.k8s`? *(Chair's preference: yes.)*
-2. **Versioning:** adopt the Kubernetes-distribution version as the profile
-   version (e.g. `io.kubernetes:1.35`)? And how do we version post-processing /
+2. **Versioning:** the Kubernetes-distribution version has been adopted
+   (`io.kubernetes:1.35`). Open sub-question: how do we version post-processing /
    modeling changes that don't change the API version — a patch suffix
    (`1.35.1`), or a separate track?
-3. **Repoint:** `io.kubevirt` and `sh.helm` (and any service templates) import
-   `io.kubernetes:3.0` today — who owns updating them to the chosen name and
-   version?
+3. **Repoint:** `io.kubevirt` and `sh.helm` have been repointed to
+   `io.kubernetes:1.35`; any service templates that import it still need updating
+   once the name is settled.
