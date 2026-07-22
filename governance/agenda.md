@@ -1,7 +1,7 @@
 # TOSCA Community — Proposed Agenda (2026-07-22)
 
 **Status:** Draft agenda for 2026-07-22, following 2026-07-15
-**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/prior-art.md) · [design-guide](../profiles/community/tosca/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
+**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/docs/prior-art.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
 
 Follows up on the 2026-07-15 action items. Issue references point to
 [open-issues.md](open-issues.md); decision references to
@@ -36,8 +36,14 @@ Follows up on the 2026-07-15 action items. Issue references point to
 
 ## 4. Profile organization / naming — 10 min · *I22*
 - `community/tosca` vs reverse-DNS (`io.kubernetes`); team-designed profiles vs
-  broader community contributions. Readout from the GitHub discussion; steer
-  toward a decision.
+  broader community contributions. Walk the options + trade-offs in
+  [`profile-naming.md`](../profiles/community/tosca/docs/profile-naming.md); note the
+  duplicate Kubernetes copies (`io.kubernetes:3.0` vs
+  `community.tosca.technology.k8s:0.1`) and the `io.kubevirt`/`sh.helm`
+  dependents; steer toward a decision.
+- **Chair's preference:** keep the reverse-DNS **`io.kubernetes`** name (retire
+  the `community.tosca.technology.k8s` copy), and **version by the Kubernetes
+  distribution** used to generate it (e.g. `io.kubernetes:1.35`, not `:3.0`).
 
 ## 5. Component/Port modeling resolutions — 10 min · *I16 / I17*
 - Proposed resolutions are now drafted in `design-guide.md` and `core/README.md`:
@@ -50,7 +56,23 @@ Follows up on the 2026-07-15 action items. Issue references point to
   - Category list made explicitly open-ended (adds provisioning, networking, routing).
 - Review and ratify, or send back for edits.
 
-## 6. Open items & AOB — 10 min
+## 6. Kubernetes profile & modeling review — 10 min
+- **Profile:** `io.kubernetes` finished its v1.3→v2.0 conversion and was renamed
+  and versioned to `io.kubernetes:1.35` (see #4); the community copy at
+  `profiles/io/kubernetes/1.35` now imports `community.tosca.technology.base`
+  instead of the Ubicity profiles. Note the dangling `base:Kubernetes` /
+  `base:KubernetesCluster` — the `cluster` requirement needs those defined in
+  `technology.base`.
+- **Microservice example:** rebuilt on the generated k8s types (namespace-scoped
+  ServiceAccount, Pod, Deployment that controls the Pod, Service that exposes it);
+  currently blocked validating on the `IntOrString` gap (a `$function` value can't
+  satisfy an `IntOrString` field — only literals do).
+- **Design questions:** `docs/kubernetes-modeling.md` now documents the
+  Kubernetes-coupling → TOSCA-requirement mapping and the open question of where
+  application-level (microservice-to-microservice) interaction should live (the
+  abstraction-level tension). Walk it and gather direction.
+
+## 7. Open items & AOB — 10 min
 - Single source of truth for shared types (*I1 / I15*); execution-location gap
   (*I23*) and other errata (*I5, I7, I13, I14*); Windows checkout failure
   (*I20*); contribution-load / second owners (*I11*); Tal's alternative

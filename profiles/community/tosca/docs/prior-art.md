@@ -1,6 +1,6 @@
 # Inventory of TOSCA Types
 
-**Related documents:** [README](README.md) · [design-guide](design-guide.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [design-guide](design-guide.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 TOSCA Community Profiles will be based on TOSCA type definitions that
 have been created in the context of various TOSCA implementation
@@ -71,7 +71,7 @@ respective YAML specification. This model can be fed into the EDMM
 Transformation and Deployment Framework.
 
 TOSCA v2.0 versions of the node types defined by EDMM can be found in
-[edmm.yaml](edmm.yaml). They are organized in the following node type
+[edmm.yaml](../../edmm.yaml). They are organized in the following node type
 hiearchy:
 ```mermaid
 classDiagram
@@ -105,7 +105,7 @@ classDiagram
 OpenTOSCA defines common TOSCA types for VMs, cloud providers, and
 runtimes that are intended to be consumed by the OpenTOSCA Container.
 TOSCA v2.0 versions of the node types defined by OpenTOSCA can be
-found in [open-tosca.yaml](open-tosca.yaml). They are organized in the
+found in [open-tosca.yaml](../../open-tosca.yaml). They are organized in the
 following node type hiearchy:
 
 ```mermaid

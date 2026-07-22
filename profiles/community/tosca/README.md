@@ -1,6 +1,6 @@
 # TOSCA Community Profiles
 
-**Related documents:** [design-guide](design-guide.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
+**Related documents:** [design-guide](docs/design-guide.md) · [prior-art](docs/prior-art.md) · [abstract-profile-proposed-changes](docs/abstract-profile-proposed-changes.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
 
 This directory contains TOSCA profiles that are created by the TOSCA
 Community&mdash;an informal group of TOSCA implementors and TOSCA
@@ -12,7 +12,7 @@ use `community.tosca` as their top-level profile name.
 
 The goal for the TOSCA Community profiles is to combine *best of
 breed* type definitions created by various [TOSCA
-projects](prior-art.md) over the years. Most of these projects have
+projects](docs/prior-art.md) over the years. Most of these projects have
 used the TOSCA Simple Profile in YAML v1.3 type definitions as a
 starting point and have extended these definitions to satisfy
 project-specific objectives. As a result, it is likely that there are
@@ -32,18 +32,18 @@ The TOSCA Community profiles are intended to harmonize these various
 profiles while at the same time allowing sufficient variability to
 accommodate these differences. With these goals in mind, the TOSCA
 Community follows the guidelines described in the [design
-guide](design-guide.md).
+guide](docs/design-guide.md).
 
 ## Documents in this directory
 
-- **[design-guide.md](design-guide.md)** &mdash; the modeling
+- **[design-guide.md](docs/design-guide.md)** &mdash; the modeling
   methodology (the Model Continuum and its abstraction levels,
   translating between levels, and deploying abstract services) together
   with the TOSCA Community design patterns (the Component/Port pattern).
-- **[prior-art.md](prior-art.md)** &mdash; a survey of existing TOSCA
+- **[prior-art.md](docs/prior-art.md)** &mdash; a survey of existing TOSCA
   type definitions from other projects, gathered as input for
   harmonization.
-- **[abstract-profile-proposed-changes.md](abstract-profile-proposed-changes.md)**
+- **[abstract-profile-proposed-changes.md](docs/abstract-profile-proposed-changes.md)**
   &mdash; a specific proposal to extend the abstract platform and data
   profiles (management address, credentials, and related issues).
 - **[governance/](../../../governance/)** &mdash; community-process documents:
@@ -55,5 +55,5 @@ guide](design-guide.md).
 
 The profiles themselves live in subdirectories of this directory (for
 example the `core` profile and the `abstract` profiles). See the
-[design guide](design-guide.md) for how these profiles map onto the
+[design guide](docs/design-guide.md) for how these profiles map onto the
 levels of the model continuum.

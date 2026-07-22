@@ -12,7 +12,7 @@ imports:
     namespace: ubct
   - profile: com.ubicity.kubernetes:2.5
     namespace: kube
-  - profile: io.kubernetes:3.0
+  - profile: io.kubernetes:1.35
     namespace: k8s
 
 artifact_types:

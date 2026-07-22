@@ -1,6 +1,6 @@
 # TOSCA Community Profile Design Guide
 
-**Related documents:** [README](README.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 This guide describes the modeling methodology and design patterns the
 TOSCA Community uses when developing community profiles: the Model
@@ -30,7 +30,7 @@ continuum* rather than *policy continuum*.
 The model continuum recommends five different levels of abstraction
 as shown in the following picture:
 
-![Model Continuum](images/model-continuum.png)
+![Model Continuum](../images/model-continuum.png)
 
 - **Business View**: describes services in terms of business goals. It
   models services as products that are available to customers.
@@ -120,7 +120,7 @@ and capability types&mdash;are organized in the
 development of abstract service templates as shown in the following
 figure:
 
-![Generic System View Service Template](images/generic-template.png)
+![Generic System View Service Template](../images/generic-template.png)
 
 ## Component-Specific System View Profiles
 
@@ -135,7 +135,7 @@ Kubernetes clusters or on servers provisioned on IaaS platforms, etc.
 To this end, the TOSCA Community defines four additional System View
 profiles as shown in the following figure:
 
-![System View Profiles](images/system-view-profiles.png)
+![System View Profiles](../images/system-view-profiles.png)
 
 Each of these profiles defines derived node types for one of the four
 base node types defined in the base profile. These profiles can then
@@ -143,7 +143,7 @@ be used to define abstract TOSCA service templates that define specific
 applications or services. The following figure shown an example of
 such an abstract service template:
 
-![Abstract Service Template](images/abstract-template.png)
+![Abstract Service Template](../images/abstract-template.png)
 
 ## Translating Between Levels of Abstraction
 
@@ -159,7 +159,7 @@ Using the derivation approach, base node types define abstract
 entities. Derived types provide concrete implementations for those
 abstract definitions. This approach is shown in the following figure:
 
-![Derivation](images/derivation.png)
+![Derivation](../images/derivation.png)
 
 ### Substitution
 
@@ -168,7 +168,7 @@ interface, a *facade* if you will. Substituting templates provide
 concrete implementations for the abstract facade. This approach is
 shown in the following figure:
 
-![Substitution](images/substitution.png)
+![Substitution](../images/substitution.png)
 
 ### Translation Best Practices
 
@@ -178,7 +178,7 @@ We recommend using *substitution mapping* to tranlate from the system
 view level of abstraction to the administrator view level of
 abstraction, as shown in the following figure:
 
-![Translate system view to administrator view](images/system-to-administrator.png)
+![Translate system view to administrator view](../images/system-to-administrator.png)
 
 Note that this recommendation does not prohibit the use of
 *inheritance* to further refine types defined in *system view*
@@ -193,7 +193,7 @@ We recommend using *derivation* to map from the administrator view
 level of abstraction to the device view level of abstraction, as shown
 in the following figure:
 
-![Translate administrator view to device view](images/administrator-to-device.png)
+![Translate administrator view to device view](../images/administrator-to-device.png)
 
 #### Translating Device View to Instance View
 
@@ -201,7 +201,7 @@ Derivation could be used again to translate from the device view level
 of abstraction to the instance view level of abstraction, as shown in
 the following figure.
 
-![Translate device view to instance view](images/device-to-instance.png)
+![Translate device view to instance view](../images/device-to-instance.png)
 
 This figure suggests that different derived classes could add
 different types of artifacts that can be used as interface operation
@@ -245,7 +245,7 @@ not have any constructs to support such dynamic behavior.
 The approach recommended in this section has resulted in a set of
 profiles as shown in the following figure:
 
-![TOSCA Community Profiles Organization](images/profile-organization.png)
+![TOSCA Community Profiles Organization](../images/profile-organization.png)
 
 The profiles on the right are *Administrator View* and *Device View*
 profiles, where *Device View* node types derive from node types
@@ -257,6 +257,11 @@ AWS, Azure, etc.
 
 The *Core* profile defines types, repositories, functions, etc. that
 are shared by profiles at different levels of abstraction.
+
+> The *naming* convention for these profiles — the `community.tosca.*`
+> namespace versus reverse-DNS names such as `io.kubernetes` — is an open
+> question tracked as issue I22 and written up in
+> [profile-naming.md](profile-naming.md).
 
 ## Deploying Abstract Services
 
@@ -284,7 +289,7 @@ The following shows a hypothetical example of such an abstract service
 template that defines a simple web application that operates on data
 stored in a relational database:
 
-![Technology Independent Service Design](images/service-design.png)
+![Technology Independent Service Design](../images/service-design.png)
 
 In this example, the `host` requirements of the application and data
 node templates are left *dangling*. These requirements need to be
@@ -306,7 +311,7 @@ following:
 The following shows a representation of the platforms available for a
 specific customer. 
 
-![Available Platforms](images/platforms.png)
+![Available Platforms](../images/platforms.png)
 
 ### Make Placement Decisions
 
@@ -318,7 +323,7 @@ be used to narrow down the set of candidate target platforms. The
 following figure shows a node filter that drives placement for the
 `application` node in the abstract service template.
 
-![Placement Decisions](images/placement.png)
+![Placement Decisions](../images/placement.png)
 
 ### Placement Drives Substitution
 
@@ -337,28 +342,28 @@ templates.
 The following figure shows an example where the application node in
 the abstract service is deployed on a Kubernetes cluster.
 
-![Placement on Kubernetes](images/placement-k8s.png)
+![Placement on Kubernetes](../images/placement-k8s.png)
 
 This information is then used to substitute the abstract application
 node with substituting templates that implement this node by deploying
 Kubernetes resources. TOSCA type definitions from the TOSCA Kubernetes
 Profile are used for the templates in the substituting service:
 
-![Substitution for Kubernetes](images/substitution-k8s.png)
+![Substitution for Kubernetes](../images/substitution-k8s.png)
 
 #### Substitute for Docker
 
 The following figure shows an alternative deployment on a Docker
 engine:
 
-![Placement on Docker Engine](images/placement-docker.png)
+![Placement on Docker Engine](../images/placement-docker.png)
 
 In this scenario, the abstract application node is substituted using
 templates that implement this nodeq by deploying the application
 directly using Docker. TOSCA type definitions from the TOSCA Docker
 Profile are used for the templates in the substituting service:
 
-![Substitution for Docker](images/substitution-docker.png)
+![Substitution for Docker](../images/substitution-docker.png)
 
 
 ---
@@ -395,7 +400,7 @@ the [TMF Open Digital Architecture](https://www.tmforum.org/oda/), and
 other modeling efforts that use a similar approach. These standard
 categories of functionality are shown in the following picture:
 
-![Component/Port Pattern](images/component-port.png?raw=true)
+![Component/Port Pattern](../images/component-port.png?raw=true)
 
 - **Runtime environment**: most if not all TOSCA nodes are contained
   by (*hosted on*) another node and their lifecycle is determined by

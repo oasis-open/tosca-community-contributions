@@ -2,7 +2,7 @@
 
 **Status:** Working summary, maintained by the chair
 **Scope:** Synthesis of the weekly TOSCA Community meeting summaries
-**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/prior-art.md) · [design-guide](../profiles/community/tosca/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/abstract-profile-proposed-changes.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
+**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/docs/prior-art.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
 
 ---
 
@@ -157,6 +157,6 @@ service templates.
   than language changes (with errata handled separately).
 - The **abstract-profile credential/mgmt-address work** that culminated at M38 is
   documented in detail in
-  [abstract-profile-proposed-changes.md](../profiles/community/tosca/abstract-profile-proposed-changes.md).
+  [abstract-profile-proposed-changes.md](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md).
 - Process observations (e.g. contribution-load distribution) are tracked as
   action items in [open-issues.md](open-issues.md).

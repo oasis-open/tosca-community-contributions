@@ -7,7 +7,7 @@ TOSCA Community meeting (pending review by Roberto)
 abstract profiles, together with the problems uncovered while prototyping them
 and the decisions reached during community discussion.
 
-**Related documents:** [README](README.md) · [prior-art](prior-art.md) · [design-guide](design-guide.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [design-guide](design-guide.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 ---
 
