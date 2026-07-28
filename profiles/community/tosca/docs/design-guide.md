@@ -439,21 +439,36 @@ categories of functionality are shown in the following picture:
   > pattern that was discussed in the TOSCA TC but never written down.
 
 - **Security**: securing access to a node is not one concern but
-  several, each modeled with its own capability/relationship pair:
+  several, each modeled with its own capability/relationship pair. Note in
+  particular that *authentication* (proving **who** a consumer is) and
+  *authorization* (**what** that consumer may do) are distinct concerns and
+  should not be conflated, even though a bearer credential often fuses them:
   - *Perimeter protection* — a node exposes a capability indicating it
     can be fronted by a security control (firewall, gateway); the
-    protected node declares a requirement targeting it.
-  - *Credentials / authorization* — a node exposes a capability
-    representing credentials it can be accessed with; consumers declare
-    an authorization requirement against it.
+    protected node declares a requirement targeting it. (A coarse,
+    network-layer authorization boundary.)
+  - *Authentication / credentials* — a node exposes a capability
+    representing the credential(s) by which a consumer **proves its
+    identity** to access it; the consumer declares a requirement that it
+    is authenticated using that credential. This establishes *who* the
+    consumer is, not *what* it may do.
+  - *Authorization* — what an authenticated principal is **permitted to
+    do**. A credential proves identity; authorization is the policy
+    applied to that identity. Today this is usually *coarse* — holding a
+    bearer credential grants access, and perimeter controls gate at the
+    network layer — so it rides on the credential and perimeter patterns.
+    *Fine-grained* authorization (roles / scoped permissions modeled as
+    their own capabilities and requirements, so that "identity X may do A
+    but not B" is expressible) is a further, less-developed sub-pattern.
   - *Identity / registration / trust* — a node (a registry or trust
     store) exposes a registration capability; devices and services
     declare a *registration requirement* (e.g. `RegistersWith`) so that
     their signed requests can later be verified by relying parties.
 
   > **Proposed resolution for issue I17.** Replaces "this pattern needs
-  > further work" by splitting security into perimeter, credentials, and
-  > identity/trust sub-patterns.
+  > further work" by splitting security into perimeter, authentication,
+  > authorization, and identity/trust sub-patterns — keeping authentication
+  > and authorization distinct rather than fused under "credentials."
 
 **The category list is open-ended.** The categories above are the
 *common* ones, not an exhaustive set. Other recurring cross-cutting
