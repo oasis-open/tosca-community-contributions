@@ -390,6 +390,35 @@ Intent-revealing names (`Monitors`, `ManagedBy`, `RegistersWith`,
 `BindsTo`, `LinksTo`). This keeps service templates readable: the reader
 should understand *why* two nodes are related from the type name alone.
 
+**Data placement.** A port is not only the structural touch point between
+two components; it is where a component's *exposed contract* lives. The
+properties and attributes a *consumer* reads across a binding — the
+coordinates it needs to use the exposed functionality — belong on the
+**capability**, not on the node. State that is internal to how the
+component is realized or deployed stays on the node.
+
+Decide by asking: *does a bound consumer read this value?* If a node bound
+through a requirement reads it (through the capability), it is part of the
+exposed contract and belongs on the capability; if only the component's own
+operations use it, it is realization detail and stays on the node.
+
+This is what lets the Component/Port pattern support substitution. A
+consumer that reads the contract from the capability (using the TOSCA Path
+`CAPABILITY` step, e.g. `[SELF, RELATIONSHIP, <requirement>, CAPABILITY,
+<attribute>]`) depends on the *capability type*, not on the node type behind
+it. Any node that advertises the capability — a different realization, or a
+substituting service template — then satisfies the consumer unchanged. Put
+the contract on the port and the implementation behind it becomes swappable;
+leave it on the node and every consumer is coupled to that node type.
+
+For example, a certificate authority exposes its issuing endpoint, trust
+root, and enrolment credential on a *certification* capability rather than
+on the (deployment-specific) CA node, so an enrolling node works against any
+CA realization; an OCI registry exposes its endpoint, scheme, TLS trust
+anchor, and deposit credential on its *registry* capability, so a publisher
+pushes without knowing whether the registry is zot, Harbor, or a hosted
+service.
+
 The Component/Port pattern defines *common* categories of
 functionality that are typically exposed by all components. It then
 attempts to define *common* capability types and *common* relationship
