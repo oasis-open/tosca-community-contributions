@@ -428,6 +428,20 @@ accumulating every realization's fields. This is the same derive-to-specialize
 discipline the pattern applies to type *naming*, now applied to the contract's
 *data*: enrich the base for what is common, derive a capability for what is not.
 
+**Secrets are references, not values.** Related to data placement, but
+broader: a component's model — its properties and attributes, and the inputs
+and outputs that flow through them — must carry *references* to secret
+material, never the material itself. A password, token, or private key belongs
+in a vault or a mounted file on the executing host; the model carries only a
+**path or name** the runtime resolves there. A secret placed in a property, an
+attribute, or an inputs file leaks: inputs are often committed to source
+control, and attributes surface in deployed-model state where any consumer can
+read them back. Where a secret's *value* originates is a separate choice — an
+operator may supply it out of band (a reference to an existing vault entry),
+or, when the orchestrator controls both ends of a channel, an operation may
+generate it directly into a vault and hand back only the path. Either way the
+model sees a reference; the value never becomes a modeled value.
+
 The Component/Port pattern defines *common* categories of
 functionality that are typically exposed by all components. It then
 attempts to define *common* capability types and *common* relationship
