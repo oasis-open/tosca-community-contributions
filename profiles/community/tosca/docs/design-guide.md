@@ -419,6 +419,15 @@ anchor, and deposit credential on its *registry* capability, so a publisher
 pushes without knowing whether the registry is zot, Harbor, or a hosted
 service.
 
+When a base capability has several realizations, a second question follows:
+*which* capability carries a given value? Decide by whether it is universal or
+realization-specific. A contract **every** realization exposes belongs on the
+**base capability**; a value **specific to one** realization belongs on a
+**capability derived from** that base — so realizations differ without the base
+accumulating every realization's fields. This is the same derive-to-specialize
+discipline the pattern applies to type *naming*, now applied to the contract's
+*data*: enrich the base for what is common, derive a capability for what is not.
+
 The Component/Port pattern defines *common* categories of
 functionality that are typically exposed by all components. It then
 attempts to define *common* capability types and *common* relationship
