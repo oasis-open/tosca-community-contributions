@@ -304,11 +304,28 @@ Where consumers bind a port rather than a node — see the [Component/Port
 Pattern](#componentport-pattern) below — the technology-neutral concept
 is already expressed by the capability that the port advertises, and the
 node type only ever needs to be the Device View realization, named for
-its product. This is what makes an intermediate abstract node type
-unnecessary. It also avoids a modeling problem that has no clean
-solution: because TOSCA node types are singly inherited, a concrete
-product type generally cannot derive both from a technology-neutral
-abstraction and from the type that represents how it is realized.
+its product.
+
+This is what makes an intermediate abstract node type unnecessary, and
+the alternative is not merely redundant but unbuildable. Suppose the
+technology-neutral concept were modeled as a node type at the
+Administrator View row. A Device View product type would then reach it
+by *derivation*, following the recommendation in [Translating
+Administrator View to Device
+View](#translating-administrator-view-to-device-view) above. But that
+same product type must also derive from the type that represents how it
+is realized. That is one `derived_from` and two required parents, and
+TOSCA node types are singly inherited. Expressing the neutral concept as
+a capability avoids the contradiction entirely, because a port is
+*bound* rather than *inherited*, and binding carries no such limit.
+
+This is a specific instance of a more general tension already noted in
+[Translating Device View to Instance
+View](#translating-device-view-to-instance-view) above: where derivation
+is the only mechanism available for crossing a boundary, every
+independent axis of variation has to be expressed as another derived
+type. Capabilities relieve that pressure wherever what the consumer
+needs is a contract rather than an ancestor.
 
 ## Deploying Abstract Services
 
