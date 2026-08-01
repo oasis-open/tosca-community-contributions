@@ -263,6 +263,53 @@ are shared by profiles at different levels of abstraction.
 > question tracked as issue I22 and written up in
 > [profile-naming.md](profile-naming.md).
 
+### Two Dimensions Determine Where a Type Belongs
+
+The level of abstraction is not the only thing that decides which
+profile a node type belongs in. Profile organization is governed by two
+*independent* dimensions, and a type must be located in both before a
+home can be chosen for it.
+
+The first dimension is the *model continuum* described above. It runs
+vertically: Administrator View profiles define types that are specific
+to a *technology*, and Device View profiles refine them into types that
+are specific to a *product* or *vendor*.
+
+The second dimension is already visible in the System View profile set,
+which separates *platform* types from *application* types, alongside
+base, data, and network types. The section on [decoupling applications
+and data from platforms](#decouple-applications-and-data-from-platforms)
+below applies this separation to the design of abstract service
+templates; the same separation applies to the organization of the
+profiles themselves.
+
+Taken together, the two dimensions produce four categories:
+
+|                        | **Platform**                                              | **Application**                        |
+| ---------------------- | --------------------------------------------------------- | -------------------------------------- |
+| **Administrator View** | a Kubernetes cluster; a container runtime; an OCI registry | a certificate authority; an image registry |
+| **Device View**        | k3s, k0s, minikube, kubeadm; containerd, Docker Engine     | step-ca; zot; Harbor                   |
+
+A type that appears to belong in two of these categories at once is not
+a single type. A node type *named* for a technology-neutral role while
+its properties describe one specific product spans the Administrator
+and Device rows simultaneously, and no profile can hold it correctly.
+The remedy is to rename the type for the product it actually models, or
+to separate it into two types, rather than to select a compromise
+profile for it.
+
+In practice the Administrator View cell of the application column is
+frequently filled by a *capability type* rather than by a node type.
+Where consumers bind a port rather than a node — see the [Component/Port
+Pattern](#componentport-pattern) below — the technology-neutral concept
+is already expressed by the capability that the port advertises, and the
+node type only ever needs to be the Device View realization, named for
+its product. This is what makes an intermediate abstract node type
+unnecessary. It also avoids a modeling problem that has no clean
+solution: because TOSCA node types are singly inherited, a concrete
+product type generally cannot derive both from a technology-neutral
+abstraction and from the type that represents how it is realized.
+
 ## Deploying Abstract Services
 
 This section describes the process that could be implemented by TOSCA
