@@ -270,20 +270,30 @@ profile a node type belongs in. Profile organization is governed by two
 *independent* dimensions, and a type must be located in both before a
 home can be chosen for it.
 
-The first dimension is the *model continuum* described above. It runs
-vertically: Administrator View profiles define types that are specific
-to a *technology*, and Device View profiles refine them into types that
-are specific to a *product* or *vendor*.
+Both dimensions are already present in the figure above. The first is
+the *model continuum*, which runs vertically: the figure labels System
+View profiles *technology and vendor independent*, Administrator View
+profiles *technology specific*, and Device View profiles *vendor
+specific*. The second runs horizontally, and appears in the figure as
+the decomposition of the System View level into separate Platform,
+Application, Data, and Network profiles. The section on [decoupling
+applications and data from platforms](#decouple-applications-and-data-from-platforms)
+below applies that same separation to the design of abstract service
+templates.
 
-The second dimension is already visible in the System View profile set,
-which separates *platform* types from *application* types, alongside
-base, data, and network types. The section on [decoupling applications
-and data from platforms](#decouple-applications-and-data-from-platforms)
-below applies this separation to the design of abstract service
-templates; the same separation applies to the organization of the
-profiles themselves.
+What the figure does not yet show is the two dimensions *crossed below
+the System View level*. Its Administrator View row contains IaaS,
+Kubernetes, and Docker profiles, and its Device View row contains AWS,
+OpenStack, and Proxmox profiles — all of them platform profiles. The
+application, data, and network columns have no Administrator View or
+Device View counterparts in the figure, yet the reasoning that
+justifies them at the System View level applies unchanged further down:
+a certificate authority is a technology-specific concept in the same
+way a Kubernetes cluster is, and a particular certificate authority
+implementation is vendor-specific in the same way AWS is.
 
-Taken together, the two dimensions produce four categories:
+Taken together, the two dimensions therefore produce four categories
+rather than one column of three:
 
 |                        | **Platform**                                              | **Application**                        |
 | ---------------------- | --------------------------------------------------------- | -------------------------------------- |
@@ -326,6 +336,12 @@ is the only mechanism available for crossing a boundary, every
 independent axis of variation has to be expressed as another derived
 type. Capabilities relieve that pressure wherever what the consumer
 needs is a contract rather than an ancestor.
+
+> The profile organization figure above depicts the horizontal dimension
+> only at the System View level. Extending it to show application (and
+> data, and network) profiles at the Administrator View and Device View
+> levels would make the four categories described here visible in the
+> figure itself.
 
 ## Deploying Abstract Services
 
