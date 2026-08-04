@@ -87,3 +87,17 @@ capability types should be slotted into one of those categories rather
 than introduced ad hoc, so the type library stays a catalog rather than
 a loose collection.
 
+## Functions
+
+This profile defines custom functions whose implementations are Python
+files under [`functions/`](functions). The entry point in each file has
+the same name as the TOSCA function.
+
+Most of these implementations use the Python **standard library only**, so
+a processor can execute them without provisioning anything. The two YAML
+functions are the exception: `validate_yaml` and `decode_yaml` require a
+**YAML parser** (PyYAML), which a processor must make available to function
+implementations. `validate_yaml` is also the validation clause on the
+`YAML` data type, so that dependency applies to any profile using that
+type — including the `implementation-details` property in the
+[base profile](../abstract/base).

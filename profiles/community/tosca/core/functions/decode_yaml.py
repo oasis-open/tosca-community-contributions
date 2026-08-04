@@ -1,3 +1,6 @@
+# Requires a YAML parser (PyYAML). Unlike the other functions in this
+# profile, which use the Python standard library only, this one depends on
+# a package a processor must make available to function implementations.
 import yaml
 
 def decode_yaml(args):
