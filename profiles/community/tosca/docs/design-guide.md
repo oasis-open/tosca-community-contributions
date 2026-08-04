@@ -64,12 +64,17 @@ as follows:
    packages.
 4. Finally, the *instance view* models add interface implementations
    based on implementation artifacts that can be used by an
-   Orchestrator to manage the products specifies in the device view
+   Orchestrator to manage the products specified in the device view
    models.
 
-> Add discussion about monitoring and telemetry data moving in the
-  other direction: low-level monitoring data are summarized and
-  aggregated into high-level *system health* attributes.
+> **Open, not yet tracked as an issue.** Add discussion about monitoring
+> and telemetry data moving in the other direction: low-level monitoring
+> data are summarized and aggregated into high-level *system health*
+> attributes. This is the *bottom-up* counterpart to the top-down
+> refinement described above, and the mechanism already exists —
+> `substitution_mappings.attributes` escalates values from a substituting
+> service onto the substituted node. Needs an issue number and a written
+> pattern.
 
 As a *best practice*, TOSCA profile designers should avoid mixing and
 matching types defined at different levels of abstraction within the
@@ -140,7 +145,7 @@ profiles as shown in the following figure:
 Each of these profiles defines derived node types for one of the four
 base node types defined in the base profile. These profiles can then
 be used to define abstract TOSCA service templates that define specific
-applications or services. The following figure shown an example of
+applications or services. The following figure shows an example of
 such an abstract service template:
 
 ![Abstract Service Template](../images/abstract-template.png)
@@ -174,7 +179,7 @@ shown in the following figure:
 
 #### Translating System View to Administrator View
 
-We recommend using *substitution mapping* to tranlate from the system
+We recommend using *substitution mapping* to translate from the system
 view level of abstraction to the administrator view level of
 abstraction, as shown in the following figure:
 
@@ -215,7 +220,9 @@ the types defined in device view profiles without having to introduce
 new derived types. Unfortunately, the TOSCA language currently does
 not have any constructs to support such dynamic behavior.
 
-> This needs further discussion
+> **Tracked as issue I14** (dynamic attachment of implementation
+> artifacts). Needs a language construct; open against a future spec
+> version.
 
 ### Mapping Relationship Types and Capability Types
 
@@ -352,6 +359,8 @@ the following steps:
 1. Decouple applications and data from platforms.
 2. Make placement decisions based on available platforms.
 3. Placement decisions drive substitution.
+4. Resolve the placement edge through the substitution, recursively where
+   the allocated platform is itself abstract.
 
 ### Decouple Applications and Data from Platforms
 
@@ -396,7 +405,7 @@ specific customer.
 ### Make Placement Decisions
 
 When deploying an abstract service, the TOSCA Processor first makes
-placement decision by *fulfilling* the dangling `host` requirements of
+placement decisions by *fulfilling* the dangling `host` requirements of
 the nodes in the abstract service representation using capabilities of
 the nodes in the abstract platform representations. Node filters can
 be used to narrow down the set of candidate target platforms. The
@@ -405,17 +414,145 @@ following figure shows a node filter that drives placement for the
 
 ![Placement Decisions](../images/placement.png)
 
+The capability named by the requirement determines which platforms are
+*eligible*; the node filter then chooses among them. In practice a
+placement filter usually compares **properties** of the candidate — its
+location, its capacity, what it is designated to be — rather than
+matching further capability types, because eligibility has already been
+settled by the capability. In the abstract service template this looks
+as follows:
+
+```yaml
+node_templates:
+  application:
+    type: <abstract application node type>
+    properties:
+      <where this application may run>: [...]
+    requirements:
+      # Left dangling: no target node is named. The processor fulfils it
+      # at deployment time against the available platform representations.
+      - host:
+          node_filter:
+            $has_entry:
+              - {$get_property: [SELF, SOURCE, <where this application may run>]}
+              - {$get_property: [SELF, TARGET, <where this platform is>]}
+```
+
+**A node filter may be declared in two places, and both are applied.** A
+requirement *definition* in a node type may carry a `node_filter`, and a
+requirement *assignment* in a template may carry another. A processor
+evaluates both, so a template can narrow the placement its type permits
+but can never relax it. Profile designers should treat a filter written
+into a type as permanent for every consumer of that type, and prefer to
+leave placement policy to the templates unless the constraint is truly
+intrinsic to the type.
+
+#### Filters and Missing Values
+
+Platform representations are rarely populated uniformly — one platform
+may publish its capacity while another does not — so filters must
+tolerate absent values. TOSCA's comparison functions are *three-valued*
+for this reason: an operand that has no value evaluates to null, a
+comparison with a null operand returns null rather than false, and `$and`
+skips null operands rather than failing on them.
+
+The practical effect is that a filter listing several constraints
+degrades gracefully: it constrains on exactly the fields both sides
+populate, and the remaining constraints begin to apply, with no change to
+the filter, as platform representations grow richer. This is what makes
+it safe to write a thorough placement filter against representations that
+are only partly filled in.
+
+**Note the asymmetry between the two kinds of filter**, which is easy to
+be caught by:
+
+| | Filter evaluates to null |
+|---|---|
+| **Node filter** (placement) | the candidate **passes** — the constraint is skipped |
+| **Substitution filter** (realization) | the template **does not match** |
+
+Placement is permissive about what it does not know; realization
+selection is not. A substituting template whose filter reads a property
+the abstract node does not populate will simply never be selected.
+
 ### Placement Drives Substitution
 
 Once placement decisions have been made, the TOSCA Processor finds
 substituting templates that are suitable for the allocated target
-platform. This is done by using information about that target platform
-into the *substitution filters* for the candidate substituting
+platform. This is done by feeding information about that target
+platform into the *substitution filters* of the candidate substituting
 templates.
 
-> If substitution decisions made based on the type of the allocated
-  platform, do we need to define a TOSCA function that returns a node
-  type?
+Because placement has already been made, the filter can reach the
+allocated platform through the requirement that was just fulfilled. A
+substitution filter is evaluated against the node being substituted, so
+it uses a TOSCA Path that traverses that relationship to its target:
+
+```yaml
+substitution_mappings:
+  node_type: <abstract application node type>
+  substitution_filter:
+    $equal:
+      - {$get_property: [SELF, RELATIONSHIP, host, 0, TARGET, <property naming the platform>]}
+      - <the value this substituting template claims>
+```
+
+This is what keeps the abstract service template free of technology. The
+template says only what the application needs and where it may run, and
+the *realization* asks what it was placed on. No property has to be added
+to the application to record which technology should deploy it: that
+choice belongs to the platform, and the application reaches it across the
+`host` requirement.
+
+**Do we need a function that returns a node type?** Filtering on a
+*property* of the allocated platform is sufficient, and is preferable to
+filtering on its type:
+
+- Platforms of **different types** — a Kubernetes cluster versus a Docker
+  engine, as in the examples below — can be distinguished either way,
+  since a type that is distinct can also expose a property saying what it
+  is.
+- Platforms of the **same type** cannot be distinguished by type at all.
+  This case is common: a fleet of like devices differing only in what each
+  is designated to become is one node type carrying different property
+  values, and a type-returning function would find them identical.
+
+A property filter covers both cases and a type filter covers only one,
+which argues against introducing the function. It does place a
+requirement on the platform representation: it must carry a property that
+*distinguishes* the platform, which the [platform representation
+list](#decouple-applications-and-data-from-platforms) above does not yet
+call out. Location, capabilities, capacity and access describe what a
+platform *is and can do*; selecting a realization additionally needs to
+know what it is *designated to be*.
+
+> **Proposed resolution for issue I13** (`type-of-node` / "hash type"
+> function). Recommends *not* adding the function, on the grounds that
+> property-based selection is strictly more general. Consistent with the
+> direction already recorded for I4 (abstract-types vs. minimal-types),
+> which leans toward property-based substitution.
+
+**Filters must be mutually exclusive.** A processor selects the *first*
+candidate whose substitution filter matches, and raises an error when
+none does. Neither outcome is negotiable by the template author, so the
+author of a set of substituting templates for the same abstract node type
+is responsible for ensuring that at most one filter can match any given
+node. Selecting on the allocated platform makes this straightforward:
+each realization claims a different platform designation, so exclusivity
+follows from the filters rather than having to be maintained separately.
+
+**The allocated platform may itself be abstract.** A platform
+representation can be a node that is substituted in turn, in which case
+the `host` requirement of the substituting service's inner node cannot be
+resolved against it directly. The processor resolves this recursively: it
+maps the requirement onto the substituted node's relationship, and where
+that target is itself abstract, drills into *that* node's substituting
+service, reads its `substitution_mappings.capabilities` for the named
+capability, and recurses on the inner node the mapping names. The edge
+therefore crosses both substitution boundaries and lands on the concrete
+node. Nothing extra need be declared for this beyond the two mappings each
+side already provides: a capability mapping on the platform side, and a
+requirement mapping on the application side.
 
 #### Substitute for Kubernetes
 
@@ -439,7 +576,7 @@ engine:
 ![Placement on Docker Engine](../images/placement-docker.png)
 
 In this scenario, the abstract application node is substituted using
-templates that implement this nodeq by deploying the application
+templates that implement this node by deploying the application
 directly using Docker. TOSCA type definitions from the TOSCA Docker
 Profile are used for the templates in the substituting service:
 
