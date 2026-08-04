@@ -41,9 +41,9 @@ relationships:
   platform node. This is a containment relationship that defines which
   platform runs the application.
 - Application nodes define a relationship of type `Processes` to a
-  node node. This is a dependency relationship that defines which
+  data node. This is a dependency relationship that defines which
   entity contains the data that are processed by the application.
-- Application nodes define a relationship of type `AvailableOn` to a
+- Data nodes define a relationship of type `AvailableOn` to a
   platform node. This is a containment relationship that defines which
   platform stores persistent copies of the data.
 - Platform nodes define a relationship of type `LinksTo` to a network
@@ -66,76 +66,102 @@ the mechanism for how this works.
    `implementation-details` that contains a structured set of
    lower-level details that can simply be ignored at the highest level
    of abstraction. The value of this property can be encoded using a
-   variety of ways&mdash;include JSON, YAML, or some other
-   mechanism&mdash;but the base profile uses JSON encoding. The [core
+   variety of ways&mdash;including YAML, JSON, or some other
+   mechanism&mdash;but the base profile uses YAML encoding. The [core
    profile](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/community/tosca/core)
-   defines a `json` data type for this purpose. The abstract node
-   should validate that the provided string is valid JSON, but it does
-   not need to know about the specific values carried in that
+   defines a `YAML` data type for this purpose. The abstract node
+   should validate that the provided string is well-formed YAML, but it
+   does not need to know about the specific values carried in that
    string. This allows arbitrary implementation detail data to be
    provided in the abstract node.
+
+   YAML is used rather than JSON because the surrounding service
+   template is itself a YAML document. JSON is a subset of YAML, so
+   nothing is given up, while the value can be written as a block
+   scalar instead of a quoted string&mdash;which permits line breaks
+   and comments, and avoids quoting a JSON document inside YAML:
+   ```yaml
+   node_templates:
+     my_app:
+       type: base:Application
+       properties:
+         implementation-details: |
+           service_label: frontend
+           # the deployment label is optional
+           deployment_label: web
+   ```
+   When authoring a block scalar, the whole block must share a common
+   base indentation: the base is taken from the first non-empty line,
+   every line must be indented at least that far, and any extra
+   indentation is preserved as structure. Tabs are not valid YAML
+   indentation and must not appear in the encoded value.
 2. In the substituting template, we define a substitution mapping that
-   maps the `mplementation-details` property value to an input of the
+   maps the `implementation-details` property value to an input of the
    substituting template. For example, the following shows how the
    `implementation-details` property is mapped to a service template
-   input called `json-data` which is also of type `json`:
-   ```
+   input called `yaml_data` which is also of type `YAML`:
+   ```yaml
    service_template:
      substitution_mappings:
        node_type: app:MicroService
        properties:
-	 implementation-details: json_data
+         implementation-details: yaml_data
      inputs:
-       json_data:
-	 type: json
+       yaml_data:
+         type: YAML
    ```
 3. The substituting template then defines another service template
    input that uses a TOSCA data type to represent the implementation
    details. For example, the following shows a TOSCA data type called
    `ImplementationDetails` and an input value of that type called
-   `implementation-details`. Note that ubstituting templates are free
+   `implementation-details`. Note that substituting templates are free
    to chose different data type names and different input names:
-   ```
+   ```yaml
    data_types:
      ImplementationDetails:
        properties:
-	 service_label:
-	   type: string
-	 deployment_label:
-	   type: string
-	 security_context:
-	   type: k8s:SecurityContext
+         service_label:
+           type: string
+         deployment_label:
+           type: string
+         security_context:
+           type: k8s:SecurityContext
    service_template:
      inputs:
-       json_data:
-	 type: json
+       yaml_data:
+         type: YAML
        implementation-details:
-	 type: ImplementationDetails
+         type: ImplementationDetails
    ```
 4. Finally, the key to making this work is to fix the value of the
    `implementation-details` input to the data that are returned by
-   decoding the JSON string in the `json_data` input, as follows:
-   ```
+   decoding the YAML string in the `yaml_data` input, as follows:
+   ```yaml
    service_template:
      substitution_mappings:
        node_type: app:MicroService
        properties:
-	 implementation-details: json_data
+         implementation-details: yaml_data
      inputs:
-       json_data:
-	 type: json
+       yaml_data:
+         type: YAML
        implementation-details:
-	 type: ImplementationDetails
-	 value: {$decode_json: [{$get_input: json_data}]}
+         type: ImplementationDetails
+         value: {$decode_yaml: [{$get_input: yaml_data}]}
    ```
-   Note that this requires a custom `$decode_json` function.
+   Note that this requires a custom `$decode_yaml` function.
 5. The TOSCA processor will then validate the data returned by the
-   `$decode_json` function against the `ImplementationDetails` data
+   `$decode_yaml` function against the `ImplementationDetails` data
    type, thereby ensuring (at deployment time) that correct
    implementation details have been provided in the abstract node.
+
+   This step is what makes the opaque property safe: the value is
+   untyped only while it crosses a boundary that could not have typed
+   it, and the decode step is where the substituting template&mdash;which
+   does know the schema&mdash;re-establishes typing.
 6. In the substituting template, whenever one of the implementation
    detail values are required, they could be retrieved using
    `$get_input` function calls, for example as follows:
-   ```
-   $get_input: [implementation-details, label]
+   ```yaml
+   $get_input: [implementation-details, service_label]
    ```

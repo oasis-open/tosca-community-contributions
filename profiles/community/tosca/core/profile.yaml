@@ -16,7 +16,7 @@ data_types:
       The YAML type defines a string that contains data in the YAML
       format
     derived_from: string
-    #validation: TBD (may need custom functions)
+    validation: {$validate_yaml: [$value]}
   IPv4:
     description: >-
       The IPv4 type defines a string that contain an IPv4 address
@@ -197,6 +197,33 @@ functions:
           primary:
             type: Python
             file: functions/decode_json.py
+  validate_yaml:
+    description: >-
+      Check if a string argument contains a well-formed YAML document.
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The yaml string to validate.
+        result: boolean
+        implementation:
+          primary:
+            type: Python
+            file: functions/validate_yaml.py
+  decode_yaml:
+    description: >-
+      Decode a YAML string. The result carries no declared type: it is
+      validated where it is assigned, which is how a template that knows
+      the schema of an opaque value re-establishes typing.
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The yaml string to decode
+        implementation:
+          primary:
+            type: Python
+            file: functions/decode_yaml.py
   in_range:
     description: >
         This function provides true if the first argument (value) is within
