@@ -549,7 +549,7 @@ maps the requirement onto the substituted node's relationship, and where
 that target is itself abstract, drills into *that* node's substituting
 service, reads its `substitution_mappings.capabilities` for the named
 capability, and recurses on the inner node the mapping names. The edge
-therefore crosses both substitution boundaries and lands on the concrete
+therefore crosses both substitution boundaries and resolves against the concrete
 node. Nothing extra need be declared for this beyond the two mappings each
 side already provides: a capability mapping on the platform side, and a
 requirement mapping on the application side.
