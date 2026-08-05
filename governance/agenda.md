@@ -15,24 +15,24 @@ From 2026-07-22:
 
 - **Core data types** (Roberto, *D9*) — ✅ email, FQDN and HTTP URL types merged into
   `core` (PR #354). This cleared the `0.1` gate, which has now been open for two
-  weeks (see #3).
+  weeks (see #4).
 - **Kubernetes consolidation** (Chris, *K6 / I21 / I22*) — ✅ **complete**. A single
   Kubernetes resource profile, `io.kubernetes:1.35`; the duplicate under
   `technology/` removed (~12,500 lines); `technology/README.md` now states plainly
   that there is no Kubernetes profile there and points at
   `profiles/io/kubernetes/1.35`. Confirm K6 closed.
 - **Abstract-profile platform properties** (Chris, *N8*) — **awaiting the credential
-  resolution (#4).** The connection properties (management address, credential file,
+  resolution (#3).** The connection properties (management address, credential file,
   config/access file) are still absent from the `abstract.*` types. One of the three
-  *is* a credential, so its shape depends on what #4 settles — adding it now would
-  mean adding it twice. Sequence N8 behind #4 rather than re-committing to a date for
+  *is* a credential, so its shape depends on what #3 settles — adding it now would
+  mean adding it twice. Sequence N8 behind #3 rather than re-committing to a date for
   it here.
 - **Tal's OpenAPI→TOSCA generator** (Roberto) — a submission location was to be
   suggested. Is the PR in, and when do we walk it (see #10)?
 - **Kubernetes profile testing** (Prachi, Jay) — feedback was due after their return
   from leave; nothing has reached the repository. Status? (see #7)
 
-## 2. `implementation-details` as YAML — 10 min · **decide before #3**
+## 2. `implementation-details` as YAML — 10 min · **decide before #4**
 
 A change the community has not yet reviewed: `implementation-details` is now encoded
 as **YAML rather than JSON**, with new `decode_yaml` / `validate_yaml` functions in
@@ -43,17 +43,7 @@ that make up the `0.1` release**. Ratify it, amend it, or hold it back — but d
 before cutting the tag, so the release does not ship a convention change the
 community has not reviewed.
 
-## 3. Cut the `0.1` release — 15 min · *R1 / R3 / R4 / R5 / I8*
-
-- Scope is unchanged: `core` + the five `abstract.*` profiles; technology profiles
-  held (R5).
-- The D9 gate cleared on 07-22 (PR #354) and the repository still carries **no
-  tags**. Nothing is blocking this except #2.
-- Push `v0.1` → the workflow builds and signs, opens a draft → review and publish.
-- N8 (#1) waits on the credential resolution (#4), so `0.1` ships without it. Confirm
-  that, and whether the platform connection properties then warrant a `0.1.1`.
-
-## 4. Credential model — 10 min · *discussion #281* · **decision sought**
+## 3. Credential model — 10 min · *discussion #281* · **decision sought**
 
 A full design of record for credentials has been written up and is ready to bring
 back to #281. It adopts the discussion's synthesis — a minimal data type plus
@@ -77,6 +67,16 @@ preference:
 - The `kind` vocabulary is constrained with `key_schema` + `$valid_values`.
 
 **Decision sought:** take this refinement back to #281 as the proposed resolution.
+
+## 4. Cut the `0.1` release — 15 min · *R1 / R3 / R4 / R5 / I8*
+
+- Scope is unchanged: `core` + the five `abstract.*` profiles; technology profiles
+  held (R5).
+- The D9 gate cleared on 07-22 (PR #354) and the repository still carries **no
+  tags**. Nothing is blocking this except #2.
+- Push `v0.1` → the workflow builds and signs, opens a draft → review and publish.
+- N8 (#1) waits on the credential resolution (#3), so `0.1` ships without it. Confirm
+  that, and whether the platform connection properties then warrant a `0.1.1`.
 
 ## 5. `type-of-node` — proposed resolution — 5 min · *I13* · **decision sought**
 
@@ -170,6 +170,6 @@ schedule a PR walkthrough. Multiple modeling approaches stay open.
 
 ---
 
-**Decisions sought:** the YAML `implementation-details` convention (#2); cut `0.1`
-(#3); the credential-model refinement for #281 (#4); the `type-of-node` resolution
-(#5); ratify the Component/Port resolutions (#6).
+**Decisions sought:** the YAML `implementation-details` convention (#2); the
+credential-model refinement for #281 (#3); cut `0.1` (#4); the `type-of-node`
+resolution (#5); ratify the Component/Port resolutions (#6).
