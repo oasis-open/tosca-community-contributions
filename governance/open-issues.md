@@ -28,6 +28,8 @@ Status legend: 🔴 open · 🟡 in progress · 🔵 needs a TC / spec decision
 
 | I24 | **Union types.** The credential work (D11) is one instance of a general gap: TOSCA has no union type, so a value that may take one of several shapes has to be modelled as a type with optional properties, a keyed map, or a set of derived types. The map-plus-`key_schema` approach adopted for credentials is a workaround rather than a language feature. Worth stating as a pattern, and worth knowing whether the TC considers it an errata or a 2.1 item. | 🔴 | Community | Write up the pattern; decide whether to raise it with the TC. |
 
+| I26 | **`HttpUrl` is not anchored at the end** (PR #354, D9). Unlike its siblings `Email` and `Fqdn`, which both end with `$`, the `HttpUrl` regex stops after the host and optional port, so everything after that is unvalidated: `https://example.com garbage here`, a value with a trailing newline and further text, `https://example.com:99999` (port above 65535), and `http://999.999.999.999` (matches the FQDN branch) all validate. Appending `$` alone is **not** the fix — it would reject `https://example.com/path?q=1`, which legitimately passes today; an optional path/query/fragment component is needed before the anchor, or a documented decision that the type validates the authority only. Raises a second question: `core` is now the community's standard library, so its data types arguably need **test cases** to keep the regexes from drifting. | 🔴 | Roberto | Fix before the `0.1` tag (the release ships `core`); decide whether `core` data types get tests. |
+
 ## Specification gaps (TOSCA 2.0 → 2.01 errata)
 
 | # | Issue | Status | Owner | Next step |
