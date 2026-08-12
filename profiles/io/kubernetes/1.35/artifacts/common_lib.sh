@@ -3,9 +3,11 @@
 # Common library
 
 init_output() {
-    # Save original stdout and redirect to log file
+    # Save original stdout and redirect to log file. stderr is deliberately left
+    # alone: it is the channel an orchestrator reads to report why an artifact
+    # failed, and merging it into the log discards that message.
     exec 3>&1
-    exec >> "$LOG_FILE" 2>&1
+    exec >> "$LOG_FILE"
     output() {
 	echo "$@" >&3
     }

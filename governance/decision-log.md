@@ -30,6 +30,7 @@ meeting where the decision was made or last confirmed.
 | A4 | Reorganize the profiles directory by **abstraction level** (system-administrator / device / abstract-technology / vendor), retaining "TOSCA" in the directory name. | M25 |
 | A5 | Use the **system view / administrative view / device view** as the organizing principle; avoid derivations in very abstract profiles. | M33 |
 | A6 | Treat the "model continuum" as a documented **design pattern**, kept at a higher repo level (not a specific implementation). | M11 |
+| A7 | **Profile naming — reverse-DNS for generated and contributed technology profiles, `community.tosca.*` for the team-designed `core` / `abstract.*` layer.** Applied to the generated Kubernetes resource profile: keep the reverse-DNS `io.kubernetes` name and **version it by the Kubernetes release it was generated from** (`io.kubernetes:1.35`), which makes the version self-documenting; retire the `community.tosca.technology.*` duplicates and repoint the `io.kubevirt` / `sh.helm` dependents. Trade-offs written up in [`profile-naming.md`](../profiles/community/tosca/docs/profile-naming.md). **Agreed 2026-07-22**, delivered in PR #355; closed 2026-08-12 once the duplicates were gone and `technology/README.md` pointed at the kept profile. (Chris) | 2026-07-22; closed 2026-08-12 |
 
 ## Node types, properties & relationships
 
