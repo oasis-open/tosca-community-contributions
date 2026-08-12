@@ -175,6 +175,140 @@ shown in the following figure:
 
 ![Substitution](../images/substitution.png)
 
+### Passing Implementation Details Across a Substitution Boundary
+
+Abstract node types *hide* the details required at lower levels. That is what
+makes them abstract, but it creates a problem during substitution: the
+substituting template frequently needs some of what was hidden. A mechanism is
+therefore needed to supply those lower-level details without burdening the
+abstract node types with information that means nothing at their level.
+
+**This is a recommended practice, not a requirement of the specification.**
+§15.2 requires property mappings only for non-optional service template inputs
+that do not define a `default` value, so a substituting template is free to
+declare additional inputs that are never mapped at all, provided they are
+optional or carry a default. Nothing here overrides that.
+
+**What the recommendation is for.** An unmapped input with a default can only
+carry a value fixed when the substituting template was authored, which makes it
+a lowest-common-denominator value across every use of that template. It can
+never carry a value that differs per substituted node. Where a value does vary
+with the node being substituted, mapping is the only mechanism that crosses the
+substitution boundary. The two are therefore not competing solutions to one
+problem:
+
+- **An unmapped input with a default** suits a value that is genuinely constant
+  across every use of the realization.
+- **A mapped property** is required as soon as the value depends on which node
+  is being substituted.
+
+The pattern below is how the community profiles carry a *set* of such
+per-node values without declaring each one on the abstract type. It uses an
+*opaque* `implementation-details` property, passed to the substituting template
+and parsed only in that template's context.
+
+1. All abstract nodes define a property called `implementation-details` that
+   contains a structured set of lower-level details that can simply be ignored
+   at the highest level of abstraction. The value of this property can be
+   encoded in a variety of ways&mdash;including YAML, JSON, or some other
+   mechanism&mdash;but the community profiles use YAML encoding. The [core
+   profile](../core) defines a `YAML` data type for this purpose. The abstract
+   node should validate that the provided string is well-formed YAML, but it
+   does not need to know about the specific values carried in that string. This
+   allows arbitrary implementation detail data to be provided in the abstract
+   node.
+
+   YAML is used rather than JSON because the surrounding service template is
+   itself a YAML document. JSON is a subset of YAML, so nothing is given up,
+   while the value can be written as a block scalar instead of a quoted
+   string&mdash;which permits line breaks and comments, and avoids quoting a
+   JSON document inside YAML:
+   ```yaml
+   node_templates:
+     my_app:
+       type: base:Application
+       properties:
+         implementation-details: |
+           service_label: frontend
+           # the deployment label is optional
+           deployment_label: web
+   ```
+   When authoring a block scalar, the whole block must share a common base
+   indentation: the base is taken from the first non-empty line, every line
+   must be indented at least that far, and any extra indentation is preserved
+   as structure. Tabs are not valid YAML indentation and must not appear in the
+   encoded value.
+2. In the substituting template, we define a substitution mapping that maps the
+   `implementation-details` property value to an input of the substituting
+   template. For example, the following shows how the `implementation-details`
+   property is mapped to a service template input called `yaml_data` which is
+   also of type `YAML`:
+   ```yaml
+   service_template:
+     substitution_mappings:
+       node_type: app:MicroService
+       properties:
+         implementation-details: yaml_data
+     inputs:
+       yaml_data:
+         type: YAML
+   ```
+3. The substituting template then defines another service template input that
+   uses a TOSCA data type to represent the implementation details. For example,
+   the following shows a TOSCA data type called `ImplementationDetails` and an
+   input value of that type called `implementation-details`. Note that
+   substituting templates are free to choose different data type names and
+   different input names:
+   ```yaml
+   data_types:
+     ImplementationDetails:
+       properties:
+         service_label:
+           type: string
+         deployment_label:
+           type: string
+         security_context:
+           type: k8s:SecurityContext
+   service_template:
+     inputs:
+       yaml_data:
+         type: YAML
+       implementation-details:
+         type: ImplementationDetails
+   ```
+4. Finally, the key to making this work is to fix the value of the
+   `implementation-details` input to the data that are returned by decoding the
+   YAML string in the `yaml_data` input, as follows:
+   ```yaml
+   service_template:
+     substitution_mappings:
+       node_type: app:MicroService
+       properties:
+         implementation-details: yaml_data
+     inputs:
+       yaml_data:
+         type: YAML
+       implementation-details:
+         type: ImplementationDetails
+         value: {$decode_yaml: [{$get_input: yaml_data}]}
+   ```
+   Note that this requires a custom `$decode_yaml` function.
+5. The TOSCA processor will then validate the data returned by the
+   `$decode_yaml` function against the `ImplementationDetails` data type,
+   thereby ensuring (at deployment time) that correct implementation details
+   have been provided in the abstract node.
+
+   This step is what makes the opaque property safe: the value is untyped only
+   while it crosses a boundary that could not have typed it, and the decode
+   step is where the substituting template&mdash;which does know the
+   schema&mdash;re-establishes typing.
+6. In the substituting template, whenever one of the implementation detail
+   values are required, they could be retrieved using `$get_input` function
+   calls, for example as follows:
+   ```yaml
+   $get_input: [implementation-details, service_label]
+   ```
+
 ### Translation Best Practices
 
 #### Translating System View to Administrator View
