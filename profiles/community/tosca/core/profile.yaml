@@ -60,12 +60,15 @@ data_types:
     description: >
       The HttpUrl type defines a string that contains an HTTP or HTTPS URL.
       The host component must be either 'localhost', a fully qualified
-      domain name (FQDN), or an IPv4 address.
+      domain name (FQDN), or an IPv4 address. The host may be followed by
+      a port in the range 1 to 65535, and then by a path, query or
+      fragment built from the characters RFC 3986 permits there. The
+      pattern is anchored at both ends, so the whole value must be a URL.
       Look-around assertions are intentionally avoided to maximize
       compatibility with regex engines that do not support them.
     derived_from: string
     validation:
-      $matches: [$value, "^https?:\/\/(localhost|([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+)|(((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])))(:[0-9]{1,5})?"]
+      $matches: [$value, "^https?:\/\/(localhost|([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+)|(((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])))(:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?([/?#][A-Za-z0-9._~%!$&'()*+,;=:@/?#-]*)?$"]
   GenericId:
     description: >-
       The GenericId type represents a generic string identifier. It can be used to
