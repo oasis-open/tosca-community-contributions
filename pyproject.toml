@@ -2,5 +2,6 @@
 [tool.pytest.ini_options]
 markers = [
     "allocation: marks tests which excerise the allocation keyword of TOSCA",
-    "empty: marks tests which expect empty TOSCA elements to be rejected as invalid"
+    "empty: marks tests which expect empty TOSCA elements to be rejected as invalid",
+    "network: marks tests which fetch a file over the network to run"
 ]

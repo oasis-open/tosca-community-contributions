@@ -63,9 +63,14 @@ Big-ticket item(s) combed from the OASIS
 `oasis-open/tosca-community-contributions` GitHub issue tracker, excluding the
 spec test-coverage backlog. Numbers are GitHub issue numbers.
 
-| # | Issue | Status | Owner | Next step |
-|---|-------|--------|-------|-----------|
-| I20 | **Repo checkout fails on Windows** (OASIS #292) — a path containing a colon (`examples/1.3/.../org.tmforum:1.0`) is invalid on NTFS, so `git clone` fails without `git config core.protectNTFS false`. Blocks all Windows contributors. | 🔴 | Community | Rename the colon-bearing path(s) to be cross-platform; document the naming constraint. |
+Nothing open here today.
+
+*I20 (**repo checkout fails on Windows**, OASIS #292) is **complete — renamed
+2026-04-06 (PR #293)**: `examples/1.3/.../org.tmforum:1.0` became
+`org.tmforum.1.0`. No tracked path carries a colon, so a Windows `git clone`
+no longer needs `core.protectNTFS false`. The naming constraint it raised —
+that a profile directory must not use the `name:version` form a profile
+identifier does — is still undocumented.*
 
 *Reconciled / already tracked:*
 - OASIS **#50** (TOSCA Implementation Landscape) is already tracked in

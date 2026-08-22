@@ -1,6 +1,7 @@
 import subprocess
 import unittest
 import os
+import pytest
 from pathlib import Path
 
 
@@ -24,6 +25,9 @@ def _find_wrapper():
     raise FileNotFoundError('wrapper.py not found')
 wrapper_path = _find_wrapper()
 
+# The repository this imports from is named by an absolute URL, so running it
+# fetches that URL. Deselect with -m "not network".
+@pytest.mark.network
 class TestWrapperProgram(unittest.TestCase):
 
     def test_wrapper_with_version_yaml(self):
