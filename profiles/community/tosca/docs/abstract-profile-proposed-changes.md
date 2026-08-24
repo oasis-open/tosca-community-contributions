@@ -188,10 +188,32 @@ and rejected in favor of platform-specific properties.
 
 ### Problem 3 — No formal release process for the community profiles
 
-There is currently **no formal release process** for the community profiles:
+> **Update (2026-08-23): release automation now exists. Most of this section
+> describes the situation before PR #350.** `.github/workflows/release.yml` and
+> `tools/scripts/build_csars.sh` build a CSAR per `community.tosca.*` profile
+> (discovered by `TOSCA.meta`, named from the profile name-version, so
+> `community.tosca.core:0.1` becomes `community.tosca.core.0.1.csar`), sign every
+> artifact with Sigstore keyless signing, publish a signed SHA256 checksum
+> manifest, and open a **draft** GitHub Release for review. It fires on a pushed
+> semver tag (`v0.1`, `v0.1.0`, and rc variants) or by manual dispatch, and the
+> repository is public, so release-asset URLs need no authentication.
+>
+> **What remains true:** no tag has been pushed yet, so **no release has been
+> cut** — the mechanism is built and unfired. Versioning/governance documentation
+> is still owed, and one concrete gap sits inside it: CSAR names derive from the
+> **profile name-version string inside each profile**, not from the git tag, so
+> freezing a version and opening the next one means bumping those strings as a
+> deliberate step.
+>
+> **This changes the conclusion below.** A signed, checksummed CSAR *is* the
+> immutable artifact whose absence is given here as the reason an external
+> ecosystem cannot depend on the community core types. Once `0.1` is tagged, a
+> consumer can pin to a release instead of to a moving `master`. See Question 3.
+
+The situation this section was written against:
 
 - no git tags and no published releases,
-- no release automation,
+- ~~no release automation~~ — **shipped in PR #350 (July 2026)**,
 - no versioning/governance documentation beyond `CONTRIBUTING.md`,
 - a pure fork-and-pull-to-`master` workflow.
 
@@ -231,11 +253,41 @@ to be refined.
 2. **`credential` typing** — *Resolved (2026-06-24):* likewise platform-specific
    — a structured `Credential` for login-based servers, a `string`/`JSON` for
    opaque token/config artifacts. No base-level harmonization.
-3. **Single source of truth for shared types** — *Open:* should `Credential`,
-   `IPv4Socket`, etc. be owned solely by `community.tosca.core`, with other
-   profiles importing rather than redefining them? (Tied to the release-process
-   item below.)
-4. **Release process** — *In progress (2026-06-24):* keep `0.1` for now; freeze
-   it once stable; plan version tracking and a formal release process that
-   publishes immutable release artifacts (CSAR files raised as a candidate
-   mechanism).
+3. **Single source of truth for shared types** — *Open, but the blocker is
+   gone (2026-08-23):* should `Credential`, `IPv4Socket`, etc. be owned solely by
+   `community.tosca.core`, with other profiles importing rather than redefining
+   them? The stated obstacle was that there is no immutable artifact to pin to, so
+   a consumer would be pinning to a moving `master`. **Release automation now
+   produces signed, checksummed CSARs (see Problem 3), so tagging `0.1` removes
+   that obstacle.** What remains is the community's decision on ownership, not a
+   technical impediment.
+
+   **Note that downstream consumers already carry this dependency in its unsafe
+   form.** The Ubicity profiles, for example, import `community.tosca.core:0.1`,
+   `community.tosca.abstract.data:0.1` and `community.tosca.abstract.platform:0.1`
+   today — by static name-version string, against a moving `master`. So cutting a
+   release does not create a new coupling; **it makes an existing one safe.**
+
+   **This question is now forced by N8, and the two have to move together.** The
+   abstract platform connection properties want a structured socket for
+   `ServerPlatform`. A downstream profile that derives from
+   `community.tosca.abstract.platform:ServerPlatform` while declaring
+   `mgmt-address` against *its own* `IPv4Socket` hits a property-refinement type
+   conflict the moment N8 declares the same property upstream — the two socket
+   types are structurally identical but independently defined, so neither derives
+   from the other. That is not a soft compatibility concern; it breaks the derived
+   profile.
+
+   **Consequence for sequencing: N8, the `0.1` tag, and downstream convergence are
+   one coordinated cut, not three steps.** Land N8 against the community types, tag
+   `0.1`, and update downstream profiles to import the released community
+   `IPv4Socket` / `Credential` and drop their own copies — with the downstream
+   change prepared in advance so it can land immediately, leaving no interval in
+   which a *released* downstream profile references a half-converged type set.
+
+4. **Release process** — *Automation shipped (PR #350, July 2026); no release cut
+   yet.* The mechanism described in Problem 3 is in place and unfired. Remaining:
+   push the first tag, and write the versioning/governance documentation — including
+   the rule that profile name-version strings are bumped when a version is frozen
+   and the next one opened, since CSAR names derive from those strings rather than
+   from the git tag.
