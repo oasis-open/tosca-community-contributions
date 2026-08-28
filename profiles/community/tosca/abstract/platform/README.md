@@ -51,10 +51,12 @@ include the following:
 The `ContainerPlatform` node type represents systems that can host
 containerized software. This can include:
 
-- *Docker Servers*: Server platforms that have technologies such as
-   Docker or Docker Compose installed and that can be used to deploy
-   and run containerized applications.
-- *Kubernetes Clusters*: To orchestrator container-based applications
+- *Container Runtimes*: Engines that run containers on a single host,
+  such as Docker Engine or containerd. A container runtime is modeled
+  as its own node, hosted on the `ServerPlatform` node that represents
+  the host it is installed on.
+- *Kubernetes Clusters*: To orchestrate container-based applications
+  across one or more hosts.
 
 ### PaaS Platforms
 
@@ -187,6 +189,28 @@ node representing the Kubernetes cluster. The updated model is shown
 in the following figure:
 
 ![IaaS on Kubernetes Cluster on Server Platform](images/iaas-on-cluster-new.png)
+
+### Container Runtime on a Server
+
+The simplest container platform layering scenario installs a container
+runtime, such as Docker Engine or containerd, on a server. It is
+modeled using a `ContainerPlatform` node that represents the runtime
+and that has a `HostedOn` relationship to the `ServerPlatform` node
+representing the server on which the runtime is installed. The
+`ContainerPlatform` node in turn hosts the containerized applications
+that the runtime runs.
+
+```mermaid
+graph BT
+    engine["ContainerPlatform<br/>(container runtime)"] -->|HostedOn| server["ServerPlatform<br/>(server)"]
+    app["Application"] -->|RunsOn| engine
+```
+
+A container runtime provides its control plane on the same host that
+runs its containers, so a single `HostedOn` relationship expresses
+where both are deployed. This is the common case described above, in
+contrast to Kubevirt, where the two are deployed on different
+platforms.
 
 ### Kubernetes Cluster on one or more Servers
 
