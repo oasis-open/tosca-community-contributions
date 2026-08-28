@@ -131,6 +131,11 @@ node_types:
     description: >-
       Common parent type for all node types in the base profile.
     properties:
+      name:
+        description: >-
+          Name of this node. Every node type carries one, so a realization can
+          name the resource it creates after the node it realizes.
+        type: string
       technology:
         description: >-
           Technology that is intended to be used in the
@@ -177,9 +182,6 @@ node_types:
     description: >-
       Abstract Node Type modeling a generic application
     derived_from: Base
-    properties:
-      name:
-        type: string
     requirements:
       - processes:
           capability: DataSource
