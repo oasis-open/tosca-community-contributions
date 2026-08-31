@@ -153,9 +153,9 @@ while this is open.
 
 ### 2.6 `community.tosca.abstract.base` — one containment relationship, one requirement name
 
-Three changes that are one idea: deployment layering is a single concept, so it should have a
-single relationship type and a single requirement name, with the *capability* saying what kind
-of thing is being placed. Reasoning in Problems 5 and 6.
+Deployment layering is a single concept, so it should have a single relationship type and a
+single requirement name, declared once on `Base`, with the *capability* saying what kind of
+thing is being placed. Reasoning in Problems 5 and 6.
 
 **One relationship type.** `HostedOn`, `RunsOn` and `AvailableOn` are identical but for the
 capability each accepts — same parent, same `implementation-details` property, and all three
@@ -178,26 +178,53 @@ capability_types:
   DataPlatform:         { derived_from: Container, valid_relationship_types: [ HostedOn ] }
 ```
 
-**One requirement name.** `host` is the name TOSCA has used for deployment layering
-throughout its history; `runs-on` and `available-on` are new names for that established
-concept. Requirement names must be unique only *within* a node type (§3655), so each of the
-three may declare `host`:
+**One requirement name, declared once on `Base`.** `host` is the name TOSCA has used for
+deployment layering throughout its history; `runs-on` and `available-on` are new names for
+that established concept. Every one of `Base`'s children needs it — `Platform` onto a
+platform, `Application` onto an execution environment, `Data` onto a data platform, and
+`Network` onto a virtualization platform (which a downstream extension already adds) — so
+declare it on `Base` and let each child refine the capability:
 
 ```yaml
 node_types:
+  Base:
+    requirements:
+      - host:
+          capability: Container      # the common parent of the three below
+          relationship: HostedOn
+          # count_range defaults to [0, UNBOUNDED]; children narrow it
+
   Platform:
     requirements:
-      - host:         { capability: PlatformHost,         relationship: HostedOn }
+      - host:         { capability: PlatformHost }
       - control-host: { capability: ExecutionEnvironment, relationship: HostedOn }
       - links-to:     { capability: Linkable,             relationship: LinksTo }
+
   Application:
     requirements:
-      - host:      { capability: ExecutionEnvironment, relationship: HostedOn }
-      - processes: { capability: DataSource,           relationship: Processes }
+      - host:      { capability: ExecutionEnvironment }
+      - processes: { capability: DataSource, relationship: Processes }
+
   Data:
     requirements:
-      - host: { capability: DataPlatform, relationship: HostedOn }
+      - host: { capability: DataPlatform }
+
+  Network:
+    requirements:
+      - host: { capability: PlatformHost, count_range: [ 0, 1 ] }
 ```
+
+The refinement rules permit this exactly (§8.4.1): a refined `capability` must derive from the
+parent's, and `PlatformHost`, `ExecutionEnvironment` and `DataPlatform` all derive from
+`Container`; a refined `relationship` must derive from the parent's, and all use `HostedOn`; a
+refined `count_range` must lie within the parent's, which `[0, UNBOUNDED]` accommodates. `Base`
+must name the capability *type* rather than a symbolic capability name, since the rules forbid
+refining a symbolic one — `Container` is a type, so this holds.
+
+Declaring it on `Base` says something worth saying at that level: **everything in this model
+can be deployed onto something, and its kind determines onto what.** It also makes the
+deployment hierarchy uniformly traversable — *what is this deployed on?* is answerable for any
+node without first establishing its kind, which is what placement against an inventory needs.
 
 **And a second name for the control plane.** `Platform` is the one type needing two placements
 — its data plane and its control plane — and they cannot share a name, since names are unique
@@ -558,7 +585,7 @@ Proposal in Section 2.6. **Not yet discussed by the community.**
    `HostedOn`, `RunsOn` and `AvailableOn` are identical but for the capability each accepts,
    and the profile marks all three `relationship_kind: containment`. Should they collapse into
    `HostedOn`, and should `runs-on` and `available-on` collapse into `host` — the name TOSCA
-   has used for deployment layering throughout its history — leaving the capability to say what
-   kind of thing is being placed? Proposal in Section 2.6, reasoning in Problem 6. Settling
+   has used for deployment layering throughout its history — declared once on `Base` and
+   refined by each child, leaving the capability to say what kind of thing is being placed? Proposal in Section 2.6, reasoning in Problem 6. Settling
    this also settles question 6, since the control-plane requirement is then a second
    requirement name over the same relationship.
