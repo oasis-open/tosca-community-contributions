@@ -91,7 +91,7 @@ node_types:
 | Node type | Added properties | Added requirements |
 |-----------|------------------|--------------------|
 | `ServerPlatform` | `mgmt-address: IPv4Socket` (opt), `credential: Credential` (opt) | `host` refined to `node: VirtualizationPlatform` |
-| `VirtualizationPlatform` | `mgmt-address: string` (opt), `credential: string` (opt) | `runs-on` → `ExecutionEnvironment` / `RunsOn` |
+| `VirtualizationPlatform` | `mgmt-address: string` (opt), `credential: string` (opt) | the control-plane requirement — see 2.6, which declares it on `Platform` under a name of its own |
 | `ContainerPlatform` | `credential: string` (opt) | — |
 
 ### 2.4 `community.tosca.abstract.data` — `RelationalDatabase`
@@ -150,6 +150,37 @@ at both layers, instead of a type per cardinality.
 `endpoint` and its `InteractsWith` requirement are declared identically on `MicroService`
 and on `SingleHostApplication` today, so they are candidates to lift onto `Application`
 while this is open.
+
+### 2.6 `community.tosca.abstract.base` — a distinctly named control-plane requirement
+
+Declare on `Platform` the second requirement the [platform profile
+README](../abstract/platform/README.md) describes, and give it a name of its own rather
+than reusing `runs-on`. The reasoning is in Problem 5.
+
+```yaml
+node_types:
+  Platform:
+    requirements:
+      - host:
+          capability: PlatformHost
+          relationship: HostedOn
+      - control-plane:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+      - links-to:
+          capability: Linkable
+          relationship: LinksTo
+```
+
+This also answers the question the README leaves open beside that paragraph — *"Is it
+necessary to have a different relationship type, or is it sufficient for this requirement
+to have a different name?"* A different **name** is what disambiguates. A different
+relationship type does not, because `RunsOn` is already the relationship an `Application`
+uses to reach its execution environment, so it carries both senses whatever it is called
+here.
+
+The name `control-plane` is a placeholder for whatever the community prefers; what matters
+is that it is not `runs-on`.
 
 ---
 
@@ -350,6 +381,47 @@ its place in the family; it is the name and the property that do not.
 
 Proposed replacement in Section 2.5. **Not yet discussed by the community.**
 
+### Problem 5 — `runs-on` carries two meanings, and the platform one is not implemented
+
+The [platform profile README](../abstract/platform/README.md) describes a second deployment
+requirement on `Platform`:
+
+> All platforms can be considered to have not only a *data plane*, but also a *control
+> plane*. [...] For some platforms (such as Kubevirt), it may be necessary to model
+> deployment of the control plane separately from deployment of the data plane. This is done
+> by defining a second requirement in the `Platform` node type that specifies where control
+> is hosted. This requirement uses the `RunsOn` relationship type rather than the `HostedOn`
+> relationship type.
+
+Two problems follow from it.
+
+**The name is overloaded.** `Application` already declares `runs-on` — reaching an
+`ExecutionEnvironment` over `RunsOn` — meaning *where this application executes*. The
+platform requirement described above means something else: *where this platform's own
+control plane is deployed*. Same requirement name, same relationship type, two meanings
+separated only by the kind of node declaring them. Reading a template, `runs-on` tells you
+nothing about which is meant until you look up the source node's type.
+
+It is worth being precise about the platform sense, because the shorthand misleads: the
+requirement does not point *at* a control-plane component. It points at the **platform that
+hosts this platform's control plane**. Both ends are platforms, and both `host` and this
+requirement are deployment relationships — they differ in *which plane* of the same platform
+is being deployed.
+
+**And `Platform` does not declare it.** `Platform` declares `host` and `links-to` only. The
+requirement exists nowhere in the community profiles; the only implementation is a
+`VirtualizationPlatform` in a downstream extension, which is the Kubevirt case the README
+uses as its example.
+
+The consequence is that the README's own multi-node Kubernetes model cannot be expressed.
+That section says *"To indicate which server acts as the control node in the Kubernetes
+cluster, we use the `RunsOn` relationship of the `ContainerPlatform` node"*, and describes
+high availability as several such relationships — but `ContainerPlatform` inherits no such
+requirement and declares none. A single-node cluster is unaffected, since control and
+hosting coincide on one server; multi-node is exactly where they separate.
+
+Proposal in Section 2.6. **Not yet discussed by the community.**
+
 ---
 
 ## 4. Decisions and open questions
@@ -406,3 +478,9 @@ Proposed replacement in Section 2.5. **Not yet discussed by the community.**
    `runs-on`? And separately from both: the property `processes` collides with the
    requirement `processes` inherited from `Application`, which needs resolving on its
    own terms. Proposal in Section 2.5, reasoning in Problem 4.
+6. **The control-plane requirement** — *Open, not yet discussed.* The platform README
+   describes a second deployment requirement on `Platform`, distinguishing where a platform's
+   control plane is deployed from where its data plane is. `Platform` does not declare it, so
+   the README's own multi-node Kubernetes model cannot be expressed. Declaring it also forces
+   the README's open question about naming, since `runs-on` already means *where this
+   application executes*. Proposal in Section 2.6, reasoning in Problem 5.
