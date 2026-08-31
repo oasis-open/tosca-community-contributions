@@ -172,15 +172,26 @@ node_types:
           relationship: LinksTo
 ```
 
-This also answers the question the README leaves open beside that paragraph — *"Is it
-necessary to have a different relationship type, or is it sufficient for this requirement
-to have a different name?"* A different **name** is what disambiguates. A different
-relationship type does not, because `RunsOn` is already the relationship an `Application`
-uses to reach its execution environment, so it carries both senses whatever it is called
-here.
+This settles the question the README leaves open beside that paragraph — *"Is it necessary
+to have a different relationship type, or is it sufficient for this requirement to have a
+different name?"* — and settles it more firmly than a preference. **The relationship type is
+not free to choose.** `ExecutionEnvironment` declares `valid_relationship_types: [RunsOn]`,
+so any requirement seeking an execution environment must use `RunsOn`; a different
+relationship type would require a different capability type as well.
 
-The name `control-plane` is a placeholder for whatever the community prefers; what matters
-is that it is not `runs-on`.
+And the target genuinely is an execution environment. A Kubevirt operator runs as workloads
+on a cluster, and a Kubernetes control plane runs on its control node — both are things
+executing on a platform rather than things contained by one. So the capability is right, the
+relationship type follows from it, and the **name is the only thing left to distinguish the
+two senses**.
+
+`control-plane` above is a placeholder. It is worth noting that it does not fit the
+convention: every other requirement in the base profile is named for a *relation* to the
+target — `host`, `runs-on`, `available-on`, `processes`, `links-to` — whereas
+`control-plane` names a thing. A relation-shaped name symmetric with `host` would read
+better, `control-host` for instance, giving *where my data plane is hosted* and *where my
+control plane is hosted* as an obvious pair. The community should pick; what matters is that
+it is not `runs-on`.
 
 ---
 
