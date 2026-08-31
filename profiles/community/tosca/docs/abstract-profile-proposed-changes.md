@@ -151,47 +151,68 @@ at both layers, instead of a type per cardinality.
 and on `SingleHostApplication` today, so they are candidates to lift onto `Application`
 while this is open.
 
-### 2.6 `community.tosca.abstract.base` — a distinctly named control-plane requirement
+### 2.6 `community.tosca.abstract.base` — one containment relationship, one requirement name
 
-Declare on `Platform` the second requirement the [platform profile
-README](../abstract/platform/README.md) describes, and give it a name of its own rather
-than reusing `runs-on`. The reasoning is in Problem 5.
+Three changes that are one idea: deployment layering is a single concept, so it should have a
+single relationship type and a single requirement name, with the *capability* saying what kind
+of thing is being placed. Reasoning in Problems 5 and 6.
+
+**One relationship type.** `HostedOn`, `RunsOn` and `AvailableOn` are identical but for the
+capability each accepts — same parent, same `implementation-details` property, and all three
+carry `metadata: {relationship_kind: containment}`, so the profile already declares them to be
+one kind. Let `HostedOn` accept all three capabilities:
+
+```yaml
+relationship_types:
+  HostedOn:
+    metadata:
+      relationship_kind: containment
+    derived_from: ContainedBy
+    properties:
+      implementation-details: { type: YAML, required: false }
+    valid_capability_types: [ PlatformHost, ExecutionEnvironment, DataPlatform ]
+
+capability_types:
+  PlatformHost:         { derived_from: Container, valid_relationship_types: [ HostedOn ] }
+  ExecutionEnvironment: { derived_from: Container, valid_relationship_types: [ HostedOn ] }
+  DataPlatform:         { derived_from: Container, valid_relationship_types: [ HostedOn ] }
+```
+
+**One requirement name.** `host` is the name TOSCA has used for deployment layering
+throughout its history; `runs-on` and `available-on` are new names for that established
+concept. Requirement names must be unique only *within* a node type (§3655), so each of the
+three may declare `host`:
 
 ```yaml
 node_types:
   Platform:
     requirements:
-      - host:
-          capability: PlatformHost
-          relationship: HostedOn
-      - control-plane:
-          capability: ExecutionEnvironment
-          relationship: RunsOn
-      - links-to:
-          capability: Linkable
-          relationship: LinksTo
+      - host:         { capability: PlatformHost,         relationship: HostedOn }
+      - control-host: { capability: ExecutionEnvironment, relationship: HostedOn }
+      - links-to:     { capability: Linkable,             relationship: LinksTo }
+  Application:
+    requirements:
+      - host:      { capability: ExecutionEnvironment, relationship: HostedOn }
+      - processes: { capability: DataSource,           relationship: Processes }
+  Data:
+    requirements:
+      - host: { capability: DataPlatform, relationship: HostedOn }
 ```
 
-This settles the question the README leaves open beside that paragraph — *"Is it necessary
-to have a different relationship type, or is it sufficient for this requirement to have a
-different name?"* — and settles it more firmly than a preference. **The relationship type is
-not free to choose.** `ExecutionEnvironment` declares `valid_relationship_types: [RunsOn]`,
-so any requirement seeking an execution environment must use `RunsOn`; a different
-relationship type would require a different capability type as well.
+**And a second name for the control plane.** `Platform` is the one type needing two placements
+— its data plane and its control plane — and they cannot share a name, since names are unique
+within a type. Declaring one `host` with an unbounded `count_range` and distinguishing the
+assignments by `capability` is legal grammar but not usable: a TOSCA path selects a
+requirement by name and index, never by capability, so a realization could not tell which
+bindings are which. Hence `control-host`, reading with `host` as the pair it is — *where my
+data plane is hosted*, *where my control plane is hosted*.
 
-And the target genuinely is an execution environment. A Kubevirt operator runs as workloads
-on a cluster, and a Kubernetes control plane runs on its control node — both are things
-executing on a platform rather than things contained by one. So the capability is right, the
-relationship type follows from it, and the **name is the only thing left to distinguish the
-two senses**.
+`control-host` is a placeholder for whatever the community prefers, provided it is
+relation-shaped like its neighbours rather than naming a thing.
 
-`control-plane` above is a placeholder. It is worth noting that it does not fit the
-convention: every other requirement in the base profile is named for a *relation* to the
-target — `host`, `runs-on`, `available-on`, `processes`, `links-to` — whereas
-`control-plane` names a thing. A relation-shaped name symmetric with `host` would read
-better, `control-host` for instance, giving *where my data plane is hosted* and *where my
-control plane is hosted* as an obvious pair. The community should pick; what matters is that
-it is not `runs-on`.
+**Migration.** `RunsOn` and `AvailableOn` are retained as deprecated aliases for one release,
+as are the `runs-on` and `available-on` requirement names, so existing templates keep parsing
+while they are updated.
 
 ---
 
@@ -433,6 +454,44 @@ hosting coincide on one server; multi-node is exactly where they separate.
 
 Proposal in Section 2.6. **Not yet discussed by the community.**
 
+### Problem 6 — Three relationship types for one relationship kind
+
+`HostedOn`, `RunsOn` and `AvailableOn` differ in nothing but the capability each accepts:
+
+| | parent | properties | metadata | accepts |
+|---|---|---|---|---|
+| `HostedOn` | `ContainedBy` | `implementation-details` | `relationship_kind: containment` | `PlatformHost` |
+| `RunsOn` | `ContainedBy` | `implementation-details` | `relationship_kind: containment` | `ExecutionEnvironment` |
+| `AvailableOn` | `ContainedBy` | `implementation-details` | `relationship_kind: containment` | `DataPlatform` |
+
+The profile labels all three `relationship_kind: containment` itself. They carry no distinct
+properties, no interfaces and no behaviour — only a different `valid_capability_types`, which
+duplicates what a requirement's `capability` keyname already states.
+
+- **The design guide argues against the split.** Its naming principle holds that *capability*
+  type names describe the functionality a component exposes, while *relationship* type names
+  describe the intent of the source toward the target. Placing a platform, an application or
+  data onto a platform is one intent against three exposed functionalities. The difference
+  belongs on the capability, and it is already there.
+
+- **`runs-on` and `available-on` are new names for an established concept.** TOSCA has used
+  `host` and `HostedOn` for deployment layering throughout its history. Introducing two further
+  names for the same idea obliges every reader to learn a private vocabulary for something they
+  already know, and makes templates harder to move between profiles.
+
+- **The guide also names `LinksTo` as a name to avoid**, listing it among "mechanism-flavored
+  names" against which intent-revealing ones are preferred — and the base profile declares it.
+  Worth settling at the same time, though it is a dependency relationship rather than a
+  containment one, so it is not part of the collapse.
+
+- **Nothing is lost by collapsing.** A `Platform` exposes all three capabilities, and a
+  requirement names the capability it seeks, so which capability a relationship binds to stays
+  as determined as it is today. Relationship types can carry operations, so if placing data ever
+  needs different lifecycle behaviour from placing an application, a specialized type can be
+  derived at that point.
+
+Proposal in Section 2.6. **Not yet discussed by the community.**
+
 ---
 
 ## 4. Decisions and open questions
@@ -495,3 +554,11 @@ Proposal in Section 2.6. **Not yet discussed by the community.**
    the README's own multi-node Kubernetes model cannot be expressed. Declaring it also forces
    the README's open question about naming, since `runs-on` already means *where this
    application executes*. Proposal in Section 2.6, reasoning in Problem 5.
+7. **One containment relationship, one requirement name** — *Open, not yet discussed.*
+   `HostedOn`, `RunsOn` and `AvailableOn` are identical but for the capability each accepts,
+   and the profile marks all three `relationship_kind: containment`. Should they collapse into
+   `HostedOn`, and should `runs-on` and `available-on` collapse into `host` — the name TOSCA
+   has used for deployment layering throughout its history — leaving the capability to say what
+   kind of thing is being placed? Proposal in Section 2.6, reasoning in Problem 6. Settling
+   this also settles question 6, since the control-plane requirement is then a second
+   requirement name over the same relationship.
