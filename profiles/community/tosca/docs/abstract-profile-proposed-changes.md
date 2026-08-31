@@ -32,6 +32,12 @@ templates can rely on the community types directly. Prototyping this exposed
 several issues — documented in Section 3 — that should be settled by the
 community first.
 
+Section 2.5 runs in the opposite direction. `community.tosca.abstract.application`
+is not description-only: `SingleHostApplication` carries a property and a name that
+assert more than the model holds, so the proposal there **removes** rather than adds.
+It came out of the same prototyping — looking for an abstract type to describe software
+installed on a server — and the reasoning is in Problem 4.
+
 ---
 
 ## 2. Proposed changes
@@ -102,6 +108,48 @@ node_types:
         type: string
         required: false
 ```
+
+### 2.5 `community.tosca.abstract.application` — name the platform, drop the processes
+
+Rework `SingleHostApplication` so that what it asserts is what it holds. The reasoning
+is in Problem 4.
+
+```yaml
+node_types:
+  ServerApplication:
+    description: >-
+      An application that runs on a server platform.
+    derived_from: Application
+    capabilities:
+      endpoint:
+        type: Endpoint
+    requirements:
+      - endpoint:
+          node: ServerApplication
+          capability: Endpoint
+          relationship: InteractsWith
+      - runs-on:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+          node: ServerPlatform
+```
+
+Three changes from the current type:
+
+- **Named for the platform it targets**, consistent with `MicroServiceApplication` and
+  `ServerlessApplication`, rather than for a cardinality.
+- **`processes` removed.**
+- **Cardinality expressed as `count_range` on `runs-on`** — in the type where a kind of
+  application genuinely constrains it, in the template where it does not.
+
+The last of these unifies a mechanism rather than adding one. An application spanning
+several servers becomes `runs-on` bound several times, which is the same shape the platform
+profile already uses for a cluster spanning several servers. One way to say "how many",
+at both layers, instead of a type per cardinality.
+
+`endpoint` and its `InteractsWith` requirement are declared identically on `MicroService`
+and on `SingleHostApplication` today, so they are candidates to lift onto `Application`
+while this is open.
 
 ---
 
@@ -242,6 +290,66 @@ release artifacts — building CSAR files as release artifacts (mirroring
 Ubicity's existing onboarding workflow) was raised as one candidate mechanism,
 to be refined.
 
+### Problem 4 — `SingleHostApplication` names a constraint it does not impose
+
+Three distinct issues sit in one type, found while looking for an abstract home for
+software installed on a server.
+
+**It is named for a cardinality it does not constrain.** The type declares:
+
+```yaml
+      - runs-on:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+          node: platform:ServerPlatform
+```
+
+with no `count_range`, so it takes the `tosca_2_0` default of `[0, UNBOUNDED]` and permits
+any number of hosts. "Single host" is a placement constraint, and a placement constraint is
+a `count_range`, not a type. Adding a type per cardinality also does not scale: the same
+reasoning would want a type for two hosts, and another for many.
+
+**`processes` sits below the System View.** The `Process` data type is a `command` plus
+`parameters`. A command string names an executable, which the
+[design guide](design-guide.md) places in the Device View row — vendor-specific realization,
+alongside k3s and Docker Engine. Requiring one on a System View type inverts the model
+continuum the profiles are organized on.
+
+It is also `required: true`, which makes a whole category unmodellable: software installed
+on a host that runs no long-running process at all — a CLI, a client tool, a package — has
+no value to supply.
+
+**`processes` collides with an inherited requirement of the same name.** The base
+`Application` declares:
+
+```yaml
+  Application:
+    requirements:
+      - processes:
+          capability: DataSource
+          relationship: Processes
+```
+
+meaning *this application processes that data*. `SingleHostApplication` then declares a
+**property** named `processes` meaning *these operating-system commands*. Same name,
+unrelated concepts, parent and child. This one needs fixing regardless of how the other two
+are settled.
+
+**What the type family gets right.** Three of the four application types pin `runs-on` to a
+kind of platform:
+
+| Node type | `runs-on` target |
+|-----------|------------------|
+| `MicroServiceApplication` | `platform:ContainerPlatform` |
+| `SingleHostApplication` | `platform:ServerPlatform` |
+| `ServerlessApplication` | `platform:ServerlessPlatform` |
+
+That axis is sound System View content — what kind of platform an application needs is what
+drives placement, and it mirrors the platform profile's own decomposition. So the type earns
+its place in the family; it is the name and the property that do not.
+
+Proposed replacement in Section 2.5. **Not yet discussed by the community.**
+
 ---
 
 ## 4. Decisions and open questions
@@ -291,3 +399,10 @@ to be refined.
    the rule that profile name-version strings are bumped when a version is frozen
    and the next one opened, since CSAR names derive from those strings rather than
    from the git tag.
+5. **`SingleHostApplication`** — *Open, not yet discussed.* Three questions, of
+   descending independence. Does the `processes` property belong at the System View at
+   all, given that a `command` names an executable? Should a type be named for a
+   cardinality it does not constrain, or should cardinality be a `count_range` on
+   `runs-on`? And separately from both: the property `processes` collides with the
+   requirement `processes` inherited from `Application`, which needs resolving on its
+   own terms. Proposal in Section 2.5, reasoning in Problem 4.
