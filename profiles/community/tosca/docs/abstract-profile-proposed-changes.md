@@ -237,9 +237,78 @@ data plane is hosted*, *where my control plane is hosted*.
 `control-host` is a placeholder for whatever the community prefers, provided it is
 relation-shaped like its neighbours rather than naming a thing.
 
+**On `Platform`, and not on `Base`.** The two requirements sit at different levels on purpose.
+`host` belongs on `Base` because everything in this model is deployed somewhere and only the
+kind of target varies. `control-host` belongs on `Platform` because only some things deploy a
+control plane apart from what it controls. The test is whether an abstraction presents as one
+thing to its consumers while deploying in two places:
+
+| type | needs it | |
+|---|---|---|
+| `Platform` | yes | Kubevirt's operator on a cluster with KVM on a server; a cluster's control node against its workers |
+| `Network` | eventually | an SDN separates a controller from its forwarding elements while presenting as one network to whatever links to it. Nothing models such a network today, so `Network` declares its own if the case arrives |
+| `Data` | no | a dataset has no control plane. What resembles one belongs to the platform hosting the data, and the model already separates those |
+| `Application` | no | where an application has a control component deployed elsewhere, the model's answer is to decompose it into nodes related through `InteractsWith` |
+
+The `Application` row is a reason not to hoist this to `Base`, not merely a reason not to
+bother. A second placement on `Application` would offer an alternative to decomposing, letting
+an author hide a multi-component application inside a single node — which is the modelling the
+horizontal decomposition into Application, Data, Platform and Network exists to prevent.
+
 **Migration.** `RunsOn` and `AvailableOn` are retained as deprecated aliases for one release,
 as are the `runs-on` and `available-on` requirement names, so existing templates keep parsing
 while they are updated.
+
+**Left open: whether a control node also hosts workloads.** Having the two requirements does
+not by itself settle how to say that the machine running the control plane is *also* available
+for workloads — the platform README's own third open question. Two models, recorded here as
+the choice rather than the answer.
+
+*Model A — set overlap*, which is what the platform README describes. `host` lists every
+server that hosts workloads, `control-host` lists the control nodes, and a control node that
+also hosts workloads appears in both:
+
+```yaml
+  requirements:                      # master on server_1, which also hosts workloads
+    - host: server_1
+    - host: server_2
+    - host: server_3
+    - control-host: server_1
+
+  requirements:                      # master on server_1, control-only
+    - host: server_2
+    - host: server_3
+    - control-host: server_1
+```
+
+Both questions are then answered by traversal: which server runs the control plane is the
+`control-host` target, and whether it hosts workloads is whether it also appears under `host`
+— which `$has_entry` reads directly, so a substitution filter can select a tainting
+realization from a non-tainting one.
+
+What Model A lacks is a way to *act* on it. A realization needs a worker on every host except
+the one that is also the control host, and a requirement mapping cannot select a subset of
+bindings: `[host, UNBOUNDED]` takes all of them and cannot skip one.
+
+*Model B — disjoint sets and a property.* `host` lists only servers that host workloads and
+are not control nodes, and a property carries the rest:
+
+```yaml
+  properties:
+    schedulable_control_nodes: true
+  requirements:
+    - host: server_2
+    - host: server_3
+    - control-host: server_1
+```
+
+Directly realizable — every `host` binding becomes a worker, `control-host` becomes the
+controller, no subsetting — at the cost of a graph that no longer answers "which servers run
+workloads" by traversal, since `server_1` does but does not appear under `host`.
+
+The trade is between a model that states the topology honestly and one that can be built
+today. Model A is preferable if the subsetting limitation is treated as something to fix;
+Model B is the pragmatic choice if it is not.
 
 ---
 
@@ -589,3 +658,11 @@ Proposal in Section 2.6. **Not yet discussed by the community.**
    refined by each child, leaving the capability to say what kind of thing is being placed? Proposal in Section 2.6, reasoning in Problem 6. Settling
    this also settles question 6, since the control-plane requirement is then a second
    requirement name over the same relationship.
+8. **Whether a control node also hosts workloads** — *Open, not yet discussed.* The platform
+   README asks this as its own third open question. Two models are set out at the end of
+   Section 2.6: *set overlap*, where a schedulable control node appears under both `host` and
+   `control-host` and `$has_entry` reads the overlap, and *disjoint sets with a property*,
+   where `host` carries only non-control workload hosts. The first states the topology
+   honestly but cannot be realized, since a requirement mapping cannot distribute a subset of
+   bindings; the second can be built today but stops the graph answering which servers run
+   workloads.
