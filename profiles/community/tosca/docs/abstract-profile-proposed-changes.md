@@ -590,7 +590,7 @@ Proposal in Section 2.6. **Not yet discussed by the community.**
 
 ---
 
-### Problem 7 — `Application` cannot be interacted with, and the interaction pattern is stranded
+### Problem 7 — `Application` cannot be interacted with, and `Endpoint` is stranded below it
 
 Abstract `Application` declares two requirements and **no capabilities**:
 
@@ -610,8 +610,8 @@ It can consume data and it can be placed, but nothing can be pointed *at* it. Ev
 in the profile is a sink.
 
 - **The pattern for application-to-application interaction exists, one level too low.** The
-  `Endpoint` capability and the `InteractsWith` relationship are declared on the two concrete
-  types, not on the abstract one:
+  `Endpoint` capability and the `InteractsWith` relationship are declared on two concrete types,
+  not on the abstract one:
 
   | type | exposes | requires |
   |---|---|---|
@@ -623,26 +623,40 @@ in the profile is a sink.
   A profile deriving from `Application` therefore inherits no way to be interacted with, and
   must declare a capability and a relationship of its own. That is not hypothetical: the O-PAS
   (Open Process Automation) profiles declare `ControlApplicationComponent` with a `SignalSource`
-  capability and a matching `Signal` requirement onto it, which is structurally the same shape
-  as `Endpoint` and `InteractsWith` — a component that both publishes and consumes through a
-  typed port. Two profiles, two vocabularies, one concept.
+  capability and a matching `Signal` requirement onto it — structurally the same shape as
+  `Endpoint` and `InteractsWith`, a component that both publishes and consumes through a typed
+  port. Two profiles, two vocabularies, one concept.
+
+- **`Endpoint` cannot simply be promoted, because it is a network contract.** Its properties are
+  `port`, `target-port`, `protocol` and `name`. That is the right shape for a network endpoint
+  and the name is honest about it — but hoisting it onto `Application` would oblige every
+  application to expose a port and a protocol. An O-PAS signal port carries `Tags`; there is no
+  port and no protocol to give. The design guide already prescribes the resolution: *a contract
+  every realization exposes belongs on the base capability; a value specific to one realization
+  belongs on a capability derived from that base.* `Endpoint` is a specialization that was never
+  given its base.
 
 - **`Endpoint` is pinned to interaction between nodes of the same type.** Its description says
   so, and both requirements name their own type as the target. Heterogeneous interaction is the
   ordinary case rather than the exception: O-PAS signals flow from an I/O channel configuration
-  to a control logic deployment, two different types, which its capability states as
+  to a control logic deployment, two different types, stated on the capability as
   `valid_source_node_types: [IOChannelConfigurations, ControlLogicDeployment]`. The same-type
   constraint reads as an artifact of how those two concrete types were written rather than a
   property of interaction.
 
-- **The base profile has no association relationship.** Everything derives from `ContainedBy` or
-  `DependsOn`, and `InteractsWith` derives from `DependsOn` — a dependency, which asserts that
-  the target must exist first. Some interactions carry no such order. Control signals are the
-  clear case: an I/O channel and the logic reading it are commissioned independently, and a
-  signal not yet flowing is a runtime condition rather than a deployment-ordering error. O-PAS
-  models this by deriving `ReceivesSignalFrom` from an `AssociatesWith` relationship the
-  community profile does not have. As it stands, saying two components exchange values also
-  says one must be deployed before the other.
+- **`InteractsWith` derives from `DependsOn`, when the profile's own association kind was
+  available.** `community.tosca.core` defines all three kinds — `ContainedBy` over `Container`,
+  `DependsOn` over `Feature`, and `AssociatesWith` over `Partner` — and `abstract.base` imports
+  it. A dependency asserts that the target must exist first; an association does not. Some
+  interactions carry no such order, and control signals are the clear case: an I/O channel and
+  the logic reading it are commissioned independently, and a signal not yet flowing is a runtime
+  condition rather than a deployment-ordering error. O-PAS derives `ReceivesSignalFrom` from
+  `AssociatesWith`, which is the choice available here too. As it stands, saying two components
+  exchange values also says one must be deployed before the other.
+
+  Worth noting how the two profiles converged: O-PAS re-declares the same three base kinds under
+  the same names in its own profile rather than importing `core`. Both reached for the same
+  vocabulary independently. Only `InteractsWith` did not use it.
 
 **This is not the `Application` / `Data` boundary, and treating it as one would be a mistake.**
 A signal looks like data, so the tempting reading is that these components are part application
@@ -662,15 +676,25 @@ reading from writing. One relationship covers both directions, so a producer can
 a consumer, a producer cannot be ordered ahead of the consumers of what it writes, and "what
 breaks if this dataset is gone" cannot be separated from "what stops being written to it".
 
-**Shape of a fix**, not yet drafted as a Section 2 change:
+**Shape of a fix**, not yet drafted as a Section 2 change. It adds no base machinery: one
+intermediate capability, under which both existing ports become specializations.
 
-1. Declare an interaction capability on abstract `Application`, so any application can be a
-   target. Derived types specialize it — O-PAS would derive `SignalSource` from it and add
-   `Tags`.
-2. Drop the same-type pinning, letting a derived profile narrow the permitted sources with
-   `valid_source_node_types` as O-PAS already does.
-3. Add an association-kind relationship to the base profile, so exchange can be expressed
-   without asserting containment or dependency.
+```
+Partner                     (core, targeted by AssociatesWith)
+└── Service                 declared on Application; no properties
+    ├── Endpoint            + port, target-port, protocol   (network interaction)
+    └── SignalSource        + Tags                          (O-PAS signals)
+```
+
+1. Declare a property-free `Service` capability on abstract `Application`, derived from
+   `Partner`. It names the functionality exposed — the ability to provide a service to another
+   component — in the same construction as `DataSource`, the ability to make data available.
+   `Interaction` would name the relationship rather than the functionality, against the naming
+   principle, and `Interface` collides with TOSCA's own `interface_types`.
+2. Rederive `Endpoint` from `Service`, keeping its network properties where they belong. O-PAS
+   derives `SignalSource` from `Service` and adds `Tags`.
+3. Rederive `InteractsWith` from `AssociatesWith`, and drop the same-type pinning so a derived
+   profile narrows permitted sources with `valid_source_node_types` as O-PAS already does.
 
 O-PAS then harmonizes by derivation rather than parallel invention, and its own placement
 modelling survives untouched: `ControlApplicationComponent` is hosted on one to four DCNs for
@@ -758,10 +782,11 @@ default.
    bindings; the second can be built today but stops the graph answering which servers run
    workloads.
 9. **Interaction between applications** — *Open, not yet discussed.* Abstract `Application`
-   declares no capabilities, so nothing can be pointed at it, and the `Endpoint` /
-   `InteractsWith` pattern sits on `MicroService` and `SingleHostApplication` instead —
-   pinned, in both, to interaction between nodes of the same type. Should an interaction
-   capability move onto `Application`, should the same-type constraint go, and should the base
-   profile gain an association relationship so that exchange can be modelled without implying
-   deployment order? Reasoning in Problem 7, which also asks whether `Processes` should
+   declares no capabilities, so nothing can be pointed at it, while `Endpoint` and
+   `InteractsWith` sit on `MicroService` and `SingleHostApplication` — `Endpoint` carrying a
+   network contract that not every application can honour, and both requirements pinned to
+   interaction between nodes of the same type. Should a property-free `Service` capability be
+   declared on `Application` and derived from `Partner`, with `Endpoint` rederived from it,
+   should `InteractsWith` rederive from `AssociatesWith` rather than `DependsOn`, and should the
+   same-type constraint go? Reasoning in Problem 7, which also asks whether `Processes` should
    distinguish reading a dataset from writing one.
