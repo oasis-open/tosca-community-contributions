@@ -74,6 +74,28 @@ naming is no longer constrained by shell syntax.
 It is also the smallest change that does this. Nothing is staged, nothing is cleaned up, and
 the remote path is untouched.
 
+### The variable is always set
+
+`TOSCA_INPUTS` is set for every invocation and always holds a valid document. An operation that
+declares no inputs gets `{}`.
+
+This matters more than it looks: **42% of the operations in one profile set -- 66 of 157 --
+declare no inputs at all.** Leaving the variable unset for those would put a guard in every
+artifact, whether or not it reads anything:
+
+```bash
+[ -n "${TOSCA_INPUTS:-}" ] && name=$(jq -r '.name' <<<"$TOSCA_INPUTS")
+```
+
+and it would make the contract conditional, which is what this proposal exists to remove. An
+artifact would have to tell *the orchestrator passed me no inputs* from *the orchestrator did
+not tell me where they are*, and an unset variable cannot distinguish them.
+
+Set unconditionally, an artifact that reads an input it was not given gets JSON `null` -- the
+same answer it gets for an input that was declared and left unset. One rule instead of two.
+This is the reasoning behind representing absence with `null`, applied one level up: absence
+belongs *in* the document, not in the absence of the channel.
+
 ### What it costs, honestly
 
 - **A parser becomes a hard dependency.** `jq` is needed today only for complex values; it
@@ -98,6 +120,13 @@ credential-model problem wearing a transport disguise. An input that carries sec
 rather than a reference to it is already a defect, and hiding it better in transit does not
 make it correct. The other rows in the list above are genuine transport problems, and the
 single variable fixes all of them.
+
+**The empty case also tells against the file.** Because the variable is always set, nearly
+half of all invocations would carry a create-and-unlink cycle to deliver an empty map -- and
+for a remote artifact, a staged file transferred over the connection to say nothing. With a
+single variable the same case costs two characters in an environment that is being built
+regardless. The overhead is small in absolute terms, but it is paid on the most common path to
+no purpose.
 
 **The migration between the two is one token**, which is what makes this a safe first step
 rather than a fork in the road:
