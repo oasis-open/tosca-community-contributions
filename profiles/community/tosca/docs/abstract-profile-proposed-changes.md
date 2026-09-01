@@ -590,6 +590,97 @@ Proposal in Section 2.6. **Not yet discussed by the community.**
 
 ---
 
+### Problem 7 — `Application` cannot be interacted with, and the interaction pattern is stranded
+
+Abstract `Application` declares two requirements and **no capabilities**:
+
+```yaml
+  Application:
+    derived_from: Base
+    requirements:
+      - processes:
+          capability: DataSource
+          relationship: Processes
+      - runs-on:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+```
+
+It can consume data and it can be placed, but nothing can be pointed *at* it. Every application
+in the profile is a sink.
+
+- **The pattern for application-to-application interaction exists, one level too low.** The
+  `Endpoint` capability and the `InteractsWith` relationship are declared on the two concrete
+  types, not on the abstract one:
+
+  | type | exposes | requires |
+  |---|---|---|
+  | `MicroService` | `endpoint: Endpoint` | `endpoint` → `node: MicroService` |
+  | `SingleHostApplication` | `endpoint: Endpoint` | `endpoint` → `node: SingleHostApplication` |
+  | `MicroServiceApplication`, `ServerlessApplication` | — | — |
+  | `Application` | — | `processes`, `runs-on` |
+
+  A profile deriving from `Application` therefore inherits no way to be interacted with, and
+  must declare a capability and a relationship of its own. That is not hypothetical: the O-PAS
+  (Open Process Automation) profiles declare `ControlApplicationComponent` with a `SignalSource`
+  capability and a matching `Signal` requirement onto it, which is structurally the same shape
+  as `Endpoint` and `InteractsWith` — a component that both publishes and consumes through a
+  typed port. Two profiles, two vocabularies, one concept.
+
+- **`Endpoint` is pinned to interaction between nodes of the same type.** Its description says
+  so, and both requirements name their own type as the target. Heterogeneous interaction is the
+  ordinary case rather than the exception: O-PAS signals flow from an I/O channel configuration
+  to a control logic deployment, two different types, which its capability states as
+  `valid_source_node_types: [IOChannelConfigurations, ControlLogicDeployment]`. The same-type
+  constraint reads as an artifact of how those two concrete types were written rather than a
+  property of interaction.
+
+- **The base profile has no association relationship.** Everything derives from `ContainedBy` or
+  `DependsOn`, and `InteractsWith` derives from `DependsOn` — a dependency, which asserts that
+  the target must exist first. Some interactions carry no such order. Control signals are the
+  clear case: an I/O channel and the logic reading it are commissioned independently, and a
+  signal not yet flowing is a runtime condition rather than a deployment-ordering error. O-PAS
+  models this by deriving `ReceivesSignalFrom` from an `AssociatesWith` relationship the
+  community profile does not have. As it stands, saying two components exchange values also
+  says one must be deployed before the other.
+
+**This is not the `Application` / `Data` boundary, and treating it as one would be a mistake.**
+A signal looks like data, so the tempting reading is that these components are part application
+and part data, and that the horizontal decomposition fails for them. It does not. Every `Data`
+subtype — `AtRestData`, `BatchData`, `StreamingData`, `EventData`, `ApiData`, `CachedData` — is
+a dataset with independent existence, a lifecycle of its own, and an `available-on` requirement
+onto a `DataPlatform`. A signal has none of those: nothing deploys it, and there is no data
+platform it is hosted on. It is an interface a running component exposes, which is why O-PAS
+models it as a capability rather than a node. The distinction that matters is not application
+versus data but **data as a managed entity versus data in motion between components** — and the
+profile already draws it, once as `Data` and once as `Endpoint`.
+
+**A related gap, worth settling alongside.** Where a component genuinely does both — a historian
+that runs logic *and* owns an authoritative dataset — the answer is decomposition into an
+`Application` and a `Data` node joined by `processes`. But `Processes` does not distinguish
+reading from writing. One relationship covers both directions, so a producer cannot be told from
+a consumer, a producer cannot be ordered ahead of the consumers of what it writes, and "what
+breaks if this dataset is gone" cannot be separated from "what stops being written to it".
+
+**Shape of a fix**, not yet drafted as a Section 2 change:
+
+1. Declare an interaction capability on abstract `Application`, so any application can be a
+   target. Derived types specialize it — O-PAS would derive `SignalSource` from it and add
+   `Tags`.
+2. Drop the same-type pinning, letting a derived profile narrow the permitted sources with
+   `valid_source_node_types` as O-PAS already does.
+3. Add an association-kind relationship to the base profile, so exchange can be expressed
+   without asserting containment or dependency.
+
+O-PAS then harmonizes by derivation rather than parallel invention, and its own placement
+modelling survives untouched: `ControlApplicationComponent` is hosted on one to four DCNs for
+redundancy, which the community `runs-on` already permits, its `count_range` being unbounded by
+default.
+
+**Not yet discussed by the community.**
+
+---
+
 ## 4. Decisions and open questions
 
 1. **`mgmt-address` typing** — *Resolved (2026-06-24):* keep the property name
@@ -666,3 +757,11 @@ Proposal in Section 2.6. **Not yet discussed by the community.**
    honestly but cannot be realized, since a requirement mapping cannot distribute a subset of
    bindings; the second can be built today but stops the graph answering which servers run
    workloads.
+9. **Interaction between applications** — *Open, not yet discussed.* Abstract `Application`
+   declares no capabilities, so nothing can be pointed at it, and the `Endpoint` /
+   `InteractsWith` pattern sits on `MicroService` and `SingleHostApplication` instead —
+   pinned, in both, to interaction between nodes of the same type. Should an interaction
+   capability move onto `Application`, should the same-type constraint go, and should the base
+   profile gain an association relationship so that exchange can be modelled without implying
+   deployment order? Reasoning in Problem 7, which also asks whether `Processes` should
+   distinguish reading a dataset from writing one.
