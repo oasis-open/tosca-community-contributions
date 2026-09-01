@@ -56,6 +56,12 @@ The orchestrator passes **all** input values as a single JSON document, in one e
 variable named `TOSCA_INPUTS`. Keys are input names; values keep the types the model gave
 them.
 
+The environment variable is the channel a shell wants, and this section states the proposal in
+its terms because `Bash` is the artifact type the current convention was built for. A later
+section argues that the *document* is the contract and the channel belongs to each artifact
+type — so read `TOSCA_INPUTS` here as the concrete form for `Bash`, not as a rule every type
+must follow.
+
 ```bash
 name=$(jq -r '.name'    <<<"$TOSCA_INPUTS")
 port=$(jq -r '.port'    <<<"$TOSCA_INPUTS")
@@ -164,6 +170,64 @@ The second is what GitHub Actions does with `$GITHUB_OUTPUT`, and it is the natu
 file-based input. The first is the cheapest and keeps the remote path as it is. This proposal
 raises the question rather than answering it.
 
+## The convention belongs to the artifact type
+
+Everything above assumes a single convention shared by every artifact type. That assumption is
+worth challenging, because it is the reason the question keeps producing awkward answers.
+
+**An environment variable is a shell affordance.** In Bash, `$foo` is the path of least
+resistance: no parsing, no dependency, nothing to decode. That is why the convention looks
+natural there, and it is the only artifact type for which it is.
+
+Python has none of those constraints. `json.load(sys.stdin)` is one line, a JSON parser is in
+the standard library, and reading a file or an argument list is trivial. Passing values through
+the environment therefore buys a Python artifact nothing while costing it everything the
+environment costs: values flattened to strings, a two-tier encoding the artifact must know in
+advance, and a namespace it shares with the process it inherits. In a language that would have
+accepted the whole document, serializing it into pieces is work done to lose information.
+
+Two observations make the point concrete.
+
+**The same artifact type already has two levels of fidelity.** Where a Python artifact
+implements a *function*, arguments reach it as a native list with native types — no encoding at
+all. Where the same artifact type implements an *operation*, every value is stringified. That is
+not a considered distinction; it is the operation path inheriting a convention designed for a
+shell.
+
+**One convention gives two artifact types different rules about legal names.** An input named
+`mgmt-address` is readable by a Python artifact and silently mangled by a Bash one:
+
+```
+python3 -c 'os.environ["mgmt-address"]'   ->  '10.0.0.1'
+bash     -c 'echo "$mgmt-address"'        ->  '-address'      # $mgmt then -address
+bash     -c 'printenv mgmt-address'       ->  '10.0.0.1'
+```
+
+The value is delivered correctly in both cases. Only Bash's *syntax for referring to it* fails,
+and that constraint is currently being applied to the profile as a whole.
+
+Meanwhile the two artifact types that could not use the environment do not: `Ansible` receives a
+YAML document as an extra-vars file, `Terraform` a JSON document as `.tfvars.json`. Four
+artifact types, three input mechanisms — arrived at not by design but because each type took
+what its technology afforded.
+
+**So the proposal is better stated as a default than as a rule.** A single document is the right
+default, and each artifact type declares how it receives one: `Bash` through `TOSCA_INPUTS`
+because a shell wants a variable; `Python` on `stdin` because a script wants a stream; a future
+type through whatever its technology affords. What is common is the *document* — one encoding,
+types preserved, absence representable. What varies is the channel, and that variation is
+already real whether or not the profile admits it.
+
+This would also let a new artifact type be defined without the question being reopened, and
+would make the difference between `community.tosca.core:Bash` and
+`community.tosca.technology.base:Bash` visible rather than silent.
+
+> Not proposed here: calling a Python artifact **in process**, which would give perfect type
+> fidelity and no serialization by unifying the operation path with the function path. It widens
+> an exposure that is already an open gap — an artifact would run inside the orchestrator
+> rather than beside it — and introduces dependency conflicts with the orchestrator's own
+> packages. Subprocess isolation is worth more than the serialization it costs.
+
 ## Open questions
 
 1. Should the input document be JSON, or YAML, or either? A parser that reads YAML reads JSON;
@@ -171,6 +235,7 @@ raises the question rather than answering it.
 2. Should the variable name carry a reserved prefix — `TOSCA_INPUTS` — or a profile-specific
    one? A prefix that the profile reserves makes collisions structurally impossible rather than
    a matter of documentation.
-3. Should the convention be a property of the artifact type, so that a profile can define types
-   with different conventions without ambiguity, rather than a rule stated once in prose?
+3. Should the convention be declared by the artifact type rather than stated once in prose?
+   Argued in the section above; the question is whether the community agrees that the document
+   is the contract and the channel is the type's business.
 4. Which of the three output channels, and is the sentinel form specific enough to standardize?
