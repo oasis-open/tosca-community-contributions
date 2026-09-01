@@ -87,6 +87,79 @@ capability types should be slotted into one of those categories rather
 than introduced ad hoc, so the type library stays a catalog rather than
 a loose collection.
 
+## Artifact Types
+
+The core profile defines two artifact types that can serve as
+implementations. An artifact type that can implement something must say
+how values reach the artifact and how results come back, or an artifact
+written for one orchestrator will not run on another.
+
+### `Python`
+
+A Python script. The same artifact type is used for two different kinds of
+implementation, and the two have different calling conventions.
+
+#### As an operation implementation
+
+- Input values are passed as *environment variables*, one for each input
+  defined in the corresponding interface operation, each named after the
+  input.
+- Values for *TOSCA Primitive Types* and *TOSCA Special Types* are passed
+  directly, in their TOSCA spelling — a boolean arrives as `true` or
+  `false`.
+- Values for *TOSCA Complex Data Types* and *TOSCA Collection Types* are
+  passed as JSON-encoded strings.
+- An input with no value is passed as the four characters `null`, which is
+  distinct from an empty string.
+- Output values are printed to `stdout` as JSON or YAML, decoded by the
+  orchestrator into separate output values whose names must match the
+  operation's output definitions.
+
+This is the same convention the `Bash` artifact type uses, and it is
+described in full in the [technology base
+profile](../technology/base/README.md).
+
+#### As a function implementation
+
+- Arguments are passed as an **ordered list of values**, matching the
+  `arguments` of the signature the function was called through. They are
+  not named, and they are not passed as environment variables.
+- The artifact returns a **single value**, of the type the signature's
+  `result` declares. There are no named outputs.
+- The artifact must define an **entry point named after the TOSCA
+  function**. `to_uppercase` is implemented by a `to_uppercase` callable in
+  `functions/to_uppercase.py`.
+
+> The difference between these two conventions is not about how an
+> orchestrator invokes the artifact — in its own interpreter or as a
+> subprocess — which is an implementation choice and not part of the
+> contract. It is that an operation exchanges *named* values in both
+> directions while a function takes *positional* arguments and returns
+> *one* result. An artifact written for one cannot serve as the other.
+
+#### Runtime environment
+
+What an implementation may assume about its runtime *is* part of the
+contract, and is currently unstated. The functions in this profile use the
+Python standard library only, with one exception: `decode_yaml` imports a
+YAML parser, and so depends on a package the orchestrator must make
+available. An artifact type that does not say which packages an
+implementation may rely on leaves that dependency to be discovered at
+deployment.
+
+> Conventions for declaring an implementation's package dependencies, and
+> for the Python version an implementation may assume, are open.
+
+### `Bash`
+
+A shell script, using the operation calling convention described above.
+
+> `Bash` is declared both here and in the technology base profile, where
+> it additionally carries a `host` property and full documentation of its
+> conventions. TOSCA typing is nominal, so these are two distinct types
+> and an artifact of one cannot satisfy a definition expecting the other.
+> Which of the two profiles should own it is unsettled.
+
 ## Functions
 
 This profile defines custom functions whose implementations are Python

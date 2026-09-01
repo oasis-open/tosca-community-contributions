@@ -31,9 +31,32 @@ values to scripts:
   (i.e., lists and maps) are passed as JSON-encoded strings. Bash scripts
   must decode these values (e.g., using
   [`jq`](https://jqlang.github.io/jq/)) before they can be used.
+- An input that has no value — an optional input, or one whose value
+  expression resolved to nothing — is passed as the four characters
+  `null`. This is not the same as an empty string, which is passed as an
+  empty variable, so a script can tell the two apart. A script that
+  treats "no value" and "empty" alike should test for both.
 
 > A more streamlined approach could use a single environment variable
 > that contains a JSON encoded string for all input values.
+
+#### Reserved Names
+
+Input values share a namespace with any environment variable the
+orchestrator sets for its own purposes, and with the environment the
+script inherits from the host it runs on. Two consequences:
+
+- An orchestrator that sets its own variables **must document their
+  names**, so that artifact designers can avoid declaring operation
+  inputs that collide with them. Where a collision does occur, the
+  orchestrator's value wins and the input is silently lost.
+- Names that are conventionally significant to a shell — `PATH`, `HOME`,
+  `USER`, `IFS` and their like — should not be used as input names.
+
+> Reserving a prefix for orchestrator-set variables would make
+> collisions structurally impossible rather than a matter of
+> documentation and care. Adopting one is a breaking change for existing
+> artifacts, so it is noted here as a direction rather than a rule.
 
 #### Output Values
 Bash scripts return output values to the orchestrator as follows:
