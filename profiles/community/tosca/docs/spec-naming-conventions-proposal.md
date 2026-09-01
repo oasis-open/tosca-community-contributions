@@ -4,7 +4,7 @@
 **Audience:** OASIS TOSCA Technical Committee. Unlike the other documents here, this one
 addresses the specification rather than the community profiles.
 **Purpose:** Propose two changes to §1.2.2 *TOSCA Naming Conventions* — permit snake case for
-value names, and make the acronym rule context-free.
+value names, and make the acronym rule context-free by keeping acronyms upper throughout.
 **Normative impact:** None. §1.2.2 already states that parsers should not enforce these
 conventions and that authors are free to differ.
 
@@ -22,8 +22,9 @@ everywhere.
 1. **Permit snake case for value names**, alongside dash case, consistent within a profile —
    and withdraw the stated rationale that dash case exists to distinguish value names from
    keynames.
-2. **Make the acronym rule context-free**, so an acronym is spelled the same way whether or not
-   other words join it.
+2. **Make the acronym rule context-free**, keeping acronyms upper throughout — `HTTPEndpoint`,
+   `TCPOrUDP`, `TCP`, `DBMS` — so an acronym is spelled the same way whether or not other words
+   join it.
 
 No change is proposed to CamelCase for entity type names. That rule draws the one distinction a
 reader cannot recover from position, and it should stay exactly as it is.
@@ -111,11 +112,40 @@ acronyms upper throughout (`HTTPServer`, `URL`); .NET uppercases two-letter acro
 longer ones as words. Either is defensible. What is hard to defend is a rule whose output
 depends on the rest of the name.
 
+### The rule that is followed is not the rule that is written
+
+Type names containing an acronym were counted across the same three profile families:
+
+| | count | examples |
+|---|---:|---|
+| Lone acronym, upper | 10 | `DBMS`, `DCN`, `JSON`, `OCF`, `UUID`, `VLAN`, `YAML` |
+| Compound, acronym kept **upper** | 24 | `IOChannelConfigurations`, `IPv4`, `DBaaS`, `DCN_IO`, `IOServiceEngine` |
+| Compound, acronym written as a word | 5 | `ApiData`, `HttpUrl`, `AlphanumericId`, `GenericId` |
+
+The specification asks for the third row and authors write the second, by nearly five to one.
+As with dash case, the convention that exists on paper is not the one in the profiles.
+
 ### What this proposes
 
-Adopt one spelling and apply it unconditionally — acronyms as words throughout
-(`HttpEndpoint`, `Tcp`, `Dbms`) or upper throughout (`HTTPEndpoint`, `TCP`, `DBMS`). This
-proposal is indifferent between them and specific about dropping the exception.
+**Keep acronyms upper throughout**, unconditionally: `HTTPEndpoint`, `TCPOrUDP`, `TCP`,
+`DBMS`. Four reasons.
+
+- **It is what authors already do**, by the count above.
+- **It keeps the acronym searchable.** An acronym appears identically wherever it occurs, so a
+  reader looking for `TCP` finds every name containing it. Under the word form, `TCP` becomes
+  `Tcp` in compounds and the search fails — which is the defect this amendment exists to fix.
+  Choosing the word form would fix the inconsistency while leaving the search problem in place.
+- **An acronym is not a word.** `Dbms` and `Http` assert a pronunciation that nobody uses.
+  Capitalizing them as though they were words makes the name harder to read aloud, not easier.
+- **It preserves the specification's own examples.** `TCP` and `DBMS` are already written that
+  way in §1.2.2, and OASIS specification prose capitalizes acronyms throughout. The word form
+  would require changing those to `Tcp` and `Dbms`.
+
+**The honest cost.** Consecutive acronyms run together: `HTTPSURL` is worse than `HttpsUrl`.
+This is why .NET uppercases two-letter acronyms and treats longer ones as words. It is a real
+edge case and it is rare — no name in the three profile families hits it — and paying it buys a
+rule with no exceptions, which is the entire point of the amendment. A profile that finds itself
+with two adjacent acronyms should reword the name.
 
 ## 3. What is not proposed
 
