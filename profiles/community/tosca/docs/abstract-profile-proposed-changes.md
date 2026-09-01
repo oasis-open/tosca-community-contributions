@@ -42,32 +42,86 @@ installed on a server — and the reasoning is in Problem 4.
 
 ## 2. Proposed changes
 
-### 2.1 `community.tosca.core` — add a `Credential` data type
+### 2.1 `community.tosca.core` — add `CredentialRef` and `NamedCredentialRef`
 
-A complex `Credential` data type used to describe authorization credentials for
-network-accessible resources:
+A credential in a model is a **reference** to material, never the material. The value carries
+the path to the file holding it and an identifier where one is needed; the material is read on
+the host where it is used and never enters the representation graph. Properties and attributes
+are visible in deployed-model state and inputs files are routinely committed, so a value placed
+there leaks.
 
 ```yaml
 data_types:
-  Credential:
+  CredentialRef:
     description: >-
-      The Credential type describes authorization credentials used to
-      access network-accessible resources.
+      A reference to credential material: the path to the file holding it, and an
+      identifier where one is needed.
     properties:
-      user_name:
+      name:
+        type: string
+        required: false
+        description: >-
+          Populated where the material needs an identifier -- the principal to
+          authenticate as, or the entry to select inside a file that holds
+          several, where leaving it unset selects the file's own default.
+      file:
         type: string
         required: true
-      key_file:
+        description: >-
+          Path to the file holding the material, read on the host where the
+          credential is used.
+
+  NamedCredentialRef:
+    description: >-
+      A CredentialRef that authenticates as someone, so it always names the
+      principal.
+    derived_from: CredentialRef
+    properties:
+      name:
         type: string
-        required: false
-      password_file:
-        type: string
-        required: false
+        required: true
 ```
 
-> Note: this mirrors the existing Ubicity `com.ubicity.core` `Credential`
-> definition. The exact shape (field names, optionality, additional fields such
-> as protocol or token type) is open for discussion.
+**What kind of credential a value is does not live in the value.** It comes from the context the
+value sits in — the key of the map holding it, or the type of the node advertising it. A consumer
+that must tell an SSH key from a bearer token therefore reads a map keyed by kind rather than a
+bare property, which supplies no kind at all:
+
+```yaml
+    credentials:
+      type: map
+      key_schema:
+        type: string
+        validation: { $valid_values: [ $value, [ ssh_key, ssh_password ] ] }
+      entry_schema:
+        type: NamedCredentialRef
+      required: false
+```
+
+**Why this belongs in `core` rather than in each profile.** TOSCA typing is nominal: two
+identically-shaped types are not compatible, so a node declaring its own credential type can
+never substitute for one declaring another's, however alike the fields. Today
+`org.opengroup.opas` declares a flat `Credential` of its own — `UserName`, `KeyFile`,
+`PasswordFile`, mirroring the O-PAS Part 9 schema — and a bridge translating between it and a
+Ubicity credentials map must disassemble and reassemble the value field by field. With both
+importing one declaration from `core`, that translation disappears. Shared declaration is the
+only thing that produces it; identical fields do not.
+
+It also settles a question that otherwise has no good answer. Converting a standards-derived
+profile in place means deviating from the standard it exists to represent. Adopting a type from
+a community profile *below* it is not a deviation — it is the layering working.
+
+**This does not reopen question 2.** That question settles which *type each node uses* for its
+credential, and resolved it as specific to the technology being authenticated to. This section
+settles where the reference types are *declared*, so that two profiles naming the same one are
+nominally compatible. A profile is free to type a credential property as a `string` under
+question 2's resolution and still import these; `RelationalDatabase` in Section 2.4 does exactly
+that.
+
+> Note: an earlier draft of this section proposed a flat `Credential` carrying `user_name`,
+> `key_file` and `password_file`, mirroring what `com.ubicity.core` declared at the time. That
+> shape has since been superseded there by the two types above, and the flat one is retained
+> only for compatibility until a major version removes it. It is not proposed here.
 
 ### 2.2 `community.tosca.abstract.base` — `name` on `Base`
 
@@ -430,6 +484,48 @@ cannot be softened the way Section 2.6 keeps `RunsOn` and `AvailableOn` as depre
 relationship types for one release. The break is small and worth taking now: the profile is at
 `0.1`, and `MicroService` and `SingleHostApplication` are the only types that declare either
 name.
+
+---
+
+### 2.8 `community.tosca.abstract.network` — what a network is addressed as, and whether it reaches the internet
+
+`community.tosca.abstract.network` declares no types; `Network` in `abstract.base` carries only
+what `Base` gives it and a `linkable` capability. Two properties are wanted by every realization
+that has been written against it:
+
+```yaml
+node_types:
+  Network:
+    properties:
+      cidr_block:
+        description: >-
+          Address range of this network, in CIDR notation. Left unset for a
+          forwarding domain that carries no addressing of its own, or one whose
+          range the realization assigns.
+        type: string
+        required: false
+      internet_accessible:
+        description: >-
+          Whether traffic on this network reaches the public internet. A network
+          that does not say so does not.
+        type: boolean
+        default: false
+```
+
+**`cidr_block` is what a network is addressed as**, and every realization needs it: an AWS VPC
+and subnet, an OpenStack Neutron network and subnet, a Proxmox bridge. It is optional because a
+forwarding domain need not carry addressing of its own, and because a realization may assign the
+range rather than receive it.
+
+**`internet_accessible` is a selector, not a description.** It states an intent the realization
+must satisfy — on AWS the difference between attaching an internet gateway and a route to it or
+leaving the subnet isolated — and a substitution filter reads it to choose between the reachable
+and isolated realizations of the same abstract network. Defaulting to `false` makes the safe
+case the one an author gets without asking for it.
+
+Both are declared today in a downstream extension, alongside the `host` requirement onto a
+virtualization platform that Section 2.6 notes in passing. The requirement is proposed there;
+these two properties are what remains.
 
 ---
 
