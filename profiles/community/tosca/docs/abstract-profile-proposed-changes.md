@@ -148,8 +148,10 @@ profile already uses for a cluster spanning several servers. One way to say "how
 at both layers, instead of a type per cardinality.
 
 `endpoint` and its `InteractsWith` requirement are declared identically on `MicroService`
-and on `SingleHostApplication` today, so they are candidates to lift onto `Application`
-while this is open.
+and on `SingleHostApplication` today. Section 2.7 lifts them onto `Application`, which
+removes both blocks from the type above: `ServerApplication` would then declare only its
+`runs-on` refinement and a `service: { type: Endpoint }` capability refinement. The two
+proposals are otherwise independent and can land in either order.
 
 ### 2.6 `community.tosca.abstract.base` — one containment relationship, one requirement name
 
@@ -309,6 +311,125 @@ workloads" by traversal, since `server_1` does but does not appear under `host`.
 The trade is between a model that states the topology honestly and one that can be built
 today. Model A is preferable if the subsetting limitation is treated as something to fix;
 Model B is the pragmatic choice if it is not.
+
+---
+
+### 2.7 `community.tosca.abstract.application` — one interaction port, specialized per kind
+
+An application should be able to expose functionality to other applications, and today only two
+concrete types can. Give `Application` a property-free port that derived profiles specialize,
+rather than hoisting the network-shaped one that exists. Reasoning in Problem 7.
+
+**A base capability, with `Endpoint` as its network specialization.** `Endpoint` carries `port`,
+`target-port` and `protocol` — the right contract for a network endpoint and the wrong one to
+oblige every application to honour. It is a specialization that was never given its base:
+
+```yaml
+capability_types:
+  Service:
+    description: >-
+      Advertizes the ability to provide a service to other components. Derived
+      types carry the contract a consumer reads to use it.
+    derived_from: Partner          # community.tosca.core, targeted by AssociatesWith
+
+  Endpoint:
+    description: >-
+      A service reached over a network.
+    derived_from: Service
+    properties:
+      port:        { type: Port }
+      target-port: { type: Port }
+      name:        { type: string, required: false }
+      protocol:    { type: string, required: false }
+```
+
+`Service` names the functionality exposed, in the same construction as `DataSource` — the
+ability to make data available. `Interaction` would name the relationship rather than the
+functionality, against the naming principle in the design guide, and `Interface` collides with
+TOSCA's own `interface_types`.
+
+**Declared on `Application`, at both ends.** Interaction is symmetric between applications, so
+the abstract type carries the capability and the requirement, as `Platform` already does for
+`host`:
+
+```yaml
+node_types:
+  Application:
+    capabilities:
+      service:
+        type: Service
+    requirements:
+      - interacts-with:
+          capability: Service
+          relationship: InteractsWith
+      - processes:
+          capability: DataSource
+          relationship: Processes
+      - runs-on:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+```
+
+The two names follow the split the design guide draws: the **capability** names the functionality
+exposed, so `service`; the **requirement** names the intent of the source toward the target, so
+`interacts-with`, reading like `links-to` and `processes` beside it. The existing `endpoint`
+requirement is the profile's one requirement named for a thing rather than a relation.
+
+**The concrete types shed their local declarations** and refine only where they differ:
+
+```yaml
+  MicroService:
+    derived_from: Application
+    capabilities:
+      service: { type: Endpoint }        # refinement: Endpoint derives from Service
+
+  SingleHostApplication:               # ServerApplication, if Section 2.5 lands first
+    derived_from: Application
+    capabilities:
+      service: { type: Endpoint }
+```
+
+Both lose their `endpoint` capability and requirement — the lift Section 2.5 names as a
+candidate while leaving it open. The same-type pinning goes with them:
+neither `node: MicroService` nor `node: SingleHostApplication` survives, so an application may
+interact with an application of another type — which is the ordinary case, and what O-PAS needs
+for signals flowing from an I/O channel configuration to a control logic deployment. A profile
+that does want to constrain the sources states them on the capability with
+`valid_source_node_types`, as O-PAS already does.
+
+**`InteractsWith` rederives from the association kind.**
+
+```yaml
+relationship_types:
+  InteractsWith:
+    metadata:
+      relationship_kind: association
+    derived_from: AssociatesWith       # community.tosca.core, was DependsOn
+    valid_capability_types: [ Service ]
+```
+
+A dependency asserts that the target must exist first. Interaction between applications does not
+always carry that order, and control signals are the case where it must not: an I/O channel and
+the logic reading it are commissioned independently. Where an interaction *is* ordering-bearing,
+a profile derives a dependency-kind relationship of its own.
+
+**The refinement rules permit all of this.** A refined capability's `type` must derive from the
+parent's (§8.2.1), and `Endpoint` derives from `Service`. A refined requirement's `capability`
+and `relationship` must likewise derive from the parent's (§8.4.1), which is what lets a derived
+profile narrow `interacts-with` onto a specialized port — O-PAS deriving `SignalSource` from
+`Service`, adding `Tags`, and `ReceivesSignalFrom` from `InteractsWith`.
+
+**Independent of Section 2.6.** If the containment collapse lands, `Application`'s `runs-on`
+becomes `host` and nothing here changes: `service`, `interacts-with` and `processes` are all
+dependency- or association-kind, and neither proposal touches the other's names.
+
+**Migration.** The capability and requirement both change symbolic name, from `endpoint` to
+`service` and `interacts-with`. Templates assigning the capability, and TOSCA paths reading its
+contract through a `CAPABILITY` step, must be updated. TOSCA has no capability alias, so this
+cannot be softened the way Section 2.6 keeps `RunsOn` and `AvailableOn` as deprecated
+relationship types for one release. The break is small and worth taking now: the profile is at
+`0.1`, and `MicroService` and `SingleHostApplication` are the only types that declare either
+name.
 
 ---
 
@@ -676,8 +797,8 @@ reading from writing. One relationship covers both directions, so a producer can
 a consumer, a producer cannot be ordered ahead of the consumers of what it writes, and "what
 breaks if this dataset is gone" cannot be separated from "what stops being written to it".
 
-**Shape of a fix**, not yet drafted as a Section 2 change. It adds no base machinery: one
-intermediate capability, under which both existing ports become specializations.
+**Proposal in Section 2.7.** It adds no base machinery: one intermediate capability, under
+which both existing ports become specializations.
 
 ```
 Partner                     (core, targeted by AssociatesWith)
@@ -788,5 +909,5 @@ default.
    interaction between nodes of the same type. Should a property-free `Service` capability be
    declared on `Application` and derived from `Partner`, with `Endpoint` rederived from it,
    should `InteractsWith` rederive from `AssociatesWith` rather than `DependsOn`, and should the
-   same-type constraint go? Reasoning in Problem 7, which also asks whether `Processes` should
-   distinguish reading a dataset from writing one.
+   same-type constraint go? Proposal in Section 2.7, reasoning in Problem 7 — which also asks
+   whether `Processes` should distinguish reading a dataset from writing one.
