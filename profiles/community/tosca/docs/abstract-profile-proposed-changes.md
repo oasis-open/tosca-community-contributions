@@ -5,6 +5,11 @@
 to be written into the community profiles. Each proposal states its own status, and each
 records what the meeting changed about it. Section 5 lists what the meeting added that this
 document does not yet cover.
+
+**A section leaves this document once it reaches the profiles.** The decision is recorded in
+the [decision log](../../../../governance/decision-log.md) and the types are in the profiles,
+so a section that has been implemented is a third copy. What stays is what is still proposed
+or still open.
 **Audience:** TOSCA Community
 **Purpose:** Capture a concrete set of proposed enhancements to the community
 abstract profiles, together with the problems uncovered while prototyping them

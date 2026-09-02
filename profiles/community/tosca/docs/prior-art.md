@@ -646,8 +646,8 @@ Puccini takes a different approach than most other TOSCA projects: it
 models entities using *capability types* rather than node types and
 then composes node types as collections of capabilities. To reflect
 this approach, the following diagrams show Puccini capability type
-hieararchies rather than node type hiearchies. This type hierarchy
-foces on type definitions in support of Kubernetes-based services.
+hierarchies rather than node type hierarchies. This type hierarchy
+focuses on type definitions in support of Kubernetes-based services.
 
 ```mermaid
 classDiagram
