@@ -627,13 +627,24 @@ it.
 
 Move the three base capability types and the three base relationship types — `Container`,
 `Feature`, `Partner`, `ContainedBy`, `DependsOn`, `AssociatesWith` — from `community.tosca.core`
-into `community.tosca.abstract.base`. `core` then holds data types, artifact types and functions.
+into `community.tosca.abstract.base`, and delete the `Bash` artifact type. `core` then holds data
+types, functions, and the one artifact type its own function implementations name.
 
 **This is what `core` is already said to be for.** The decision to add a standard library of data
-types describes `core` as the community's library of types and functions. Data types, artifact
-types and functions serve any profile whatever it models. The six base types serve one modelling
-approach — the [Component/Port pattern](design-guide.md#componentport-pattern), with three
-connection kinds and a capability paired to each.
+types describes `core` as the community's library of types and functions. Data types and functions
+serve any profile whatever it models. The six base types serve one modelling approach — the
+[Component/Port pattern](design-guide.md#componentport-pattern), with three connection kinds and a
+capability paired to each.
+
+**`Python` stays and `Bash` goes, on the same test.** `core` names `Python` sixteen times, once in
+every function implementation it declares, so the artifact type is a dependency of the profile's own
+content rather than a convenience offered to consumers. `Bash` has no such standing: a TOSCA
+function is implemented by a module the processor calls, which is not something a shell script does,
+and no profile in the repository names `type: Bash` at all. The definition that is wanted lives in
+`community.tosca.technology.base`, which declares its own `Bash` with a `host` property so a script
+can be run on a particular host rather than on the orchestrator — the form an operation
+implementation needs, at the level that has operation implementations. Deleting `core`'s copy also
+removes a name defined twice in profiles that import one another.
 
 **Every type derived from the six already lives in `abstract.base`:**
 

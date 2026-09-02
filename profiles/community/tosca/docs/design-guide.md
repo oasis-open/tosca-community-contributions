@@ -309,6 +309,43 @@ and parsed only in that template's context.
    $get_input: [implementation-details, service_label]
    ```
 
+### Interface Definitions Differ by Level
+
+A node type at the System View level declares the operations a
+substituting service can implement. A node type at the Administrator
+View or Device View level declares the operations its implementation
+artifacts carry out. These are different sets, and the community
+profiles define a `Standard` interface at each level accordingly:
+
+| profile | `Standard` operations |
+|---|---|
+| `community.tosca.abstract.base` | `create`, `modify`, `delete` |
+| `community.tosca.technology.base` | `create`, `configure`, `start`, `modify`, `stop`, `delete` |
+
+The reason lies in how substitution implements an operation. An
+*interface mapping* maps an operation on the substituted node to a
+*workflow* in the substituting service, so an operation declared on a
+System View node type is answerable only where a workflow can stand for
+it. Starting and stopping describe transitions an artifact performs on a
+running resource; a service whose internals are themselves nodes with
+lifecycles of their own has no single workflow that corresponds.
+
+**Relationship types at the System View level declare no interfaces at
+all.** Substitution applies to node types: a `substitution_mapping`
+declares a `node_type`, and the language defines no relationship
+counterpart. An interface declared on a relationship can therefore only
+be implemented by an artifact supplied at the level where the
+relationship is declared, which is precisely what a System View profile
+does not supply. Relationship types at this level carry structure; a
+configuration interface on a relationship belongs to the
+technology-specific and vendor-specific profiles, alongside the
+artifacts that implement it.
+
+The same reasoning applies to any interface type, not only to
+`Standard`. An interface belongs at the level whose node types can
+implement its operations, and an interface serving one level is not
+made general by being defined lower in the import chain.
+
 ### Translation Best Practices
 
 #### Translating System View to Administrator View
@@ -360,26 +397,35 @@ not have any constructs to support such dynamic behavior.
 
 ### Mapping Relationship Types and Capability Types
 
-> It is likely that the same guidelines about abstraction apply to
-  relationship types as well. However, the TOSCA spec is somewhat
-  vague about whether requirement mappings rules (and capability
-  mapping rules for that matter) require that the relationships
-  resulting from the mapping have types that are compatible with the
-  relationship of the mapped requirement. If that is the case, then
-  these relationship types (and capability types) must be shared
-  between System View, Administrator View, and Device View profiles
-  and may need to be organized in a *shared* profile.  This shared
-  profile should only define top-level relationship types or
-  capability types. Profile-specific types should derive from one of
-  the base types defined in the base profile.
+**Capability mappings and requirement mappings impose no type
+compatibility.** Their grammar is positional — a capability mapping
+names a node template and one of its capabilities, a requirement mapping
+names a node template and one of its requirements — and neither carries
+a rule relating the type on the substituted node to the type on the
+substituting one. The specification states the reason directly:
+capability and requirement mappings do not propagate property or
+attribute values and are used exclusively to control service topology.
+Where a value must cross the boundary, a property or attribute mapping
+carries it, and those *are* type compatible.
 
-  > **Tracked as issue I15**, and related to I1 (single source of truth
-  > for shared types). If the mapping rules do require type
-  > compatibility, the shared top-level relationship and capability
-  > types belong in `community.tosca.core` — which already owns the
-  > three base relationship/capability kinds — so that System View,
-  > Administrator View, and Device View profiles all derive from a
-  > single source.
+The consequence for profile organization is that **relationship types
+and capability types need not be shared across levels of
+abstraction.** A System View profile and a Device View profile may each
+define their own, and a substituting service may map a requirement of
+one onto a requirement of the other, because the mapping stitches the
+topology rather than matching the types. What does require compatibility
+is *derivation*: a refined requirement must name a relationship type
+derived from the one it refines, so types related by inheritance stay
+related across a profile boundary.
+
+The guidance about abstraction still applies to relationship and
+capability types, then, but as a design choice rather than a constraint
+the language imposes. Where the same relationship means the same thing
+at every level, defining it once and deriving from it is the simpler
+model. Where a relationship carries an interface at one level and pure
+structure at another — see [Interface Definitions Differ by
+Level](#interface-definitions-differ-by-level) above — a definition per
+level is the honest one.
 
 ### Profile Organization
 
@@ -398,6 +444,27 @@ AWS, Azure, etc.
 
 The *Core* profile defines types, repositories, functions, etc. that
 are shared by profiles at different levels of abstraction.
+
+Two further profiles serve as the base of a *column* rather than of a
+level. `community.tosca.abstract.base`, described in [Generic Base Node
+Types for System View
+Profiles](#generic-base-node-types-for-system-view-profiles) above,
+holds the four generic node types of the System View column together
+with the relationship and capability types they use.
+`community.tosca.technology.base` is its counterpart for the
+Administrator View and Device View columns. It defines a `Root` node
+type that technology-specific and vendor-specific node types derive
+from, the six-operation `Standard` interface those types implement, and
+a `Bash` artifact type carrying a `host` property, so that a script can
+be declared to run on a particular host rather than on the orchestrator.
+Why the two `Standard` definitions differ is covered in [Interface
+Definitions Differ by Level](#interface-definitions-differ-by-level)
+above.
+
+> The figure above shows a single base profile, and it is the System
+> View one. No base profile is drawn beneath the Administrator View and
+> Device View rows, although `community.tosca.technology.base` is the
+> common parent of both.
 
 > The *naming* convention for these profiles — the `community.tosca.*`
 > namespace versus reverse-DNS names such as `io.kubernetes` — is an open
