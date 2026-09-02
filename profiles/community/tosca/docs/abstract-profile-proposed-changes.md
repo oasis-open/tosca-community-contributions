@@ -299,29 +299,26 @@ at all.
 
 **Status: open.** The six community platform types declare no properties today.
 
-**The credential rows below are superseded by Section 2.1.** They record the singular
-`credential` property the prototype carried when this section was written. That prototype now
-declares a `credentials` **map keyed by credential kind** — `[ssh_key, ssh_password]` on
-`ServerPlatform`, `[kubeconfig]` on `ContainerPlatform`, `[token, cloud_account]` on
-`VirtualizationPlatform` — whose entries are the reference types Section 2.1 proposes. The
-per-platform *vocabulary* still differs, which is what [Question 2](#question-2--credential-typing) settled; what changed is that
-the mechanism is now uniform.
+`credentials` is declared once on `Platform` in the shape Section 2.1 gives it. What each
+platform type adds is the **vocabulary of credential kinds it accepts**, as a `key_schema`
+refinement — §9.4 permits refining a `key_schema`, and a refinement's validation clause is
+considered *in addition to* the parent's, so a derived type narrows and cannot widen.
 
 | Node type | Added properties | Added requirements |
 |-----------|------------------|--------------------|
-| `ServerPlatform` | `mgmt-address: IPv4Socket` (opt), `credential: Credential` (opt) | `host` — inherited from `Platform` — refined to `node: VirtualizationPlatform` |
-| `VirtualizationPlatform` | `mgmt-address: string` (opt), `credential: string` (opt) | the control-plane requirement — see Section 2.3, which declares it on `Platform` under a name of its own |
-| `ContainerPlatform` | `credential: string` (opt) | — |
+| `ServerPlatform` | `mgmt-address: IPv4Socket` (opt), `credentials` keyed `[ssh_key, ssh_password]` | `host` — inherited from `Platform` — refined to `node: VirtualizationPlatform` |
+| `VirtualizationPlatform` | `mgmt-address: string` (opt), `credentials` keyed `[token, cloud_account]` | the control-plane requirement — see Section 2.3, which declares it on `Platform` under a name of its own |
+| `ContainerPlatform` | `credentials` keyed `[kubeconfig]` | — |
 
 `PaasPlatform`, `SaasPlatform` and `ServerlessPlatform` are not addressed. Nothing has been
 prototyped against them, so there is no evidence yet for what they would need.
 
 ### 2.5 `community.tosca.abstract.data` — `RelationalDatabase`
 
-**Status: open.** The `credential` property below is the prototype's current form and is
-deliberately *not* the map described in Section 2.1 — a database credential is a single value
-of one kind, so there is nothing for a map keyed by kind to distinguish. [Question 2](#question-2--credential-typing)'s
-resolution admits both.
+**Status: open.** A database is authenticated to one way, so a single `credential` property is
+the natural declaration here — there is nothing for a map keyed by credential kind to
+distinguish. Its *type* is whatever Section 2.1 settles on;
+[Question 2](#question-2--credential-typing)'s resolution admits either declaration.
 
 ```yaml
 node_types:
@@ -506,7 +503,7 @@ the only types that declare either name.
 
 ### 2.8 `community.tosca.abstract.network` — what a network is addressed as, and whether it reaches the internet
 
-**Status: open, not yet discussed.** No corresponding problem section: the two properties are additions the prototype needs, not a defect in the community types.
+**Status: open, not yet discussed.** No corresponding problem section: the two properties are additions every realization written against `Network` has needed, not a defect in the community types.
 
 `community.tosca.abstract.network` declares no types; `Network` in `abstract.base` carries only
 what `Base` gives it and a `linkable` capability. Two properties are wanted by every realization
