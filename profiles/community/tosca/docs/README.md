@@ -25,6 +25,9 @@ lives and what it may claim.
   patterns the profiles are built from. Each names a problem that comes up
   across profiles and the type definitions that answer it. Currently the
   Component/Port pattern and the practices built on it.
+- **[artifact-conventions.md](artifact-conventions.md)** — how values reach an
+  implementation artifact and how results come back: the operation convention,
+  the function convention, and what a runtime may be assumed to provide.
 - **[profile-organization.md](profile-organization.md)** — where the results
   are kept: the levels and the profiles at each, the two dimensions that decide
   which profile a type belongs in, and the profile naming convention.

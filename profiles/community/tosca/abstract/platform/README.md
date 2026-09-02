@@ -3,7 +3,7 @@
 This profile defines TOSCA types that support modeling of *platforms*
 on which services can be *orchestrated* as well as the *providers* of
 these platforms. It builds on and extends existing [TOSCA type
-definitions for platforms](inventory.md).
+definitions for platforms](../../docs/prior-art.md#reading-across-platforms-providers-and-credentials).
 
 ## Platform Types
 

@@ -778,3 +778,41 @@ classDiagram
     Root <|-- Blueprint
     Root <|-- PasswordSecret
 ```
+
+## Reading Across: Platforms, Providers and Credentials
+
+The sections above take each project on its own terms. Read across them on one
+question — how a project represents the platform a component is deployed on, and
+the credentials needed to reach it — and a small set of answers recurs. The type
+hierarchies are all above; what follows is what they amount to.
+
+**A platform node, specialized by kind.** EDMM introduces a `Platform` node type
+and specializes it into `PaaS`, `SaaS` and `DBaaS`. The kind of platform is the
+type, so choosing a platform is choosing a type.
+
+**A platform node plus a separate provider node.** Vintner keeps EDMM's platform
+concept and adds a `cloud.provider` type for the owner of the platforms. DeMAF
+does the same with a `CloudProvider` alongside its `ContainerPlatform`, with the
+container orchestrators as the specializations. The reason to separate the two is
+sharing: several platforms may belong to one provider, and information held by
+the provider — credentials among it — is then stated once rather than repeated on
+every platform.
+
+**A configuration record rather than a representation.** Ystia's
+`yorc.pub.location.LocationConfig` is not a node standing for a platform but a
+place to keep what is needed to reach one, specialized per cloud
+(`GoogleConfig`, `OpenStackConfig`, `AWSConfig`, `KubernetesConfig`,
+`HostsPoolConfig`). Its `HostsPool` type represents a collection of physical
+hosts, in support of the Ansible *hosts* concept.
+
+**A credential node, separate from both.** Ubicity reaches the same sharing
+outcome by a third route: platforms are a `VirtualInfrastructureTarget`
+specialized per cloud, and the credentials are their own `Account` node type
+rather than a property of a provider. Modeling a credential as a node has a
+consequence the other approaches do not have — a node has a lifecycle, so a
+credential can be created by the orchestrator rather than only supplied to it.
+
+Three of the five separate the platform from what authorizes access to it, and
+they differ in what carries the authorization: a provider node, a configuration
+record, or a credential node. Only the last makes the credential something the
+orchestrator can bring into existence.

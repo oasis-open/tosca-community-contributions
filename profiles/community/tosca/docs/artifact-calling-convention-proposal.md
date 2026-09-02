@@ -7,7 +7,8 @@ states the problem and the options without settling it.
 document, so that an artifact written against a community artifact type runs unchanged on any
 orchestrator that implements it.
 
-**Related documents:** [core README](../core/README.md) ·
+**Related documents:** [artifact-conventions](artifact-conventions.md) — the convention
+this proposal would replace · [core README](../core/README.md) ·
 [technology base README](../technology/base/README.md) ·
 [design-guide](design-guide.md)
 
