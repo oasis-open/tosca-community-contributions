@@ -45,8 +45,6 @@ lives and what it may claim.
 - **[kubernetes-modeling.md](kubernetes-modeling.md)** — why TOSCA is useful for
   deploying services on Kubernetes, the modeling approaches considered, and the
   questions still open.
-- **[kubernetes-implementation-notes.md](kubernetes-implementation-notes.md)** —
-  a short list of implementation suggestions raised in discussion.
 
 ## Proposals
 
