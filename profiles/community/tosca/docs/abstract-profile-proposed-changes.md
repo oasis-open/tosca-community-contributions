@@ -1,8 +1,8 @@
 # Proposed Enhancements to the TOSCA Community Abstract Profiles
 
-**Status:** Discussion draft. Sections 2.1–2.4 and Problems 1–4 carry the outcomes of the
-2026-06-24 community meeting; 2.6–2.8 and Problems 5–7 were added between August and
-September 2026 and have not been discussed. Each proposal in Section 2 states its own status.
+**Status:** Discussion draft. Sections 2.3, 2.7 and 2.8 and Problems 5–7 were added between
+August and September 2026 and have not been discussed; the rest carry the outcomes of the
+2026-06-24 community meeting. Each proposal in Section 2 states its own status.
 **Audience:** TOSCA Community
 **Purpose:** Capture a concrete set of proposed enhancements to the community
 abstract profiles, together with the problems uncovered while prototyping them
@@ -12,7 +12,8 @@ and the decisions reached during community discussion.
 
 **How this document is organized.** Four parts, which cross-reference each other by number.
 **Section 1** says why these changes are being proposed. **Section 2** is the proposals
-themselves, one per profile, each carrying its own status. **Section 3** is the reasoning: the
+themselves, grouped by profile in the order the profiles build on each other, each carrying
+its own status. Two profiles have more than one proposal. **Section 3** is the reasoning: the
 problems found while prototyping, numbered *Problem 1* through *Problem 7*, and most Section 2
 proposals point at the problem that motivates them. **Section 4** records what the community has
 settled and what is still open, numbered *question 1* through *question 9* — so a reference to
@@ -44,7 +45,7 @@ community first.
 
 Two sections run in the opposite direction. `community.tosca.abstract.application` is not
 description-only: `SingleHostApplication` carries a property and a name that assert more than
-the model holds, so Section 2.5 **removes** rather than adds — the reasoning is in Problem 4.
+the model holds, so Section 2.6 **removes** rather than adds — the reasoning is in Problem 4.
 Section 2.7 also removes, taking the interaction declarations off the two concrete application
 types and the same-type constraint with them.
 
@@ -54,7 +55,7 @@ types and the same-type constraint with them.
 
 ### 2.1 `community.tosca.core` — add `CredentialRef` and `NamedCredentialRef`
 
-**Status: open.** Supersedes the credential model recorded in Sections 2.3 and 2.4.
+**Status: open.** Supersedes the credential model recorded in Sections 2.4 and 2.5.
 
 A credential in a model is a **reference** to material, never the material. The value carries
 the path to the file holding it and an identifier where one is needed; the material is read on
@@ -127,7 +128,7 @@ a community profile *below* it is not a deviation — it is the layering working
 credential, and resolved it as specific to the technology being authenticated to. This section
 settles where the reference types are *declared*, so that two profiles naming the same one are
 nominally compatible. A profile is free to type a credential property as a `string` under
-[question 2](#question-2--credential-typing)'s resolution and still import these; `RelationalDatabase` in Section 2.4 does exactly
+[question 2](#question-2--credential-typing)'s resolution and still import these; `RelationalDatabase` in Section 2.5 does exactly
 that.
 
 > Note: an earlier draft of this section proposed a flat `Credential` carrying `user_name`,
@@ -155,94 +156,7 @@ node_types:
       implementation-details: { ... }
 ```
 
-### 2.3 `community.tosca.abstract.platform` — properties and requirements
-
-**Status: open.** The six community platform types declare no properties today.
-
-**The credential rows below are superseded by Section 2.1.** They record the singular
-`credential` property the prototype carried when this section was written. That prototype now
-declares a `credentials` **map keyed by credential kind** — `[ssh_key, ssh_password]` on
-`ServerPlatform`, `[kubeconfig]` on `ContainerPlatform`, `[token, cloud_account]` on
-`VirtualizationPlatform` — whose entries are the reference types Section 2.1 proposes. The
-per-platform *vocabulary* still differs, which is what [Question 2](#question-2--credential-typing) settled; what changed is that
-the mechanism is now uniform.
-
-| Node type | Added properties | Added requirements |
-|-----------|------------------|--------------------|
-| `ServerPlatform` | `mgmt-address: IPv4Socket` (opt), `credential: Credential` (opt) | `host` refined to `node: VirtualizationPlatform` |
-| `VirtualizationPlatform` | `mgmt-address: string` (opt), `credential: string` (opt) | the control-plane requirement — see 2.6, which declares it on `Platform` under a name of its own |
-| `ContainerPlatform` | `credential: string` (opt) | — |
-
-`PaasPlatform`, `SaasPlatform` and `ServerlessPlatform` are not addressed. Nothing has been
-prototyped against them, so there is no evidence yet for what they would need.
-
-### 2.4 `community.tosca.abstract.data` — `RelationalDatabase`
-
-**Status: open.** The `credential` property below is the prototype's current form and is
-deliberately *not* the map described in Section 2.1 — a database credential is a single value
-of one kind, so there is nothing for a map keyed by kind to distinguish. [Question 2](#question-2--credential-typing)'s
-resolution admits both.
-
-```yaml
-node_types:
-  RelationalDatabase:
-    description: >-
-      Represents a relational database — a set of at-rest data managed by a
-      relational database management system.
-    derived_from: AtRestData
-    properties:
-      credential:
-        type: string
-        required: false
-```
-
-### 2.5 `community.tosca.abstract.application` — name the platform, drop the processes
-
-**Status: open.** Reasoning in Problem 4; see also Section 2.7, which removes the interaction declarations from the type this section renames.
-
-Rework `SingleHostApplication` so that what it asserts is what it holds. The reasoning
-is in Problem 4.
-
-```yaml
-node_types:
-  ServerApplication:
-    description: >-
-      An application that runs on a server platform.
-    derived_from: Application
-    capabilities:
-      endpoint:
-        type: Endpoint
-    requirements:
-      - endpoint:
-          node: ServerApplication
-          capability: Endpoint
-          relationship: InteractsWith
-      - runs-on:
-          capability: ExecutionEnvironment
-          relationship: RunsOn
-          node: ServerPlatform
-```
-
-Three changes from the current type:
-
-- **Named for the platform it targets**, consistent with `MicroServiceApplication` and
-  `ServerlessApplication`, rather than for a cardinality.
-- **`processes` removed.**
-- **Cardinality expressed as `count_range` on `runs-on`** — in the type where a kind of
-  application genuinely constrains it, in the template where it does not.
-
-The last of these unifies a mechanism rather than adding one. An application spanning
-several servers becomes `runs-on` bound several times, which is the same shape the platform
-profile already uses for a cluster spanning several servers. One way to say "how many",
-at both layers, instead of a type per cardinality.
-
-`endpoint` and its `InteractsWith` requirement are declared identically on `MicroService`
-and on `SingleHostApplication` today. Section 2.7 lifts them onto `Application`, which
-removes both blocks from the type above: `ServerApplication` would then declare only its
-`runs-on` refinement and a `service: { type: Endpoint }` capability refinement. The two
-proposals are otherwise independent and can be adopted in either order.
-
-### 2.6 `community.tosca.abstract.base` — one containment relationship, one requirement name
+### 2.3 `community.tosca.abstract.base` — one containment relationship, one requirement name
 
 **Status: open, not yet discussed.** Reasoning in Problems 5 and 6.
 
@@ -405,6 +319,93 @@ Model B is the pragmatic choice if it is not.
 
 ---
 
+### 2.4 `community.tosca.abstract.platform` — properties and requirements
+
+**Status: open.** The six community platform types declare no properties today.
+
+**The credential rows below are superseded by Section 2.1.** They record the singular
+`credential` property the prototype carried when this section was written. That prototype now
+declares a `credentials` **map keyed by credential kind** — `[ssh_key, ssh_password]` on
+`ServerPlatform`, `[kubeconfig]` on `ContainerPlatform`, `[token, cloud_account]` on
+`VirtualizationPlatform` — whose entries are the reference types Section 2.1 proposes. The
+per-platform *vocabulary* still differs, which is what [Question 2](#question-2--credential-typing) settled; what changed is that
+the mechanism is now uniform.
+
+| Node type | Added properties | Added requirements |
+|-----------|------------------|--------------------|
+| `ServerPlatform` | `mgmt-address: IPv4Socket` (opt), `credential: Credential` (opt) | `host` — inherited from `Platform` — refined to `node: VirtualizationPlatform` |
+| `VirtualizationPlatform` | `mgmt-address: string` (opt), `credential: string` (opt) | the control-plane requirement — see Section 2.3, which declares it on `Platform` under a name of its own |
+| `ContainerPlatform` | `credential: string` (opt) | — |
+
+`PaasPlatform`, `SaasPlatform` and `ServerlessPlatform` are not addressed. Nothing has been
+prototyped against them, so there is no evidence yet for what they would need.
+
+### 2.5 `community.tosca.abstract.data` — `RelationalDatabase`
+
+**Status: open.** The `credential` property below is the prototype's current form and is
+deliberately *not* the map described in Section 2.1 — a database credential is a single value
+of one kind, so there is nothing for a map keyed by kind to distinguish. [Question 2](#question-2--credential-typing)'s
+resolution admits both.
+
+```yaml
+node_types:
+  RelationalDatabase:
+    description: >-
+      Represents a relational database — a set of at-rest data managed by a
+      relational database management system.
+    derived_from: AtRestData
+    properties:
+      credential:
+        type: string
+        required: false
+```
+
+### 2.6 `community.tosca.abstract.application` — name the platform, drop the processes
+
+**Status: open.** Reasoning in Problem 4; see also Section 2.7, which removes the interaction declarations from the type this section renames.
+
+Rework `SingleHostApplication` so that what it asserts is what it holds. The reasoning
+is in Problem 4.
+
+```yaml
+node_types:
+  ServerApplication:
+    description: >-
+      An application that runs on a server platform.
+    derived_from: Application
+    capabilities:
+      endpoint:
+        type: Endpoint
+    requirements:
+      - endpoint:
+          node: ServerApplication
+          capability: Endpoint
+          relationship: InteractsWith
+      - runs-on:
+          capability: ExecutionEnvironment
+          relationship: RunsOn
+          node: ServerPlatform
+```
+
+Three changes from the current type:
+
+- **Named for the platform it targets**, consistent with `MicroServiceApplication` and
+  `ServerlessApplication`, rather than for a cardinality.
+- **`processes` removed.**
+- **Cardinality expressed as `count_range` on `runs-on`** — in the type where a kind of
+  application genuinely constrains it, in the template where it does not.
+
+The last of these unifies a mechanism rather than adding one. An application spanning
+several servers becomes `runs-on` bound several times, which is the same shape the platform
+profile already uses for a cluster spanning several servers. One way to say "how many",
+at both layers, instead of a type per cardinality.
+
+`endpoint` and its `InteractsWith` requirement are declared identically on `MicroService`
+and on `SingleHostApplication` today. Section 2.7 lifts them onto `Application`, which
+removes both blocks from the type above: `ServerApplication` would then declare only its
+`runs-on` refinement and a `service: { type: Endpoint }` capability refinement. The two
+proposals are otherwise independent and can be adopted in either order.
+
 ### 2.7 `community.tosca.abstract.application` — one interaction port, specialized per kind
 
 **Status: open, not yet discussed.** Reasoning in Problem 7.
@@ -476,13 +477,13 @@ requirement is the profile's one requirement named for a thing rather than a rel
     capabilities:
       service: { type: Endpoint }        # refinement: Endpoint derives from Service
 
-  SingleHostApplication:               # ServerApplication, if Section 2.5 is adopted first
+  SingleHostApplication:               # ServerApplication, if Section 2.6 is adopted first
     derived_from: Application
     capabilities:
       service: { type: Endpoint }
 ```
 
-Both lose their `endpoint` capability and requirement — the lift Section 2.5 names as a
+Both lose their `endpoint` capability and requirement — the lift Section 2.6 names as a
 candidate while leaving it open. The same-type pinning goes with them:
 neither `node: MicroService` nor `node: SingleHostApplication` survives, so an application may
 interact with an application of another type — which is the ordinary case, and what O-PAS needs
@@ -512,14 +513,14 @@ and `relationship` must likewise derive from the parent's (§8.4.1), which is wh
 profile narrow `interacts-with` onto a specialized port — O-PAS deriving `SignalSource` from
 `Service`, adding `Tags`, and `ReceivesSignalFrom` from `InteractsWith`.
 
-**Independent of Section 2.6.** If the containment collapse is adopted, `Application`'s `runs-on`
+**Independent of Section 2.3.** If the containment collapse is adopted, `Application`'s `runs-on`
 becomes `host` and nothing here changes: `service`, `interacts-with` and `processes` are all
 dependency- or association-kind, and neither proposal touches the other's names.
 
 **Migration.** The capability and requirement both change symbolic name, from `endpoint` to
 `service` and `interacts-with`. Templates assigning the capability, and TOSCA paths reading its
 contract through a `CAPABILITY` step, must be updated. TOSCA has no capability alias, so this
-cannot be softened the way Section 2.6 keeps `RunsOn` and `AvailableOn` as deprecated
+cannot be softened the way Section 2.3 keeps `RunsOn` and `AvailableOn` as deprecated
 relationship types for one release. The break is small and worth taking now: the profile is at
 `0.1`, and `MicroService` and `SingleHostApplication` are the only types that declare either
 name.
@@ -565,7 +566,7 @@ and isolated realizations of the same abstract network. Defaulting to `false` ma
 case the one an author gets without asking for it.
 
 Both are declared today in a downstream extension, alongside the `host` requirement onto a
-virtualization platform that Section 2.6 notes in passing. The requirement is proposed there;
+virtualization platform that Section 2.3 notes in passing. The requirement is proposed there;
 these two properties are what remains.
 
 ---
@@ -774,7 +775,7 @@ That axis is sound System View content — what kind of platform an application 
 drives placement, and it mirrors the platform profile's own decomposition. So the type earns
 its place in the family; it is the name and the property that do not.
 
-Proposed replacement in Section 2.5. **Not yet discussed by the community.**
+Proposed replacement in Section 2.6. **Not yet discussed by the community.**
 
 ### Problem 5 — `runs-on` carries two meanings, and the platform one is not implemented
 
@@ -815,7 +816,7 @@ high availability as several such relationships — but `ContainerPlatform` inhe
 requirement and declares none. A single-node cluster is unaffected, since control and
 hosting coincide on one server; multi-node is exactly where they separate.
 
-Proposal in Section 2.6. **Not yet discussed by the community.**
+Proposal in Section 2.3. **Not yet discussed by the community.**
 
 ### Problem 6 — Three relationship types for one relationship kind
 
@@ -853,7 +854,7 @@ duplicates what a requirement's `capability` keyname already states.
   needs different lifecycle behaviour from placing an application, a specialized type can be
   derived at that point.
 
-Proposal in Section 2.6. **Not yet discussed by the community.**
+Proposal in Section 2.3. **Not yet discussed by the community.**
 
 ---
 
@@ -1041,7 +1042,7 @@ all, given that a `command` names an executable? Should a type be named for a
 cardinality it does not constrain, or should cardinality be a `count_range` on
 `runs-on`? And separately from both: the property `processes` collides with the
 requirement `processes` inherited from `Application`, which needs resolving on its
-own terms. Proposal in Section 2.5, reasoning in Problem 4.
+own terms. Proposal in Section 2.6, reasoning in Problem 4.
 
 ### Question 6 — The control-plane requirement
 
@@ -1050,7 +1051,7 @@ describes a second deployment requirement on `Platform`, distinguishing where a 
 control plane is deployed from where its data plane is. `Platform` does not declare it, so
 the README's own multi-node Kubernetes model cannot be expressed. Declaring it also forces
 the README's open question about naming, since `runs-on` already means *where this
-application executes*. Proposal in Section 2.6, reasoning in Problem 5.
+application executes*. Proposal in Section 2.3, reasoning in Problem 5.
 
 ### Question 7 — One containment relationship, one requirement name
 
@@ -1059,7 +1060,7 @@ application executes*. Proposal in Section 2.6, reasoning in Problem 5.
 and the profile marks all three `relationship_kind: containment`. Should they collapse into
 `HostedOn`, and should `runs-on` and `available-on` collapse into `host` — the name TOSCA
 has used for deployment layering throughout its history — declared once on `Base` and
-refined by each child, leaving the capability to say what kind of thing is being placed? Proposal in Section 2.6, reasoning in Problem 6. Settling
+refined by each child, leaving the capability to say what kind of thing is being placed? Proposal in Section 2.3, reasoning in Problem 6. Settling
 this also settles [question 6](#question-6--the-control-plane-requirement), since the control-plane requirement is then a second
 requirement name over the same relationship.
 
@@ -1067,7 +1068,7 @@ requirement name over the same relationship.
 
 *Open, not yet discussed.* The platform
 README asks this as its own third open question. Two models are set out at the end of
-Section 2.6: *set overlap*, where a schedulable control node appears under both `host` and
+Section 2.3: *set overlap*, where a schedulable control node appears under both `host` and
 `control-host` and `$has_entry` reads the overlap, and *disjoint sets with a property*,
 where `host` carries only non-control workload hosts. The first states the topology
 honestly but cannot be realized, since a requirement mapping cannot distribute a subset of
