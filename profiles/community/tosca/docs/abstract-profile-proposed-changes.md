@@ -1,7 +1,8 @@
 # Proposed Enhancements to the TOSCA Community Abstract Profiles
 
-**Status:** Discussion draft — updated with the outcomes of the 2026-06-24
-TOSCA Community meeting (pending review by Roberto)
+**Status:** Discussion draft. Sections 2.1–2.4 and Problems 1–4 carry the outcomes of the
+2026-06-24 community meeting; 2.6–2.8 and Problems 5–7 were added between August and
+September 2026 and have not been discussed. Each proposal in Section 2 states its own status.
 **Audience:** TOSCA Community
 **Purpose:** Capture a concrete set of proposed enhancements to the community
 abstract profiles, together with the problems uncovered while prototyping them
@@ -13,18 +14,19 @@ and the decisions reached during community discussion.
 
 ## 1. Background and motivation
 
-The community abstract profiles
-(`community.tosca.core`, `community.tosca.abstract.base`,
-`community.tosca.abstract.platform`, `community.tosca.abstract.data`)
-currently define the platform and data node types as essentially
-*description-only* abstract types — they carry a `derived_from` and a
-description, but few or no properties and requirements.
+The community abstract profiles — `community.tosca.core` and the five
+`community.tosca.abstract.*` profiles (`base`, `platform`, `data`, `application`,
+`network`) — define most of their node types as essentially *description-only*: they carry a
+`derived_from` and a description, but few or no properties and requirements. All six platform
+types declare no properties at all.
 
-Ubicity maintains a small set of **extension profiles**
-(`com.ubicity.abstract.platform`, `com.ubicity.abstract.data`) whose only
-purpose is to derive from the community types and add the properties and
-requirements needed to actually use them (management address, credentials,
-hosting/runs-on requirements, a concrete `RelationalDatabase`, etc.).
+Ubicity maintains a set of **extension profiles** (`com.ubicity.abstract.platform`,
+`com.ubicity.abstract.data`, `com.ubicity.abstract.network`, and an empty
+`com.ubicity.abstract.application`) whose only purpose is to derive from the community types
+and add the properties and requirements needed to actually use them: management address,
+credentials, hosting requirements, a concrete `RelationalDatabase`, a network's address range.
+Where Section 3 discusses a property such as `mgmt-address` or `credentials`, it is describing
+these extension profiles — the community types themselves declare neither.
 
 The goal of this proposal is to **fold those features into the community
 profiles**, so the extension profiles are no longer necessary and downstream
@@ -32,17 +34,19 @@ templates can rely on the community types directly. Prototyping this exposed
 several issues — documented in Section 3 — that should be settled by the
 community first.
 
-Section 2.5 runs in the opposite direction. `community.tosca.abstract.application`
-is not description-only: `SingleHostApplication` carries a property and a name that
-assert more than the model holds, so the proposal there **removes** rather than adds.
-It came out of the same prototyping — looking for an abstract type to describe software
-installed on a server — and the reasoning is in Problem 4.
+Two sections run in the opposite direction. `community.tosca.abstract.application` is not
+description-only: `SingleHostApplication` carries a property and a name that assert more than
+the model holds, so Section 2.5 **removes** rather than adds — the reasoning is in Problem 4.
+Section 2.7 also removes, taking the interaction declarations off the two concrete application
+types and the same-type constraint with them.
 
 ---
 
 ## 2. Proposed changes
 
 ### 2.1 `community.tosca.core` — add `CredentialRef` and `NamedCredentialRef`
+
+**Status: open.** Supersedes the credential model recorded in Sections 2.3 and 2.4.
 
 A credential in a model is a **reference** to material, never the material. The value carries
 the path to the file holding it and an identifier where one is needed; the material is read on
@@ -99,7 +103,7 @@ bare property, which supplies no kind at all:
 ```
 
 **Why this belongs in `core` rather than in each profile.** TOSCA typing is nominal: two
-identically-shaped types are not compatible, so a node declaring its own credential type can
+two types with identical fields are not compatible, so a node declaring its own credential type can
 never substitute for one declaring another's, however alike the fields. Today
 `org.opengroup.opas` declares a flat `Credential` of its own — `UserName`, `KeyFile`,
 `PasswordFile`, mirroring the O-PAS Part 9 schema — and a bridge translating between it and a
@@ -120,10 +124,13 @@ that.
 
 > Note: an earlier draft of this section proposed a flat `Credential` carrying `user_name`,
 > `key_file` and `password_file`, mirroring what `com.ubicity.core` declared at the time. That
-> shape has since been superseded there by the two types above, and the flat one is retained
+> definition has since been superseded there by the two types above, and the flat one is retained
 > only for compatibility until a major version removes it. It is not proposed here.
 
 ### 2.2 `community.tosca.abstract.base` — `name` on `Base`
+
+**Status: adopted.** `Base` declares `name` and `Application` no longer duplicates it. Kept
+here as the record of what was agreed and why.
 
 Move `name` up to the common `Base` node type so every node (Platform, Data,
 Network, Application) inherits it, and remove the duplicate declaration from
@@ -142,13 +149,31 @@ node_types:
 
 ### 2.3 `community.tosca.abstract.platform` — properties and requirements
 
+**Status: open.** The six community platform types declare no properties today.
+
+**The credential rows below are superseded by Section 2.1.** They record the singular
+`credential` property the prototype carried when this section was written. That prototype now
+declares a `credentials` **map keyed by credential kind** — `[ssh_key, ssh_password]` on
+`ServerPlatform`, `[kubeconfig]` on `ContainerPlatform`, `[token, cloud_account]` on
+`VirtualizationPlatform` — whose entries are the reference types Section 2.1 proposes. The
+per-platform *vocabulary* still differs, which is what Question 2 settled; what changed is that
+the mechanism is now uniform.
+
 | Node type | Added properties | Added requirements |
 |-----------|------------------|--------------------|
 | `ServerPlatform` | `mgmt-address: IPv4Socket` (opt), `credential: Credential` (opt) | `host` refined to `node: VirtualizationPlatform` |
 | `VirtualizationPlatform` | `mgmt-address: string` (opt), `credential: string` (opt) | the control-plane requirement — see 2.6, which declares it on `Platform` under a name of its own |
 | `ContainerPlatform` | `credential: string` (opt) | — |
 
+`PaasPlatform`, `SaasPlatform` and `ServerlessPlatform` are not addressed. Nothing has been
+prototyped against them, so there is no evidence yet for what they would need.
+
 ### 2.4 `community.tosca.abstract.data` — `RelationalDatabase`
+
+**Status: open.** The `credential` property below is the prototype's current form and is
+deliberately *not* the map described in Section 2.1 — a database credential is a single value
+of one kind, so there is nothing for a map keyed by kind to distinguish. Question 2's
+resolution admits both.
 
 ```yaml
 node_types:
@@ -164,6 +189,8 @@ node_types:
 ```
 
 ### 2.5 `community.tosca.abstract.application` — name the platform, drop the processes
+
+**Status: open.** Reasoning in Problem 4; see also Section 2.7, which removes the interaction declarations from the type this section renames.
 
 Rework `SingleHostApplication` so that what it asserts is what it holds. The reasoning
 is in Problem 4.
@@ -205,9 +232,11 @@ at both layers, instead of a type per cardinality.
 and on `SingleHostApplication` today. Section 2.7 lifts them onto `Application`, which
 removes both blocks from the type above: `ServerApplication` would then declare only its
 `runs-on` refinement and a `service: { type: Endpoint }` capability refinement. The two
-proposals are otherwise independent and can land in either order.
+proposals are otherwise independent and can be adopted in either order.
 
 ### 2.6 `community.tosca.abstract.base` — one containment relationship, one requirement name
+
+**Status: open, not yet discussed.** Reasoning in Problems 5 and 6.
 
 Deployment layering is a single concept, so it should have a single relationship type and a
 single requirement name, declared once on `Base`, with the *capability* saying what kind of
@@ -370,9 +399,11 @@ Model B is the pragmatic choice if it is not.
 
 ### 2.7 `community.tosca.abstract.application` — one interaction port, specialized per kind
 
+**Status: open, not yet discussed.** Reasoning in Problem 7.
+
 An application should be able to expose functionality to other applications, and today only two
 concrete types can. Give `Application` a property-free port that derived profiles specialize,
-rather than hoisting the network-shaped one that exists. Reasoning in Problem 7.
+rather than hoisting the network-specific one that exists. Reasoning in Problem 7.
 
 **A base capability, with `Endpoint` as its network specialization.** `Endpoint` carries `port`,
 `target-port` and `protocol` — the right contract for a network endpoint and the wrong one to
@@ -437,7 +468,7 @@ requirement is the profile's one requirement named for a thing rather than a rel
     capabilities:
       service: { type: Endpoint }        # refinement: Endpoint derives from Service
 
-  SingleHostApplication:               # ServerApplication, if Section 2.5 lands first
+  SingleHostApplication:               # ServerApplication, if Section 2.5 is adopted first
     derived_from: Application
     capabilities:
       service: { type: Endpoint }
@@ -473,7 +504,7 @@ and `relationship` must likewise derive from the parent's (§8.4.1), which is wh
 profile narrow `interacts-with` onto a specialized port — O-PAS deriving `SignalSource` from
 `Service`, adding `Tags`, and `ReceivesSignalFrom` from `InteractsWith`.
 
-**Independent of Section 2.6.** If the containment collapse lands, `Application`'s `runs-on`
+**Independent of Section 2.6.** If the containment collapse is adopted, `Application`'s `runs-on`
 becomes `host` and nothing here changes: `service`, `interacts-with` and `processes` are all
 dependency- or association-kind, and neither proposal touches the other's names.
 
@@ -488,6 +519,8 @@ name.
 ---
 
 ### 2.8 `community.tosca.abstract.network` — what a network is addressed as, and whether it reaches the internet
+
+**Status: open, not yet discussed.** No corresponding problem section: the two properties are additions the prototype needs, not a defect in the community types.
 
 `community.tosca.abstract.network` declares no types; `Network` in `abstract.base` carries only
 what `Base` gives it and a `linkable` capability. Two properties are wanted by every realization
@@ -537,6 +570,9 @@ real reason this is a discussion document rather than a pull request.
 
 ### Problem 1 — Inconsistent typing of `mgmt-address` (`string` vs `IPv4Socket`)
 
+**Resolved — see Question 1.** The properties discussed here are the extension profiles',
+not the community types': the community platform types declare none.
+
 The same conceptual property is typed differently depending on the node:
 
 - `ServerPlatform.mgmt-address` → `IPv4Socket` (the structured address+port
@@ -572,6 +608,12 @@ Constraining this on the base type was considered and rejected as too rigid for
 the range of platforms involved.
 
 ### Problem 2 — Inconsistent typing of `credential` (`string` vs `Credential`)
+
+**Resolved — see Question 2.** As with Problem 1, these are the extension profiles'
+properties. They have since been reshaped into a map keyed by credential kind, so the singular
+`credential` typed `Credential` described below no longer exists anywhere; Section 2.1 carries
+the current model. The resolution still holds — what a credential is typed as remains specific
+to what is being authenticated to.
 
 Likewise, `credential` is typed inconsistently:
 
@@ -840,12 +882,12 @@ in the profile is a sink.
   A profile deriving from `Application` therefore inherits no way to be interacted with, and
   must declare a capability and a relationship of its own. That is not hypothetical: the O-PAS
   (Open Process Automation) profiles declare `ControlApplicationComponent` with a `SignalSource`
-  capability and a matching `Signal` requirement onto it — structurally the same shape as
+  capability and a matching `Signal` requirement onto it — structurally the same as
   `Endpoint` and `InteractsWith`, a component that both publishes and consumes through a typed
   port. Two profiles, two vocabularies, one concept.
 
 - **`Endpoint` cannot simply be promoted, because it is a network contract.** Its properties are
-  `port`, `target-port`, `protocol` and `name`. That is the right shape for a network endpoint
+  `port`, `target-port`, `protocol` and `name`. That is right for a network endpoint
   and the name is honest about it — but hoisting it onto `Application` would oblige every
   application to expose a port and a protocol. An O-PAS signal port carries `Tags`; there is no
   port and no protocol to give. The design guide already prescribes the resolution: *a contract
@@ -946,7 +988,7 @@ default.
    today — by static name-version string, against a moving `master`. So cutting a
    release does not create a new coupling; **it makes an existing one safe.**
 
-   **This question is now forced by N8, and the two have to move together.** The
+   **This question is now forced by N8 — the abstract-profile property work tracked in [`open-issues.md`](../../../../governance/open-issues.md) — and the two have to move together.** The
    abstract platform connection properties want a structured socket for
    `ServerPlatform`. A downstream profile that derives from
    `community.tosca.abstract.platform:ServerPlatform` while declaring
@@ -964,11 +1006,14 @@ default.
    which a *released* downstream profile references a half-converged type set.
 
 4. **Release process** — *Automation shipped (PR #350, July 2026); no release cut
-   yet.* The mechanism described in Problem 3 is in place and unfired. Remaining:
-   push the first tag, and write the versioning/governance documentation — including
-   the rule that profile name-version strings are bumped when a version is frozen
-   and the next one opened, since CSAR names derive from those strings rather than
-   from the git tag.
+   yet.* The mechanism described in Problem 3 is in place and unfired, and the repository
+   still carries no tags. Remaining, per [`open-issues.md`](../../../../governance/open-issues.md)
+   I8: `0.1` waits on the credential model (decision D11) being present in the abstract
+   profiles, so that the first release carries the settled model rather than one the community
+   would have to revise immediately — Section 2.1 is that work. N8 can ride along. Then push
+   the first tag and write the versioning/governance documentation, including the rule that
+   profile name-version strings are bumped when a version is frozen and the next one opened,
+   since CSAR names derive from those strings rather than from the git tag.
 5. **`SingleHostApplication`** — *Open, not yet discussed.* Three questions, of
    descending independence. Does the `processes` property belong at the System View at
    all, given that a `command` names an executable? Should a type be named for a
