@@ -109,6 +109,32 @@ profile organization (`community/tosca` vs `io.kubernetes` naming); and a noted
 TOSCA gap — no standard way to describe an operation's **execution location** in
 service templates.
 
+**2026-09-02** (Chris, Roberto, Stefano), after a two-week break, and the first meeting to work
+straight down the [abstract-profile proposal
+document](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md). It ran the
+full hour and reached five of its eight proposals, all agreed: **credentials** as a reference
+data type with a per-type key vocabulary (D13, realizing D11); **one containment requirement
+name**, `host`, everywhere, with the relationship-type collapse left open and a warning against
+constraining capability and relationship both (N9); **never use a base capability or
+relationship type directly** (N10), which came out of Roberto asking what a property-free
+`Service` capability buys; **one interaction port on `Application`**, replacing the same-type
+interactions declared on two of its children (N11); and **`SingleHostApplication` →
+`ServerApplication`** with `processes` dropped, Roberto proposing `implementation-details` as
+where such a list would go if it returns (N12). Reopened or newly raised: whether
+`mgmt-address` should be a URL rather than a structured type (I28) — which reopens the
+2026-06-24 resolution; the container-platform credential vocabulary, agreed to be too
+Kubernetes-specific (I29); whether `RelationalDatabase` is a derived type or a `technology`
+value (I30); an inventory of storage constructs, Stefano to supply (I31); and orchestrated
+credentials, Tal's point from discussion #281, which needs node types rather than a data type
+(I27). `cidr_block` on `Network` was taken as-is and openly called provisional, with Roberto
+proposing `technology` carry IPv4 / IPv6 / dual-stack instead (I2). Two process outcomes: the
+agreed changes go into the **upstream profiles** rather than staying in the document (P6), and
+Chris expects to bring an **OPAF/OPAS** participant into the meetings, that profile sitting at
+the same System View level for the same vendor-neutrality reason (C4).
+
+*This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
+[decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
+
 ---
 
 ## Cross-cutting themes

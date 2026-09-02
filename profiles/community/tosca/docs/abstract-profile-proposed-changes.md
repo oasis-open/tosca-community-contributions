@@ -1,8 +1,10 @@
 # Proposed Enhancements to the TOSCA Community Abstract Profiles
 
-**Status:** Discussion draft. Sections 2.3, 2.7 and 2.8 and Problems 5–7 were added between
-August and September 2026 and have not been discussed; the rest carry the outcomes of the
-2026-06-24 community meeting. Each proposal in Section 2 states its own status.
+**Status:** Discussion draft. Every proposal in Section 2 was walked through at the
+2026-09-02 community meeting; Sections 2.1, 2.3, 2.4, 2.6 and 2.7 were agreed there and are
+to be written into the community profiles. Each proposal states its own status, and each
+records what the meeting changed about it. Section 5 lists what the meeting added that this
+document does not yet cover.
 **Audience:** TOSCA Community
 **Purpose:** Capture a concrete set of proposed enhancements to the community
 abstract profiles, together with the problems uncovered while prototyping them
@@ -10,14 +12,16 @@ and the decisions reached during community discussion.
 
 **Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [design-guide](design-guide.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
-**How this document is organized.** Four parts, which cross-reference each other by number.
+**How this document is organized.** Five parts, which cross-reference each other by number.
 **Section 1** says why these changes are being proposed. **Section 2** is the proposals
 themselves, grouped by profile in the order the profiles build on each other, each carrying
 its own status. Two profiles have more than one proposal. **Section 3** is the reasoning: the
 problems found while prototyping, numbered *Problem 1* through *Problem 7*, and most Section 2
 proposals point at the problem that motivates them. **Section 4** records what the community has
 settled and what is still open, numbered *question 1* through *question 9* — so a reference to
-"question 2" anywhere above means the second entry there.
+"question 2" anywhere above means the second entry there. **Section 5** holds what the
+2026-09-02 discussion added and Section 2 does not yet cover: material recorded from that
+meeting, to be worked up into a proposal of its own.
 
 ---
 
@@ -55,7 +59,11 @@ types and the same-type constraint with them.
 
 ### 2.1 `community.tosca.core` — add `CredentialRef` and `NamedCredentialRef`
 
-**Status: open.** Supersedes the credential model recorded in Sections 2.4 and 2.5.
+**Status: agreed 2026-09-02** — *"I agree with this approach, because it's general, and it
+applies to most of the cases"* (Roberto). Recorded as decision D13. Supersedes the credential
+model recorded in Sections 2.4 and 2.5. It covers a credential the model *references*; a
+credential the orchestrator *creates* needs the node-type pattern of
+[Section 5.1](#51-orchestrated-credentials).
 
 A credential in a model is a **reference** to material, never the material. The value carries
 the path to the file holding it and an identifier where one is needed; the material is read on
@@ -158,7 +166,16 @@ node_types:
 
 ### 2.3 `community.tosca.abstract.base` — one containment relationship, one requirement name
 
-**Status: open, not yet discussed.** Reasoning in Problems 5 and 6.
+**Status: agreed 2026-09-02 on the requirement name; the relationship-type collapse is
+deliberately left open.** Recorded as decision N9. Roberto proposed the three relationship
+types originally, at a point when it was not yet known whether each would need distinct
+properties or attributes; months of use show they do not. So `host` is the requirement name
+everywhere and the base `HostedOn` is what it declares, and a derived relationship type
+returns if and when one earns its keep by carrying properties, attributes or interface inputs
+of its own — which the requirement name absorbs without change. **One further constraint came
+out of the discussion:** restrict on the capability side or the relationship side, not both.
+Declaring `valid_capability_types` and `valid_relationship_types` for the same connection
+over-constrains it and nothing binds. Reasoning in Problems 5 and 6.
 
 Deployment layering is a single concept, so it should have a single relationship type and a
 single requirement name, declared once on `Base`, with the *capability* saying what kind of
@@ -297,7 +314,9 @@ at all.
 
 ### 2.4 `community.tosca.abstract.platform` — properties and requirements
 
-**Status: open.** The six community platform types declare no properties today.
+**Status: agreed 2026-09-02, with two items reopened.** The six community platform types
+declare no properties today. The credentials mechanism is decision D13; the two open items are
+the `mgmt-address` type and the container-platform vocabulary, both flagged in the table below.
 
 `credentials` is declared once on `Platform` in the shape Section 2.1 gives it. What each
 platform type adds is the **vocabulary of credential kinds it accepts**, as a `key_schema`
@@ -306,16 +325,38 @@ considered *in addition to* the parent's, so a derived type narrows and cannot w
 
 | Node type | Added properties | Added requirements |
 |-----------|------------------|--------------------|
-| `ServerPlatform` | `mgmt-address: IPv4Socket` (opt), `credentials` keyed `[ssh_key, ssh_password]` | `host` — inherited from `Platform` — refined to `node: VirtualizationPlatform` |
-| `VirtualizationPlatform` | `mgmt-address: string` (opt), `credentials` keyed `[token, cloud_account]` | the control-plane requirement — see Section 2.3, which declares it on `Platform` under a name of its own |
-| `ContainerPlatform` | `credentials` keyed `[kubeconfig]` | — |
+| `ServerPlatform` | `mgmt-address: IPv4Socket` (opt) †, `credentials` keyed `[ssh_key, ssh_password]` | `host` — inherited from `Platform` — refined to `node: VirtualizationPlatform` |
+| `VirtualizationPlatform` | `mgmt-address: string` (opt) †, `credentials` keyed `[token, cloud_account]` — a cloud account being a reference to a provider config file such as an AWS one, which holds the token and optionally the region | the control-plane requirement — see Section 2.3, which declares it on `Platform` under a name of its own |
+| `ContainerPlatform` | `credentials` keyed `[kubeconfig]` ‡ | — |
+
+**† The `mgmt-address` type is reopened (2026-09-02).** Roberto's alternative is to type it as a
+URL, using the validated URL type now in `core`, rather than as a structured socket for one
+platform kind and a bare string for another — general, and validated in both cases. What has to
+be established first is whether every management address can be written as a URL: there is no
+official SSH URL scheme, so adopting this means publishing a convention. The reason to settle it
+before the `0.1` rather than after: a data type chosen at this level cannot be corrected at any
+lower one. Tracked as I28, and it reopens the 2026-06-24 resolution of
+[Question 1](#question-1--mgmt-address-typing).
+
+**‡ `[kubeconfig]` is too restrictive** and was agreed on 2026-09-02 to be an oversight rather
+than a position. A container platform can equally be Docker with Compose, Docker Swarm or Nomad,
+none of which authenticate with a kubeconfig. The vocabulary needs extending as those platforms
+are modelled; tracked as I29.
 
 `PaasPlatform`, `SaasPlatform` and `ServerlessPlatform` are not addressed. Nothing has been
 prototyped against them, so there is no evidence yet for what they would need.
 
 ### 2.5 `community.tosca.abstract.data` — `RelationalDatabase`
 
-**Status: open.**
+**Status: open, and the derivation itself is in question (2026-09-02).** `Base` already carries
+`technology` and `vendor`, so the same thing is expressible as `AtRestData` with
+`technology: relational` and `vendor: postgres`, and Roberto asks whether the relational/NoSQL
+distinction belongs at this level or is a technology detail. The counter-precedent is
+`ContainerPlatform` against `VirtualizationPlatform`, which sit at this level for a distinction
+of the same kind, and Roberto's own tiebreaker is that a derived type earns its place if it has
+properties specific to it — a schema, for instance. Tracked as I30 in
+[`open-issues.md`](../../../../governance/open-issues.md); this section is a candidate to hold
+out of the `0.1` rather than freeze unresolved.
 
 ```yaml
 node_types:
@@ -338,7 +379,13 @@ database login names the principal it authenticates as.
 
 ### 2.6 `community.tosca.abstract.application` — one interaction port, specialized per kind
 
-**Status: open, not yet discussed.** Reasoning in Problem 7.
+**Status: agreed 2026-09-02** — *"more correct than the previous situation, in which we had
+specialized interactions between derived nodes of the same type, and only on a subset of them,
+not all"* (Roberto). Recorded as decision N11. Roberto asked whether a `Service` capability that
+adds nothing to `Partner` is worth declaring; the answer, accepted and now recorded as decision
+N10, is that a profile should never use a base capability or relationship type directly — the
+derived type names the intent, and it keeps discrimination possible once a second type derives
+from the same parent. Reasoning in Problem 7.
 
 An application should be able to expose functionality to other applications, and today only two
 concrete types can. Give `Application` a property-free port that derived profiles specialize,
@@ -476,7 +523,11 @@ the only types that declare either name.
 
 ### 2.7 `community.tosca.abstract.application` — name the platform, drop the processes
 
-**Status: open.** Reasoning in Problem 4.
+**Status: agreed 2026-09-02.** Recorded as decision N12. Roberto added the answer to the
+question the section leaves hanging — where the list of processes goes if it turns out to be
+needed. Not a renamed property, but the **`implementation-details`** property already inherited
+from `Base`: the list stays opaque at the System View and is parsed at the layer that
+understands it, which is what that property is for. Reasoning in Problem 4.
 
 Rework `SingleHostApplication` so that what it asserts is what it holds. The reasoning
 is in Problem 4.
@@ -518,7 +569,15 @@ today. The two proposals are otherwise independent and can be adopted in either 
 
 ### 2.8 `community.tosca.abstract.network` — what a network is addressed as, and whether it reaches the internet
 
-**Status: open, not yet discussed.** No corresponding problem section: the two properties are additions every realization written against `Network` has needed, not a defect in the community types.
+**Status: proposed as-is and acknowledged provisional (2026-09-02).** No corresponding problem
+section: the two properties are additions every realization written against `Network` has needed,
+not a defect in the community types. `cidr_block` as a bare string is what keeps the existing AWS,
+Google Cloud and Proxmox realizations working, and it was put forward on that basis rather than as
+the right model — the point of taking it now is to retire the downstream extension profiles and
+use the community types directly, with the network model corrected as the area gets more
+attention. Roberto's direction for that correction: the inherited `technology` property carries
+IPv4, IPv6, dual-stack or optical, and derived network types specialize from there — a network
+need not be IPv4 at all, which a bare `cidr_block` quietly assumes. Tracked as I2.
 
 `community.tosca.abstract.network` declares no types; `Network` in `abstract.base` carries only
 what `Base` gives it and a `linkable` capability. Two properties are wanted by every realization
@@ -966,10 +1025,16 @@ default.
 
 ### Question 1 — `mgmt-address` typing
 
-*Resolved (2026-06-24):* keep the property name
-and type specific to each derived platform type — a structured socket for
-servers, a `string` or platform-specific `JSON` for URL-addressed API
-platforms. Do not hoist a single `mgmt-address` onto the base `Platform`.
+*Resolved (2026-06-24), reopened (2026-09-02).* The 2026-06-24 resolution: keep the property
+name and type specific to each derived platform type — a structured socket for servers, a
+`string` or platform-specific `JSON` for URL-addressed API platforms. Do not hoist a single
+`mgmt-address` onto the base `Platform`.
+
+What reopens it is not the per-type principle but the choice of types. Roberto proposes a
+validated URL for every case, which is both general and checkable, against a structured socket
+in one place and an unvalidated string in another. The question to settle is whether every
+management address is expressible as a URL — SSH has no official scheme, so the community would
+be publishing a convention of its own. Section 2.4 carries the detail; tracked as I28.
 
 ### Question 2 — `credential` typing
 
@@ -1025,7 +1090,10 @@ since CSAR names derive from those strings rather than from the git tag.
 
 ### Question 5 — `SingleHostApplication`
 
-*Open, not yet discussed.* Three questions, of
+*Resolved (2026-09-02)* as decision N12 — the type becomes `ServerApplication`, `processes` is
+dropped, and cardinality becomes a `count_range` on the placement requirement. Should the list
+of processes prove necessary after all, it goes into the inherited `implementation-details`
+property rather than into a property of its own. The three questions as originally posed, of
 descending independence. Does the `processes` property belong at the System View at
 all, given that a `command` names an executable? Should a type be named for a
 cardinality it does not constrain, or should cardinality be a `count_range` on
@@ -1044,7 +1112,9 @@ application executes*. Proposal in Section 2.3, reasoning in Problem 5.
 
 ### Question 7 — One containment relationship, one requirement name
 
-*Open, not yet discussed.*
+*Resolved in part (2026-09-02)* as decision N9: the requirement name is `host` everywhere, and
+the relationship-type collapse is left open, to be undone only by a type that needs properties
+or attributes of its own. The question as originally posed:
 `HostedOn`, `RunsOn` and `AvailableOn` are identical but for the capability each accepts,
 and the profile marks all three `relationship_kind: containment`. Should they collapse into
 `HostedOn`, and should `runs-on` and `available-on` collapse into `host` — the name TOSCA
@@ -1067,7 +1137,9 @@ question and does not belong to this proposal.
 
 ### Question 9 — Interaction between applications
 
-*Open, not yet discussed.* Abstract `Application`
+*Resolved (2026-09-02)* as decisions N11 and N10 — yes to all three, and a capability that adds
+nothing to its parent is still worth declaring, because it names the intent and keeps
+discrimination possible. The question as originally posed: abstract `Application`
 declares no capabilities, so nothing can be pointed at it, while `Endpoint` and
 `InteractsWith` sit on `MicroService` and `SingleHostApplication` — `Endpoint` carrying a
 network contract that not every application can honour, and both requirements pinned to
@@ -1076,3 +1148,40 @@ declared on `Application` and derived from `Partner`, with `Endpoint` rederived 
 should `InteractsWith` rederive from `AssociatesWith` rather than `DependsOn`, and should the
 same-type constraint go? Proposal in Section 2.6, reasoning in Problem 7 — which also asks
 whether `Processes` should distinguish reading a dataset from writing one.
+
+---
+
+## 5. Recorded from the 2026-09-02 discussion, not yet proposed
+
+### 5.1 Orchestrated credentials
+
+Section 2.1 covers a credential the model **references**. It does not cover a credential the
+orchestrator **creates**, which is a different thing and needs node types rather than a data
+type. Raised by Tal on discussion #281.
+
+Deploying a virtual machine is the ordinary case: the key pair is generated first and the public
+half handed to the provider along with the request, so the key pair is itself an orchestrated
+entity with a lifecycle, not an input the author supplies. The same holds for a certificate
+issued during deployment, a token minted for a service, or a password generated for a database.
+
+The pattern that has held across all of those:
+
+- **A node type per kind of orchestrated secret** — a key pair, a certificate, a token. Its
+  creation operation produces the material and writes it wherever the deployment keeps such
+  things, a protected file or a vault.
+- **A capability of type `Credential` on that node**, holding a map of `CredentialRef` as
+  Section 2.1 defines it. The node is what has a lifecycle; the capability is
+  what other nodes can point at.
+- **A requirement on every node that needs the material**, targeting that capability. The
+  consumer names what it needs and the topology says where it comes from, rather than the author
+  copying a reference into two places.
+
+What makes this fit the rest of the model is that the material still never appears in it. The
+node's creation produces the secret, the `CredentialRef` says where it went, and a consumer
+reaches it through the graph.
+
+Two pieces are still to be worked out before this becomes a Section 2 proposal: which profile
+the `Credential` capability type belongs in — `core` holds the data types, but a capability type
+is not a data type — and whether the orchestrated-secret node types belong in the abstract
+profiles at all or only in the technology profiles that know how to create each kind. Tracked as
+I27 in [`open-issues.md`](../../../../governance/open-issues.md).
