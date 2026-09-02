@@ -15,7 +15,9 @@ and the decisions reached during community discussion.
 **How this document is organized.** Five parts, which cross-reference each other by number.
 **Section 1** says why these changes are being proposed. **Section 2** is the proposals
 themselves, grouped by profile in the order the profiles build on each other, each carrying
-its own status. Two profiles have more than one proposal. **Section 3** is the reasoning: the
+its own status. Two profiles have more than one proposal. Section 2.9 concerns `core` and
+`abstract.base` jointly and sits last rather than beside Section 2.1, so that the section numbers
+already in circulation keep their meaning. **Section 3** is the reasoning: the
 problems found while prototyping, numbered *Problem 1* through *Problem 7*, and most Section 2
 proposals point at the problem that motivates them. **Section 4** records what the community has
 settled and what is still open, numbered *question 1* through *question 9* — so a reference to
@@ -616,6 +618,84 @@ case the one an author gets without asking for it.
 Both are declared today in a downstream extension, alongside the `host` requirement onto a
 virtualization platform that Section 2.3 notes in passing. The requirement is proposed there;
 these two properties are what remains.
+
+### 2.9 `community.tosca.core` and `community.tosca.abstract.base` — core as a standard library
+
+**Status: open, not yet discussed.** No corresponding problem section: nothing is broken today, and
+what the change buys is a `core` that a profile can import without taking a modelling approach with
+it.
+
+Move the three base capability types and the three base relationship types — `Container`,
+`Feature`, `Partner`, `ContainedBy`, `DependsOn`, `AssociatesWith` — from `community.tosca.core`
+into `community.tosca.abstract.base`. `core` then holds data types, artifact types and functions.
+
+**This is what `core` is already said to be for.** The decision to add a standard library of data
+types describes `core` as the community's library of types and functions. Data types, artifact
+types and functions serve any profile whatever it models. The six base types serve one modelling
+approach — the [Component/Port pattern](design-guide.md#componentport-pattern), with three
+connection kinds and a capability paired to each.
+
+**Every type derived from the six already lives in `abstract.base`:**
+
+| base type, in `core` | derived types, all in `abstract.base` |
+|---|---|
+| `Container` | `PlatformHost`, `ExecutionEnvironment`, `DataPlatform` |
+| `Feature` | `DataSource`, `Linkable` |
+| `Partner` | — ([Section 2.6](#26-communitytoscaabstractapplication--one-interaction-port-specialized-per-kind) adds `Service`) |
+| `ContainedBy` | `HostedOn`, `RunsOn`, `AvailableOn` |
+| `DependsOn` | `Processes`, `LinksTo` |
+| `AssociatesWith` | — (Section 2.6 rederives `InteractsWith`) |
+
+The parent sits one profile below every one of its children, with nothing in between. That the two
+rows with no children are exactly the two Section 2.6 gives children to is the point: the whole
+hierarchy is one design, split across two profiles at an arbitrary line.
+
+**The capabilities and the relationships have to move together.** `Container` names `ContainedBy`
+in `valid_relationship_types` and `ContainedBy` names `Container` in `valid_capability_types`, so
+neither resolves without the other. They belong wherever the types that refine them are.
+
+**A profile may want the library without the vocabulary.** `community.tosca.technology.base` is the
+case already in the repository: it imports `core`, defines artifact types, interface types and node
+types of its own, and uses none of the six. Today that import carries a set of relationship and
+capability types it has no use for. After the move it takes the data types and functions and
+nothing about how nodes connect.
+
+**The profiles already carry two base layers, one per view, and `core` already sits under both.**
+`abstract.base` is the base of the System View column; `community.tosca.technology.base` is the base
+of the technology- and vendor-specific column, and it declares its own root node type, its own
+`Bash` artifact type with a `host` property for remote execution, and its own `Standard`:
+
+| | `Standard` operations |
+|---|---|
+| `community.tosca.abstract.base` | `create`, `modify`, `delete` |
+| `community.tosca.technology.base` | `create`, `configure`, `start`, `modify`, `stop`, `delete` |
+
+The System View declares the operations a substituting template can map to a workflow; the
+implemented views declare the lifecycle their artifacts drive. That difference is already settled
+practice here, and it is the same reasoning applied to interfaces that this proposal applies to the
+base capability and relationship types: what every profile shares is the library, and what one
+column shares belongs to that column's base.
+
+**A relationship type is not neutral across levels of abstraction the way a data type is.** An
+`HttpUrl` means the same thing wherever it appears. A relationship type does not. At a level whose
+nodes are realized by substitution, a relationship carries structure and nothing else: substitution
+applies to node types — `substitution_mappings` takes a `node_type`, and TOSCA defines no
+relationship counterpart — so an interface declared on a relationship could only ever be
+implemented by an artifact supplied at that same level, which is precisely what an abstract level
+does not do. At a level whose nodes are realized by artifacts, the same three kinds of relationship
+reasonably carry lifecycle interfaces. The three kinds are general; a particular declaration of
+them is not, and it belongs with the node types it is declared alongside.
+
+**Nothing reachable today becomes unreachable.** `abstract.base` imports `core` into the default
+namespace and every profile above imports `abstract.base`, so the transitive chain is unchanged for
+every consumer. Two files import `core` directly and use one of the six: `abstract.base` itself,
+which would then define them, and `abstract.application`, which imports `abstract.base` into the
+default namespace as well and goes on resolving `Feature` and `DependsOn` through it.
+
+**Order against the other proposals.** Section 2.3 collapses the containment relationship types and
+Section 2.6 adds a capability under `Partner`, so both edit types this proposal moves. Either order
+works; taking this one first means the other two are made in a single profile.
+
 
 ---
 
