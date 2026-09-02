@@ -18,7 +18,7 @@ projects. So far, the following have been identified:
 - [Alien4Cloud](https://github.com/alien4cloud/csar-public-library/tree/develop/org/alien4cloud)
 - [Micado](https://github.com/micado-scale/tosca)
 - [Radon particles](https://github.com/radon-h2020/radon-particles)
-- [Ubicity](https://github.com/lauwers/tosca-community-contributions/tree/master/profiles/com/ubicity)
+- [Ubicity](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/com/ubicity)
 - [Puccini](https://github.com/oasis-open/tosca-community-contributions/tree/master/profiles/cloud/puccini)
 - [Turandot](https://github.com/tliron/turandot)
 - [Cloudify](https://github.com/cloudify-cosmo/cloudify-manager/blob/master/resources/rest-service/cloudify/types/types.yaml)
