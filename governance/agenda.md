@@ -1,150 +1,146 @@
-# TOSCA Community — Proposed Agenda (2026-09-02)
+# TOSCA Community — Proposed Agenda (2026-09-09)
 
-**Status:** Draft agenda for 2026-09-02, following 2026-08-12
+**Status:** Draft agenda for 2026-09-09, following 2026-09-02
 **Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [platform README](../profiles/community/tosca/abstract/platform/README.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
 
-This meeting works through
-[abstract-profile-proposed-changes.md](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md)
-end to end. The document now carries **eight proposals and nine questions**; four
-proposals and five questions have never been discussed, and one of them is what the
-`0.1` release has been waiting on since 08-05. The items below follow the document's
-own order, which is the order the profiles build on each other, so each decision is
-taken with its dependencies already settled.
+Last week walked the proposed-changes document end to end and agreed five of its eight
+proposals — 2.1, 2.3, 2.6, 2.7 and 2.8 — recorded as decisions N9 through N12 and D13.
+What is left is narrower and of a different kind: three questions the walk-through
+*opened*, one it left unfinished, and the edits themselves.
 
-Everything referenced is written up in full. The meeting should not need to reconstruct
-an argument from cold.
+**The release is now the organizing item.** I8 no longer waits on a design decision; it
+waits on the edits, and on three questions that decide what those edits say. Everything
+in items 1 to 3 is on the release path. Everything after it is not.
 
 ---
 
-## 1. Credentials in `core` and on the platform types — 15 min · **decisions sought**
+## 1. `mgmt-address` — a URL, or a structured type? — 15 min · *I28* · **decision sought**
 
-**This is the `0.1` blocker.** D11 (agreed 08-05) settled the credential model and
-carried an action to write it up in
-[#281](https://github.com/oasis-open/tosca-community-contributions/discussions/281) and
-incorporate it into the abstract profiles. The write-up exists — as **Section 2.1** of
-the proposed-changes document rather than as a comment on #281, whose last comment is
-still from March. I8 records that `0.1` waits on this work, so nothing else on the
-release path moves until it is agreed.
+**This reopens the 2026-06-24 resolution recorded as N7**, and it is the one item that
+blocks N8, which in turn blocks the `0.1`.
 
-Two decisions, and they are separable:
+Section 2.4 gives `ServerPlatform` an `IPv4Socket` and `VirtualizationPlatform` a
+string. Roberto's alternative is to type both as the `HttpUrl`-style URL now in `core`,
+which validates and stays general.
 
-- **Section 2.1 — put `CredentialRef` and `NamedCredentialRef` in `core`.** A credential
-  in the model is a reference to material, never the material. The argument for `core`
-  rather than per-profile is nominal typing: `org.opengroup.opas` declares its own flat
-  `Credential`, so a bridge between it and a community credentials map must disassemble
-  the value field by field, and only a shared *declaration* removes that. Adopting a type
-  from a profile below a standards-derived one is not a deviation from the standard.
-  This also settles **Question 3** in part — it is the first shared type to move.
-- **Section 2.4 — the per-platform vocabularies.** `credentials` declared once on
-  `Platform` keyed by credential kind, each platform type refining the `key_schema` to
-  the kinds it accepts: `[ssh_key, ssh_password]` for `ServerPlatform`,
-  `[token, cloud_account]` for `VirtualizationPlatform`, `[kubeconfig]` for
-  `ContainerPlatform`. §9.4 permits the refinement and a refinement's validation clause
-  is considered *in addition to* the parent's, so a derived type narrows and cannot widen.
+The open part is whether every management address can honestly be written as a URL.
+There is no registered SSH URL scheme, so adopting one means the community publishes its
+own convention. Against that, a data type chosen at this level of abstraction cannot be
+corrected from below — get it wrong here and no lower layer can fix it.
 
-**Decisions sought:** adopt 2.1 into `core`; confirm the three vocabularies; and confirm
-that N8's remaining connection properties ride along with this rather than waiting behind
-it. Question 2's resolution — credential typing specific to what is authenticated to —
-is unaffected either way.
+**Preparation:** the cases to decide against are the six platform types' management
+addresses as they are realized today — a server reached over SSH, a cloud API endpoint, a
+Kubernetes API server, a Proxmox host. If a URL covers all four honestly, it wins on
+validation alone.
 
-## 2. One containment relationship, one requirement name — 20 min · *Questions 6 and 7* · **decision sought**
+**Decision sought:** URL or structured, for each of the two properties.
 
-**Section 2.3**, reasoning in **Problems 5 and 6**. The largest change in the document
-and the one everything else reads against, which is why it is taken before the
-application items.
+**Consequence either way:** choosing URL makes `HttpUrl` load-bearing on every
+API-addressed platform type, which raises the priority of the second half of I26 —
+whether `core`'s data types carry test cases — from housekeeping to a release concern.
 
-Three parts, and they can be taken separately:
+## 2. The container-platform credential vocabulary — 10 min · *I29* · **decision sought**
 
-- **Collapse `HostedOn`, `RunsOn` and `AvailableOn` into `HostedOn`.** They are identical
-  but for the capability each accepts, and the profile already marks all three
-  `relationship_kind: containment`. This is the Component/Port pattern applied to
-  deployment: the capability is the port and names what a node exposes; the relationship
-  names intent. Three types differing only in accepted capability state on the
-  relationship what the port already states.
-- **Declare `host` once on `Base`**, with each child refining the capability. `host` is
-  the name TOSCA has used for deployment layering throughout its history; `runs-on` and
-  `available-on` are new names for an established concept. §8.4.1 permits the refinement.
-- **Add `control-host` on `Platform`** for a platform whose control plane deploys apart
-  from what it controls — Kubevirt, and a Kubernetes cluster's control node. **The
-  platform README has described this requirement as though it existed since before
-  08-12; it does not.** `Platform` declares `host` and `links-to` only, so the README's
-  Kubevirt and multi-node cluster models cannot currently be written down. The README now
-  marks it as proposed.
+Section 2.4 keys `ContainerPlatform`'s credentials map to `[kubeconfig]`, which is
+Kubernetes-specific. A container platform that is Docker with Compose, Docker Swarm or
+Nomad authenticates some other way. Agreed on 09-02 to be an oversight in the proposal
+rather than a design position, so this is a question of what to add, not whether.
 
-**Decision sought:** whether the collapse is adopted, whether `host` moves to `Base`, and
-whether `control-host` is the name. **Migration is a clean break**: TOSCA has no aliasing
-mechanism — its only `alias` is the YAML anchor convenience in `dsl_definitions` — and
-retaining the old types would not help, since they and `HostedOn` are siblings under
-`ContainedBy` and refinement requires derivation. Nothing has been released, so there is
-no published artifact to stay compatible with; this belongs in the same coordinated cut
-as the `0.1` tag.
+**Decision sought:** the vocabulary. §9.4 means a derived type can only narrow what
+`Platform` declares, so a kind left out here cannot be added by a downstream profile
+without changing the abstract type again — which is why it has to be right before the
+`0.1` freezes it.
 
-## 3. The application types — 15 min · *Questions 9 and 5*
+## 3. `RelationalDatabase` — derived type or technology value? — 15 min · *I30 / I31 / I4*
 
-Two proposals, taken in dependency order.
+`Base` already carries `technology` and `vendor`, so `AtRestData` with
+`technology: relational` and `vendor: postgres` expresses the same thing Section 2.5
+derives a type for. Roberto asks whether the relational/NoSQL distinction belongs at this
+level or is a technology detail; the counter-precedent is `ContainerPlatform` against
+`VirtualizationPlatform`, which sit at this level for a distinction of the same kind.
 
-- **Section 2.6 — one interaction port.** Abstract `Application` declares no capabilities,
-  so nothing can be pointed at it; `Endpoint` and `InteractsWith` sit on `MicroService`
-  and `SingleHostApplication` instead, pinned in both to interaction between nodes of the
-  *same type*. The proposal declares a property-free `Service` capability on `Application`
-  derived from the existing `Partner`, rederives `Endpoint` from it, and rederives
-  `InteractsWith` from `AssociatesWith` so that interaction can be modelled without
-  asserting deployment order. **Problem 7** has the reasoning. It is worth the group's
-  attention that a second profile has already hit this: O-PAS declares a `SignalSource`
-  capability and a matching requirement structurally identical to these, because
-  there was nothing upstream to derive from.
-- **Section 2.7 — rename `SingleHostApplication`.** Named for a cardinality it does not
-  constrain, and carrying a `processes` property that collides with the `processes`
-  requirement inherited from `Application`. **Problem 4** has the reasoning; the rename to
-  `ServerApplication` follows `MicroServiceApplication` and `ServerlessApplication`.
+Roberto's own tiebreaker is the usable one: **a derived type earns its place if it has
+properties specific to it** — a schema, for instance. Applying it needs the reason the
+derived type was introduced, which is being recovered (credential specialization is the
+suspicion).
 
-**Decisions sought:** adopt the `Service` capability and the association-kind
-`InteractsWith`; adopt the rename and the removal of `processes`.
+This is the concrete instance of **I4**, the abstract-types against minimal-types
+question, and settling it here gives the rule a worked case rather than a principle.
 
-## 4. Network properties — 5 min
+**Also here: I31.** Data and storage have had the least prototyping of any area of the
+abstract profiles, and `AtRestData` is the only at-rest type. Stefano's
+reverse-engineering work covers storage constructs across providers, and an inventory of
+them would tell us how many more of these decisions are coming.
 
-**Section 2.8.** `Network` gains `cidr_block` and `internet_accessible`. The first is what
-a network is addressed as, wanted by every realization written against the type. The
-second is a *selector* rather than a description — a substitution filter reads it to
-choose between reachable and isolated realizations — and defaults to `false` so the safe
-case is what an author gets by default. No corresponding problem section: these are
-additions, not a defect.
+**Decision sought, or an explicit deferral:** Section 2.5 is a candidate to hold out of
+the `0.1` rather than freeze it unresolved. Deferring is a legitimate outcome; leaving it
+undecided while the tag is cut is not.
 
-## 5. The `0.1` release — 10 min · *I8 / I26*
+## 4. `control-host` — the piece 2.3 did not finish — 15 min · *Questions 6 and 8*
 
-What remains after items 1–4, and the sequencing has not changed since 08-12: the
-credential model in the abstract profiles, then N8's remaining connection properties,
-then the tag. The repository still carries **no tags**, locally or upstream.
+N9 settled the requirement name `host`. It did not settle the second requirement.
 
-Still outstanding from the last agenda and not yet addressed:
+`Platform` declares `host` and `links-to` only, so a platform whose control plane deploys
+apart from what it controls — Kubevirt, and a multi-node Kubernetes cluster — still
+cannot be written down. **The platform README has described this requirement as though it
+existed**; it does not, and the README now marks it as proposed.
 
-- **I26 — `HttpUrl` is not anchored at the end**, so `https://example.com garbage here`
-  and `http://999.999.999.999` both pass. Appending `$` is not the fix, since it would
-  reject legitimate paths and queries. `core` ships in the `0.1`.
-- Whether `core`'s data types carry **test cases**, now that it is the community's
-  standard library.
+Two decisions, and the first is small:
+
+- **The name.** `control-host` is the interim spelling, and `runs-on` is unavailable
+  because it already means *where this application executes*. Now that `host` is settled
+  as the base name, `control-host` reads as its sibling.
+- **Question 8 — whether a control node also hosts workloads.** Owned by the
+  [platform README](../profiles/community/tosca/abstract/platform/README.md#does-a-control-node-also-host-workloads):
+  *set overlap*, where a schedulable control node appears under both `host` and
+  `control-host`, against *disjoint sets with a property*. The first states the topology
+  honestly but cannot be realized, since a requirement mapping cannot distribute a subset
+  of bindings; the second can be built today.
+
+**Decision sought:** the name, and which of the two models the profiles adopt.
+
+## 5. Orchestrated credentials — 10 min · *I27* · **first look**
+
+**Section 5.1**, written up since 09-02. D13 covers a credential the model *references*;
+this covers one the orchestrator *creates* — a key pair generated before a VM request, a
+certificate issued during deployment, a token minted for a service. A node type per kind
+of orchestrated secret, a `Credential` capability on it holding a map of `CredentialRef`,
+and a requirement on every node that needs the material.
+
+Raised by Tal on [#281](https://github.com/oasis-open/tosca-community-contributions/discussions/281).
+Two pieces are deliberately unresolved and are what the group's input is wanted on:
+
+- **Which profile the `Credential` capability type belongs in.** `core` holds the data
+  types, but a capability type is not a data type.
+- **Whether the orchestrated-secret node types belong in the abstract profiles at all**,
+  or only in the technology profiles that know how to create each kind.
+
+Not a decision item this week. It becomes a Section 2 proposal once those two are
+answered.
 
 ---
 
 ## 6. If time permits
 
-- **Question 3 — single source of truth for shared types.** Unblocked since 08-23:
-  release automation produces signed CSARs, so tagging `0.1` removes the
-  pin-to-a-moving-`master` objection. Item 1 moves the first two types; the question is
-  whether the rest follow.
-- **Question 8 — whether a control node also hosts workloads.** Now owned by the
-  [platform README](../profiles/community/tosca/abstract/platform/README.md#does-a-control-node-also-host-workloads),
-  which sets out *set overlap* against *disjoint sets with a property*. The first states
-  the topology honestly but cannot be realized, since a requirement mapping cannot
-  distribute a subset of bindings; the second can be built today.
-- **Two more platform README questions** with no answer yet: how the total node count and
-  the control-node count reach a substituting template.
-- Carried from 08-12: Kubernetes profile testing (Prachi, Jay); Tal's OpenAPI→TOSCA
-  generator; the design-guide walkthrough.
+- **Substitution filters against the revised types (I32).** N9 and N11 move the abstract
+  types' structure into requirements and capabilities, which is what a substitution
+  filter selects on. The filters are being refined and are expected to work, but the
+  mechanism has not been walked through with the group.
+- **Examples exercising the agreed changes.** Committed on 09-02 for the next couple of
+  meetings.
+- **I16(c)** — how deep type hierarchies should go. (a) was settled by N9 and (b) by N10;
+  (c) is what remains. **I17** — the monitoring and security patterns drafted in
+  `design-guide.md` on 07-15 and still unratified after three deferrals.
+- **OPAF participation (C4).** Bringing the Open Process Automation Forum's
+  control-systems modelling into these meetings, in both directions.
+- Carried: Kubernetes profile testing (Prachi, Jay); Tal's OpenAPI→TOSCA generator.
 
 ---
 
-**Decisions sought:** adopt Section 2.1 into `core` and confirm the platform credential
-vocabularies (#1); the containment collapse, `host` on `Base`, and the `control-host`
-name (#2); the `Service` capability and the `ServerApplication` rename (#3); the two
-network properties (#4).
+**Decisions sought:** the `mgmt-address` type (#1); the container-platform credential
+vocabulary (#2); `RelationalDatabase` as a derived type or a technology value, or an
+explicit deferral out of the `0.1` (#3); the `control-host` name and the control-node
+workload model (#4).
+
+**Everything in #1 to #3 is on the `0.1` path.** After those three, what stands between
+the community and its first tag is editing the profiles.
