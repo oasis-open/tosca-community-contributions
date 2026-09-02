@@ -123,11 +123,11 @@ It also settles a question that otherwise has no good answer. Converting a stand
 profile in place means deviating from the standard it exists to represent. Adopting a type from
 a community profile *below* it is not a deviation — it is the layering working.
 
-**This does not reopen question 2.** That question settles which *type each node uses* for its
+**This does not reopen [question 2](#question-2--credential-typing).** That question settles which *type each node uses* for its
 credential, and resolved it as specific to the technology being authenticated to. This section
 settles where the reference types are *declared*, so that two profiles naming the same one are
 nominally compatible. A profile is free to type a credential property as a `string` under
-question 2's resolution and still import these; `RelationalDatabase` in Section 2.4 does exactly
+[question 2](#question-2--credential-typing)'s resolution and still import these; `RelationalDatabase` in Section 2.4 does exactly
 that.
 
 > Note: an earlier draft of this section proposed a flat `Credential` carrying `user_name`,
@@ -164,7 +164,7 @@ node_types:
 declares a `credentials` **map keyed by credential kind** — `[ssh_key, ssh_password]` on
 `ServerPlatform`, `[kubeconfig]` on `ContainerPlatform`, `[token, cloud_account]` on
 `VirtualizationPlatform` — whose entries are the reference types Section 2.1 proposes. The
-per-platform *vocabulary* still differs, which is what Question 2 settled; what changed is that
+per-platform *vocabulary* still differs, which is what [Question 2](#question-2--credential-typing) settled; what changed is that
 the mechanism is now uniform.
 
 | Node type | Added properties | Added requirements |
@@ -180,7 +180,7 @@ prototyped against them, so there is no evidence yet for what they would need.
 
 **Status: open.** The `credential` property below is the prototype's current form and is
 deliberately *not* the map described in Section 2.1 — a database credential is a single value
-of one kind, so there is nothing for a map keyed by kind to distinguish. Question 2's
+of one kind, so there is nothing for a map keyed by kind to distinguish. [Question 2](#question-2--credential-typing)'s
 resolution admits both.
 
 ```yaml
@@ -578,7 +578,7 @@ real reason this is a discussion document rather than a pull request.
 
 ### Problem 1 — Inconsistent typing of `mgmt-address` (`string` vs `IPv4Socket`)
 
-**Resolved — see Question 1.** The properties discussed here are the extension profiles',
+**Resolved — see [Question 1](#question-1--mgmt-address-typing).** The properties discussed here are the extension profiles',
 not the community types': the community platform types declare none.
 
 The same conceptual property is typed differently depending on the node:
@@ -617,7 +617,7 @@ the range of platforms involved.
 
 ### Problem 2 — Inconsistent typing of `credential` (`string` vs `Credential`)
 
-**Resolved — see Question 2.** As with Problem 1, these are the extension profiles'
+**Resolved — see [Question 2](#question-2--credential-typing).** As with Problem 1, these are the extension profiles'
 properties. They have since been reshaped into a map keyed by credential kind, so the singular
 `credential` typed `Credential` described below no longer exists anywhere; Section 2.1 carries
 the current model. The resolution still holds — what a credential is typed as remains specific
@@ -682,7 +682,7 @@ and rejected in favor of platform-specific properties.
 > **This changes the conclusion below.** A signed, checksummed CSAR *is* the
 > immutable artifact whose absence is given here as the reason an external
 > ecosystem cannot depend on the community core types. Once `0.1` is tagged, a
-> consumer can pin to a release instead of to a moving `master`. See Question 3.
+> consumer can pin to a release instead of to a moving `master`. See [Question 3](#question-3--single-source-of-truth-for-shared-types).
 
 The situation this section was written against:
 
@@ -700,7 +700,7 @@ change or break dependent profiles with no versioned artifact to pin to and no
 deprecation path. It is the main reason an external ecosystem (such as Ubicity)
 cannot safely take a hard dependency on the community core types — for example,
 having downstream profiles converge on the community `Credential` / `IPv4Socket`
-definitions instead of maintaining their own (see Question 3 below).
+definitions instead of maintaining their own (see [Question 3](#question-3--single-source-of-truth-for-shared-types) below).
 
 A well-defined release process (immutable, versioned, tagged releases with a
 documented compatibility/deprecation policy) is a prerequisite for the
@@ -1060,7 +1060,7 @@ and the profile marks all three `relationship_kind: containment`. Should they co
 `HostedOn`, and should `runs-on` and `available-on` collapse into `host` — the name TOSCA
 has used for deployment layering throughout its history — declared once on `Base` and
 refined by each child, leaving the capability to say what kind of thing is being placed? Proposal in Section 2.6, reasoning in Problem 6. Settling
-this also settles question 6, since the control-plane requirement is then a second
+this also settles [question 6](#question-6--the-control-plane-requirement), since the control-plane requirement is then a second
 requirement name over the same relationship.
 
 ### Question 8 — Whether a control node also hosts workloads
