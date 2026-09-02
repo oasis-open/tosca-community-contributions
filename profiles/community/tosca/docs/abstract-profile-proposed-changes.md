@@ -10,6 +10,14 @@ and the decisions reached during community discussion.
 
 **Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [design-guide](design-guide.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
+**How this document is organized.** Four parts, which cross-reference each other by number.
+**Section 1** says why these changes are being proposed. **Section 2** is the proposals
+themselves, one per profile, each carrying its own status. **Section 3** is the reasoning: the
+problems found while prototyping, numbered *Problem 1* through *Problem 7*, and most Section 2
+proposals point at the problem that motivates them. **Section 4** records what the community has
+settled and what is still open, numbered *question 1* through *question 9* — so a reference to
+"question 2" anywhere above means the second entry there.
+
 ---
 
 ## 1. Background and motivation
@@ -966,89 +974,114 @@ default.
 
 ## 4. Decisions and open questions
 
-1. **`mgmt-address` typing** — *Resolved (2026-06-24):* keep the property name
-   and type specific to each derived platform type — a structured socket for
-   servers, a `string` or platform-specific `JSON` for URL-addressed API
-   platforms. Do not hoist a single `mgmt-address` onto the base `Platform`.
-2. **`credential` typing** — *Resolved (2026-06-24):* likewise platform-specific
-   — a structured `Credential` for login-based servers, a `string`/`JSON` for
-   opaque token/config artifacts. No base-level harmonization.
-3. **Single source of truth for shared types** — *Open, but the blocker is
-   gone (2026-08-23):* should `Credential`, `IPv4Socket`, etc. be owned solely by
-   `community.tosca.core`, with other profiles importing rather than redefining
-   them? The stated obstacle was that there is no immutable artifact to pin to, so
-   a consumer would be pinning to a moving `master`. **Release automation now
-   produces signed, checksummed CSARs (see Problem 3), so tagging `0.1` removes
-   that obstacle.** What remains is the community's decision on ownership, not a
-   technical impediment.
+### Question 1 — `mgmt-address` typing
 
-   **Note that downstream consumers already carry this dependency in its unsafe
-   form.** The Ubicity profiles, for example, import `community.tosca.core:0.1`,
-   `community.tosca.abstract.data:0.1` and `community.tosca.abstract.platform:0.1`
-   today — by static name-version string, against a moving `master`. So cutting a
-   release does not create a new coupling; **it makes an existing one safe.**
+*Resolved (2026-06-24):* keep the property name
+and type specific to each derived platform type — a structured socket for
+servers, a `string` or platform-specific `JSON` for URL-addressed API
+platforms. Do not hoist a single `mgmt-address` onto the base `Platform`.
 
-   **This question is now forced by N8 — the abstract-profile property work tracked in [`open-issues.md`](../../../../governance/open-issues.md) — and the two have to move together.** The
-   abstract platform connection properties want a structured socket for
-   `ServerPlatform`. A downstream profile that derives from
-   `community.tosca.abstract.platform:ServerPlatform` while declaring
-   `mgmt-address` against *its own* `IPv4Socket` hits a property-refinement type
-   conflict the moment N8 declares the same property upstream — the two socket
-   types are structurally identical but independently defined, so neither derives
-   from the other. That is not a soft compatibility concern; it breaks the derived
-   profile.
+### Question 2 — `credential` typing
 
-   **Consequence for sequencing: N8, the `0.1` tag, and downstream convergence are
-   one coordinated cut, not three steps.** Land N8 against the community types, tag
-   `0.1`, and update downstream profiles to import the released community
-   `IPv4Socket` / `Credential` and drop their own copies — with the downstream
-   change prepared in advance so it can land immediately, leaving no interval in
-   which a *released* downstream profile references a half-converged type set.
+*Resolved (2026-06-24):* likewise platform-specific
+— a structured `Credential` for login-based servers, a `string`/`JSON` for
+opaque token/config artifacts. No base-level harmonization.
 
-4. **Release process** — *Automation shipped (PR #350, July 2026); no release cut
-   yet.* The mechanism described in Problem 3 is in place and unfired, and the repository
-   still carries no tags. Remaining, per [`open-issues.md`](../../../../governance/open-issues.md)
-   I8: `0.1` waits on the credential model (decision D11) being present in the abstract
-   profiles, so that the first release carries the settled model rather than one the community
-   would have to revise immediately — Section 2.1 is that work. N8 can ride along. Then push
-   the first tag and write the versioning/governance documentation, including the rule that
-   profile name-version strings are bumped when a version is frozen and the next one opened,
-   since CSAR names derive from those strings rather than from the git tag.
-5. **`SingleHostApplication`** — *Open, not yet discussed.* Three questions, of
-   descending independence. Does the `processes` property belong at the System View at
-   all, given that a `command` names an executable? Should a type be named for a
-   cardinality it does not constrain, or should cardinality be a `count_range` on
-   `runs-on`? And separately from both: the property `processes` collides with the
-   requirement `processes` inherited from `Application`, which needs resolving on its
-   own terms. Proposal in Section 2.5, reasoning in Problem 4.
-6. **The control-plane requirement** — *Open, not yet discussed.* The platform README
-   describes a second deployment requirement on `Platform`, distinguishing where a platform's
-   control plane is deployed from where its data plane is. `Platform` does not declare it, so
-   the README's own multi-node Kubernetes model cannot be expressed. Declaring it also forces
-   the README's open question about naming, since `runs-on` already means *where this
-   application executes*. Proposal in Section 2.6, reasoning in Problem 5.
-7. **One containment relationship, one requirement name** — *Open, not yet discussed.*
-   `HostedOn`, `RunsOn` and `AvailableOn` are identical but for the capability each accepts,
-   and the profile marks all three `relationship_kind: containment`. Should they collapse into
-   `HostedOn`, and should `runs-on` and `available-on` collapse into `host` — the name TOSCA
-   has used for deployment layering throughout its history — declared once on `Base` and
-   refined by each child, leaving the capability to say what kind of thing is being placed? Proposal in Section 2.6, reasoning in Problem 6. Settling
-   this also settles question 6, since the control-plane requirement is then a second
-   requirement name over the same relationship.
-8. **Whether a control node also hosts workloads** — *Open, not yet discussed.* The platform
-   README asks this as its own third open question. Two models are set out at the end of
-   Section 2.6: *set overlap*, where a schedulable control node appears under both `host` and
-   `control-host` and `$has_entry` reads the overlap, and *disjoint sets with a property*,
-   where `host` carries only non-control workload hosts. The first states the topology
-   honestly but cannot be realized, since a requirement mapping cannot distribute a subset of
-   bindings; the second can be built today but stops the graph answering which servers run
-   workloads.
-9. **Interaction between applications** — *Open, not yet discussed.* Abstract `Application`
-   declares no capabilities, so nothing can be pointed at it, while `Endpoint` and
-   `InteractsWith` sit on `MicroService` and `SingleHostApplication` — `Endpoint` carrying a
-   network contract that not every application can honour, and both requirements pinned to
-   interaction between nodes of the same type. Should a property-free `Service` capability be
-   declared on `Application` and derived from `Partner`, with `Endpoint` rederived from it,
-   should `InteractsWith` rederive from `AssociatesWith` rather than `DependsOn`, and should the
-   same-type constraint go? Proposal in Section 2.7, reasoning in Problem 7 — which also asks
-   whether `Processes` should distinguish reading a dataset from writing one.
+### Question 3 — Single source of truth for shared types
+
+*Open, but the blocker is
+gone (2026-08-23):* should `Credential`, `IPv4Socket`, etc. be owned solely by
+`community.tosca.core`, with other profiles importing rather than redefining
+them? The stated obstacle was that there is no immutable artifact to pin to, so
+a consumer would be pinning to a moving `master`. **Release automation now
+produces signed, checksummed CSARs (see Problem 3), so tagging `0.1` removes
+that obstacle.** What remains is the community's decision on ownership, not a
+technical impediment.
+
+**Note that downstream consumers already carry this dependency in its unsafe
+form.** The Ubicity profiles, for example, import `community.tosca.core:0.1`,
+`community.tosca.abstract.data:0.1` and `community.tosca.abstract.platform:0.1`
+today — by static name-version string, against a moving `master`. So cutting a
+release does not create a new coupling; **it makes an existing one safe.**
+
+**This question is now forced by N8 — the abstract-profile property work tracked in [`open-issues.md`](../../../../governance/open-issues.md) — and the two have to move together.** The
+abstract platform connection properties want a structured socket for
+`ServerPlatform`. A downstream profile that derives from
+`community.tosca.abstract.platform:ServerPlatform` while declaring
+`mgmt-address` against *its own* `IPv4Socket` hits a property-refinement type
+conflict the moment N8 declares the same property upstream — the two socket
+types are structurally identical but independently defined, so neither derives
+from the other. That is not a soft compatibility concern; it breaks the derived
+profile.
+
+**Consequence for sequencing: N8, the `0.1` tag, and downstream convergence are
+one coordinated cut, not three steps.** Land N8 against the community types, tag
+`0.1`, and update downstream profiles to import the released community
+`IPv4Socket` / `Credential` and drop their own copies — with the downstream
+change prepared in advance so it can land immediately, leaving no interval in
+which a *released* downstream profile references a half-converged type set.
+
+### Question 4 — Release process
+
+*Automation shipped (PR #350, July 2026); no release cut
+yet.* The mechanism described in Problem 3 is in place and unfired, and the repository
+still carries no tags. Remaining, per [`open-issues.md`](../../../../governance/open-issues.md)
+I8: `0.1` waits on the credential model (decision D11) being present in the abstract
+profiles, so that the first release carries the settled model rather than one the community
+would have to revise immediately — Section 2.1 is that work. N8 can ride along. Then push
+the first tag and write the versioning/governance documentation, including the rule that
+profile name-version strings are bumped when a version is frozen and the next one opened,
+since CSAR names derive from those strings rather than from the git tag.
+
+### Question 5 — `SingleHostApplication`
+
+*Open, not yet discussed.* Three questions, of
+descending independence. Does the `processes` property belong at the System View at
+all, given that a `command` names an executable? Should a type be named for a
+cardinality it does not constrain, or should cardinality be a `count_range` on
+`runs-on`? And separately from both: the property `processes` collides with the
+requirement `processes` inherited from `Application`, which needs resolving on its
+own terms. Proposal in Section 2.5, reasoning in Problem 4.
+
+### Question 6 — The control-plane requirement
+
+*Open, not yet discussed.* The platform README
+describes a second deployment requirement on `Platform`, distinguishing where a platform's
+control plane is deployed from where its data plane is. `Platform` does not declare it, so
+the README's own multi-node Kubernetes model cannot be expressed. Declaring it also forces
+the README's open question about naming, since `runs-on` already means *where this
+application executes*. Proposal in Section 2.6, reasoning in Problem 5.
+
+### Question 7 — One containment relationship, one requirement name
+
+*Open, not yet discussed.*
+`HostedOn`, `RunsOn` and `AvailableOn` are identical but for the capability each accepts,
+and the profile marks all three `relationship_kind: containment`. Should they collapse into
+`HostedOn`, and should `runs-on` and `available-on` collapse into `host` — the name TOSCA
+has used for deployment layering throughout its history — declared once on `Base` and
+refined by each child, leaving the capability to say what kind of thing is being placed? Proposal in Section 2.6, reasoning in Problem 6. Settling
+this also settles question 6, since the control-plane requirement is then a second
+requirement name over the same relationship.
+
+### Question 8 — Whether a control node also hosts workloads
+
+*Open, not yet discussed.* The platform
+README asks this as its own third open question. Two models are set out at the end of
+Section 2.6: *set overlap*, where a schedulable control node appears under both `host` and
+`control-host` and `$has_entry` reads the overlap, and *disjoint sets with a property*,
+where `host` carries only non-control workload hosts. The first states the topology
+honestly but cannot be realized, since a requirement mapping cannot distribute a subset of
+bindings; the second can be built today but stops the graph answering which servers run
+workloads.
+
+### Question 9 — Interaction between applications
+
+*Open, not yet discussed.* Abstract `Application`
+declares no capabilities, so nothing can be pointed at it, while `Endpoint` and
+`InteractsWith` sit on `MicroService` and `SingleHostApplication` — `Endpoint` carrying a
+network contract that not every application can honour, and both requirements pinned to
+interaction between nodes of the same type. Should a property-free `Service` capability be
+declared on `Application` and derived from `Partner`, with `Endpoint` rederived from it,
+should `InteractsWith` rederive from `AssociatesWith` rather than `DependsOn`, and should the
+same-type constraint go? Proposal in Section 2.7, reasoning in Problem 7 — which also asks
+whether `Processes` should distinguish reading a dataset from writing one.
