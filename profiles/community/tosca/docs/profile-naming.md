@@ -9,7 +9,7 @@ The discussion below is retained as the rationale of record.
 versus reverse-DNS names (e.g. `io.kubernetes`), and clarify the boundary between
 team-designed profiles and broader community contributions.
 
-**Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [design-guide](design-guide.md#profile-organization) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [profile-organization](profile-organization.md) · [design-guide](design-guide.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 ---
 

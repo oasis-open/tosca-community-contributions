@@ -1,6 +1,6 @@
 # TOSCA Community Profile Design Guide
 
-**Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [design-patterns](design-patterns.md) · [profile-organization](profile-organization.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 This guide describes the modeling methodology and design patterns the
 TOSCA Community uses when developing community profiles: the Model
@@ -105,25 +105,15 @@ application generally consist of the following:
 - *Networks* that connect various platforms.
 
 To assist with the development of abstract service templates, the
-TOSCA Community profiles include a System View profile that defines
-base node types for these four *generic* abstractions. Specifically,
-it defines:
+TOSCA Community profiles include a System View profile that defines a
+base node type for each of these four abstractions, together with the
+relationship and capability types that connect them. They are organized
+in the `community.tosca.abstract.base` profile, and what each one models
+and how they relate to one another is documented with the profile
+itself: [base profile README](../abstract/base/README.md#type-definitions).
 
-- An `Application` node type that represents the functionality
-  provided by the service.
-- A `Data` node type that represents the persistent data processed by
-  the service. This data node type can model Data Sets, Data Lakes,
-  Databases or similar entities.
-- A `Platform` node type that represents the platforms on which the
-  service components are deployed.
-- A `Network` node type that represents connectivity between
-  platforms.
-
-These node types&mdash;as well as the supporting relationship types
-and capability types&mdash;are organized in the
-`community.tosca.abstract.base` profile. It can be used to guide the
-development of abstract service templates as shown in the following
-figure:
+The result guides the development of abstract service templates as shown
+in the following figure:
 
 ![Generic System View Service Template](../images/generic-template.png)
 
@@ -137,16 +127,17 @@ distinguish between databases and data lakes, or derived `Platform`
 node types could specify whether applications are deployed on
 Kubernetes clusters or on servers provisioned on IaaS platforms, etc.
 
-To this end, the TOSCA Community defines four additional System View
-profiles as shown in the following figure:
+To this end, the TOSCA Community defines one further System View profile
+per base node type, each defining the derived types for its own
+abstraction, as shown in the following figure:
 
 ![System View Profiles](../images/system-view-profiles.png)
 
-Each of these profiles defines derived node types for one of the four
-base node types defined in the base profile. These profiles can then
-be used to define abstract TOSCA service templates that define specific
-applications or services. The following figure shows an example of
-such an abstract service template:
+Which profiles those are, and how they sit relative to the profiles
+below them, is in
+[profile-organization.md](profile-organization.md#the-profile-set).
+Together they are what an abstract service template is written against.
+The following figure shows an example of such a template:
 
 ![Abstract Service Template](../images/abstract-template.png)
 
@@ -427,129 +418,12 @@ structure at another — see [Interface Definitions Differ by
 Level](#interface-definitions-differ-by-level) above — a definition per
 level is the honest one.
 
-### Profile Organization
+### Where the Resulting Profiles Live
 
-The approach recommended in this section has resulted in a set of
-profiles as shown in the following figure:
-
-![TOSCA Community Profiles Organization](../images/profile-organization.png)
-
-The profiles on the right are *Administrator View* and *Device View*
-profiles, where *Device View* node types derive from node types
-defined in *Administrator View* profiles. One such Administrator View
-profile is the IaaS profile that defines node types that represent
-entities managed by Infrastructure-as-a-Service platforms. These types
-are then refined in profiles specific to each IaaS provider, such as
-AWS, Azure, etc.
-
-The *Core* profile defines types, repositories, functions, etc. that
-are shared by profiles at different levels of abstraction.
-
-Two further profiles serve as the base of a *column* rather than of a
-level. `community.tosca.abstract.base`, described in [Generic Base Node
-Types for System View
-Profiles](#generic-base-node-types-for-system-view-profiles) above,
-holds the four generic node types of the System View column together
-with the relationship and capability types they use.
-`community.tosca.technology.base` is its counterpart for the
-Administrator View and Device View columns. It defines a `Root` node
-type that technology-specific and vendor-specific node types derive
-from, the six-operation `Standard` interface those types implement, and
-a `Bash` artifact type carrying a `host` property, so that a script can
-be declared to run on a particular host rather than on the orchestrator.
-Why the two `Standard` definitions differ is covered in [Interface
-Definitions Differ by Level](#interface-definitions-differ-by-level)
-above.
-
-> The figure above shows a single base profile, and it is the System
-> View one. No base profile is drawn beneath the Administrator View and
-> Device View rows, although `community.tosca.technology.base` is the
-> common parent of both.
-
-> The *naming* convention for these profiles — the `community.tosca.*`
-> namespace versus reverse-DNS names such as `io.kubernetes` — is an open
-> question tracked as issue I22 and written up in
-> [profile-naming.md](profile-naming.md).
-
-### Two Dimensions Determine Where a Type Belongs
-
-The level of abstraction is not the only thing that decides which
-profile a node type belongs in. Profile organization is governed by two
-*independent* dimensions, and a type must be located in both before a
-home can be chosen for it.
-
-Both dimensions are already present in the figure above. The first is
-the *model continuum*, which runs vertically: the figure labels System
-View profiles *technology and vendor independent*, Administrator View
-profiles *technology specific*, and Device View profiles *vendor
-specific*. The second runs horizontally, and appears in the figure as
-the decomposition of the System View level into separate Platform,
-Application, Data, and Network profiles. The section on [decoupling
-applications and data from platforms](#decouple-applications-and-data-from-platforms)
-below applies that same separation to the design of abstract service
-templates.
-
-What the figure does not yet show is the two dimensions *crossed below
-the System View level*. Its Administrator View row contains IaaS,
-Kubernetes, and Docker profiles, and its Device View row contains AWS,
-OpenStack, and Proxmox profiles — all of them platform profiles. The
-application, data, and network columns have no Administrator View or
-Device View counterparts in the figure, yet the reasoning that
-justifies them at the System View level applies unchanged further down:
-a certificate authority is a technology-specific concept in the same
-way a Kubernetes cluster is, and a particular certificate authority
-implementation is vendor-specific in the same way AWS is.
-
-Taken together, the two dimensions therefore produce four categories
-rather than one column of three:
-
-|                        | **Platform**                                              | **Application**                        |
-| ---------------------- | --------------------------------------------------------- | -------------------------------------- |
-| **Administrator View** | a Kubernetes cluster; a container runtime; an OCI registry | a certificate authority; an image registry |
-| **Device View**        | k3s, k0s, minikube, kubeadm; containerd, Docker Engine     | step-ca; zot; Harbor                   |
-
-A type that appears to belong in two of these categories at once is not
-a single type. A node type *named* for a technology-neutral role while
-its properties describe one specific product spans the Administrator
-and Device rows simultaneously, and no profile can hold it correctly.
-The remedy is to rename the type for the product it actually models, or
-to separate it into two types, rather than to select a compromise
-profile for it.
-
-In practice the Administrator View cell of the application column is
-frequently filled by a *capability type* rather than by a node type.
-Where consumers bind a port rather than a node — see the [Component/Port
-Pattern](#componentport-pattern) below — the technology-neutral concept
-is already expressed by the capability that the port advertises, and the
-node type only ever needs to be the Device View realization, named for
-its product.
-
-This is what makes an intermediate abstract node type unnecessary, and
-the alternative is not merely redundant but unbuildable. Suppose the
-technology-neutral concept were modeled as a node type at the
-Administrator View row. A Device View product type would then reach it
-by *derivation*, following the recommendation in [Translating
-Administrator View to Device
-View](#translating-administrator-view-to-device-view) above. But that
-same product type must also derive from the type that represents how it
-is realized. That is one `derived_from` and two required parents, and
-TOSCA node types are singly inherited. Expressing the neutral concept as
-a capability avoids the contradiction entirely, because a port is
-*bound* rather than *inherited*, and binding carries no such limit.
-
-This is a specific instance of a more general tension already noted in
-[Translating Device View to Instance
-View](#translating-device-view-to-instance-view) above: where derivation
-is the only mechanism available for crossing a boundary, every
-independent axis of variation has to be expressed as another derived
-type. Capabilities relieve that pressure wherever what the consumer
-needs is a contract rather than an ancestor.
-
-> The profile organization figure above depicts the horizontal dimension
-> only at the System View level. Extending it to show application (and
-> data, and network) profiles at the Administrator View and Device View
-> levels would make the four categories described here visible in the
-> figure itself.
+How the profiles that result from this methodology are organized — the levels,
+the two dimensions that cross them, how to decide which profile a type belongs
+in, and the naming convention — is in
+[profile-organization.md](profile-organization.md).
 
 ## Deploying Abstract Services
 
@@ -786,215 +660,10 @@ Profile are used for the templates in the substituting service:
 
 ---
 
-## Component/Port Pattern
+---
 
-TOSCA uses a **Component/Port** pattern where a component’s touch
-points for interacting with other components are modeled separately
-from that component using *port* abstractions. Using TOSCA, components
-are modeled using *Node Types* and the ports of those components are
-modeled using the following two different abstractions associated with
-node types:
-- Capabilities: for functionality exposed by a component and usable by
-  other components.
-- Requirements: for dependencies of one component on functionality
-  exposed by other components.
+## Patterns
 
-**Naming principle.** Capability type names should describe the
-*functionality a component exposes*; relationship type names should
-describe the *semantics of the dependency* — the intent of the source
-node toward the target — and not the mechanism used to realize it.
-Intent-revealing names (`Monitors`, `ManagedBy`, `RegistersWith`,
-`HostedOn`) are preferred over mechanism-flavored names (`ConnectsTo`,
-`BindsTo`, `LinksTo`). This keeps service templates readable: the reader
-should understand *why* two nodes are related from the type name alone.
-
-**Data placement.** A port is not only the structural touch point between
-two components; it is where a component's *exposed contract* lives. The
-properties and attributes a *consumer* reads across a binding — the
-coordinates it needs to use the exposed functionality — belong on the
-**capability**, not on the node. State that is internal to how the
-component is realized or deployed stays on the node.
-
-Decide by asking: *does a bound consumer read this value?* If a node bound
-through a requirement reads it (through the capability), it is part of the
-exposed contract and belongs on the capability; if only the component's own
-operations use it, it is realization detail and stays on the node.
-
-This is what lets the Component/Port pattern support substitution. A
-consumer that reads the contract from the capability (using the TOSCA Path
-`CAPABILITY` step, e.g. `[SELF, RELATIONSHIP, <requirement>, CAPABILITY,
-<attribute>]`) depends on the *capability type*, not on the node type behind
-it. Any node that advertises the capability — a different realization, or a
-substituting service template — then satisfies the consumer unchanged. Put
-the contract on the port and the implementation behind it becomes swappable;
-leave it on the node and every consumer is coupled to that node type.
-
-For example, a certificate authority exposes its issuing endpoint, trust
-root, and enrolment credential on a *certification* capability rather than
-on the (deployment-specific) CA node, so an enrolling node works against any
-CA realization; an OCI registry exposes its endpoint, scheme, TLS trust
-anchor, and deposit credential on its *registry* capability, so a publisher
-pushes without knowing whether the registry is zot, Harbor, or a hosted
-service.
-
-When a base capability has several realizations, a second question follows:
-*which* capability carries a given value? Decide by whether it is universal or
-realization-specific. A contract **every** realization exposes belongs on the
-**base capability**; a value **specific to one** realization belongs on a
-**capability derived from** that base — so realizations differ without the base
-accumulating every realization's fields. This is the same derive-to-specialize
-discipline the pattern applies to type *naming*, now applied to the contract's
-*data*: enrich the base for what is common, derive a capability for what is not.
-
-**Secrets are references, not values.** Related to data placement, but
-broader: a component's model — its properties and attributes, and the inputs
-and outputs that flow through them — must carry *references* to secret
-material, never the material itself. A password, token, or private key belongs
-in a vault or a mounted file on the executing host; the model carries only a
-**path or name** the runtime resolves there. A secret placed in a property, an
-attribute, or an inputs file leaks: inputs are often committed to source
-control, and attributes surface in deployed-model state where any consumer can
-read them back. Where a secret's *value* originates is a separate choice — an
-operator may supply it out of band (a reference to an existing vault entry),
-or, when the orchestrator controls both ends of a channel, an operation may
-generate it directly into a vault and hand back only the path. Either way the
-model sees a reference; the value never becomes a modeled value.
-
-The Component/Port pattern defines *common* categories of
-functionality that are typically exposed by all components. It then
-attempts to define *common* capability types and *common* relationship
-types to represent each of these categories of functionality. Note
-that this pattern is inspired by the [ONF Core Information
-Model](https://opennetworking.org/software-defined-standards/models-apis/),
-the [TMF Open Digital Architecture](https://www.tmforum.org/oda/), and
-other modeling efforts that use a similar approach. These standard
-categories of functionality are shown in the following picture:
-
-![Component/Port Pattern](../images/component-port.png?raw=true)
-
-- **Runtime environment**: most if not all TOSCA nodes are contained
-  by (*hosted on*) another node and their lifecycle is determined by
-  the lifecycle of the containing node. This containment dependency is
-  expressed using an *execution environment requirement* that must be
-  fulfilled by a corresponding *execution environment capability* of
-  the containing node. Nodes that can *host* other nodes typically
-  have their own *runtime environment requirement*.
-- **Core functionality**: the main function of a TOSCA node is to
-  provide a specific set of features or functionality to other
-  nodes. This is expressed using a *core functionality capability*.
-  Other nodes will define requirements for this functionality.
-- **Management**: many TOSCA nodes are matched with a corresponding
-  management tool. This relationship is expressed as a *management
-  requirement* of the managed TOSCA node rather than as a *management
-  capability* to express potential deployment dependencies: if the
-  management tool is used to configure the TOSCA node, the management
-  tool must be deployed before the managed node can be fully deployed.
-  Note that for management tools, the management functions are exposed
-  as their *core functionality capability*. Because management is
-  modeled as a requirement of the managed node, a *reverse* "manages"
-  capability/relationship on the management tool is **not** needed and
-  should be avoided — it duplicates the same dependency in the opposite
-  direction.
-- **Monitoring**: many TOSCA nodes are matched with a corresponding
-  monitoring tool. The monitored node exposes an *observability
-  capability*; the monitoring tool declares a *monitoring requirement*
-  that targets it. This is a *dependency* relationship (the monitored
-  node must be deployed and observable before monitoring can attach),
-  so the monitoring relationship derives from `DependsOn`. Modeling
-  observability as a capability of the *monitored* node — rather than as
-  a capability of the monitoring tool — keeps the direction consistent
-  with management: the touch point lives on the node being acted upon.
-
-  > **Proposed resolution for issue I17.** Formalizes the monitoring
-  > pattern that was discussed in the TOSCA TC but never written down.
-
-- **Security**: securing access to a node is not one concern but
-  several, each modeled with its own capability/relationship pair. Note in
-  particular that *authentication* (proving **who** a consumer is) and
-  *authorization* (**what** that consumer may do) are distinct concerns and
-  should not be conflated, even though a bearer credential often fuses them:
-  - *Perimeter protection* — a node exposes a capability indicating it
-    can be fronted by a security control (firewall, gateway); the
-    protected node declares a requirement targeting it. (A coarse,
-    network-layer authorization boundary.)
-  - *Authentication / credentials* — a node exposes a capability
-    representing the credential(s) by which a consumer **proves its
-    identity** to access it; the consumer declares a requirement that it
-    is authenticated using that credential. This establishes *who* the
-    consumer is, not *what* it may do.
-  - *Authorization* — what an authenticated principal is **permitted to
-    do**. A credential proves identity; authorization is the policy
-    applied to that identity. Today this is usually *coarse* — holding a
-    bearer credential grants access, and perimeter controls gate at the
-    network layer — so it rides on the credential and perimeter patterns.
-    *Fine-grained* authorization (roles / scoped permissions modeled as
-    their own capabilities and requirements, so that "identity X may do A
-    but not B" is expressible) is a further, less-developed sub-pattern.
-  - *Identity / registration / trust* — a node (a registry or trust
-    store) exposes a registration capability; devices and services
-    declare a *registration requirement* (e.g. `RegistersWith`) so that
-    their signed requests can later be verified by relying parties.
-
-  > **Proposed resolution for issue I17.** Replaces "this pattern needs
-  > further work" by splitting security into perimeter, authentication,
-  > authorization, and identity/trust sub-patterns — keeping authentication
-  > and authorization distinct rather than fused under "credentials."
-
-**The category list is open-ended.** The categories above are the
-*common* ones, not an exhaustive set. Other recurring cross-cutting
-categories follow the same pattern and may warrant their own common
-capability and relationship types — for example *provisioning* (a node
-built from an image or package source), *networking* (attachment to
-hosts and networks), and *routing* (directing traffic to a target). New
-categories should be introduced deliberately, documented here, and given
-capability and relationship types that follow the naming principle
-above.
-
-As stated earlier, the TOSCA Community uses this pattern to define common
-capability types and common relationship types for these various
-categories of functionality. These types are discussed next.
-
-### Best Practices
-
-> **Proposed resolutions for issue I16.** The three questions below were
-> previously open; the recommendations are proposed for community
-> ratification. Related to I4 (abstract-vs-minimal types).
-
-**1. Where should the capability↔relationship constraint be declared —
-`valid_capability_types`, `valid_relationship_types`, or both?**
-
-Declare it in **one** place, not both. The recommended convention:
-
-- Put `valid_relationship_types` **only on the three base capability
-  types** (`Container`, `Feature`, `Partner`), where it enforces the
-  containment / dependency / association *kind* gate.
-- Put `valid_capability_types` **on relationship types** to point each
-  relationship at the specific capability it targets.
-
-Restating both on every derived type is redundant, and — under TOSCA's
-nominal typing — invites the two lists to drift out of sync.
-
-**2. When should a new derived relationship or capability type be
-defined, versus reusing a base type?**
-
-Derive a new type when at least one of these holds:
-
-1. A **semantically clearer name** improves the readability of profiles
-   and templates (the name reveals intent that the base type does not).
-2. **Additional properties or attributes** are needed on the
-   relationship or capability.
-3. **Additional inputs or operation implementations** are needed on a
-   relationship interface.
-4. **Additional interfaces** are needed on the relationship.
-
-If none of these apply — the type would differ only in which nodes it
-connects — do **not** derive a new type.
-
-**3. If a specific capability and a specific relationship to it are
-needed, derive new types or specialize the base types in place?**
-
-Follow from question 2: if a case in (1)–(4) applies, derive the types.
-Otherwise, reuse the base types and constrain them at the point of use
-with `valid_source_node_types` / `valid_target_node_types` in the
-capability and requirement definitions. This keeps the type hierarchies
-shallow and avoids a proliferation of near-identical types.
+The recurring modeling patterns these methods are applied through — the
+Component/Port pattern and the practices built on it — are in
+[design-patterns.md](design-patterns.md).

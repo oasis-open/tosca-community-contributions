@@ -36,20 +36,20 @@ guide](docs/design-guide.md).
 
 ## Documents in this directory
 
-- **[design-guide.md](docs/design-guide.md)** &mdash; the modeling
-  methodology (the Model Continuum and its abstraction levels,
-  translating between levels, and deploying abstract services) together
-  with the TOSCA Community design patterns (the Component/Port pattern).
-- **[prior-art.md](docs/prior-art.md)** &mdash; a survey of existing TOSCA
-  type definitions from other projects, gathered as input for
-  harmonization.
-- **[abstract-profile-proposed-changes.md](docs/abstract-profile-proposed-changes.md)**
-  &mdash; a specific proposal to extend the abstract platform and data
-  profiles (management address, credentials, and related issues).
-- **[governance/](../../../governance/)** &mdash; community-process documents:
-  the [meeting history](../../../governance/meeting-history.md), the [decision
-  log](../../../governance/decision-log.md), and the [open-issues
-  tracker](../../../governance/open-issues.md).
+The [`docs/`](docs) directory holds the guides, reference material, domain notes
+and proposals, and [`docs/README.md`](docs/README.md) indexes them and says what
+each kind is for. The two to start with:
+
+- **[design-guide.md](docs/design-guide.md)** &mdash; the modeling methodology.
+- **[design-patterns.md](docs/design-patterns.md)** &mdash; the recurring
+  modeling patterns the profiles are built from.
+- **[profile-organization.md](docs/profile-organization.md)** &mdash; how the
+  profiles are organized and how to decide which one a type belongs in.
+
+Community-process documents are in [`governance/`](../../../governance/): the
+[meeting history](../../../governance/meeting-history.md), the [decision
+log](../../../governance/decision-log.md), and the [open-issues
+tracker](../../../governance/open-issues.md).
 
 ## Profiles
 

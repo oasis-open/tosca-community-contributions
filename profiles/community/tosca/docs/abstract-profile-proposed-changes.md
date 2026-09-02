@@ -183,7 +183,7 @@ Deployment layering is a single concept, so it should have a single relationship
 single requirement name, declared once on `Base`, with the *capability* saying what kind of
 thing is being placed.
 
-This is the [Component/Port pattern](design-guide.md#componentport-pattern) applied to
+This is the [Component/Port pattern](design-patterns.md#componentport-pattern) applied to
 deployment. The capability is the port, and names the functionality a node exposes — *I can
 host a platform*, *I can provide an execution environment*, *I can hold data*. The relationship
 names the intent of the source toward that port. Three relationship types that differ only in
@@ -633,7 +633,7 @@ types, functions, and the one artifact type its own function implementations nam
 **This is what `core` is already said to be for.** The decision to add a standard library of data
 types describes `core` as the community's library of types and functions. Data types and functions
 serve any profile whatever it models. The six base types serve one modelling approach — the
-[Component/Port pattern](design-guide.md#componentport-pattern), with three connection kinds and a
+[Component/Port pattern](design-patterns.md#componentport-pattern), with three connection kinds and a
 capability paired to each.
 
 **`Python` stays and `Bash` goes, on the same test.** `core` names `Python` sixteen times, once in
