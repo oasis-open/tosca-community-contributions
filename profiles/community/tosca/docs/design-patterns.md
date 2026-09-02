@@ -147,7 +147,10 @@ categories of functionality are shown in the following picture:
     representing the credential(s) by which a consumer **proves its
     identity** to access it; the consumer declares a requirement that it
     is authenticated using that credential. This establishes *who* the
-    consumer is, not *what* it may do.
+    consumer is, not *what* it may do. A worked realization — the port, the
+    obligation advertising it creates, and node types for credentials with a
+    lifecycle — is proposed in
+    [credential-orchestration-proposal.md](credential-orchestration-proposal.md).
   - *Authorization* — what an authenticated principal is **permitted to
     do**. A credential proves identity; authorization is the policy
     applied to that identity. Today this is usually *coarse* — holding a

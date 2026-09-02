@@ -32,6 +32,14 @@ generating a key pair and handing the public half to the provider along with the
 issued, renewed, revoked and access-controlled, which is to say it has a lifecycle, and in TOSCA a
 thing with a lifecycle is a **node**.
 
+**This models authentication, not authorization.** A credential carries *who* a consumer is and
+its proof of that. *What* an authenticated principal is permitted to do is a separate concern and
+is not modelled here. A bearer credential fuses the two in practice — holding it both identifies
+you and admits you — which is why the distinction is stated rather than left to the reader: the
+`Credential` port is not an access-control mechanism. This is the *authentication* sub-pattern of
+the security section of the [design patterns](design-patterns.md#best-practices), and the proposal
+below is a worked realization of it.
+
 ```yaml
 capability_types:
   Credential:
