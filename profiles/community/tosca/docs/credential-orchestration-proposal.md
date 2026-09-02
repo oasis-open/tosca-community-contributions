@@ -56,6 +56,11 @@ capability_types:
         required: false
 ```
 
+**The value type is `CredentialRef` and the port is `Credential`**, so each name belongs to one
+entity and a reader needs no context to tell which is meant. `Ref` is substance rather than
+decoration: the value carries a *reference* to secret material and never the material itself, so the
+name states the property that governs how it may be used.
+
 **Advertising the port obliges the node to publish material, in the form the data type defines.** A port that
 publishes nothing is a promise the node cannot keep, since a consumer binds it precisely to read
 through it. A consumer binds generically — `capability: Credential`, working against any credential
