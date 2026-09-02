@@ -11,9 +11,11 @@ lives and what it may claim.
   guidance, and it goes stale rather than wrong.
 - **Domain notes** record why a particular technology is modeled the way it is.
   Durable, but scoped to one subject rather than to the profiles as a whole.
-- **Proposals** describe what *should change*. A proposal is deleted once its
-  decisions reach the [decision log](../../../../governance/decision-log.md),
-  which is where the outcome belongs; git carries the argument.
+- **Proposals** describe what *should change*. An implemented proposal leaves in
+  two directions: the **decision** to the [decision
+  log](../../../../governance/decision-log.md), and the **description of what now
+  exists** to the README of the profile that declares it. The proposal is then
+  deleted, and git carries the argument.
 
 ## Guides
 

@@ -5,10 +5,10 @@
 to be written into the community profiles. Each proposal states its own status, and each
 records what the meeting changed about it.
 
-**A section leaves this document once it reaches the profiles.** The decision is recorded in
-the [decision log](../../../../governance/decision-log.md) and the types are in the profiles,
-so a section that has been implemented is a third copy. What stays is what is still proposed
-or still open.
+**A section leaves this document once it reaches the profiles**, in two directions: the decision
+to the [decision log](../../../../governance/decision-log.md), and the description of the types to
+the README of the profile that declares them. A section that has been implemented is a third copy
+of both. What stays here is what is still proposed or still open.
 **Audience:** TOSCA Community
 **Purpose:** Capture a concrete set of proposed enhancements to the community
 abstract profiles, together with the problems uncovered while prototyping them

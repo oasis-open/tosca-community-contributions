@@ -3,6 +3,57 @@
 This profile defines general-purpose TOSCA types that are intended to
 be shared by all other profiles.
 
+## Data Types
+
+Every data type here but one derives from a TOSCA primitive and adds a validation clause, so a
+value is an ordinary string or integer that has been checked. `IPv4Socket` is the exception, a
+complex type composed of two of the others.
+
+**The regular expressions avoid look-around assertions**, deliberately, so that they work in regex
+engines that do not support them. Two consequences are documented on the types themselves: `Fqdn`
+does not enforce the 253-character DNS name limit, and `Email` accepts most common addresses without
+being fully compliant with RFC 5321 and RFC 5322.
+
+### Structured encodings
+
+- **`JSON`**, **`YAML`** — a string carrying a document in that format, validated by the
+  corresponding function below. `YAML` is the type the `implementation-details` property uses to
+  carry values across a substitution boundary, so any profile using that property depends on the
+  YAML parser those functions need.
+
+### Network addressing
+
+- **`IPv4`** — a dotted-quad IPv4 address.
+- **`Port`** — an integer from 0 to 65535. Zero is admitted because it is the conventional way to
+  ask for an unspecified port; a URL cannot name it, which is why `HttpUrl` accepts only 1 to 65535.
+- **`IPv4Socket`** — an address and a port together, as `ip-address` and `transport-port`. The only
+  complex type in this profile.
+
+### Names and addresses
+
+- **`Email`** — an email address.
+- **`Fqdn`** — a fully qualified domain name.
+- **`HttpUrl`** — an HTTP or HTTPS URL whose host is `localhost`, an FQDN or an IPv4 address,
+  optionally followed by a port and by a path, query or fragment built from the characters RFC 3986
+  permits. Anchored at both ends, so the whole value must be a URL rather than merely begin with
+  one.
+
+### Identifiers
+
+- **`GenericId`** — a string identifier with no constraint of its own. It exists to be derived from,
+  by a type that adds the validation its identifiers need.
+- **`AlphanumericId`** — letters and digits, any length.
+- **`UUID`** — an RFC 4122 UUID, versions 1 through 5.
+- **`UUIDRelaxed`** — the 8-4-4-4-12 hexadecimal form without the version and variant constraints.
+
+> **Two credential reference types are agreed and not yet declared here.** `CredentialRef` carries
+> the path to where credential material is retrieved and, where one is needed, a `name`;
+> `NamedCredentialRef` derives from it and makes `name` mandatory. Agreed on 2026-09-02 as decision
+> D13; Section 2.1 of the [abstract-profile
+> proposal](../docs/abstract-profile-proposed-changes.md) has the detail, and
+> [credential-orchestration-proposal.md](../docs/credential-orchestration-proposal.md) proposes the
+> capability and node types that use them.
+
 ## Relationship Types
 
 This profile defines three different *kinds* of top-level
