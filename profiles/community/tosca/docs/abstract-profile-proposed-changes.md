@@ -315,10 +315,7 @@ prototyped against them, so there is no evidence yet for what they would need.
 
 ### 2.5 `community.tosca.abstract.data` — `RelationalDatabase`
 
-**Status: open.** A database is authenticated to one way, so a single `credential` property is
-the natural declaration here — there is nothing for a map keyed by credential kind to
-distinguish. Its *type* is whatever Section 2.1 settles on;
-[Question 2](#question-2--credential-typing)'s resolution admits either declaration.
+**Status: open.**
 
 ```yaml
 node_types:
@@ -329,9 +326,15 @@ node_types:
     derived_from: AtRestData
     properties:
       credential:
-        type: string
+        type: NamedCredentialRef        # Section 2.1
         required: false
 ```
+
+A database is authenticated to one way, so a single property is the right declaration here
+rather than the map keyed by credential kind that Section 2.4 gives the platform types — there
+is only one kind, and nothing for a key to distinguish. It is a `NamedCredentialRef` because a
+database login names the principal it authenticates as.
+[Question 2](#question-2--credential-typing)'s resolution admits either declaration.
 
 ### 2.6 `community.tosca.abstract.application` — one interaction port, specialized per kind
 
@@ -437,6 +440,23 @@ parent's (§8.2.1), and `Endpoint` derives from `Service`. A refined requirement
 and `relationship` must likewise derive from the parent's (§8.4.1), which is what lets a derived
 profile narrow `interacts-with` onto a specialized port — O-PAS deriving `SignalSource` from
 `Service`, adding `Tags`, and `ReceivesSignalFrom` from `InteractsWith`.
+
+**Why `Application` keeps both `processes` and `interacts-with`.** Section 2.3 argues that
+requirements differing only in which capability they accept should collapse into one, and today
+these two would qualify: `processes` reaches a `DataSource` and `interacts-with` reaches an
+`Endpoint`, both over a relationship derived from `DependsOn`, both `relationship_kind:
+dependency`. By that test one requirement seeking a `Feature` would do.
+
+Rederiving `InteractsWith` from `AssociatesWith` is what separates them. `processes` stays a
+**dependency** — the dataset exists before the application that processes it, and deployment
+order follows — while `interacts-with` becomes an **association**, asserting no order. Section
+2.3 collapses three relationships that were all `relationship_kind: containment`; the same test
+keeps these two apart, because their kinds differ.
+
+They also reach different kinds of entity: `processes` reaches `Data`, `interacts-with` reaches
+`Application`. Collapsing them would make *what does this application consume* answerable only
+by inspecting capability types rather than by traversal, which is what the horizontal
+decomposition exists to avoid.
 
 **Independent of Section 2.3.** The placement requirement is shown as `host`, the name that
 section proposes; read it as `runs-on` otherwise. Nothing here depends on which — `service`,
