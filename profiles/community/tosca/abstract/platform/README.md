@@ -263,6 +263,65 @@ relationships as shown in the following figure:
 > - how is the number of control nodes communicated?
 > - how can we communicate whether the control nodes can host workloads?
 
+### Does a control node also host workloads?
+
+The third question above is the one the model does not yet answer. Assume the
+`ContainerPlatform` has two placement requirements — `host` for the servers that run workloads
+and a second for the control plane, proposed as `control-host` in
+[the abstract-profile changes](../../docs/abstract-profile-proposed-changes.md#23-communitytoscaabstractbase--one-containment-relationship-one-requirement-name).
+Having both does not by itself settle how to say that the machine running the control plane is
+*also* available for workloads. Two models, recorded here as the choice rather than the
+answer.
+
+*Model A — set overlap*, which is what the figures above describe. `host` lists every
+server that hosts workloads, `control-host` lists the control nodes, and a control node that
+also hosts workloads appears in both:
+
+```yaml
+  requirements:                      # master on server_1, which also hosts workloads
+    - host: server_1
+    - host: server_2
+    - host: server_3
+    - control-host: server_1
+
+  requirements:                      # master on server_1, control-only
+    - host: server_2
+    - host: server_3
+    - control-host: server_1
+```
+
+Both questions are then answered by traversal: which server runs the control plane is the
+`control-host` target, and whether it hosts workloads is whether it also appears under `host`
+— which `$has_entry` reads directly, so a substitution filter can select a tainting
+realization from a non-tainting one.
+
+What Model A lacks is a way to *act* on it. A realization needs a worker on every host except
+the one that is also the control host, and a requirement mapping cannot select a subset of
+bindings: `[host, UNBOUNDED]` takes all of them and cannot skip one.
+
+*Model B — disjoint sets and a property.* `host` lists only servers that host workloads and
+are not control nodes, and a property carries the rest:
+
+```yaml
+  properties:
+    schedulable_control_nodes: true
+  requirements:
+    - host: server_2
+    - host: server_3
+    - control-host: server_1
+```
+
+Directly realizable — every `host` binding becomes a worker, `control-host` becomes the
+controller, no subsetting — at the cost of a graph that no longer answers "which servers run
+workloads" by traversal, since `server_1` does but does not appear under `host`.
+
+The trade is between a model that states the topology honestly and one that can be built
+today. Model A is preferable if the subsetting limitation is treated as something to fix;
+Model B is the pragmatic choice if it is not.
+
+---
+
+
 ### Managed Kubernetes Clusters
 
 Cloud providers typically support a *Managed Kubernetes Cluster*

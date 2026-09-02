@@ -162,7 +162,14 @@ node_types:
 
 Deployment layering is a single concept, so it should have a single relationship type and a
 single requirement name, declared once on `Base`, with the *capability* saying what kind of
-thing is being placed. Reasoning in Problems 5 and 6.
+thing is being placed.
+
+This is the [Component/Port pattern](design-guide.md#componentport-pattern) applied to
+deployment. The capability is the port, and names the functionality a node exposes — *I can
+host a platform*, *I can provide an execution environment*, *I can hold data*. The relationship
+names the intent of the source toward that port. Three relationship types that differ only in
+which capability each accepts are stating on the relationship something the port already
+states — which is the argument Problem 6 makes at length.
 
 **One relationship type.** `HostedOn`, `RunsOn` and `AvailableOn` are identical but for the
 capability each accepts — same parent, same `implementation-details` property, and all three
@@ -262,62 +269,31 @@ bother. A second placement on `Application` would offer an alternative to decomp
 an author hide a multi-component application inside a single node — which is the modelling the
 horizontal decomposition into Application, Data, Platform and Network exists to prevent.
 
-**Migration.** `RunsOn` and `AvailableOn` are retained as deprecated aliases for one release,
-as are the `runs-on` and `available-on` requirement names, so existing templates keep parsing
-while they are updated.
+**Migration.** There is no soft path, because **TOSCA has no aliasing mechanism**. The only
+`alias` in the specification is the YAML anchor convenience in `dsl_definitions`; nothing lets
+one type stand for another, or one requirement name stand for another, and `deprecated` is not
+a keyname.
 
-**Left open: whether a control node also hosts workloads.** Having the two requirements does
-not by itself settle how to say that the machine running the control plane is *also* available
-for workloads — the platform README's own third open question. Two models, recorded here as
-the choice rather than the answer.
+Retaining `RunsOn` and `AvailableOn` as declared types would not help. They and `HostedOn`
+derive from `ContainedBy` as siblings, so a requirement declared against one is not satisfied
+by a relationship of the other — refinement requires derivation, and siblings do not derive.
+For the same reason `host` and `runs-on` declared together on one type are two requirements,
+not one requirement under two names: an author could bind both, and a realization expecting
+one would not see the other.
 
-*Model A — set overlap*, which is what the platform README describes. `host` lists every
-server that hosts workloads, `control-host` lists the control nodes, and a control node that
-also hosts workloads appears in both:
+So this is a breaking change, and the mechanism for it is profile versioning. That is cheaper
+here than it sounds: **no version of these profiles has ever been released** — the repository
+carries no tags — so there is no published artifact to stay compatible with. The consumers that
+exist import `community.tosca.abstract.base:0.1` by name-version string against a moving
+`master`, which is the coupling [Question 3](#question-3--single-source-of-truth-for-shared-types)
+describes and proposes to resolve as one coordinated cut. This change belongs in that cut.
 
-```yaml
-  requirements:                      # master on server_1, which also hosts workloads
-    - host: server_1
-    - host: server_2
-    - host: server_3
-    - control-host: server_1
-
-  requirements:                      # master on server_1, control-only
-    - host: server_2
-    - host: server_3
-    - control-host: server_1
-```
-
-Both questions are then answered by traversal: which server runs the control plane is the
-`control-host` target, and whether it hosts workloads is whether it also appears under `host`
-— which `$has_entry` reads directly, so a substitution filter can select a tainting
-realization from a non-tainting one.
-
-What Model A lacks is a way to *act* on it. A realization needs a worker on every host except
-the one that is also the control host, and a requirement mapping cannot select a subset of
-bindings: `[host, UNBOUNDED]` takes all of them and cannot skip one.
-
-*Model B — disjoint sets and a property.* `host` lists only servers that host workloads and
-are not control nodes, and a property carries the rest:
-
-```yaml
-  properties:
-    schedulable_control_nodes: true
-  requirements:
-    - host: server_2
-    - host: server_3
-    - control-host: server_1
-```
-
-Directly realizable — every `host` binding becomes a worker, `control-host` becomes the
-controller, no subsetting — at the cost of a graph that no longer answers "which servers run
-workloads" by traversal, since `server_1` does but does not appear under `host`.
-
-The trade is between a model that states the topology honestly and one that can be built
-today. Model A is preferable if the subsetting limitation is treated as something to fix;
-Model B is the pragmatic choice if it is not.
-
----
+**Whether a control node also hosts workloads is a separate question**, and it belongs to the
+platform profile rather than to this proposal: it is about how a multi-node cluster is modelled,
+not about how many relationship types the base profile needs. It is asked and answered in
+[the platform profile's README](../abstract/platform/README.md#does-a-control-node-also-host-workloads).
+Declaring `control-host` is a prerequisite for either answer, which is why it is mentioned here
+at all.
 
 ### 2.4 `community.tosca.abstract.platform` — properties and requirements
 
@@ -519,11 +495,12 @@ dependency- or association-kind, and neither proposal touches the other's names.
 
 **Migration.** The capability and requirement both change symbolic name, from `endpoint` to
 `service` and `interacts-with`. Templates assigning the capability, and TOSCA paths reading its
-contract through a `CAPABILITY` step, must be updated. TOSCA has no capability alias, so this
-cannot be softened the way Section 2.3 keeps `RunsOn` and `AvailableOn` as deprecated
-relationship types for one release. The break is small and worth taking now: the profile is at
-`0.1`, and `MicroService` and `SingleHostApplication` are the only types that declare either
-name.
+contract through a `CAPABILITY` step, must be updated. TOSCA has no aliasing of any kind, so
+neither this change nor Section 2.3's can be softened — both are breaking changes that belong
+in the coordinated cut described in
+[Question 3](#question-3--single-source-of-truth-for-shared-types). The break here is small and
+worth taking now: nothing has been released, and `MicroService` and `SingleHostApplication` are
+the only types that declare either name.
 
 ---
 
@@ -1066,14 +1043,15 @@ requirement name over the same relationship.
 
 ### Question 8 — Whether a control node also hosts workloads
 
-*Open, not yet discussed.* The platform
-README asks this as its own third open question. Two models are set out at the end of
-Section 2.3: *set overlap*, where a schedulable control node appears under both `host` and
-`control-host` and `$has_entry` reads the overlap, and *disjoint sets with a property*,
-where `host` carries only non-control workload hosts. The first states the topology
-honestly but cannot be realized, since a requirement mapping cannot distribute a subset of
-bindings; the second can be built today but stops the graph answering which servers run
-workloads.
+*Open, not yet discussed.* **Owned by
+[the platform profile's README](../abstract/platform/README.md#does-a-control-node-also-host-workloads)**,
+which asks the question and sets out the two models — *set overlap*, where a schedulable
+control node appears under both `host` and `control-host`, and *disjoint sets with a
+property*, where `host` carries only non-control workload hosts.
+
+It is listed here because Section 2.3 has to declare `control-host` before either model can be
+written down, so the two move together. The modelling choice itself is a platform-layering
+question and does not belong to this proposal.
 
 ### Question 9 — Interaction between applications
 
