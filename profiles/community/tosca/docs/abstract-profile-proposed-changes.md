@@ -45,8 +45,8 @@ community first.
 
 Two sections run in the opposite direction. `community.tosca.abstract.application` is not
 description-only: `SingleHostApplication` carries a property and a name that assert more than
-the model holds, so Section 2.6 **removes** rather than adds — the reasoning is in Problem 4.
-Section 2.7 also removes, taking the interaction declarations off the two concrete application
+the model holds, so Section 2.7 **removes** rather than adds — the reasoning is in Problem 4.
+Section 2.6 also removes, taking the interaction declarations off the two concrete application
 types and the same-type constraint with them.
 
 ---
@@ -333,53 +333,7 @@ node_types:
         required: false
 ```
 
-### 2.6 `community.tosca.abstract.application` — name the platform, drop the processes
-
-**Status: open.** Reasoning in Problem 4; see also Section 2.7, which removes the interaction declarations from the type this section renames.
-
-Rework `SingleHostApplication` so that what it asserts is what it holds. The reasoning
-is in Problem 4.
-
-```yaml
-node_types:
-  ServerApplication:
-    description: >-
-      An application that runs on a server platform.
-    derived_from: Application
-    capabilities:
-      endpoint:
-        type: Endpoint
-    requirements:
-      - endpoint:
-          node: ServerApplication
-          capability: Endpoint
-          relationship: InteractsWith
-      - runs-on:
-          capability: ExecutionEnvironment
-          relationship: RunsOn
-          node: ServerPlatform
-```
-
-Three changes from the current type:
-
-- **Named for the platform it targets**, consistent with `MicroServiceApplication` and
-  `ServerlessApplication`, rather than for a cardinality.
-- **`processes` removed.**
-- **Cardinality expressed as `count_range` on `runs-on`** — in the type where a kind of
-  application genuinely constrains it, in the template where it does not.
-
-The last of these unifies a mechanism rather than adding one. An application spanning
-several servers becomes `runs-on` bound several times, which is the same shape the platform
-profile already uses for a cluster spanning several servers. One way to say "how many",
-at both layers, instead of a type per cardinality.
-
-`endpoint` and its `InteractsWith` requirement are declared identically on `MicroService`
-and on `SingleHostApplication` today. Section 2.7 lifts them onto `Application`, which
-removes both blocks from the type above: `ServerApplication` would then declare only its
-`runs-on` refinement and a `service: { type: Endpoint }` capability refinement. The two
-proposals are otherwise independent and can be adopted in either order.
-
-### 2.7 `community.tosca.abstract.application` — one interaction port, specialized per kind
+### 2.6 `community.tosca.abstract.application` — one interaction port, specialized per kind
 
 **Status: open, not yet discussed.** Reasoning in Problem 7.
 
@@ -432,9 +386,8 @@ node_types:
       - processes:
           capability: DataSource
           relationship: Processes
-      - runs-on:
+      - host:
           capability: ExecutionEnvironment
-          relationship: RunsOn
 ```
 
 The two names follow the split the design guide draws: the **capability** names the functionality
@@ -450,14 +403,13 @@ requirement is the profile's one requirement named for a thing rather than a rel
     capabilities:
       service: { type: Endpoint }        # refinement: Endpoint derives from Service
 
-  SingleHostApplication:               # ServerApplication, if Section 2.6 is adopted first
+  SingleHostApplication:               # ServerApplication, if Section 2.7 is adopted first
     derived_from: Application
     capabilities:
       service: { type: Endpoint }
 ```
 
-Both lose their `endpoint` capability and requirement — the lift Section 2.6 names as a
-candidate while leaving it open. The same-type pinning goes with them:
+Both lose their `endpoint` capability and requirement. The same-type pinning goes with them:
 neither `node: MicroService` nor `node: SingleHostApplication` survives, so an application may
 interact with an application of another type — which is the ordinary case, and what O-PAS needs
 for signals flowing from an I/O channel configuration to a control logic deployment. A profile
@@ -486,9 +438,10 @@ and `relationship` must likewise derive from the parent's (§8.4.1), which is wh
 profile narrow `interacts-with` onto a specialized port — O-PAS deriving `SignalSource` from
 `Service`, adding `Tags`, and `ReceivesSignalFrom` from `InteractsWith`.
 
-**Independent of Section 2.3.** If the containment collapse is adopted, `Application`'s `runs-on`
-becomes `host` and nothing here changes: `service`, `interacts-with` and `processes` are all
-dependency- or association-kind, and neither proposal touches the other's names.
+**Independent of Section 2.3.** The placement requirement is shown as `host`, the name that
+section proposes; read it as `runs-on` otherwise. Nothing here depends on which — `service`,
+`interacts-with` and `processes` are all dependency- or association-kind, and neither proposal
+touches the other's names.
 
 **Migration.** The capability and requirement both change symbolic name, from `endpoint` to
 `service` and `interacts-with`. Templates assigning the capability, and TOSCA paths reading its
@@ -500,6 +453,48 @@ worth taking now: nothing has been released, and `MicroService` and `SingleHostA
 the only types that declare either name.
 
 ---
+
+### 2.7 `community.tosca.abstract.application` — name the platform, drop the processes
+
+**Status: open.** Reasoning in Problem 4.
+
+Rework `SingleHostApplication` so that what it asserts is what it holds. The reasoning
+is in Problem 4.
+
+```yaml
+node_types:
+  ServerApplication:
+    description: >-
+      An application that runs on a server platform.
+    derived_from: Application
+    capabilities:
+      service: { type: Endpoint }        # Section 2.6
+    requirements:
+      - host:
+          capability: ExecutionEnvironment
+          node: ServerPlatform           # Section 2.3
+```
+
+The type declares only two refinements, because Section 2.6 puts the interaction port on
+`Application` and Section 2.3 puts the placement requirement on `Base`. Read `host` as
+`runs-on` if Section 2.3 is not adopted; this proposal is about the type's name and its
+`processes` property and does not depend on either.
+
+Three changes from the current type:
+
+- **Named for the platform it targets**, consistent with `MicroServiceApplication` and
+  `ServerlessApplication`, rather than for a cardinality.
+- **`processes` removed.**
+- **Cardinality expressed as `count_range` on the placement requirement** — in the type where a kind of
+  application genuinely constrains it, in the template where it does not.
+
+The last of these unifies a mechanism rather than adding one. An application spanning
+several servers becomes `host` bound several times, which is the same form the platform
+profile already uses for a cluster spanning several servers. One way to say "how many",
+at both layers, instead of a type per cardinality.
+
+Section 2.6 is what removes the `endpoint` capability and requirement this type declares
+today. The two proposals are otherwise independent and can be adopted in either order.
 
 ### 2.8 `community.tosca.abstract.network` — what a network is addressed as, and whether it reaches the internet
 
@@ -749,7 +744,7 @@ That axis is sound System View content — what kind of platform an application 
 drives placement, and it mirrors the platform profile's own decomposition. So the type earns
 its place in the family; it is the name and the property that do not.
 
-Proposed replacement in Section 2.6. **Not yet discussed by the community.**
+Proposed replacement in Section 2.7. **Not yet discussed by the community.**
 
 ### Problem 5 — `runs-on` carries two meanings, and the platform one is not implemented
 
@@ -918,7 +913,7 @@ reading from writing. One relationship covers both directions, so a producer can
 a consumer, a producer cannot be ordered ahead of the consumers of what it writes, and "what
 breaks if this dataset is gone" cannot be separated from "what stops being written to it".
 
-**Proposal in Section 2.7.** It adds no base machinery: one intermediate capability, under
+**Proposal in Section 2.6.** It adds no base machinery: one intermediate capability, under
 which both existing ports become specializations.
 
 ```
@@ -1016,7 +1011,7 @@ all, given that a `command` names an executable? Should a type be named for a
 cardinality it does not constrain, or should cardinality be a `count_range` on
 `runs-on`? And separately from both: the property `processes` collides with the
 requirement `processes` inherited from `Application`, which needs resolving on its
-own terms. Proposal in Section 2.6, reasoning in Problem 4.
+own terms. Proposal in Section 2.7, reasoning in Problem 4.
 
 ### Question 6 — The control-plane requirement
 
@@ -1059,5 +1054,5 @@ network contract that not every application can honour, and both requirements pi
 interaction between nodes of the same type. Should a property-free `Service` capability be
 declared on `Application` and derived from `Partner`, with `Endpoint` rederived from it,
 should `InteractsWith` rederive from `AssociatesWith` rather than `DependsOn`, and should the
-same-type constraint go? Proposal in Section 2.7, reasoning in Problem 7 — which also asks
+same-type constraint go? Proposal in Section 2.6, reasoning in Problem 7 — which also asks
 whether `Processes` should distinguish reading a dataset from writing one.
