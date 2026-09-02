@@ -3,8 +3,7 @@
 **Status:** Discussion draft. Every proposal in Section 2 was walked through at the
 2026-09-02 community meeting; Sections 2.1, 2.3, 2.4, 2.6 and 2.7 were agreed there and are
 to be written into the community profiles. Each proposal states its own status, and each
-records what the meeting changed about it. Section 5 lists what the meeting added that this
-document does not yet cover.
+records what the meeting changed about it.
 
 **A section leaves this document once it reaches the profiles.** The decision is recorded in
 the [decision log](../../../../governance/decision-log.md) and the types are in the profiles,
@@ -17,7 +16,7 @@ and the decisions reached during community discussion.
 
 **Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [design-guide](design-guide.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
-**How this document is organized.** Five parts, which cross-reference each other by number.
+**How this document is organized.** Four parts, which cross-reference each other by number.
 **Section 1** says why these changes are being proposed. **Section 2** is the proposals
 themselves, grouped by profile in the order the profiles build on each other, each carrying
 its own status. Two profiles have more than one proposal. Section 2.9 concerns `core` and
@@ -26,9 +25,7 @@ already in circulation keep their meaning. **Section 3** is the reasoning: the
 problems found while prototyping, numbered *Problem 1* through *Problem 7*, and most Section 2
 proposals point at the problem that motivates them. **Section 4** records what the community has
 settled and what is still open, numbered *question 1* through *question 9* — so a reference to
-"question 2" anywhere above means the second entry there. **Section 5** holds what the
-2026-09-02 discussion added and Section 2 does not yet cover: material recorded from that
-meeting, to be worked up into a proposal of its own.
+"question 2" anywhere above means the second entry there.
 
 ---
 
@@ -69,8 +66,8 @@ types and the same-type constraint with them.
 **Status: agreed 2026-09-02** — *"I agree with this approach, because it's general, and it
 applies to most of the cases"* (Roberto). Recorded as decision D13. Supersedes the credential
 model recorded in Sections 2.4 and 2.5. It covers a credential the model *references*; a
-credential the orchestrator *creates* needs the node-type pattern of
-[Section 5.1](#51-orchestrated-credentials).
+credential the orchestrator *creates* needs the capability and node types of
+[Section 2.10](#210-a-capability-and-node-types-for-credentials-the-orchestrator-creates).
 
 A credential in a model is a **reference** to material, never the material. The value carries
 the path to the file holding it and an identifier where one is needed; the material is read on
@@ -713,6 +710,80 @@ Section 2.6 adds a capability under `Partner`, so both edit types this proposal 
 works; taking this one first means the other two are made in a single profile.
 
 
+### 2.10 A capability and node types for credentials the orchestrator creates
+
+**Status: open, not yet discussed.** Section 2.1 covers a credential the model *references*. This
+covers one the orchestrator *creates*, which is a different thing and needs more than a data type.
+Raised by Tal on discussion #281.
+
+**Two origins, and only one of them is a value.** A credential the orchestrator does not own — a
+cloud API token, a registry password — is supplied from outside and is an inline `CredentialRef`.
+A credential that comes into being during deployment is not: deploying a virtual machine means
+generating a key pair and handing the public half to the provider along with the request. It is
+issued, renewed, revoked and access-controlled, which is to say it has a lifecycle, and in TOSCA a
+thing with a lifecycle is a **node**.
+
+```yaml
+capability_types:
+  Credential:
+    description: >-
+      Advertises the ability to act as a credential. The material is published
+      here, keyed by credential kind, so that a consumer reads it through the
+      port and stays independent of the node type providing it.
+    derived_from: Feature
+    properties:
+      credentials:
+        type: map
+        key_schema: { type: string }
+        entry_schema: { type: CredentialRef }   # Section 2.1
+        required: false
+```
+
+**Advertising the port obliges the node to publish material, in the form Section 2.1 defines.** A port that
+publishes nothing is a promise the node cannot keep, since a consumer binds it precisely to read
+through it. A consumer binds generically — `capability: Credential`, working against any credential
+node — or specifically, pinning the node type when it needs a particular kind.
+
+**The map is declared as a property, and that is what makes the port a contract.** Every property
+has an automatically reflected attribute of the same name, so one declaration yields both views, and
+both are needed because material reaches a port two ways. A node that **mints** its material writes
+the attribute in `create`, along the same path a consumer reads. A node that **receives** material
+from the model has it assigned as a property under `capabilities.<port>.properties`. The declaration
+is optional, because a minting advertiser has nothing to assign. A consumer reads it the same way in
+both cases and never learns which origin it was.
+
+**A node type whose material serves more than one kind splits into subtypes**, and the reason is a
+constraint of the language rather than a preference. For minted material the map is written by
+`create`, so at the time a requirement is matched it is unset: a `node_filter` over it evaluates to
+null and drops out rather than rejecting, and the kind cannot be constrained that way. Only the node
+*type* is known early enough. The same bytes that serve as a password to whoever sends HTTP Basic
+serve as a bearer token to whoever sets an authorization header, so those are two types over one
+material, each narrowing its map's `key_schema` to its own kind. Where a node type already implies
+exactly one kind, no subtype is needed and the map states that kind directly.
+
+**Carrying a `credentials` map does not by itself make a node an advertiser.** The platform types of
+Section 2.4 carry one, and it is not a credential they publish — it is how the orchestrator reaches
+*them*, recorded on the node because that is what it opens. An advertiser is a node whose purpose is
+to hold credential material and be bound by whoever needs it. A node can be both at once: it binds a
+credential node for its own access while carrying the resolved material as configuration.
+
+**Several credentials of one kind is requirement cardinality, not a longer map.** A map keyed by
+kind holds one entry per kind by construction. A key-rotation pair, or an identity offered under two
+algorithms, is expressed by binding a `count_range`-ed requirement to several credential nodes, each
+contributing its own material.
+
+**Trust material is not credential material and does not belong on this port.** What a node verifies
+*others* against — a root or chain it anchors trust in — is not its own proof of identity, and
+publishing it here would put two contracts on one port. It belongs on a port of its own.
+
+**Where these would live.** The data types are Section 2.1's, in `core`. The capability type belongs
+with the other capability types, which [Section
+2.9](#29-communitytoscacore-and-communitytoscaabstractbase--core-as-a-standard-library) would put in
+`abstract.base`. The node types belong wherever their kind belongs, which for most of them is a
+technology profile rather than an abstract one — a key pair and a certificate are general, while an
+account or project is a provider's.
+
+
 ---
 
 ## 3. Problems and open issues
@@ -1244,40 +1315,3 @@ declared on `Application` and derived from `Partner`, with `Endpoint` rederived 
 should `InteractsWith` rederive from `AssociatesWith` rather than `DependsOn`, and should the
 same-type constraint go? Proposal in Section 2.6, reasoning in Problem 7 — which also asks
 whether `Processes` should distinguish reading a dataset from writing one.
-
----
-
-## 5. Recorded from the 2026-09-02 discussion, not yet proposed
-
-### 5.1 Orchestrated credentials
-
-Section 2.1 covers a credential the model **references**. It does not cover a credential the
-orchestrator **creates**, which is a different thing and needs node types rather than a data
-type. Raised by Tal on discussion #281.
-
-Deploying a virtual machine is the ordinary case: the key pair is generated first and the public
-half handed to the provider along with the request, so the key pair is itself an orchestrated
-entity with a lifecycle, not an input the author supplies. The same holds for a certificate
-issued during deployment, a token minted for a service, or a password generated for a database.
-
-The pattern that has held across all of those:
-
-- **A node type per kind of orchestrated secret** — a key pair, a certificate, a token. Its
-  creation operation produces the material and writes it wherever the deployment keeps such
-  things, a protected file or a vault.
-- **A capability of type `Credential` on that node**, holding a map of `CredentialRef` as
-  Section 2.1 defines it. The node is what has a lifecycle; the capability is
-  what other nodes can point at.
-- **A requirement on every node that needs the material**, targeting that capability. The
-  consumer names what it needs and the topology says where it comes from, rather than the author
-  copying a reference into two places.
-
-What makes this fit the rest of the model is that the material still never appears in it. The
-node's creation produces the secret, the `CredentialRef` says where it went, and a consumer
-reaches it through the graph.
-
-Two pieces are still to be worked out before this becomes a Section 2 proposal: which profile
-the `Credential` capability type belongs in — `core` holds the data types, but a capability type
-is not a data type — and whether the orchestrated-secret node types belong in the abstract
-profiles at all or only in the technology profiles that know how to create each kind. Tracked as
-I27 in [`open-issues.md`](../../../../governance/open-issues.md).
