@@ -16,7 +16,7 @@ Kubernetes resource profile is the auto-generated, reverse-DNS profile at:
 The two former copies here — the generated `community.tosca.technology.k8s` and
 the hand-authored `community.tosca.technology.kubernetes` — were retired following
 the 2026-07-22 community decision (issue I22); see
-[`docs/profile-naming.md`](../docs/profile-naming.md). The durable design
+[`docs/profile-organization.md`](../docs/profile-organization.md#profile-naming). The durable design
 rationale for modeling Kubernetes with TOSCA now lives in
 [`docs/kubernetes-modeling.md`](../docs/kubernetes-modeling.md).
 

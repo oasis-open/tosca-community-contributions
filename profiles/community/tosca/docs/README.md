@@ -52,10 +52,6 @@ lives and what it may claim.
 - **[artifact-calling-convention-proposal.md](artifact-calling-convention-proposal.md)**
   — replace the per-input environment variable convention with a single
   structured document, so an artifact runs unchanged on any orchestrator.
-- **[profile-naming.md](profile-naming.md)** — resolved at the 2026-07-22
-  meeting and recorded as decision A7; retained for the alternatives it weighs.
-  The rule itself is in
-  [profile-organization.md](profile-organization.md#profile-naming).
 - **[spec-naming-conventions-proposal.md](spec-naming-conventions-proposal.md)**
   — two amendments to §1.2.2 of the specification. This one addresses the OASIS
   TOSCA Technical Committee rather than these profiles.

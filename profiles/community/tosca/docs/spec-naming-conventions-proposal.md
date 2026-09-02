@@ -8,7 +8,7 @@ value names, and make the acronym rule context-free by keeping acronyms upper th
 **Normative impact:** None. §1.2.2 already states that parsers should not enforce these
 conventions and that authors are free to differ.
 
-**Related documents:** [design-guide](design-guide.md) · [profile-naming](profile-naming.md) ·
+**Related documents:** [design-guide](design-guide.md) · [profile-organization](profile-organization.md) ·
 [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md)
 
 ---

@@ -8,7 +8,7 @@ them, and the naming convention. The modeling methodology and the design pattern
 are in the [design guide](design-guide.md); this document is about where the
 results of applying them are kept.
 
-**Related documents:** [README](../README.md) · [design-guide](design-guide.md) · [profile-naming](profile-naming.md) · [prior-art](prior-art.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [design-guide](design-guide.md) · [prior-art](prior-art.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 ---
 
@@ -51,10 +51,8 @@ above.
 > Device View rows, although `community.tosca.technology.base` is the
 > common parent of both.
 
-> The *naming* convention for these profiles — the `community.tosca.*`
-> namespace versus reverse-DNS names such as `io.kubernetes` — is an open
-> question tracked as issue I22 and written up in
-> [profile-naming.md](profile-naming.md).
+> Which naming scheme each of these profiles takes is
+> [below](#profile-naming).
 
 ## Two Dimensions Determine Where a Type Belongs
 
@@ -145,11 +143,24 @@ from a project that already has a name of its own, keeps a reverse-DNS name
 drawn from the technology it models — `io.kubernetes`, `io.kubevirt`,
 `sh.helm`.
 
+**Which scheme a profile takes turns on who determined its type set**, not on how
+technology-specific it is. Where the community chose the types — argued them, and
+can change them — the profile carries the community namespace, even when what it
+models is a single technology: `community.tosca.technology.base` is
+technology-specific and community-designed, and takes `community.tosca.*` for
+that reason. Where the types are determined by something outside the community —
+generated from a specification, or contributed from a project that named them
+already — the profile takes a reverse-DNS name drawn from that source.
+
+**A reverse-DNS name states origin, not authority.** `io.kubernetes` says the
+profile renders the Kubernetes API. It does not claim to be the Kubernetes
+project's own profile, and a second rendering produced by a different method may
+sit alongside it under a name of its own.
+
 **A generated profile is versioned by the release it was generated from**, not
 by a profile version number of its own. The Kubernetes resource profile is
 `io.kubernetes:1.35` because it renders the Kubernetes 1.35 OpenAPI, which makes
 the version self-documenting: a reader can tell which API the profile describes
-without consulting anything else.
-
-The alternatives considered, and the case that forced the question, are in
-[profile-naming.md](profile-naming.md).
+without consulting anything else. A profile in the community namespace versions
+on the community's own release line instead, for the same reason: its types
+answer to the community rather than to an upstream release.
