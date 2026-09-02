@@ -52,6 +52,9 @@ lives and what it may claim.
   — proposed enhancements to the abstract profiles: credentials, containment,
   platform and network properties, application interaction, and what `core` is
   for. Section 5 holds what has been raised but not yet worked up.
+- **[credential-orchestration-proposal.md](credential-orchestration-proposal.md)** — model
+  credentials the orchestrator creates rather than is given: a `Credential` capability, and node
+  types for secrets with a lifecycle. The data type half is settled as decision D13.
 - **[artifact-calling-convention-proposal.md](artifact-calling-convention-proposal.md)**
   — replace the per-input environment variable convention with a single
   structured document, so an artifact runs unchanged on any orchestrator.

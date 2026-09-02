@@ -66,8 +66,8 @@ types and the same-type constraint with them.
 **Status: agreed 2026-09-02** — *"I agree with this approach, because it's general, and it
 applies to most of the cases"* (Roberto). Recorded as decision D13. Supersedes the credential
 model recorded in Sections 2.4 and 2.5. It covers a credential the model *references*; a
-credential the orchestrator *creates* needs the capability and node types of
-[Section 2.10](#210-a-capability-and-node-types-for-credentials-the-orchestrator-creates).
+credential the orchestrator *creates* needs the capability and node types proposed in
+[credential-orchestration-proposal.md](credential-orchestration-proposal.md).
 
 A credential in a model is a **reference** to material, never the material. The value carries
 the path to the file holding it and an identifier where one is needed; the material is read on
@@ -708,81 +708,6 @@ default namespace as well and goes on resolving `Feature` and `DependsOn` throug
 **Order against the other proposals.** Section 2.3 collapses the containment relationship types and
 Section 2.6 adds a capability under `Partner`, so both edit types this proposal moves. Either order
 works; taking this one first means the other two are made in a single profile.
-
-
-### 2.10 A capability and node types for credentials the orchestrator creates
-
-**Status: open, not yet discussed.** Section 2.1 covers a credential the model *references*. This
-covers one the orchestrator *creates*, which is a different thing and needs more than a data type.
-Raised by Tal on discussion #281.
-
-**Two origins, and only one of them is a value.** A credential the orchestrator does not own — a
-cloud API token, a registry password — is supplied from outside and is an inline `CredentialRef`.
-A credential that comes into being during deployment is not: deploying a virtual machine means
-generating a key pair and handing the public half to the provider along with the request. It is
-issued, renewed, revoked and access-controlled, which is to say it has a lifecycle, and in TOSCA a
-thing with a lifecycle is a **node**.
-
-```yaml
-capability_types:
-  Credential:
-    description: >-
-      Advertises the ability to act as a credential. The material is published
-      here, keyed by credential kind, so that a consumer reads it through the
-      port and stays independent of the node type providing it.
-    derived_from: Feature
-    properties:
-      credentials:
-        type: map
-        key_schema: { type: string }
-        entry_schema: { type: CredentialRef }   # Section 2.1
-        required: false
-```
-
-**Advertising the port obliges the node to publish material, in the form Section 2.1 defines.** A port that
-publishes nothing is a promise the node cannot keep, since a consumer binds it precisely to read
-through it. A consumer binds generically — `capability: Credential`, working against any credential
-node — or specifically, pinning the node type when it needs a particular kind.
-
-**The map is declared as a property, and that is what makes the port a contract.** Every property
-has an automatically reflected attribute of the same name, so one declaration yields both views, and
-both are needed because material reaches a port two ways. A node that **mints** its material writes
-the attribute in `create`, along the same path a consumer reads. A node that **receives** material
-from the model has it assigned as a property under `capabilities.<port>.properties`. The declaration
-is optional, because a minting advertiser has nothing to assign. A consumer reads it the same way in
-both cases and never learns which origin it was.
-
-**A node type whose material serves more than one kind splits into subtypes**, and the reason is a
-constraint of the language rather than a preference. For minted material the map is written by
-`create`, so at the time a requirement is matched it is unset: a `node_filter` over it evaluates to
-null and drops out rather than rejecting, and the kind cannot be constrained that way. Only the node
-*type* is known early enough. The same bytes that serve as a password to whoever sends HTTP Basic
-serve as a bearer token to whoever sets an authorization header, so those are two types over one
-material, each narrowing its map's `key_schema` to its own kind. Where a node type already implies
-exactly one kind, no subtype is needed and the map states that kind directly.
-
-**Carrying a `credentials` map does not by itself make a node an advertiser.** The platform types of
-Section 2.4 carry one, and it is not a credential they publish — it is how the orchestrator reaches
-*them*, recorded on the node because that is what it opens. An advertiser is a node whose purpose is
-to hold credential material and be bound by whoever needs it. A node can be both at once: it binds a
-credential node for its own access while carrying the resolved material as configuration.
-
-**Several credentials of one kind is requirement cardinality, not a longer map.** A map keyed by
-kind holds one entry per kind by construction. A key-rotation pair, or an identity offered under two
-algorithms, is expressed by binding a `count_range`-ed requirement to several credential nodes, each
-contributing its own material.
-
-**Trust material is not credential material and does not belong on this port.** What a node verifies
-*others* against — a root or chain it anchors trust in — is not its own proof of identity, and
-publishing it here would put two contracts on one port. It belongs on a port of its own.
-
-**Where these would live.** The data types are Section 2.1's, in `core`. The capability type belongs
-with the other capability types, which [Section
-2.9](#29-communitytoscacore-and-communitytoscaabstractbase--core-as-a-standard-library) would put in
-`abstract.base`. The node types belong wherever their kind belongs, which for most of them is a
-technology profile rather than an abstract one — a key pair and a certificate are general, while an
-account or project is a provider's.
-
 
 ---
 
