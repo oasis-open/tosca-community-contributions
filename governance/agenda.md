@@ -11,20 +11,27 @@ What is left is narrower and of a different kind: three questions the walk-throu
 
 **Four proposals have never been discussed at all**, and one of them is on the release
 path — Section 2.9, which is why it leads. It and orchestrated credentials (item 6) were
-written up after 09-02. The artifact calling convention (item 7) and the §1.2.2 naming
-amendments (item 8) were committed the same day as last week's agenda, were not on it, and
+written up after 09-02. The artifact calling convention (item 8) and the §1.2.2 naming
+amendments (item 9) were committed the same day as last week's agenda, were not on it, and
 the hour went to the proposal document instead. All four are on this agenda for that
 reason.
 
+**And three drafted resolutions have never been reached.** I16(c) and I17 were not reached
+on 07-22 and were dropped from 08-05 to make room; I13 sat in *if time permits* twice. They
+are item 7 this week rather than a bullet in the list they have been dying in.
+
 **The release is now the organizing item.** I8 no longer waits on a design decision; it
 waits on the edits, and on four questions that decide what those edits say. Everything
-in items 1 to 4 is on the release path. Item 7 asks whether it joins them. The rest do not.
+in items 1 to 4 is on the release path. Item 8 asks whether it joins them. The rest do not.
 
-**Items 1 to 8 run to 90 minutes, and the meeting is 60.** Items 1 to 4 take 50 of those,
-which leaves room for one of the four that follow. Item 8 is the cheapest and ends with a
-document either submitted or withdrawn. Item 5 is the one to carry forward — it is the only
-release-path-adjacent item that changes nothing the `0.1` freezes — and items 6 and 7 are
-first looks that lose nothing by waiting a week.
+**Items 1 to 9 run to 105 minutes, and the meeting is 60.** Items 1 to 4 take 50 of those,
+so the hour holds the release path and roughly one more thing. Item 9 is the cheapest at five
+minutes and ends with a document either submitted or withdrawn. Item 5 is the one to carry
+forward — it is the only release-path-adjacent item that changes nothing the `0.1` freezes.
+Items 6 and 8 are first looks that lose nothing by waiting a week. **Item 7 is the one not to
+defer again** — its three resolutions are written and have been carried past four meetings
+without being read, and if the hour is short it is better to take one of them than to move
+all three a fifth time.
 
 ---
 
@@ -184,7 +191,35 @@ the group sees one proposal or two.
 Not a decision item this week. It becomes a Section 2 proposal once those two are
 answered.
 
-## 7. The artifact calling convention — one document in — 10 min · *I10* · **first look**
+## 7. The drafted resolutions nobody has ratified — 15 min · *I13 / I16(c) / I17* · **ratification sought**
+
+Three answers are already written in
+[`design-guide.md`](../profiles/community/tosca/docs/design-guide.md) and none has been
+ratified, because none has been reached. They are grouped because the work left on each is
+the same: read the drafted resolution and say yes or no.
+
+- **I17 — the monitoring and security patterns**, drafted 07-15. Monitoring is an
+  observability capability on the monitored node with a `DependsOn`-based monitoring
+  requirement; security splits into perimeter, authentication, authorization and
+  identity/trust. **This one follows item 6 directly**: the credential proposal is a worked
+  realization of the authentication sub-pattern, and its scope agrees with the drafted
+  pattern independently, so the pattern can be ratified against working types rather than
+  against prose. I41, above, is its identity/trust half.
+- **I16(c) — how deep the type hierarchies should go.** (a) was settled by N9 and (b) by
+  N10 on 09-02, both indirectly. (c) is what is left of the entry.
+- **I13 — the `type-of-node` function**, drafted 08-04, recommending it **not** be added:
+  platforms of the same type differing only in what each is designated to become cannot be
+  distinguished by type at all, and that case is common, so a property filter covers
+  strictly more ground. It carries a follow-on if ratified — the platform-representation
+  list needs a property for what a platform is *designated to be*.
+
+I16(c) and I17 were not reached on 07-22 and were dropped from the 08-05 agenda to make
+room. I13 sat in *if time permits* on 08-05 and 08-12 and was not reached either. **That is
+why they are a numbered item this week and not a fourth bullet in the same list.**
+
+**Ratification sought** on each of the three, or an explicit decision to retire the draft.
+
+## 8. The artifact calling convention — one document in — 10 min · *I10* · **first look**
 
 The specification does not say how an orchestrator passes values to an implementation
 artifact, so the contract can only live in the artifact type, which is profile territory.
@@ -216,7 +251,7 @@ definitions.
 **Input wanted, not a decision:** whether the document is the contract and the channel is
 each type's own business, and which of the three output channels.
 
-## 8. The §1.2.2 naming amendments — submit or withdraw — 5 min · *I39* · **decision sought**
+## 9. The §1.2.2 naming amendments — submit or withdraw — 5 min · *I39* · **decision sought**
 
 The one document in the profiles tree addressed to the OASIS TC rather than to these
 profiles, drafted and never submitted. Two amendments to *TOSCA Naming Conventions*: permit
@@ -239,7 +274,7 @@ draft. Five minutes is enough for either.
 
 ---
 
-## 9. If time permits
+## 10. If time permits
 
 - **Substitution filters against the revised types (I32).** N9 and N11 move the abstract
   types' structure into requirements and capabilities, which is what a substitution
@@ -247,9 +282,6 @@ draft. Five minutes is enough for either.
   mechanism has not been walked through with the group.
 - **Examples exercising the agreed changes.** Committed on 09-02 for the next couple of
   meetings.
-- **I16(c)** — how deep type hierarchies should go. (a) was settled by N9 and (b) by N10;
-  (c) is what remains. **I17** — the monitoring and security patterns drafted in
-  `design-guide.md` on 07-15 and still unratified after three deferrals.
 - **OPAF participation (C4).** Bringing the Open Process Automation Forum's
   control-systems modelling into these meetings, in both directions.
 - Carried: Kubernetes profile testing (Prachi, Jay); Tal's OpenAPI→TOSCA generator.
@@ -260,9 +292,12 @@ draft. Five minutes is enough for either.
 `core` (#1); the `mgmt-address` type (#2); the container-platform credential vocabulary (#3);
 `RelationalDatabase` as a derived type or a technology value, or an explicit deferral out of
 the `0.1` (#4); the `control-host` name and the control-node workload model (#5); and whether
-the §1.2.2 naming amendments are submitted to the TC or withdrawn (#8).
+the §1.2.2 naming amendments are submitted to the TC or withdrawn (#9).
 
-**Items 6 and 7 want input rather than a decision** — both are first looks at proposals the
+**Ratification sought** on the three drafted resolutions in #7, or an explicit decision to
+retire each draft.
+
+**Items 6 and 8 want input rather than a decision** — both are first looks at proposals the
 group has not seen, and each becomes a decision item once the questions in it are answered.
 
 **Everything in #1 to #4 is on the `0.1` path.** After those four, what stands between
