@@ -1,7 +1,7 @@
 # TOSCA Community — Proposed Agenda (2026-09-09)
 
 **Status:** Draft agenda for 2026-09-09, following 2026-09-02
-**Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [platform README](../profiles/community/tosca/abstract/platform/README.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
+**Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [platform README](../profiles/community/tosca/abstract/platform/README.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [credential-orchestration-proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md) · [artifact-calling-convention-proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md) · [spec-naming-conventions-proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
 
 Last week walked the proposed-changes document end to end and agreed five of the eight
 proposals it then held — 2.1, 2.3, 2.4, 2.6 and 2.7 — recorded as decisions N9 through N12
@@ -9,12 +9,20 @@ and D13, taking 2.8 as provisional. A ninth has been added since, and is item 4 
 What is left is narrower and of a different kind: three questions the walk-through
 *opened*, one added since, one it left unfinished, and the edits themselves.
 
+**Three proposals have never been discussed at all.** Orchestrated credentials (item 6) was
+written up after 09-02. The artifact calling convention (item 7) and the §1.2.2 naming
+amendments (item 8) were committed the same day as last week's agenda, were not on it, and
+the hour went to the proposal document instead. All three are on this agenda for that reason.
+
 **The release is now the organizing item.** I8 no longer waits on a design decision; it
 waits on the edits, and on four questions that decide what those edits say. Everything
-in items 1 to 4 is on the release path. Everything after it is not.
+in items 1 to 4 is on the release path. Item 7 asks whether it joins them. The rest do not.
 
-**Items 1 to 6 run to 75 minutes.** If the hour is firm, item 5 is the one to drop — it is
-the only release-path-adjacent item that changes nothing the `0.1` freezes.
+**Items 1 to 8 run to 90 minutes, and the meeting is 60.** Items 1 to 4 take 50 of those,
+which leaves room for one of the four that follow. Item 8 is the cheapest and ends with a
+document either submitted or withdrawn. Item 5 is the one to carry forward — it is the only
+release-path-adjacent item that changes nothing the `0.1` freezes — and items 6 and 7 are
+first looks that lose nothing by waiting a week.
 
 ---
 
@@ -137,11 +145,14 @@ Two decisions, and the first is small:
 
 ## 6. Orchestrated credentials — 10 min · *I27* · **first look**
 
-**Section 5.1**, written up since 09-02. D13 covers a credential the model *references*;
-this covers one the orchestrator *creates* — a key pair generated before a VM request, a
-certificate issued during deployment, a token minted for a service. A node type per kind
-of orchestrated secret, a `Credential` capability on it holding a map of `CredentialRef`,
-and a requirement on every node that needs the material.
+**[Its own document](../profiles/community/tosca/docs/credential-orchestration-proposal.md)**,
+written up since 09-02, rather than a section of the proposal document — it proposes a
+capability type and node types that mostly belong in technology profiles rather than
+abstract ones. D13 covers a credential the model *references*; this covers one the
+orchestrator *creates* — a key pair generated before a VM request, a certificate issued
+during deployment, a token minted for a service. A node type per kind of orchestrated
+secret, a `Credential` capability on it holding a map of `CredentialRef`, and a requirement
+on every node that needs the material.
 
 Raised by Tal on [#281](https://github.com/oasis-open/tosca-community-contributions/discussions/281).
 Two pieces are deliberately unresolved and are what the group's input is wanted on:
@@ -151,12 +162,80 @@ Two pieces are deliberately unresolved and are what the group's input is wanted 
 - **Whether the orchestrated-secret node types belong in the abstract profiles at all**,
   or only in the technology profiles that know how to create each kind.
 
+**And a sequencing question — I41.** The proposal models *authentication*, and says trust
+material does not belong on the `Credential` port: what a node verifies *others* against is
+not its own proof of identity, and publishing both on one port puts two contracts on it. It
+belongs on a port of its own — and that port has a worked design in use, a `TrustAnchor`
+capability publishing what a node verifies against, `Certification` deriving from it and
+adding issuance because a leaf certificate cannot issue, and `AnchorsOn` targeting the anchor
+while an enrolment relationship stays on the issuance contract. Together the two are the
+authentication and identity/trust halves of I17's security pattern, which is still
+unratified after three deferrals.
+
+The question is when to bring the second one. Proposing it now doubles the credential
+discussion; proposing it after this half is agreed means the port pattern it mirrors is
+already settled. **Worth a minute at the end of this item**, since the answer decides whether
+the group sees one proposal or two.
+
 Not a decision item this week. It becomes a Section 2 proposal once those two are
 answered.
 
+## 7. The artifact calling convention — one document in — 10 min · *I10* · **first look**
+
+The specification does not say how an orchestrator passes values to an implementation
+artifact, so the contract can only live in the artifact type, which is profile territory.
+It does not live there today: `Bash` declares `host`, `Python` declares nothing, and two
+orchestrators can both implement `community.tosca.core:Bash` correctly and run the same
+script to different effect.
+
+The proposal replaces the per-input environment variable with a single JSON document in one
+reserved variable. The four failures it cites all trace to one cause — the environment is a
+flat string map the artifact does not own: a boolean spelled two ways depending on whether
+it arrived nested, absence arriving as the four characters `null`, inputs colliding silently
+with the inherited environment, and an input named `mgmt-address` that cannot be an
+environment variable at all. The last of those is a shell's identifier rules setting a
+naming convention for the profile.
+
+**Two halves, and only one is a recommendation.** The input half proposes the document as a
+*default*, with each artifact type declaring its own channel — a variable for Bash because a
+shell wants one, `stdin` for Python because a script wants a stream — which is already the
+practice: `Ansible` takes a YAML extra-vars file and `Terraform` a `.tfvars.json`, and
+neither uses the environment. The output half states the problem and three options without
+settling it: `stdout` with a sentinel, a file named by a second variable, or a dedicated
+descriptor.
+
+**Why it is here and not in *if time permits*.** `Bash` and `Python` live in `core`, which
+the `0.1` freezes, and item 4 proposes deleting `Bash` from it. If the convention is
+declared by the artifact type rather than stated in prose, it changes `core` type
+definitions.
+
+**Input wanted, not a decision:** whether the document is the contract and the channel is
+each type's own business, and which of the three output channels.
+
+## 8. The §1.2.2 naming amendments — submit or withdraw — 5 min · *I39* · **decision sought**
+
+The one document in the profiles tree addressed to the OASIS TC rather than to these
+profiles, drafted and never submitted. Two amendments to *TOSCA Naming Conventions*: permit
+snake case for value names alongside dash case, consistent within a profile, and withdraw
+the stated rationale that dash case exists to distinguish value names from keynames; and
+make the acronym rule context-free, keeping acronyms upper throughout — `HTTPEndpoint`,
+`TCPOrUDP`, `TCP`, `DBMS` — rather than respelling an acronym according to what sits beside
+it.
+
+Normative impact is none. §1.2.2 already says parsers should not enforce these conventions,
+so no document becomes valid or invalid and no existing profile needs editing. CamelCase for
+entity type names is explicitly not touched.
+
+It reaches these profiles through D2, which applies the current conventions to them, and the
+draft's own count is the argument: the convention on paper is not the one the profiles
+follow.
+
+**Decision sought:** submit it to the TC against the errata track (P4), or withdraw the
+draft. Five minutes is enough for either.
+
 ---
 
-## 7. If time permits
+## 9. If time permits
 
 - **Substitution filters against the revised types (I32).** N9 and N11 move the abstract
   types' structure into requirements and capabilities, which is what a substitution
@@ -176,7 +255,11 @@ answered.
 **Decisions sought:** the `mgmt-address` type (#1); the container-platform credential
 vocabulary (#2); `RelationalDatabase` as a derived type or a technology value, or an
 explicit deferral out of the `0.1` (#3); whether the base capability and relationship types
-move out of `core` (#4); the `control-host` name and the control-node workload model (#5).
+move out of `core` (#4); the `control-host` name and the control-node workload model (#5);
+and whether the §1.2.2 naming amendments are submitted to the TC or withdrawn (#8).
+
+**Items 6 and 7 want input rather than a decision** — both are first looks at proposals the
+group has not seen, and each becomes a decision item once the questions in it are answered.
 
 **Everything in #1 to #4 is on the `0.1` path.** After those four, what stands between
 the community and its first tag is editing the profiles.
