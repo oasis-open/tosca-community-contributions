@@ -105,3 +105,105 @@ proposal](abstract-profile-proposed-changes.md#29-communitytoscacore-and-communi
 would put in `abstract.base`. The node types belong wherever their kind belongs, which for most of them is a
 technology profile rather than an abstract one — a key pair and a certificate are general, while an
 account or project is a provider's.
+
+---
+
+## A worked example — an orchestrated certificate
+
+A certificate is the clearest case of the distinction this proposal turns on. It cannot be supplied
+as a value, because it does not exist before deployment: issuing one means generating a key pair,
+building a signing request and obtaining a signature, and the material that comes back is renewed,
+revoked and access-controlled for as long as the node lives. That is a lifecycle, and in TOSCA a
+thing with a lifecycle is a node.
+
+The type below is trimmed to what the proposal is about; a production definition carries more
+properties.
+
+```yaml
+node_types:
+
+  Certificate:
+    derived_from: Root
+    description: >-
+      An X.509 certificate establishing the identity of a device or service.
+      `Standard.create` issues one and `Standard.delete` removes it along with its
+      private key. The issued certificate's metadata is written to the attributes
+      below, and the material is published on the `credential` port.
+    properties:
+      common_name:
+        type: string
+        description: >-
+          Subject common name: the identity the certificate asserts.
+      subject_alt_names:
+        type: list
+        entry_schema: string
+        required: false
+        description: >-
+          Subject alternative names applied to the issued certificate. A client
+          matches these against the address it dialled, so a certificate presented
+          by a server needs at least one.
+      usage:
+        type: list
+        entry_schema: string
+        default: [client]
+        description: >-
+          What the certificate may be used for, as a set, since one certificate can
+          serve several roles.
+      validity_days:
+        type: integer
+        default: 365
+        description: >-
+          Requested certificate lifetime, in days.
+    attributes:
+      certificate:
+        type: string
+        description: >-
+          The public certificate as base64-encoded PEM, carried in the model so a
+          relying party can present it directly. Populated by `create`. The private
+          key never leaves the host that generated it.
+      not_after:
+        type: string
+        description: >-
+          Expiry timestamp, so a renewal can be driven from the model.
+    capabilities:
+      credential:
+        type: Credential
+        properties:
+          credentials:
+            key_schema:
+              validation: {$valid_values: [$value, [x509_cert, x509_key]]}
+      # The chain a relying party verifies this certificate against is not this
+      # node's proof of identity, so it is published on a port of its own rather
+      # than here.
+    requirements:
+      # The issuing authority. Unbound, `create` self-signs and the leaf is its own
+      # anchor; bound, the certificate is issued by that authority.
+      - ca:
+          capability: Certification
+          count_range: [0, 1]
+```
+
+**No value is assigned to the map, and that is the point.** `credentials` is declared as a property
+so that one declaration yields both views, but nothing is assigned here: `create` writes the
+reflected attribute along the path a consumer reads,
+`[SELF, CAPABILITY, credential, credentials, x509_cert, file]`. A supplied credential would assign
+the same map under `capabilities.credential.properties` instead. The consumer reads it the same way
+in both cases and never learns which origin it was.
+
+**Two kinds, one node, no subtypes.** The `key_schema` narrows the map to `x509_cert` and
+`x509_key`, which are the two parts of one identity rather than two ways of using the same material
+— a certificate and the private key that proves it. They are separate roles, one each, so they
+occupy separate keys without collision, and there is nothing for a binding to choose between. That
+is the case the proposal contrasts with material that serves two kinds at once, where only the node
+type is known early enough to constrain the binding and a subtype per kind is what settles it.
+
+**The self-signed case needs no conditionality.** `ca` is `count_range: [0, 1]`. Unbound, `create`
+self-signs and the leaf is its own anchor; bound, the certificate is issued by that authority. A
+relying party binds the same way in either case and never learns which it was, so no property
+records the distinction and no expression tests it.
+
+**A consumer binds the port, not the type.** A node needing an identity declares
+`capability: Credential` and takes whatever satisfies it, which is what makes the port a contract:
+the same requirement is served by a certificate here and by some other credential node elsewhere,
+with no change to the consumer. It pins `node: Certificate` only when it specifically needs a
+certificate and not merely a credential.
