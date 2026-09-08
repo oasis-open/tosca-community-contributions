@@ -5,14 +5,16 @@
 
 Last week walked the proposed-changes document end to end and agreed five of the eight
 proposals it then held — 2.1, 2.3, 2.4, 2.6 and 2.7 — recorded as decisions N9 through N12
-and D13, taking 2.8 as provisional. A ninth has been added since, and is item 4 below.
+and D13, taking 2.8 as provisional. A ninth has been added since, and leads this agenda.
 What is left is narrower and of a different kind: three questions the walk-through
 *opened*, one added since, one it left unfinished, and the edits themselves.
 
-**Three proposals have never been discussed at all.** Orchestrated credentials (item 6) was
+**Four proposals have never been discussed at all**, and one of them is on the release
+path — Section 2.9, which is why it leads. It and orchestrated credentials (item 6) were
 written up after 09-02. The artifact calling convention (item 7) and the §1.2.2 naming
 amendments (item 8) were committed the same day as last week's agenda, were not on it, and
-the hour went to the proposal document instead. All three are on this agenda for that reason.
+the hour went to the proposal document instead. All four are on this agenda for that
+reason.
 
 **The release is now the organizing item.** I8 no longer waits on a design decision; it
 waits on the edits, and on four questions that decide what those edits say. Everything
@@ -26,72 +28,12 @@ first looks that lose nothing by waiting a week.
 
 ---
 
-## 1. `mgmt-address` — a URL, or a structured type? — 15 min · *I28* · **decision sought**
+## 1. Is `core` the standard library, or also the base of one modelling approach? — 10 min · *I33* · **decision sought**
 
-**This reopens the 2026-06-24 resolution recorded as N7**, and it is the one item that
-blocks N8, which in turn blocks the `0.1`.
-
-Section 2.4 gives `ServerPlatform` an `IPv4Socket` and `VirtualizationPlatform` a
-string. Roberto's alternative is to type both as the `HttpUrl`-style URL now in `core`,
-which validates and stays general.
-
-The open part is whether every management address can honestly be written as a URL.
-There is no registered SSH URL scheme, so adopting one means the community publishes its
-own convention. Against that, a data type chosen at this level of abstraction cannot be
-corrected from below — get it wrong here and no lower layer can fix it.
-
-**Preparation:** the cases to decide against are the six platform types' management
-addresses as they are realized today — a server reached over SSH, a cloud API endpoint, a
-Kubernetes API server, a Proxmox host. If a URL covers all four honestly, it wins on
-validation alone.
-
-**Decision sought:** URL or structured, for each of the two properties.
-
-**Consequence either way:** choosing URL makes `HttpUrl` load-bearing on every
-API-addressed platform type, which raises the priority of the second half of I26 —
-whether `core`'s data types carry test cases — from housekeeping to a release concern.
-
-## 2. The container-platform credential vocabulary — 10 min · *I29* · **decision sought**
-
-Section 2.4 keys `ContainerPlatform`'s credentials map to `[kubeconfig]`, which is
-Kubernetes-specific. A container platform that is Docker with Compose, Docker Swarm or
-Nomad authenticates some other way. Agreed on 09-02 to be an oversight in the proposal
-rather than a design position, so this is a question of what to add, not whether.
-
-**Decision sought:** the vocabulary. §9.4 means a derived type can only narrow what
-`Platform` declares, so a kind left out here cannot be added by a downstream profile
-without changing the abstract type again — which is why it has to be right before the
-`0.1` freezes it.
-
-## 3. `RelationalDatabase` — derived type or technology value? — 15 min · *I30 / I31 / I4*
-
-`Base` already carries `technology` and `vendor`, so `AtRestData` with
-`technology: relational` and `vendor: postgres` expresses the same thing Section 2.5
-derives a type for. Roberto asks whether the relational/NoSQL distinction belongs at this
-level or is a technology detail; the counter-precedent is `ContainerPlatform` against
-`VirtualizationPlatform`, which sit at this level for a distinction of the same kind.
-
-Roberto's own tiebreaker is the usable one: **a derived type earns its place if it has
-properties specific to it** — a schema, for instance. Applying it needs the reason the
-derived type was introduced, which is being recovered (credential specialization is the
-suspicion).
-
-This is the concrete instance of **I4**, the abstract-types against minimal-types
-question, and settling it here gives the rule a worked case rather than a principle.
-
-**Also here: I31.** Data and storage have had the least prototyping of any area of the
-abstract profiles, and `AtRestData` is the only at-rest type. Stefano's
-reverse-engineering work covers storage constructs across providers, and an inventory of
-them would tell us how many more of these decisions are coming.
-
-**Decision sought, or an explicit deferral:** Section 2.5 is a candidate to hold out of
-the `0.1` rather than freeze it unresolved. Deferring is a legitimate outcome; leaving it
-undecided while the tag is cut is not.
-
-## 4. Is `core` the standard library, or also the base of one modelling approach? — 10 min · *I33* · **decision sought**
-
-**Section 2.9, added after this agenda was first drafted.** It is on the release path
-because it moves types *between* profiles, and a release freezes where they live.
+**Section 2.9, added after this agenda was first drafted, and the one release-path item the
+group has not seen** — the three that follow are questions 09-02 opened rather than proposals
+in their own right. It leads for that reason, and it is on the release path because it moves
+types *between* profiles, and a release freezes where they live.
 
 `core` holds the data types, artifact types and functions any profile can use, and also
 the three base capability types and three base relationship types that express one way of
@@ -119,6 +61,68 @@ level may define its own.
 
 **Decision sought:** move the six to `abstract.base`, or keep them in `core` and accept
 that a consumer takes the vocabulary with the library.
+
+## 2. `mgmt-address` — a URL, or a structured type? — 15 min · *I28* · **decision sought**
+
+**This reopens the 2026-06-24 resolution recorded as N7**, and it is the one item that
+blocks N8, which in turn blocks the `0.1`.
+
+Section 2.4 gives `ServerPlatform` an `IPv4Socket` and `VirtualizationPlatform` a
+string. Roberto's alternative is to type both as the `HttpUrl`-style URL now in `core`,
+which validates and stays general.
+
+The open part is whether every management address can honestly be written as a URL.
+There is no registered SSH URL scheme, so adopting one means the community publishes its
+own convention. Against that, a data type chosen at this level of abstraction cannot be
+corrected from below — get it wrong here and no lower layer can fix it.
+
+**Preparation:** the cases to decide against are the six platform types' management
+addresses as they are realized today — a server reached over SSH, a cloud API endpoint, a
+Kubernetes API server, a Proxmox host. If a URL covers all four honestly, it wins on
+validation alone.
+
+**Decision sought:** URL or structured, for each of the two properties.
+
+**Consequence either way:** choosing URL makes `HttpUrl` load-bearing on every
+API-addressed platform type, which raises the priority of the second half of I26 —
+whether `core`'s data types carry test cases — from housekeeping to a release concern.
+
+## 3. The container-platform credential vocabulary — 10 min · *I29* · **decision sought**
+
+Section 2.4 keys `ContainerPlatform`'s credentials map to `[kubeconfig]`, which is
+Kubernetes-specific. A container platform that is Docker with Compose, Docker Swarm or
+Nomad authenticates some other way. Agreed on 09-02 to be an oversight in the proposal
+rather than a design position, so this is a question of what to add, not whether.
+
+**Decision sought:** the vocabulary. §9.4 means a derived type can only narrow what
+`Platform` declares, so a kind left out here cannot be added by a downstream profile
+without changing the abstract type again — which is why it has to be right before the
+`0.1` freezes it.
+
+## 4. `RelationalDatabase` — derived type or technology value? — 15 min · *I30 / I31 / I4*
+
+`Base` already carries `technology` and `vendor`, so `AtRestData` with
+`technology: relational` and `vendor: postgres` expresses the same thing Section 2.5
+derives a type for. Roberto asks whether the relational/NoSQL distinction belongs at this
+level or is a technology detail; the counter-precedent is `ContainerPlatform` against
+`VirtualizationPlatform`, which sit at this level for a distinction of the same kind.
+
+Roberto's own tiebreaker is the usable one: **a derived type earns its place if it has
+properties specific to it** — a schema, for instance. Applying it needs the reason the
+derived type was introduced, which is being recovered (credential specialization is the
+suspicion).
+
+This is the concrete instance of **I4**, the abstract-types against minimal-types
+question, and settling it here gives the rule a worked case rather than a principle.
+
+**Also here: I31.** Data and storage have had the least prototyping of any area of the
+abstract profiles, and `AtRestData` is the only at-rest type. Stefano's
+reverse-engineering work covers storage constructs across providers, and an inventory of
+them would tell us how many more of these decisions are coming.
+
+**Decision sought, or an explicit deferral:** Section 2.5 is a candidate to hold out of
+the `0.1` rather than freeze it unresolved. Deferring is a legitimate outcome; leaving it
+undecided while the tag is cut is not.
 
 ## 5. `control-host` — the piece 2.3 did not finish — 15 min · *Questions 6 and 8*
 
@@ -205,7 +209,7 @@ settling it: `stdout` with a sentinel, a file named by a second variable, or a d
 descriptor.
 
 **Why it is here and not in *if time permits*.** `Bash` and `Python` live in `core`, which
-the `0.1` freezes, and item 4 proposes deleting `Bash` from it. If the convention is
+the `0.1` freezes, and item 1 proposes deleting `Bash` from it. If the convention is
 declared by the artifact type rather than stated in prose, it changes `core` type
 definitions.
 
@@ -252,11 +256,11 @@ draft. Five minutes is enough for either.
 
 ---
 
-**Decisions sought:** the `mgmt-address` type (#1); the container-platform credential
-vocabulary (#2); `RelationalDatabase` as a derived type or a technology value, or an
-explicit deferral out of the `0.1` (#3); whether the base capability and relationship types
-move out of `core` (#4); the `control-host` name and the control-node workload model (#5);
-and whether the §1.2.2 naming amendments are submitted to the TC or withdrawn (#8).
+**Decisions sought:** whether the base capability and relationship types move out of
+`core` (#1); the `mgmt-address` type (#2); the container-platform credential vocabulary (#3);
+`RelationalDatabase` as a derived type or a technology value, or an explicit deferral out of
+the `0.1` (#4); the `control-host` name and the control-node workload model (#5); and whether
+the §1.2.2 naming amendments are submitted to the TC or withdrawn (#8).
 
 **Items 6 and 7 want input rather than a decision** — both are first looks at proposals the
 group has not seen, and each becomes a decision item once the questions in it are answered.
