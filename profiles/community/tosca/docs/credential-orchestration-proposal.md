@@ -99,12 +99,34 @@ contributing its own material.
 *others* against — a root or chain it anchors trust in — is not its own proof of identity, and
 publishing it here would put two contracts on one port. It belongs on a port of its own.
 
-**Where these would live.** The data types are in `core`. The capability type belongs
-with the other capability types, which [Section 2.9 of the abstract-profile
-proposal](abstract-profile-proposed-changes.md#29-communitytoscacore-and-communitytoscaabstractbase--core-as-a-standard-library)
-would put in `abstract.base`. The node types belong wherever their kind belongs, which for most of them is a
-technology profile rather than an abstract one — a key pair and a certificate are general, while an
-account or project is a provider's.
+**Where these would live.** The data types are in `core`, and that part is settled: an abstract
+type uses `CredentialRef` as a property value, which is what Section 2.4 does in declaring
+`credentials` on `Platform`. The node types belong wherever their kind belongs, which for most of
+them is a technology profile rather than an abstract one — a key pair and a certificate are
+general, while an account or project is a provider's.
+
+**Where the capability type belongs is open, and is what this proposal asks the community to
+settle.** The data type and the capability part company here. The data type is a value an abstract
+type carries; the capability is a port that only a credential node advertises and only a consumer
+binds. Nothing in `core` or the five `abstract.*` profiles declares or binds one today, and every
+advertiser named above is technology-level.
+
+- **For a technology profile.** `community.tosca.technology.base` is the base of the column every
+  advertiser sits in. Putting the port in `abstract.base` places it one profile above everything
+  that uses it, so a consumer of the abstract profiles imports a vocabulary nothing at that level
+  touches — the same arbitrary division [Section 2.9 of the abstract-profile
+  proposal](abstract-profile-proposed-changes.md#29-communitytoscacore-and-communitytoscaabstractbase--core-as-a-standard-library)
+  argues against, running the other way.
+- **For `abstract.base`.** An abstract type that needed to *bind* a credential node, rather than
+  carry a supplied reference, would need the port visible at its level. Against that: a derived
+  type may add a requirement its parent never declared, so such a binding can be introduced later
+  without changing the abstract type. The §9.4 constraint that makes the container-platform
+  credential vocabulary urgent — a refinement narrows and cannot widen — governs a `key_schema` the
+  parent already declares, not a requirement it never did.
+
+The two answers also differ in what else they wait on. A technology profile settles the question on
+its own; `abstract.base` makes it wait on Section 2.9, which decides where the base capability types
+live.
 
 ---
 
