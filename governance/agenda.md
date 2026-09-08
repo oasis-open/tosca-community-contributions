@@ -4,8 +4,10 @@
 **Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [platform README](../profiles/community/tosca/abstract/platform/README.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [credential-orchestration-proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md) · [artifact-calling-convention-proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md) · [spec-naming-conventions-proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
 
 Last week walked the proposed-changes document end to end and agreed five of the eight
-proposals it then held — 2.1, 2.3, 2.4, 2.6 and 2.7 — recorded as decisions N9 through N12
-and D13, taking 2.8 as provisional. A ninth has been added since, and leads this agenda.
+proposals it then held — 2.1, 2.3, 2.4, 2.6 and 2.7 — with 2.2 already adopted, 2.5 reopened
+and 2.8 taken as provisional. The five decisions recorded, D13 and N9 through N12, are a
+different five: N10 answers no section of the document, and 2.4 carries no decision of its
+own, being the write-up of N8. A ninth proposal has been added since, and leads this agenda.
 What is left is narrower and of a different kind: three questions the walk-through
 *opened*, one added since, one it left unfinished, and the edits themselves.
 
