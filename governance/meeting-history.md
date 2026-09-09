@@ -136,6 +136,42 @@ the **upstream profiles** rather than staying in the document (P6), and Chris ex
 an **OPAF/OPAS** participant into the meetings, that profile sitting at the same System View
 level for the same vendor-neutrality reason (C4).
 
+**2026-09-09** (Chris, Roberto), a two-person meeting — Damien and Stefano were expected and
+neither joined — which decided the one item that was blocking work and postponed the rest rather
+than settle them thinly. **The decision is A8: `core` becomes the standard library and the six
+base capability and relationship types leave it** for `abstract.base`, with the technology column
+declaring its own. The argument that carried it had not been made before, and it is about
+interfaces. A relationship type can only be given an interface where the type is declared, so an
+interface type for the base relationship types would have to be declared in `core`, putting
+technology-specific operations in the profile every other profile imports. And the abstract
+profiles cannot use relationship interfaces at all: substitution replaces a node's operations with
+workflows on the substituting template, and that mechanism exists for nodes only, so an operation
+on an abstract relationship has nothing that can implement it. One profile cannot hold relationship
+types serving both columns. N13 had already removed the objection that the six must be shared, so
+nothing remained requiring a single definition, and Roberto agreed.
+
+Two questions came out of it. Roberto asked whether the `relationship_kind` metadata is inherited
+by derived types (**I44**); it is not — §6.4.2 excludes `metadata` from derivation and §5.3.1 says
+metadata may be ignored and should not affect runtime behavior — and the repository already shows
+both consequences, `InteractsWith` carrying no kind and the vocabulary differing in case between
+`core` and `abstract.base`. Posted as discussion
+[#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363). And Roberto raised the portability of `core` itself (**I43**): its
+eight functions carry sixteen implementations and every one of them is typed as `Python`, so a
+platform that executes custom functions as WebAssembly plugins has to edit the profile to adopt it. The directions raised were splitting
+definitions from implementations, or asking TOSCA 2.1 for a profile that can carry alternative
+implementations with the orchestrator selecting one — the same problem operations have, where the
+choice between Bash, Python, Ansible and Terraform belongs to the orchestrator rather than to the
+profile. Roberto to open a discussion.
+
+Chris also walked the **orchestrated-credential** proposal (I27) end to end against a certificate
+example, and placed the `Credential` capability type in the technology base profile, orchestration
+happening in the technology column and reaching abstract nodes by attribute mapping; Roberto to
+review. Everything else on the agenda — `mgmt-address`, the container-platform vocabulary,
+`RelationalDatabase`, `control-host`, the three unratified drafts, the artifact calling convention
+and the naming amendments — was held for a meeting with fuller attendance. **The chair stated a
+target of releasing the `0.1` during September 2026** and announcing it to the community as a
+usable deliverable.
+
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
 [decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
 
@@ -148,10 +184,10 @@ level for the same vendor-neutrality reason (C4).
 | **Modeling philosophy** | Minimal types + property-based substitution vs. more derived types — the recurring tension. Resolved pragmatically per case; Roberto's top-down abstraction became the backbone. |
 | **Credentials / mgmt-address** | ~6-month arc: endpoint capability + credential type (M16) → simplification to file references (M21–M22) → platform-specific, not base-harmonized (M38). |
 | **Platform layering** | Server → virtualization → container; KubeVirt/Kubernetes; control-plane vs. data-plane; `kind`/`product` properties to drive substitution; managed clusters lose topology info. |
-| **Artifacts & functions** | Bash/Python artifact types; JSON env-var I/O; standardize on a single-module / matching-name / single-arg approach; community impls as reference implementations + JSON stdin/stdout protocol; `integrations/` directory. |
+| **Artifacts & functions** | Bash/Python artifact types; JSON env-var I/O; standardize on a single-module / matching-name / single-arg approach; community impls as reference implementations + JSON stdin/stdout protocol; `integrations/` directory. **2026-09-09:** the portability problem restated as a profile problem — `core` names a `Python` implementation per function, so an orchestrator that runs functions another way must fork the profile (I43). |
 | **Spec gaps → errata** | Implementation surfaced TOSCA 2.0 gaps: metadata support, property refinement in data types, artifact-type-mandatory ambiguity, substitution-mapping limits, a proposed `type-of-node` function — feeding a 2.01 errata effort and resumed TC language meetings. |
 | **Tooling** | Puccini (TOSCA 2.0 support), OpenAPI→TOSCA generators, Redfish/AnyTOSCA and Ansible translators, visualization (Winery, Inria CloudNet, Mermaid). |
-| **Release process** | Surfaced at M38; at **M39** adopted a simple process — a GitHub workflow packaging CSAR artifacts and a `0.1` release, flat directory structure (version subdirectories rejected). **2026-07-08:** adapt an existing, proven release workflow into the community repo; target a stable `0.1` of core by ~2026-07-15. **2026-07-15:** workflow reviewed and in place; `0.1` scoped to `core` + five `abstract.*` (technology profiles held), and held until the new core data types (D9) land. |
+| **Release process** | Surfaced at M38; at **M39** adopted a simple process — a GitHub workflow packaging CSAR artifacts and a `0.1` release, flat directory structure (version subdirectories rejected). **2026-07-08:** adapt an existing, proven release workflow into the community repo; target a stable `0.1` of core by ~2026-07-15. **2026-07-15:** workflow reviewed and in place; `0.1` scoped to `core` + five `abstract.*` (technology profiles held), and held until the new core data types (D9) land. **2026-09-09:** no longer waiting on a design decision, only on the edits; target **September 2026**. |
 
 ---
 
