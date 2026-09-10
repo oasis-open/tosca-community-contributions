@@ -222,8 +222,8 @@ Two directions were raised on 09-09:
   function or operation, with the orchestrator selecting the one it can execute. The chair's
   preference, since it keeps a single profile rather than a family of near-copies.
 
-**Roberto to open a GitHub discussion before the meeting**, so this item is a read rather than a
-recap. **Input wanted, not a decision:** whether the answer is a convention we adopt now or a
+**Roberto has opened it as discussion [#365](https://github.com/oasis-open/tosca-community-contributions/discussions/365)**, *About actual portability of the core
+type profile*. Read it before the meeting, so this item is a read rather than a recap. **Input wanted, not a decision:** whether the answer is a convention we adopt now or a
 proposal we take to the TC — and it can be both, in that order.
 
 ## 9. The artifact calling convention — one document in — 10 min · *I10* · **first look**
