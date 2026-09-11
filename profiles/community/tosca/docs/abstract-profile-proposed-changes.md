@@ -334,13 +334,39 @@ considered *in addition to* the parent's, so a derived type narrows and cannot w
 | `ContainerPlatform` | `credentials` keyed `[kubeconfig]` ‡ | — |
 
 **† The `mgmt-address` type is reopened (2026-09-02).** Roberto's alternative is to type it as a
-URL, using the validated URL type now in `core`, rather than as a structured socket for one
-platform kind and a bare string for another — general, and validated in both cases. What has to
-be established first is whether every management address can be written as a URL: there is no
-official SSH URL scheme, so adopting this means publishing a convention. The reason to settle it
-before the `0.1` rather than after: a data type chosen at this level cannot be corrected at any
-lower one. Tracked as I28, and it reopens the 2026-06-24 resolution of
-[Question 1](#question-1--mgmt-address-typing).
+URL rather than as a structured socket for one platform kind and a bare string for another —
+general, and validated in both cases. What has to be established first is whether every
+management address can be written as a URL. The reason to settle it before the `0.1` rather than
+after: a data type chosen at this level cannot be corrected at any lower one. Tracked as I28, and
+it reopens the 2026-06-24 resolution of [Question 1](#question-1--mgmt-address-typing).
+
+**The validated URL type in `core` is not that type.** `HttpUrl` accepts only `http` and
+`https`, so the URL route needs a URL type that does not fix the scheme, leaving the scheme to say
+how the platform is reached.
+
+**An SSH address can be written as a URL, and doing so cites a convention rather than inventing
+one (checked 2026-09-11).** There is no RFC: the IETF draft that defined the scheme,
+`draft-ietf-secsh-scp-sftp-ssh-uri`, expired in 2006. But IANA holds a provisional registration
+of `ssh`, as `ssh://[<user>[;fingerprint=<host-key fingerprint>]@]<host>[:<port>]`, and deployed
+tools agree on its core: OpenSSH accepts `ssh://[user@]hostname[:port]` as a destination, Git
+addresses repositories as `ssh://[user@]host[:port]/path`, and Docker takes `ssh://user@host` as
+a daemon address. They differ only where a management address has no need to go — what a path
+means, which the draft says to ignore and Git and Docker each use for their own purpose; the
+draft's `;fingerprint=` parameter, which none of those tools documents; and whether a user is
+given. So the convention to adopt is the common subset, **`ssh://host[:port]`**, with port 22
+when none is given:
+
+- **no path**, since its meaning is application-specific;
+- **no user**, since the login name is the credential's `name`, and a second source for it could
+  disagree with the first;
+- **no `;fingerprint`**, since a host-key fingerprint is trust material and belongs on a trust
+  port (I41), not in an address;
+- **a host as RFC 3986 defines one**: a DNS name, an IPv4 address or a bracketed IPv6 literal.
+
+The IANA template marks the scheme's encoding, interoperability and security as "unknown, use
+with care", the standard wording for a provisional registration, which is a reason to name the
+subset rather than cite the registration unqualified. The container-platform endpoints listed
+under ‡ below — `tcp://`, `unix://`, `https://` — are URLs of the same kind.
 
 **‡ `[kubeconfig]` is too restrictive** and was agreed on 2026-09-02 to be an oversight rather
 than a position. A container platform can equally be Docker with Compose, Docker Swarm or Nomad,
