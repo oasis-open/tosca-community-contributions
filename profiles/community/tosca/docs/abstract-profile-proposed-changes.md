@@ -354,7 +354,7 @@ a daemon address. They differ only where a management address has no need to go 
 means, which the draft says to ignore and Git and Docker each use for their own purpose; the
 draft's `;fingerprint=` parameter, which none of those tools documents; and whether a user is
 given. So the convention to adopt is the common subset, **`ssh://host[:port]`**, with port 22
-when none is given:
+when none is given, declared in `core` as `SshUrl` (below):
 
 - **no path**, since its meaning is application-specific;
 - **no user**, since the login name is the credential's `name`, and a second source for it could
@@ -367,6 +367,135 @@ The IANA template marks the scheme's encoding, interoperability and security as 
 with care", the standard wording for a provisional registration, which is a reason to name the
 subset rather than cite the registration unqualified. The container-platform endpoints listed
 under ‡ below — `tcp://`, `unix://`, `https://` — are URLs of the same kind.
+
+**If the address is a URL, it is declared once, on `Platform`.** It is declared per platform type
+today only because the types differ, a socket on one and a string on another, and a URL type that
+does not fix the scheme covers every case. It then belongs where `credentials` already is: the two
+answer one question, how the orchestrator reaches the platform. `Base` is the wrong level.
+`Application`, `Data` and `Network` are deployed onto platforms and managed through them, and an
+application's endpoint is a contract for its consumers (Section 2.6), not a management address.
+
+**Each platform type then narrows the address, as it narrows its credentials:**
+
+| Property | Declared once on `Platform` as | Narrowed per platform type by | A realization dispatches on |
+|----------|--------------------------------|-------------------------------|-----------------------------|
+| `credentials` | a map of `CredentialRef` | a `key_schema` refinement, to the kinds it accepts | the key |
+| `mgmt-address` | a `Url` | refining the type to a scheme's own type where one scheme is admitted; a validation over the schemes where several are | the scheme |
+
+**Two mechanisms, because they do two jobs.** What a URL of a given scheme looks like is a fact
+about the scheme, so it belongs in a type declared once, as `HttpUrl` already does for `http` and
+`https` and `SshUrl` below does for `ssh`. Which schemes a property admits is a fact about the
+property, and it has to stay a validation wherever there is more than one: TOSCA has no union
+types (I24), so no single type can say "one of these three".
+
+| Platform type | `mgmt-address` narrowed by |
+|---------------|----------------------------|
+| `ServerPlatform` | refining the type to `SshUrl` |
+| `VirtualizationPlatform` | refining the type to `HttpUrl` |
+| `ContainerPlatform` | a validation admitting `https`, `tcp` and `unix`, the type staying `Url` |
+
+A refined type must derive from the parent's, and a refinement's validation applies in addition to
+the parent's (§9.4), so either way a derived type narrows the address and cannot widen it, which is
+the rule that bounds the credential vocabulary too. Only schemes whose syntax the community fixes
+get a type of their own. Any other scheme is `Url` narrowed on the property, so that, as with a new
+credential kind, a new scheme needs no change to `core`.
+
+**Two consequences follow.** Declaring it on `Platform` commits every platform to the URL family,
+since a derived type can narrow the property but cannot take it outside `Url`. Enumerating the
+remaining cases, `PaasPlatform`, `SaasPlatform` and `ServerlessPlatform` among them, is therefore
+the precondition for the move, and part of settling I28 before the `0.1`. And it supplies the
+address the ‡ resolution below gives `ContainerPlatform`, which then inherits one rather than
+declaring its own.
+
+**The cost of the URL route is that a URL has to be parsed to be read in parts.** A structured
+socket yields its host by path, as `[mgmt-address, ip-address]`. A URL yields a host and a port
+only by parsing, and the built-in functions do not parse one: `$token` returns the substring at a
+fixed index between separator characters, so it cannot read a port that may be absent, or a
+bracketed IPv6 host whose colons are themselves separators. A realization would otherwise have to
+hand the whole URL to an artifact that parses it. That is the main argument against the URL
+route, and `core` can answer it.
+
+**What `core` would add if the route is taken.**
+
+- **A `Url` type that validates RFC 3986's generic syntax**, `scheme ":" hier-part [ "?" query ]
+  [ "#" fragment ]`, rather than any one scheme's rules, so that `unix:///var/run/docker.sock`
+  validates as readily as `ssh://host:22`. Which schemes a property admits is its refinement's
+  business, as the table above sets out. `core` is the home for the reason it is `CredentialRef`'s:
+  typing is nominal, so the abstract property and every profile that assigns or reads it must name
+  one declaration. `HttpUrl` then derives from `Url`, keeping its stricter pattern as the
+  refinement's added validation, so that an `HttpUrl` value is a `Url` and anything typed `Url`
+  accepts one. That change breaks nothing: `HttpUrl`'s values and validation are unchanged, and its
+  parent moves from `string` to a type that is itself a string. As I26 asks of `core`'s other
+  patterns, `Url` should carry test cases, since a generic URL pattern is harder to get right than
+  `HttpUrl`'s.
+- **An `SshUrl` type derived from `Url`**, holding the subset adopted above: the `ssh` scheme, a
+  host and an optional port, and nothing else. The convention is then stated once rather than
+  repeated on every property that admits `ssh`, and a realization that receives one can rely on
+  there being no path and no user in what it parses. It carries test cases for the same reason
+  `Url` does.
+- **A function that reads a URL's parts. This one is required.** An address supplied to the
+  abstract node travels *down* to technology types that want its host and its port apart, and no
+  built-in function can take them out reliably. It returns one part at a time — scheme, host, port
+  or path — rather than a decoded structure, because a function's result cannot be followed by a
+  path, so a structure would be unusable where a realization needs the host. For a part the URL
+  does not carry, it returns a default the caller passes, such as 22 for an `ssh` port. The default
+  has to be an argument: TOSCA has no built-in function that substitutes one for an absent value,
+  and RFC 3986 recommends leaving out a port that equals the scheme's default, so a well-formed
+  `ssh://host` often carries no port at all.
+- **A function that composes one.** An address a realization produces travels *up* — a
+  provisioned server's IP address and port becoming its platform's `mgmt-address` — and has to be
+  assembled. `$concat` covers a DNS name or an IPv4 address, but produces an invalid URL from an
+  IPv6 host, which must be bracketed, and cannot leave out a port that is absent. A composing
+  function that brackets the host, omits an absent port and validates its result keeps what a
+  realization produces as valid as what an author assigns.
+
+The two functions follow the two directions a credential also travels, supplied downward and
+produced upward, which is why they come as a pair. Like `core`'s other functions they would be
+implemented in Python, which I43 notes is the only implementation a profile can carry for a
+function today.
+
+**How a realization translates across the boundary.** Property mapping requires the two sides'
+types to match (§15.2), so the translation is not in the mapping. It sits in the substituting
+template's own inputs and outputs, between a boundary-typed value and the technology types below,
+in the form the [design guide](design-guide.md#passing-implementation-details-across-a-substitution-boundary)
+uses for `implementation-details`: a mapped input of the abstract type, and a second input whose
+`value` a `core` function derives from it, there `$decode_yaml`. In the sketches below,
+`$url_part` and `$compose_url` stand for the two functions above; naming them is the group's
+call.
+
+Downward, for a realization onto a server whose technology types take a socket:
+
+```yaml
+inputs:
+  mgmt-address:              # boundary-typed: exactly the abstract node's type
+    type: SshUrl
+  mgmt-socket:               # derived: what the technology types below expect
+    type: IPv4Socket
+    value:
+      ip-address: { $url_part: [ { $get_input: mgmt-address }, host ] }
+      transport-port: { $url_part: [ { $get_input: mgmt-address }, port, 22 ] }
+```
+
+Upward, for a realization that provisions the server and reports its address:
+
+```yaml
+substitution_mappings:
+  attributes:
+    mgmt-address: mgmt_url
+outputs:
+  mgmt_url:
+    type: SshUrl
+    value: { $compose_url: [ ssh, { $get_attribute: [ server, address ] } ] }
+```
+
+**The downward translation can lose information; the upward one cannot.** A URL's host may be a
+DNS name or a bracketed IPv6 literal, and `IPv4Socket` types its host as `IPv4`, which holds
+neither. A realization whose technology types need an IPv4 literal says so in its substitution
+filter, which is one more place the reading function is used. A socket always composes into a URL.
+
+**The cost is paid once per realization.** Nothing below the boundary changes: the translation is
+written in each realization's inputs and outputs, not in the node templates or artifacts it
+deploys.
 
 **‡ `[kubeconfig]` is too restrictive** and was agreed on 2026-09-02 to be an oversight rather
 than a position. A container platform can equally be Docker with Compose, Docker Swarm or Nomad,
@@ -399,7 +528,8 @@ kind it consumes.
 
 - **An address.** A token or a client certificate is presented *to* an endpoint, and
   `ContainerPlatform` declares none; a kubeconfig needs none only because it carries its server's
-  URL. The extension therefore brings an optional `mgmt-address`, typed however I28 settles. The
+  URL. The extension therefore needs an optional `mgmt-address`: inherited from `Platform` if I28
+  declares it there as a URL, and declared on `ContainerPlatform` otherwise. The
   endpoints in question — `tcp://host:2376`, `unix:///var/run/docker.sock`, `https://host:4646`,
   `https://host:6443` — carry a scheme, and one is a socket path rather than a host and port.
 - **Trust.** The x509 kinds, like a token sent over TLS, verify the server against a CA. That is
