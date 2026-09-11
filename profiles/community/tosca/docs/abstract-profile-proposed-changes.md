@@ -344,8 +344,48 @@ lower one. Tracked as I28, and it reopens the 2026-06-24 resolution of
 
 **‡ `[kubeconfig]` is too restrictive** and was agreed on 2026-09-02 to be an oversight rather
 than a position. A container platform can equally be Docker with Compose, Docker Swarm or Nomad,
-none of which authenticate with a kubeconfig. The vocabulary needs extending as those platforms
-are modelled; tracked as I29.
+none of which authenticate with a kubeconfig. Tracked as I29.
+
+**Proposed resolution (2026-09-11).** The kinds follow from what a connection opens: a platform
+records how the orchestrator reaches it on the node that connection opens, as the
+[credential orchestration proposal](credential-orchestration-proposal.md) puts it. That gives
+`ContainerPlatform` four kinds:
+
+| Kind | What the connection opens | Used by |
+|------|---------------------------|---------|
+| `kubeconfig` | the cluster API; the file carries its endpoint and its CA | every Kubernetes distribution |
+| `token` | the platform's HTTP API | Nomad's ACL token; a Kubernetes bearer token held without a kubeconfig |
+| `x509_cert`, `x509_key` | the platform's API, over mutual TLS | a remote Docker daemon — and so Compose and a Swarm manager, which speak its API — and Nomad with mutual TLS enabled |
+
+Three kinds are absent on purpose. **`ssh_key` and `ssh_password` open the host.** A Docker
+`ssh://` endpoint, a remote Podman and a runtime reached through its local socket are all reached
+by logging into the machine the platform runs on, so that login belongs on the `ServerPlatform`
+hosting the platform; declaring it here as well would give one login two homes. **`cloud_account`
+opens a cloud account**, which is the `VirtualizationPlatform`'s; a managed cluster's kubeconfig
+uses it from there. **`password`**: nothing in this class authenticates its orchestrator with HTTP
+Basic.
+
+**The vocabulary is a ceiling, so it is a union.** A refinement narrows and cannot widen (§9.4),
+so what the abstract type admits bounds every realization of it, and each realization reads the
+kind it consumes.
+
+**Two things the vocabulary cannot supply on its own.**
+
+- **An address.** A token or a client certificate is presented *to* an endpoint, and
+  `ContainerPlatform` declares none; a kubeconfig needs none only because it carries its server's
+  URL. The extension therefore brings an optional `mgmt-address`, typed however I28 settles. The
+  endpoints in question — `tcp://host:2376`, `unix:///var/run/docker.sock`, `https://host:4646`,
+  `https://host:6443` — carry a scheme, and one is a socket path rather than a host and port.
+- **Trust.** The x509 kinds, like a token sent over TLS, verify the server against a CA. That is
+  trust material rather than credential material and belongs on a trust port of its own, not in
+  this map (I41).
+
+**Sequencing.** Widening a `key_schema` is not a breaking change: every value that validated
+still validates, and every narrower refinement downstream still lies within the wider set; it is
+narrowing that breaks. So `0.1` can ship `[kubeconfig]` as the table shows, and the three further
+kinds arrive in `0.2` together with `mgmt-address` and the trust requirement — which also keeps a
+template from supplying a kind that no realization can yet use. The mechanisms in the table are to
+be confirmed against each platform's documentation before they are written into the profile.
 
 `PaasPlatform`, `SaasPlatform` and `ServerlessPlatform` are not addressed. Nothing has been
 prototyped against them, so there is no evidence yet for what they would need.
