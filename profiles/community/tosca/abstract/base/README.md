@@ -59,6 +59,6 @@ property, mapped to an input of the substituting template and decoded there.
 
 This is a **recommended practice rather than a requirement of the
 specification**. The pattern, the reasoning for it, and worked examples are in
-the design guide, which is the single place it is described:
+the modeling methodology, which is the single place it is described:
 
-[Design guide &mdash; Passing Implementation Details Across a Substitution Boundary](../../docs/design-guide.md#passing-implementation-details-across-a-substitution-boundary)
+[Modeling methodology &mdash; Passing Implementation Details Across a Substitution Boundary](../../docs/modeling-methodology.md#passing-implementation-details-across-a-substitution-boundary)

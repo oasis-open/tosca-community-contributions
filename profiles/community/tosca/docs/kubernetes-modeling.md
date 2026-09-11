@@ -13,7 +13,7 @@ earlier `community.tosca.technology.k8s` and hand-authored
 `community.tosca.technology.kubernetes` copies were consolidated away (governance
 issues K6 / I21 / I22).
 
-**Related documents:** [README](../README.md) · [design-guide](design-guide.md) · [prior-art](prior-art.md) · [meeting-history](../../../../governance/meeting-history.md) · [open-issues](../../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [modeling-methodology](modeling-methodology.md) · [prior-art](prior-art.md) · [meeting-history](../../../../governance/meeting-history.md) · [open-issues](../../../../governance/open-issues.md)
 
 ---
 
@@ -267,7 +267,7 @@ the *Pod*. To generate that `env`, the Pod needs an `InteractsWith` requirement 
 the peer's Service, so `{$get_property: [SELF, RELATIONSHIP, endpoint, TARGET,
 address]}` resolves. That forces a microservice-realization profile to **derive
 `k8s:Pod` and add an application-level `endpoint` requirement** — putting a
-system-view relationship on a device-view type, which the design guide cautions
+system-view relationship on a device-view type, which the modeling methodology cautions
 against.
 
 The pressure comes from two TOSCA facts:

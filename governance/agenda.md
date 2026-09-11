@@ -1,7 +1,7 @@
 # TOSCA Community — Proposed Agenda (2026-09-16)
 
 **Status:** Draft agenda for 2026-09-16, following 2026-09-09
-**Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [platform README](../profiles/community/tosca/abstract/platform/README.md) · [design-guide](../profiles/community/tosca/docs/design-guide.md) · [credential-orchestration-proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md) · [artifact-calling-convention-proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md) · [spec-naming-conventions-proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
+**Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [platform README](../profiles/community/tosca/abstract/platform/README.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [credential-orchestration-proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md) · [artifact-calling-convention-proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md) · [spec-naming-conventions-proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
 
 Last week had two participants. It took the one item that was blocking work — Section 2.9,
 now **decision A8**: `core` becomes the standard library and the six base capability and
@@ -25,6 +25,22 @@ being read, and if the hour is short it is better to ratify one of them than to 
 a sixth time.
 
 ---
+
+## Notice — the design guide is now `modeling-methodology.md` — 2 min · **for information**
+
+When the documentation was reorganized on 09-02, the design guide kept the methodology alone —
+the Model Continuum, translating between levels, deploying abstract services — and the
+Component/Port pattern and the practices built on it moved to
+[`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md). "Design guide" and
+"design patterns" then no longer said which of the two to open, so the guide is renamed for what
+it holds: [`modeling-methodology.md`](../profiles/community/tosca/docs/modeling-methodology.md),
+titled *TOSCA Community Modeling Methodology*. Only the title and the opening paragraph change.
+
+- **Links inside the repository** are repointed, section anchors included. Where a document
+  cited "the design guide" for the naming principle or for data placement, it now points at the
+  Component/Port pattern, which is where those have lived since 09-02.
+- **Links from outside the repository** to `design-guide.md` stop resolving. Anyone who has
+  bookmarked or cited it should update the link; the section anchors are unchanged.
 
 ## 1. `relationship_kind` — metadata carries neither inheritance nor obligation — 10 min · *I44* · **decision sought**
 
@@ -139,9 +155,10 @@ Two decisions, and the first is small:
 
 ## 6. The drafted resolutions nobody has ratified — 15 min · *I13 / I16(c) / I17* · **ratification sought**
 
-**Fifth time on an agenda without being read.** Three answers are already written in
-[`design-guide.md`](../profiles/community/tosca/docs/design-guide.md) and none has been ratified,
-because none has been reached. They are grouped because the work left on each is the same: read
+**Fifth time on an agenda without being read.** Three answers are already written, I16(c)'s and
+I17's in [`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md) and I13's in
+[`modeling-methodology.md`](../profiles/community/tosca/docs/modeling-methodology.md), and none
+has been ratified, because none has been reached. They are grouped because the work left on each is the same: read
 the drafted resolution and say yes or no.
 
 - **I17 — the monitoring and security patterns**, drafted 07-15. Monitoring is an observability
@@ -307,3 +324,6 @@ discussed, each becoming a decision item once the questions in it are answered.
 
 **Items 1 to 4 are on the `0.1` path, and September has three meetings left.** After those four,
 what stands between the community and its first tag is editing the profiles.
+
+**For information:** the design guide is renamed `modeling-methodology.md` (the notice before
+item 1).

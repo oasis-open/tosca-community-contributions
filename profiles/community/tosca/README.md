@@ -1,6 +1,6 @@
 # TOSCA Community Profiles
 
-**Related documents:** [design-guide](docs/design-guide.md) · [prior-art](docs/prior-art.md) · [abstract-profile-proposed-changes](docs/abstract-profile-proposed-changes.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
+**Related documents:** [modeling-methodology](docs/modeling-methodology.md) · [design-patterns](docs/design-patterns.md) · [prior-art](docs/prior-art.md) · [abstract-profile-proposed-changes](docs/abstract-profile-proposed-changes.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
 
 This directory contains TOSCA profiles that are created by the TOSCA
 Community&mdash;an informal group of TOSCA implementors and TOSCA
@@ -31,16 +31,17 @@ differences, for example:
 The TOSCA Community profiles are intended to harmonize these various
 profiles while at the same time allowing sufficient variability to
 accommodate these differences. With these goals in mind, the TOSCA
-Community follows the guidelines described in the [design
-guide](docs/design-guide.md).
+Community follows the [modeling methodology](docs/modeling-methodology.md)
+and the patterns catalogued in [design patterns](docs/design-patterns.md).
 
 ## Documents in this directory
 
 The [`docs/`](docs) directory holds the guides, reference material, domain notes
 and proposals, and [`docs/README.md`](docs/README.md) indexes them and says what
-each kind is for. The two to start with:
+each kind is for. The three to start with:
 
-- **[design-guide.md](docs/design-guide.md)** &mdash; the modeling methodology.
+- **[modeling-methodology.md](docs/modeling-methodology.md)** &mdash; the Model
+  Continuum, translating between levels, and deploying abstract services.
 - **[design-patterns.md](docs/design-patterns.md)** &mdash; the recurring
   modeling patterns the profiles are built from.
 - **[profile-organization.md](docs/profile-organization.md)** &mdash; how the
@@ -55,5 +56,5 @@ tracker](../../../governance/open-issues.md).
 
 The profiles themselves live in subdirectories of this directory (for
 example the `core` profile and the `abstract` profiles). See the
-[design guide](docs/design-guide.md) for how these profiles map onto the
-levels of the model continuum.
+[modeling methodology](docs/modeling-methodology.md) for how these profiles
+map onto the levels of the model continuum.

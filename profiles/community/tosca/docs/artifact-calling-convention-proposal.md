@@ -10,7 +10,7 @@ orchestrator that implements it.
 **Related documents:** [artifact-conventions](artifact-conventions.md) — the convention
 this proposal would replace · [core README](../core/README.md) ·
 [technology base README](../technology/base/README.md) ·
-[design-guide](design-guide.md)
+[modeling-methodology](modeling-methodology.md)
 
 ---
 

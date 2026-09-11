@@ -1,12 +1,13 @@
-# TOSCA Community Profile Design Guide
+# TOSCA Community Modeling Methodology
 
 **Related documents:** [README](../README.md) · [design-patterns](design-patterns.md) · [profile-organization](profile-organization.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
-This guide describes the modeling methodology and design patterns the
-TOSCA Community uses when developing community profiles: the Model
-Continuum for managing abstraction, how to translate between
-abstraction levels, how abstract services are deployed, and the
-Component/Port pattern for modeling how nodes interact.
+This guide describes the modeling methodology the TOSCA Community uses
+when developing community profiles: the Model Continuum for managing
+abstraction, how to translate between abstraction levels, and how
+abstract services are deployed. The recurring patterns the profiles'
+type definitions follow, the Component/Port pattern among them, are
+catalogued in [design-patterns.md](design-patterns.md).
 
 ---
 

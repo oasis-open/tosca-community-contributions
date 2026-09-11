@@ -5,16 +5,16 @@
 **Purpose:** Say how the community profiles are organized and how to decide which
 profile a type belongs in — the levels of abstraction, the dimensions that cross
 them, and the naming convention. The modeling methodology and the design patterns
-are in the [design guide](design-guide.md); this document is about where the
+are in the [modeling methodology](modeling-methodology.md); this document is about where the
 results of applying them are kept.
 
-**Related documents:** [README](../README.md) · [design-guide](design-guide.md) · [prior-art](prior-art.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [modeling-methodology](modeling-methodology.md) · [prior-art](prior-art.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 ---
 
 ## The Profile Set
 
-The methodology in the [design guide](design-guide.md) has resulted in a set of
+The methodology in the [modeling methodology](modeling-methodology.md) has resulted in a set of
 profiles as shown in the following figure:
 
 ![TOSCA Community Profiles Organization](../images/profile-organization.png)
@@ -33,7 +33,7 @@ are shared by profiles at different levels of abstraction.
 Two further profiles serve as the base of a *column* rather than of a
 level. `community.tosca.abstract.base`, described in [Generic Base Node
 Types for System View
-Profiles](design-guide.md#generic-base-node-types-for-system-view-profiles) above,
+Profiles](modeling-methodology.md#generic-base-node-types-for-system-view-profiles) above,
 holds the four generic node types of the System View column together
 with the relationship and capability types they use.
 `community.tosca.technology.base` is its counterpart for the
@@ -43,7 +43,7 @@ from, the six-operation `Standard` interface those types implement, and
 a `Bash` artifact type carrying a `host` property, so that a script can
 be declared to run on a particular host rather than on the orchestrator.
 Why the two `Standard` definitions differ is covered in [Interface
-Definitions Differ by Level](design-guide.md#interface-definitions-differ-by-level)
+Definitions Differ by Level](modeling-methodology.md#interface-definitions-differ-by-level)
 above.
 
 > The figure above shows a single base profile, and it is the System
@@ -68,7 +68,7 @@ profiles *technology specific*, and Device View profiles *vendor
 specific*. The second runs horizontally, and appears in the figure as
 the decomposition of the System View level into separate Platform,
 Application, Data, and Network profiles. The section on [decoupling
-applications and data from platforms](design-guide.md#decouple-applications-and-data-from-platforms)
+applications and data from platforms](modeling-methodology.md#decouple-applications-and-data-from-platforms)
 below applies that same separation to the design of abstract service
 templates.
 
@@ -113,7 +113,7 @@ technology-neutral concept were modeled as a node type at the
 Administrator View row. A Device View product type would then reach it
 by *derivation*, following the recommendation in [Translating
 Administrator View to Device
-View](design-guide.md#translating-administrator-view-to-device-view) above. But that
+View](modeling-methodology.md#translating-administrator-view-to-device-view) above. But that
 same product type must also derive from the type that represents how it
 is realized. That is one `derived_from` and two required parents, and
 TOSCA node types are singly inherited. Expressing the neutral concept as
@@ -122,7 +122,7 @@ a capability avoids the contradiction entirely, because a port is
 
 This is a specific instance of a more general tension already noted in
 [Translating Device View to Instance
-View](design-guide.md#translating-device-view-to-instance-view) above: where derivation
+View](modeling-methodology.md#translating-device-view-to-instance-view) above: where derivation
 is the only mechanism available for crossing a boundary, every
 independent axis of variation has to be expressed as another derived
 type. Capabilities relieve that pressure wherever what the consumer

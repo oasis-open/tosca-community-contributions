@@ -6,7 +6,7 @@
 come back. An artifact type that can implement something has to say this, or an
 artifact written against it runs on one orchestrator and not another.
 
-**Related documents:** [README](README.md) · [design-guide](design-guide.md) · [artifact-calling-convention-proposal](artifact-calling-convention-proposal.md) · [core profile](../core/README.md) · [technology base profile](../technology/base/README.md)
+**Related documents:** [README](README.md) · [modeling-methodology](modeling-methodology.md) · [artifact-calling-convention-proposal](artifact-calling-convention-proposal.md) · [core profile](../core/README.md) · [technology base profile](../technology/base/README.md)
 
 ---
 

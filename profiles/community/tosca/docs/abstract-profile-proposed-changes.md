@@ -14,7 +14,7 @@ of both. What stays here is what is still proposed or still open.
 abstract profiles, together with the problems uncovered while prototyping them
 and the decisions reached during community discussion.
 
-**Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [design-guide](design-guide.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
+**Related documents:** [README](../README.md) · [prior-art](prior-art.md) · [modeling-methodology](modeling-methodology.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 **How this document is organized.** Four parts, which cross-reference each other by number.
 **Section 1** says why these changes are being proposed. **Section 2** is the proposals
@@ -529,7 +529,7 @@ function today.
 **How a realization translates across the boundary.** Property mapping requires the two sides'
 types to match (§15.2), so the translation is not in the mapping. It sits in the substituting
 template's own inputs and outputs, between a boundary-typed value and the technology types below,
-in the form the [design guide](design-guide.md#passing-implementation-details-across-a-substitution-boundary)
+in the form the [modeling methodology](modeling-methodology.md#passing-implementation-details-across-a-substitution-boundary)
 uses for `implementation-details`: a mapped input of the abstract type, and a second input whose
 `value` a `core` function derives from it, there `$decode_yaml`. In the sketches below,
 `$url_part` and `$compose_url` stand for the two functions above; naming them is the group's
@@ -688,7 +688,7 @@ capability_types:
 
 `Service` names the functionality exposed, in the same construction as `DataSource` — the
 ability to make data available. `Interaction` would name the relationship rather than the
-functionality, against the naming principle in the design guide, and `Interface` collides with
+functionality, against the Component/Port naming principle, and `Interface` collides with
 TOSCA's own `interface_types`.
 
 **Declared on `Application`, at both ends.** Interaction is symmetric between applications, so
@@ -712,8 +712,8 @@ node_types:
           capability: ExecutionEnvironment
 ```
 
-The two names follow the split the design guide draws: the **capability** names the functionality
-exposed, so `service`; the **requirement** names the intent of the source toward the target, so
+The two names follow the split the Component/Port pattern draws: the **capability** names the
+functionality exposed, so `service`; the **requirement** names the intent of the source toward the target, so
 `interacts-with`, reading like `links-to` and `processes` beside it. The existing `endpoint`
 requirement is the profile's one requirement named for a thing rather than a relation.
 
@@ -1146,8 +1146,8 @@ reasoning would want a type for two hosts, and another for many.
 
 **`processes` sits below the System View.** The `Process` data type is a `command` plus
 `parameters`. A command string names an executable, which the
-[design guide](design-guide.md) places in the Device View row — vendor-specific realization,
-alongside k3s and Docker Engine. Requiring one on a System View type inverts the model
+[modeling methodology](modeling-methodology.md) places in the Device View row —
+vendor-specific realization, alongside k3s and Docker Engine. Requiring one on a System View type inverts the model
 continuum the profiles are organized on.
 
 It is also `required: true`, which makes a whole category unmodellable: software installed
@@ -1240,8 +1240,8 @@ The profile labels all three `relationship_kind: containment` itself. They carry
 properties, no interfaces and no behaviour — only a different `valid_capability_types`, which
 duplicates what a requirement's `capability` keyname already states.
 
-- **The design guide argues against the split.** Its naming principle holds that *capability*
-  type names describe the functionality a component exposes, while *relationship* type names
+- **The Component/Port pattern argues against the split.** Its naming principle holds that
+  *capability* type names describe the functionality a component exposes, while *relationship* type names
   describe the intent of the source toward the target. Placing a platform, an application or
   data onto a platform is one intent against three exposed functionalities. The difference
   belongs on the capability, and it is already there.
@@ -1307,8 +1307,8 @@ in the profile is a sink.
   `port`, `target-port`, `protocol` and `name`. That is right for a network endpoint
   and the name is honest about it — but hoisting it onto `Application` would oblige every
   application to expose a port and a protocol. An O-PAS signal port carries `Tags`; there is no
-  port and no protocol to give. The design guide already prescribes the resolution: *a contract
-  every realization exposes belongs on the base capability; a value specific to one realization
+  port and no protocol to give. The Component/Port pattern already prescribes the resolution:
+  *a contract every realization exposes belongs on the base capability; a value specific to one realization
   belongs on a capability derived from that base.* `Endpoint` is a specialization that was never
   given its base.
 

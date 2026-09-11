@@ -19,14 +19,13 @@ lives and what it may claim.
 
 ## Guides
 
-- **[design-guide.md](design-guide.md)** — the modeling methodology and the
-  design patterns: the Model Continuum and its levels of abstraction, how to
-  translate between levels, which operations a node type declares at each level,
-  and how abstract services are deployed.
+- **[modeling-methodology.md](modeling-methodology.md)** — the Model Continuum
+  and its levels of abstraction, how to translate between levels, which
+  operations a node type declares at each level, and how abstract services are
+  deployed.
 - **[design-patterns.md](design-patterns.md)** — the recurring modeling
   patterns the profiles are built from. Each names a problem that comes up
-  across profiles and the type definitions that answer it. Currently the
-  Component/Port pattern and the practices built on it.
+  across profiles and the type definitions that answer it.
 - **[artifact-conventions.md](artifact-conventions.md)** — how values reach an
   implementation artifact and how results come back: the operation convention,
   the function convention, and what a runtime may be assumed to provide.

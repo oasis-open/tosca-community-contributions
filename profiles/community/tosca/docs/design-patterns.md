@@ -6,9 +6,9 @@
 from. Each pattern names a problem that comes up across profiles and the shape
 of type definitions that answers it. The methodology these patterns are applied
 within — the Model Continuum, translating between levels, deploying abstract
-services — is in the [design guide](design-guide.md).
+services — is in the [modeling methodology](modeling-methodology.md).
 
-**Related documents:** [README](README.md) · [design-guide](design-guide.md) · [profile-organization](profile-organization.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
+**Related documents:** [README](README.md) · [modeling-methodology](modeling-methodology.md) · [profile-organization](profile-organization.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 ---
 
@@ -322,8 +322,8 @@ The rules behind the shape:
    every type beneath it and can never be lifted, while a permission
    granted there can be withdrawn by any derived type that needs to.
    Declare at the base only the restrictions that hold for everything
-   beneath it. The design guide applies the same rule to
-   [node filters written into types](design-guide.md#make-placement-decisions).
+   beneath it. The modeling methodology applies the same rule to
+   [node filters written into types](modeling-methodology.md#make-placement-decisions).
 
 3. **Restrict at the narrowest scope that holds.** A restriction on what
    may be placed where can be declared at three levels, each binding
