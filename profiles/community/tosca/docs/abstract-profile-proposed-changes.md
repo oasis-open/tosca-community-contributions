@@ -1425,6 +1425,13 @@ property Problem 6 found in the relationship types:
   technology demands. Three capabilities on the base grant all three kinds of hosting to every
   platform, and a derived type can withdraw one only by narrowing its sources.
 
+  §8.2.1's wording, read literally, measures a capability refinement against the capability
+  type rather than the parent node type's definition, which would let a derived node type widen
+  a list its parent narrowed. That contradicts §5.1.3, §8.1 and the parallel §8.4.1, and is
+  raised as errata in
+  [oasis-tcs/tosca-specs#371](https://github.com/oasis-tcs/tosca-specs/issues/371); this
+  proposal relies on the narrowing reading.
+
 - **O-PAS already works this way.** Its control application components are placed through one
   requirement onto one capability of a distributed control node, and the node types derived
   from it — compute-only, I/O-only — narrow that capability's `valid_source_node_types` to the
