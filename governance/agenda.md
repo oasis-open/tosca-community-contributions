@@ -107,15 +107,23 @@ abstract type again — which is why it has to be right before the `0.1` freezes
 
 ## 4. `RelationalDatabase` — derived type or technology value? — 15 min · *I30 / I31 / I4*
 
-Carried from 09-09, not reached. `Base` already carries `technology` and `vendor`, so
-`AtRestData` with `technology: relational` and `vendor: postgres` expresses the same thing
+Carried from 09-09, not reached. `Base` already carries `technology` and `product`, so
+`AtRestData` with `technology: relational` and `product: postgresql` expresses the same thing
 Section 2.5 derives a type for. Roberto asks whether the relational/NoSQL distinction belongs at
 this level or is a technology detail; the counter-precedent is `ContainerPlatform` against
 `VirtualizationPlatform`, which sit at this level for a distinction of the same kind.
 
 Roberto's own tiebreaker is the usable one: **a derived type earns its place if it has properties
-specific to it** — a schema, for instance. Applying it needs the reason the derived type was
-introduced, which is being recovered (credential specialization is the suspicion).
+specific to it** — a schema, for instance. **Applied, it says this one does not.** Section 2.5
+gives `RelationalDatabase` one property, `credential`, and every at-rest store is authenticated to,
+so nothing in it is specific to relational data. The downstream profile the type came from
+confirms it from the other side:
+
+- the type was introduced without a recorded reason;
+- no template sets its `credential`, and no realization reads it;
+- its one realization selects on the `technology` property, not on the type.
+
+Nothing depends on the derived type.
 
 This is the concrete instance of **I4**, the abstract-types against minimal-types question, and
 settling it here gives the rule a worked case rather than a principle.
@@ -125,9 +133,10 @@ profiles, and `AtRestData` is the only at-rest type. Stefano's reverse-engineeri
 storage constructs across providers, and an inventory of them would tell us how many more of
 these decisions are coming.
 
-**Decision sought, or an explicit deferral:** Section 2.5 is a candidate to hold out of the `0.1`
-rather than freeze it unresolved. Deferring is a legitimate outcome; leaving it undecided while
-the tag is cut is not.
+**Proposed: withdraw Section 2.5.** A relational database is `AtRestData` with `technology:
+relational` and a `product` naming the implementation, until a property specific to relational
+data — a schema — gives a derived type something to carry. Holding the section out of the `0.1`
+remains the fallback; leaving it undecided while the tag is cut is not.
 
 ## 5. `control-host` — the piece 2.3 did not finish — 15 min · *Questions 6 and 8*
 
@@ -311,8 +320,8 @@ Five minutes is enough for either.
 ---
 
 **Decisions sought:** how a derived relationship type declares its kind (#1); the `mgmt-address`
-type (#2); the container-platform credential vocabulary (#3); `RelationalDatabase` as a derived
-type or a technology value, or an explicit deferral out of the `0.1` (#4); the `control-host` name
+type (#2); the container-platform credential vocabulary (#3); withdrawing `RelationalDatabase` in
+favour of `AtRestData` with `technology` and `product`, or an explicit deferral out of the `0.1` (#4); the `control-host` name
 and the control-node workload model (#5); and whether the §1.2.2 naming amendments are submitted to
 the TC or withdrawn (#10).
 

@@ -621,8 +621,8 @@ prototyped against them, so there is no evidence yet for what they would need.
 ### 2.5 `community.tosca.abstract.data` — `RelationalDatabase`
 
 **Status: open, and the derivation itself is in question (2026-09-02).** `Base` already carries
-`technology` and `vendor`, so the same thing is expressible as `AtRestData` with
-`technology: relational` and `vendor: postgres`, and Roberto asks whether the relational/NoSQL
+`technology` and `product`, so the same thing is expressible as `AtRestData` with
+`technology: relational` and `product: postgresql`, and Roberto asks whether the relational/NoSQL
 distinction belongs at this level or is a technology detail. The counter-precedent is
 `ContainerPlatform` against `VirtualizationPlatform`, which sit at this level for a distinction
 of the same kind, and Roberto's own tiebreaker is that a derived type earns its place if it has
