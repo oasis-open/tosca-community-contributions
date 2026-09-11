@@ -22,9 +22,9 @@ themselves, grouped by profile in the order the profiles build on each other, ea
 its own status. Two profiles have more than one proposal. Section 2.9 concerns `core` and
 `abstract.base` jointly and sits last rather than beside Section 2.1, so that the section numbers
 already in circulation keep their meaning. **Section 3** is the reasoning: the
-problems found while prototyping, numbered *Problem 1* through *Problem 7*, and most Section 2
+problems found while prototyping, numbered *Problem 1* through *Problem 8*, and most Section 2
 proposals point at the problem that motivates them. **Section 4** records what the community has
-settled and what is still open, numbered *question 1* through *question 9* — so a reference to
+settled and what is still open, numbered *question 1* through *question 10* — so a reference to
 "question 2" anywhere above means the second entry there.
 
 ---
@@ -315,6 +315,78 @@ not about how many relationship types the base profile needs. It is asked and an
 [the platform profile's README](../abstract/platform/README.md#does-a-control-node-also-host-workloads).
 Declaring `control-host` is a prerequisite for either answer, which is why it is mentioned here
 at all.
+
+**Proposed amendment: one hosting capability, permissive at the base.** *Proposed 2026-09-11;
+not yet discussed.* N9 unified the requirement name and kept the three capability types, on the
+reasoning that the capability says what kind of thing is being placed. The argument that makes
+the three relationship types redundant applies to the three capabilities as well: one
+capability type, exposed once by `Platform` and accepting every kind of guest, narrowed by a
+derived platform type where that platform accepts fewer. Reasoning in Problem 8.
+
+```yaml
+capability_types:
+  Host:                                 # placeholder name; derived, not Container itself (N10)
+    derived_from: Container
+
+relationship_types:
+  HostedOn:
+    metadata:
+      relationship_kind: containment
+    derived_from: ContainedBy
+    properties:
+      implementation-details: { type: YAML, required: false }
+    valid_capability_types: [ Host ]    # the one side constrained; Host names no relationships
+
+node_types:
+  Base:
+    requirements:
+      - host:
+          capability: Host
+          relationship: HostedOn
+
+  Platform:
+    capabilities:
+      host:
+        type: Host                      # no valid_source_node_types: every guest is accepted
+    requirements:
+      - control-host: { capability: Host,     relationship: HostedOn }
+      - links-to:     { capability: Linkable, relationship: LinksTo }
+
+  Network:
+    requirements:
+      - host: { count_range: [ 0, 1 ] }
+```
+
+Against the agreed sketch above:
+
+- **One capability instead of three.** `PlatformHost`, `ExecutionEnvironment` and `DataPlatform`
+  give way to a single type, and `Platform` exposes one capability. `PlatformHost` names one of
+  the three roles, so the single type wants a neutral name; `Host` is a placeholder in the same
+  spirit as `control-host`.
+- **No child refines `host`.** `Platform`, `Application` and `Data` inherit it from `Base`
+  unchanged, and `Network` narrows only its `count_range`. What is being placed is stated by the
+  type of the source node, which every relationship already knows, rather than by the
+  capability it targets.
+- **A platform that accepts fewer kinds of guest says so in its own type**, by refining the
+  inherited capability's `valid_source_node_types`, which a refinement may narrow but never
+  widen (§8.2.1). As an illustration only — whether
+  any community platform restricts its guests is a question for the platform profile:
+
+  ```yaml
+    ServerlessPlatform:
+      capabilities:
+        host:
+          valid_source_node_types: [ Application ]
+  ```
+
+- **The relationship-type collapse N9 left open follows.** With one capability there is nothing
+  for `RunsOn` or `AvailableOn` to accept that `HostedOn` does not.
+
+This amends N9's wording rather than its substance: the requirement name stays `host`, declared
+once on `Base`. The migration belongs to the same cut as the rest of this section. Beyond the
+consumers N9 already affects, a substituting template that maps `execution-environment` or
+`data-platform` by name maps `host` instead; the realizations that exist map all three onto the
+same capability of the node they substitute, so they lose nothing.
 
 ### 2.4 `community.tosca.abstract.platform` — properties and requirements
 
@@ -1309,6 +1381,63 @@ default.
 
 ---
 
+### Problem 8 — Three hosting capabilities that every platform exposes
+
+`Platform` declares three capabilities — `host` of type `PlatformHost`, `execution-environment`
+of type `ExecutionEnvironment` and `data-platform` of type `DataPlatform` — and every platform
+type inherits all three. N9 kept them when it unified the requirement name, but they share the
+property Problem 6 found in the relationship types:
+
+| | parent | properties | attributes | exposed by |
+|---|---|---|---|---|
+| `PlatformHost` | `Container` | none | none | every `Platform` |
+| `ExecutionEnvironment` | `Container` | none | none | every `Platform` |
+| `DataPlatform` | `Container` | none | none | every `Platform` |
+
+- **They are one capability under three names.** Same parent, nothing declared. The
+  realizations that exist confirm it from the other side: a substituting template maps all
+  three onto the same capability of the node it substitutes.
+
+- **They do not tell platforms apart.** A derived type cannot remove an inherited capability,
+  so every platform advertises all three kinds of hosting — a serverless platform claims to
+  hold data and to host other platforms. What remains for restricting one is to narrow its
+  `valid_source_node_types`, which does with three capabilities what one does alone.
+
+- **A requirement cannot ask for more than one of them.** A requirement names a single
+  capability, so a component has no way to ask for a platform that hosts both applications and
+  data. Since every platform exposes all three, the answer would be yes regardless — the split
+  carries no information a placement could use. With one capability, what a platform accepts is
+  stated in one place, and every guest bound to it is checked against that one list: an
+  application and its data placed on the same platform each pass or fail against the same
+  `valid_source_node_types`.
+
+- **The vocabulary does not fit the guests it has.** Four kinds of node are placed — platforms,
+  applications, data and networks — against three capabilities, so `Network` borrows
+  `PlatformHost`, which reads as hosting a platform. Another kind of guest would need another
+  capability on `Platform`. One capability that says only *can host* fits every guest.
+
+- **Permission belongs at the base, restriction below it.** Refinement narrows (§5.1.3): a
+  derived type may tighten a property's validation (§9.4), a requirement's `count_range`
+  (§8.4.1) or a capability's `valid_source_node_types` (§8.1, §8.2.1), but not loosen what its
+  parent allowed. So a restriction declared at the base binds every type beneath it, while a
+  permission granted at the base can be withdrawn by any one of them. The flexible arrangement
+  is a base as permissive as the model needs and each derived type as restrictive as its
+  technology demands. Three capabilities on the base grant all three kinds of hosting to every
+  platform, and a derived type can withdraw one only by narrowing its sources.
+
+- **O-PAS already works this way.** Its control application components are placed through one
+  requirement onto one capability of a distributed control node, and the node types derived
+  from it — compute-only, I/O-only — narrow that capability's `valid_source_node_types` to the
+  components each accepts.
+
+- **Nothing is lost.** If a hosting role ever needs properties of its own, a capability type
+  derived from the single one carries them. A requirement is satisfied by a capability of the
+  type it names or of any type derived from it, so guests asking for the parent keep binding.
+
+Proposal in the amendment to Section 2.3. **Not yet discussed by the community.**
+
+---
+
 ## 4. Decisions and open questions
 
 ### Question 1 — `mgmt-address` typing
@@ -1436,3 +1565,12 @@ declared on `Application` and derived from `Partner`, with `Endpoint` rederived 
 should `InteractsWith` rederive from `AssociatesWith` rather than `DependsOn`, and should the
 same-type constraint go? Proposal in Section 2.6, reasoning in Problem 7 — which also asks
 whether `Processes` should distinguish reading a dataset from writing one.
+
+### Question 10 — One hosting capability
+
+*Open (raised 2026-09-11).* Should `PlatformHost`, `ExecutionEnvironment` and `DataPlatform`
+collapse into one hosting capability type, exposed once by `Platform` with no restriction on
+its sources and narrowed by the derived platform types that accept fewer kinds of guest? Doing
+so amends N9's wording, which leaves the capability to say what kind of thing is placed, and
+settles the relationship-type collapse N9 left open. The single type also needs a name.
+Proposal in the amendment to Section 2.3, reasoning in Problem 8.
