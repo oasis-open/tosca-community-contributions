@@ -3,13 +3,39 @@
 **Related documents:** [README](../README.md) · [design-patterns](design-patterns.md) · [profile-organization](profile-organization.md) · [prior-art](prior-art.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [meeting-history](../../../../governance/meeting-history.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 This guide describes the modeling methodology the TOSCA Community uses
-when developing community profiles: the Model Continuum for managing
-abstraction, how to translate between abstraction levels, and how
-abstract services are deployed. The recurring patterns the profiles'
-type definitions follow, the Component/Port pattern among them, are
-catalogued in [design-patterns.md](design-patterns.md).
+when developing community profiles: the vantage point it is written
+from, the Model Continuum for managing abstraction, how to translate
+between abstraction levels, and how abstract services are deployed. The
+recurring patterns the profiles' type definitions follow, the
+Component/Port pattern among them, are catalogued in
+[design-patterns.md](design-patterns.md).
 
 ---
+
+## Two Vantage Points
+
+A system can be modeled in TOSCA from two legitimate vantage points. A
+*target-driven* modeler starts from a particular platform, such as a
+Kubernetes cluster, a cloud or a device, and wants a profile that
+describes it faithfully, with every feature it offers. A
+*design-driven* modeler starts from the system to be built and wants to
+describe its architecture before, and independently of, the platforms
+it will run on. The first is the view of whoever operates a platform;
+the second is the view of the system architect.
+
+This methodology is written from the system architect's vantage point.
+Its aim is **model once, run everywhere**, where running everywhere is
+accomplished through substitution. A service is designed once, in terms
+of what its components do and how they relate. Each component is then
+realized, by a substituting template written for that platform, onto
+whatever platform it is placed on. So one design can be realized onto
+several platforms at once, across an estate that is heterogeneous by
+nature.
+
+The two vantage points are complementary. Target-driven profiles make
+up the lower levels of the model continuum, and the substituting
+templates that realize a design are built from them. This methodology
+adds the upper levels, and the rules for translating between them.
 
 ## The Model Continuum in Support of Abstraction
 
@@ -55,7 +81,7 @@ The model continuum enables a **top-down** service design approach,
 where high-level designs are incrementally refined into lower levels
 as follows:
 
-1. System designers create abstract *system view* models to define the
+1. System architects create abstract *system view* models to define the
    architecture of their systems.
 2. These abstract system models are then refined using *administrator
    view* models that introduce the specific technologies chosen to
@@ -68,14 +94,14 @@ as follows:
    Orchestrator to manage the products specified in the device view
    models.
 
-> **Open, not yet tracked as an issue.** Add discussion about monitoring
-> and telemetry data moving in the other direction: low-level monitoring
-> data are summarized and aggregated into high-level *system health*
-> attributes. This is the *bottom-up* counterpart to the top-down
+> **Tracked as issue I25** (monitoring and telemetry escalation).
+> Monitoring and telemetry data move in the other direction: low-level
+> monitoring data are summarized and aggregated into high-level *system
+> health* attributes. This is the *bottom-up* counterpart to the top-down
 > refinement described above, and the mechanism already exists —
 > `substitution_mappings.attributes` escalates values from a substituting
-> service onto the substituted node. Needs an issue number and a written
-> pattern.
+> service onto the substituted node. The pattern is still to be written,
+> in [design-patterns.md](design-patterns.md).
 
 As a *best practice*, TOSCA profile designers should avoid mixing and
 matching types defined at different levels of abstraction within the
