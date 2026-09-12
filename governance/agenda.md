@@ -35,7 +35,11 @@ Component/Port pattern and the practices built on it moved to
 [`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md). "Design guide" and
 "design patterns" then no longer said which of the two to open, so the guide is renamed for what
 it holds: [`modeling-methodology.md`](../profiles/community/tosca/docs/modeling-methodology.md),
-titled *TOSCA Community Modeling Methodology*. Only the title and the opening paragraph change.
+titled *TOSCA Community Modeling Methodology*. Beyond the title and the opening paragraph, one
+section is new: [*Two Vantage Points*](../profiles/community/tosca/docs/modeling-methodology.md#two-vantage-points)
+opens the document by saying it is written from the system architect's vantage point rather
+than a target-driven one, with *model once, run everywhere* as its aim, and that target-driven
+profiles make up the continuum's lower levels. The rest of the content is unchanged.
 
 - **Links inside the repository** are repointed, section anchors included. Where a document
   cited "the design guide" for the naming principle or for data placement, it now points at the
