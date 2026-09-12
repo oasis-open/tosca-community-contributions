@@ -179,7 +179,8 @@ returns if and when one earns its keep by carrying properties, attributes or int
 of its own — which the requirement name absorbs without change. **One further constraint came
 out of the discussion:** restrict on the capability side or the relationship side, not both.
 Declaring `valid_capability_types` and `valid_relationship_types` for the same connection
-over-constrains it and nothing binds. Reasoning in Problems 5 and 6.
+states the constraint twice, and the connection binds only while the two lists agree; once they
+drift apart, nothing binds. Reasoning in Problems 5 and 6.
 
 Deployment layering is a single concept, so it should have a single relationship type and a
 single requirement name, declared once on `Base`, with the *capability* saying what kind of

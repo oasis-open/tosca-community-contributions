@@ -33,7 +33,7 @@ are shared by profiles at different levels of abstraction.
 Two further profiles serve as the base of a *column* rather than of a
 level. `community.tosca.abstract.base`, described in [Generic Base Node
 Types for System View
-Profiles](modeling-methodology.md#generic-base-node-types-for-system-view-profiles) above,
+Profiles](modeling-methodology.md#generic-base-node-types-for-system-view-profiles) in the modeling methodology,
 holds the four generic node types of the System View column together
 with the relationship and capability types they use.
 `community.tosca.technology.base` is its counterpart for the
@@ -44,7 +44,7 @@ a `Bash` artifact type carrying a `host` property, so that a script can
 be declared to run on a particular host rather than on the orchestrator.
 Why the two `Standard` definitions differ is covered in [Interface
 Definitions Differ by Level](modeling-methodology.md#interface-definitions-differ-by-level)
-above.
+in the modeling methodology.
 
 > The figure above shows a single base profile, and it is the System
 > View one. No base profile is drawn beneath the Administrator View and
@@ -69,7 +69,7 @@ specific*. The second runs horizontally, and appears in the figure as
 the decomposition of the System View level into separate Platform,
 Application, Data, and Network profiles. The section on [decoupling
 applications and data from platforms](modeling-methodology.md#decouple-applications-and-data-from-platforms)
-below applies that same separation to the design of abstract service
+in the modeling methodology applies that same separation to the design of abstract service
 templates.
 
 What the figure does not yet show is the two dimensions *crossed below
@@ -113,7 +113,8 @@ technology-neutral concept were modeled as a node type at the
 Administrator View row. A Device View product type would then reach it
 by *derivation*, following the recommendation in [Translating
 Administrator View to Device
-View](modeling-methodology.md#translating-administrator-view-to-device-view) above. But that
+View](modeling-methodology.md#translating-administrator-view-to-device-view) in the modeling
+methodology. But that
 same product type must also derive from the type that represents how it
 is realized. That is one `derived_from` and two required parents, and
 TOSCA node types are singly inherited. Expressing the neutral concept as
@@ -122,7 +123,8 @@ a capability avoids the contradiction entirely, because a port is
 
 This is a specific instance of a more general tension already noted in
 [Translating Device View to Instance
-View](modeling-methodology.md#translating-device-view-to-instance-view) above: where derivation
+View](modeling-methodology.md#translating-device-view-to-instance-view) in the modeling
+methodology: where derivation
 is the only mechanism available for crossing a boundary, every
 independent axis of variation has to be expressed as another derived
 type. Capabilities relieve that pressure wherever what the consumer

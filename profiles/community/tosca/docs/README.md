@@ -6,7 +6,10 @@ The documents here fall into four kinds, and a document's kind says how long it
 lives and what it may claim.
 
 - **Guides** describe what *is*: the methodology, the organization, the
-  conventions. They carry no status line because they are always current.
+  conventions. Their status is always *current practice*. A guide may also carry
+  a proposed amendment to itself, marked by a callout that names its tracker
+  issue; when the issue is decided the callout goes, and the text either stays as
+  current practice or goes with it.
 - **Reference** collects material gathered from elsewhere. It is input, not
   guidance, and it goes stale rather than wrong.
 - **Domain notes** record why a particular technology is modeled the way it is.
