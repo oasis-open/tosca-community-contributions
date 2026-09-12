@@ -19,8 +19,8 @@ what those edits say. Items 1 to 4 are those four. Everything else on this agend
 the tag without changing it, except I46 in item 5, which amends an edit the tag makes and can
 slip only as a breaking change in the next version.
 
-**Items 1 to 10 run to 125 minutes, and the meeting is 60.** The four release-path items take
-55 of those, which is the hour once anything else is reached at all. **Item 6 is the one not to
+**Items 1 to 10 run to 120 minutes, and the meeting is 60.** The four release-path items take
+50 of those, which is the hour once anything else is reached at all. **Item 6 is the one not to
 defer again** — its three drafted resolutions have now been carried past five meetings without
 being read, and if the hour is short it is better to ratify one of them than to move all three
 a sixth time.
@@ -110,45 +110,36 @@ proposal rather than a design position, so this is a question of what to add, no
 declares, so a kind left out here cannot be added by a downstream profile without changing the
 abstract type again — which is why it has to be right before the `0.1` freezes it.
 
-## 4. `RelationalDatabase` — derived type or technology value? — 20 min · *I30 / I31 / I4 / I45*
+## 4. The data profile — `AtRestData`'s name, and the storage inventory — 15 min · *I45 / I31 / I4*
 
-Carried from 09-09, not reached. `Base` already carries `technology` and `product`, so
-`AtRestData` with `technology: relational` and `product: postgresql` expresses the same thing
-Section 2.5 derives a type for. Roberto asks whether the relational/NoSQL distinction belongs at
-this level or is a technology detail; the counter-precedent is `ContainerPlatform` against
-`VirtualizationPlatform`, which sit at this level for a distinction of the same kind.
-
-Roberto's own tiebreaker is the usable one: **a derived type earns its place if it has properties
-specific to it** — a schema, for instance. **Applied, it says this one does not.** Section 2.5
-gives `RelationalDatabase` one property, `credential`, and every at-rest store is authenticated to,
-so nothing in it is specific to relational data. The downstream profile the type came from
-confirms it from the other side:
+**For information: Section 2.5 is withdrawn (decision N14).** It proposed deriving
+`RelationalDatabase` from `AtRestData` with one property, `credential`. Roberto's tiebreaker from
+09-02 — a derived type earns its place if it has properties specific to it, a schema for
+instance — says it does not, since every at-rest store is authenticated to. The downstream
+profile the type came from confirms it from the other side:
 
 - the type was introduced without a recorded reason;
 - no template sets its `credential`, and no realization reads it;
 - its one realization selects on the `technology` property, not on the type.
 
-Nothing depends on the derived type.
+So a relational database is `AtRestData` with `technology: relational` and a `product` naming the
+implementation, until a property specific to relational data gives a derived type something to
+carry. It is the worked case of **I4**: a derived type where it has something of its own to carry,
+a property value where it does not.
 
-This is the concrete instance of **I4**, the abstract-types against minimal-types question, and
-settling it here gives the rule a worked case rather than a principle.
-
-**Also here: I31.** Data and storage have had the least prototyping of any area of the abstract
-profiles, and `AtRestData` is the only at-rest type. Stefano's reverse-engineering work covers
-storage constructs across providers, and an inventory of them would tell us how many more of
-these decisions are coming.
-
-**Also here: I45.** `AtRestData` is named on a security axis, *at rest* as against *in transit*
+**I45 — the name.** `AtRestData` is named on a security axis, *at rest* as against *in transit*
 and *in use*, while its five siblings are named for how data is delivered. So the name suggests
 the others are not at rest, which is not the distinction the profile draws. What sets the type
 apart on the profile's own axis is that data is stored and retrieved on demand; `StoredData` and
 `PersistentData` both read alongside `BatchData` and `StreamingData`. TOSCA has no aliasing, so
 a rename after the `0.1` is a breaking change: rename now, or keep the name.
 
-**Proposed: withdraw Section 2.5.** A relational database is `AtRestData` with `technology:
-relational` and a `product` naming the implementation, until a property specific to relational
-data — a schema — gives a derived type something to carry. Holding the section out of the `0.1`
-remains the fallback; leaving it undecided while the tag is cut is not.
+**Also here: I31.** Data and storage have had the least prototyping of any area of the abstract
+profiles, and `AtRestData` is the only at-rest type. Stefano's reverse-engineering work covers
+storage constructs across providers, and an inventory of them would tell us how many more of
+these decisions are coming.
+
+**Decision sought:** whether to rename `AtRestData` before the `0.1`.
 
 ## 5. `control-host` — the piece 2.3 did not finish — 20 min · *Questions 6 and 8 / I46*
 
@@ -345,9 +336,8 @@ Five minutes is enough for either.
 ---
 
 **Decisions sought:** how a derived relationship type declares its kind (#1); the `mgmt-address`
-type (#2); the container-platform credential vocabulary (#3); withdrawing `RelationalDatabase` in
-favour of `AtRestData` with `technology` and `product`, or an explicit deferral out of the `0.1`,
-and whether to rename `AtRestData` (#4); the `control-host` name, the control-node workload model,
+type (#2); the container-platform credential vocabulary (#3); whether to rename `AtRestData`
+before the `0.1` (#4); the `control-host` name, the control-node workload model,
 and whether I46's single hosting capability goes in before the tag or after it (#5); and whether the §1.2.2 naming amendments are submitted to
 the TC or withdrawn (#10).
 
@@ -361,4 +351,4 @@ discussed, each becoming a decision item once the questions in it are answered.
 what stands between the community and its first tag is editing the profiles.
 
 **For information:** the design guide is renamed `modeling-methodology.md` (the notice before
-item 1).
+item 1), and Section 2.5's `RelationalDatabase` is withdrawn (decision N14, item 4).

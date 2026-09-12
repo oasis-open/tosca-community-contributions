@@ -38,10 +38,10 @@ The community abstract profiles — `community.tosca.core` and the five
 types declare no properties at all.
 
 Ubicity maintains a set of **extension profiles** (`com.ubicity.abstract.platform`,
-`com.ubicity.abstract.data`, `com.ubicity.abstract.network`, and an empty
-`com.ubicity.abstract.application`) whose only purpose is to derive from the community types
-and add the properties and requirements needed to actually use them: management address,
-credentials, hosting requirements, a concrete `RelationalDatabase`, a network's address range.
+`com.ubicity.abstract.network`, and the empty `com.ubicity.abstract.application` and
+`com.ubicity.abstract.data`, which carry realizations only) whose purpose is to derive from the
+community types and add the properties and requirements needed to actually use them: management
+address, credentials, hosting requirements, a network's address range.
 Where Section 3 discusses a property such as `mgmt-address` or `credentials`, it is describing
 these extension profiles — the community types themselves declare neither.
 
@@ -140,8 +140,7 @@ a community profile *below* it is not a deviation — it is the layering working
 credential, and resolved it as specific to the technology being authenticated to. This section
 settles where the reference types are *declared*, so that two profiles naming the same one are
 nominally compatible. A profile is free to type a credential property as a `string` under
-[question 2](#question-2--credential-typing)'s resolution and still import these; `RelationalDatabase` in Section 2.5 does exactly
-that.
+[question 2](#question-2--credential-typing)'s resolution and still import these.
 
 > Note: an earlier draft of this section proposed a flat `Credential` carrying `user_name`,
 > `key_file` and `password_file`, mirroring what `com.ubicity.core` declared at the time. That
@@ -621,34 +620,14 @@ prototyped against them, so there is no evidence yet for what they would need.
 
 ### 2.5 `community.tosca.abstract.data` — `RelationalDatabase`
 
-**Status: open, and the derivation itself is in question (2026-09-02).** `Base` already carries
-`technology` and `product`, so the same thing is expressible as `AtRestData` with
-`technology: relational` and `product: postgresql`, and Roberto asks whether the relational/NoSQL
-distinction belongs at this level or is a technology detail. The counter-precedent is
-`ContainerPlatform` against `VirtualizationPlatform`, which sit at this level for a distinction
-of the same kind, and Roberto's own tiebreaker is that a derived type earns its place if it has
-properties specific to it — a schema, for instance. Tracked as I30 in
-[`open-issues.md`](../../../../governance/open-issues.md); this section is a candidate to hold
-out of the `0.1` rather than freeze unresolved.
-
-```yaml
-node_types:
-  RelationalDatabase:
-    description: >-
-      Represents a relational database — a set of at-rest data managed by a
-      relational database management system.
-    derived_from: AtRestData
-    properties:
-      credential:
-        type: NamedCredentialRef        # Section 2.1
-        required: false
-```
-
-A database is authenticated to one way, so a single property is the right declaration here
-rather than the map keyed by credential kind that Section 2.4 gives the platform types — there
-is only one kind, and nothing for a key to distinguish. It is a `NamedCredentialRef` because a
-database login names the principal it authenticates as.
-[Question 2](#question-2--credential-typing)'s resolution admits either declaration.
+**Status: withdrawn (2026-09-12).** This section proposed deriving `RelationalDatabase` from
+`AtRestData` with one property, `credential`. That property is not specific to relational data —
+every at-rest store is authenticated to — so by Roberto's tiebreaker, that a derived type earns
+its place with properties specific to it, the type does not, and the downstream profile it came
+from depends on nothing it adds. A relational database is `AtRestData` with
+`technology: relational` and a `product` naming the implementation, until a property specific to
+relational data, a schema for instance, gives a derived type something to carry. Recorded as
+decision N14, which closes I30.
 
 ### 2.6 `community.tosca.abstract.application` — one interaction port, specialized per kind
 
