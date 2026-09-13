@@ -13,9 +13,11 @@ forward intact.
 Roberto's. The first has an answer already and needs a decision (item 1). The second needs a
 discussion opened before it can have one (item 8).
 
-**September is the deadline the chair set, and three meetings remain in it.** The `0.1` no
-longer waits on any design decision — it waits on the edits, and on four questions that decide
-what those edits say. Items 1 to 4 are those four. Everything else on this agenda can slip past
+**September is the deadline the chair set, and three meetings remain in it.** Most of the edits
+the `0.1` waits on are now written into the profiles; the second notice below lists them. Two
+remain: N8, once items 2 and 3 have settled what it says, and N9, with the rest of N12, once
+item 5 has said whether I46 goes in first. Items 1 to 4 are the questions that decide what the
+remaining edits and the already-written types say. Everything else on this agenda can slip past
 the tag without changing it, except I46 in item 5, which amends an edit the tag makes and can
 slip only as a breaking change in the next version.
 
@@ -46,6 +48,27 @@ profiles make up the continuum's lower levels. The rest of the content is unchan
   Component/Port pattern, which is where those have lived since 09-02.
 - **Links from outside the repository** to `design-guide.md` stop resolving. Anyone who has
   bookmarked or cited it should update the link; the section anchors are unchanged.
+
+## Notice — written into the profiles since 09-09 — 3 min · **for information**
+
+Five agreed decisions are now in the profiles, and one proposal is withdrawn. Each is marked
+in the [decision log](decision-log.md).
+
+- **A8 — `core` is the standard library.** The six base capability and relationship types are
+  in `abstract.base`, with a copy in `technology.base`, and `core` holds data types, artifact
+  types and functions. `Bash` stays in `core` for now (item 9).
+- **D13 — `CredentialRef` and `NamedCredentialRef` are in `core`.** The vocabulary each platform
+  type accepts arrives with N8.
+- **N11 — one interaction port on `Application`.** Every application exposes `service` and
+  reaches another's through `interacts-with`. `Service` and `InteractsWith` are declared in
+  `abstract.base` beside `Application`, `InteractsWith` as an association, and `Endpoint`
+  derives from `Service`. The two examples in the repository use the new names.
+- **N12, in part — `ServerApplication`.** Renamed, and without `processes`. Its placement
+  requirement becomes `host` with N9.
+- **N15 — `Network` carries `cidr_block` and `internet_accessible`.** Section 2.8, agreed on
+  09-02 and carried until now only in I2, is recorded as a decision. It stays provisional
+  pending the `technology`-based network model I2 describes.
+- **N14 — Section 2.5 is withdrawn** (item 4).
 
 ## 1. `relationship_kind` — metadata carries neither inheritance nor obligation — 10 min · *I44* · **decision sought**
 
@@ -214,7 +237,7 @@ Walked through on 09-09, but to two people, so this is still the group's first l
 credential the model *references*; this covers one the orchestrator *creates* — a key pair
 generated before a VM request, a certificate issued during deployment, a token minted for a
 service. A node type per kind of orchestrated secret, a `Credential` capability on it holding a
-map of `CredentialRef`, and a requirement on every node that needs the material. The certificate
+map of `CredentialRef`, which `core` now declares, and a requirement on every node that needs the material. The certificate
 case is the worked one: common name, alternative names, intended usage and validity on the node
 type; the certificate and key produced as file references on the device that created them; the
 public information published as attributes for whoever reads it.
@@ -329,7 +352,11 @@ Five minutes is enough for either.
   structure into requirements and capabilities, which is what a substitution filter selects on.
   The filters are being refined and are expected to work, but the mechanism has not been walked
   through with the group.
-- **Examples exercising the agreed changes.** Committed on 09-02 for the next couple of meetings.
+- **Examples exercising the agreed changes.** Committed on 09-02. The two examples in the
+  repository, `online_boutique` and the microservice substitution, now use N11's names; examples
+  for the other agreed changes are still to come.
+- **Whether the `Process` data type goes.** N12 dropped the `processes` property that used it,
+  so nothing in the application profile uses it now, and N12 does not say whether it stays.
 - **OPAF participation (C4).** Bringing the Open Process Automation Forum's control-systems
   modelling into these meetings, in both directions.
 - Carried: Kubernetes profile testing (Prachi, Jay); Tal's OpenAPI→TOSCA generator.
@@ -349,7 +376,9 @@ each draft.
 discussed, each becoming a decision item once the questions in it are answered.
 
 **Items 1 to 4 are on the `0.1` path, and September has three meetings left.** After those four,
-what stands between the community and its first tag is editing the profiles.
+and item 5's call on I46, what stands between the community and its first tag is two edits, N8
+and N9.
 
-**For information:** the design guide is renamed `modeling-methodology.md` (the notice before
-item 1), and Section 2.5's `RelationalDatabase` is withdrawn (decision N14, item 4).
+**For information:** the design guide is renamed `modeling-methodology.md` (the first notice);
+A8, D13, N11, most of N12 and Section 2.8 (N15) are written into the profiles (the second
+notice); and Section 2.5's `RelationalDatabase` is withdrawn (decision N14, item 4).
