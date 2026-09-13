@@ -59,12 +59,12 @@ service_template:
     node_type: app:MicroService
     properties:
       name: name
-      [CAPABILITY, endpoint, port]: port
-      [CAPABILITY, endpoint, target-port]: target-port
-      [CAPABILITY, endpoint, name]: port-name
-      [CAPABILITY, endpoint, protocol]: protocol
+      [CAPABILITY, service, port]: port
+      [CAPABILITY, service, target-port]: target-port
+      [CAPABILITY, service, name]: port-name
+      [CAPABILITY, service, protocol]: protocol
     capabilities:
-      endpoint: [service, endpoint]
+      service: [service, endpoint]
     requirements:
       # Fan the abstract platform requirement out to every resource's cluster
       # requirement (inherited from k8s:Resource).
@@ -75,7 +75,7 @@ service_template:
           - [service, cluster]
       # Peer-microservice interactions are consumed by the Pod (to build the
       # *_SERVICE_ADDR env vars).
-      - [endpoint, UNBOUNDED]: [pod, endpoint]
+      - [interacts-with, UNBOUNDED]: [pod, endpoint]
 
   inputs:
     name:

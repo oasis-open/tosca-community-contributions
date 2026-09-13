@@ -632,7 +632,9 @@ decision N14, which closes I30.
 
 ### 2.6 `community.tosca.abstract.application` — one interaction port, specialized per kind
 
-**Status: agreed 2026-09-02** — *"more correct than the previous situation, in which we had
+**Status: agreed 2026-09-02; in the profiles since 2026-09-12**, with `Service` and `InteractsWith`
+declared in `abstract.base` beside the `Application` that uses them — *"more correct than the
+previous situation, in which we had
 specialized interactions between derived nodes of the same type, and only on a subset of them,
 not all"* (Roberto). Recorded as decision N11. Roberto asked whether a `Service` capability that
 adds nothing to `Partner` is worth declaring; the answer, accepted and now recorded as decision
@@ -776,7 +778,9 @@ the only types that declare either name.
 
 ### 2.7 `community.tosca.abstract.application` — name the platform, drop the processes
 
-**Status: agreed 2026-09-02.** Recorded as decision N12. Roberto added the answer to the
+**Status: agreed 2026-09-02, and in the profiles in part since 2026-09-12**: the type is renamed
+and `processes` is dropped, while its placement requirement keeps the name `runs-on` until Section
+2.3 (N9) renames it. Recorded as decision N12. Roberto added the answer to the
 question the section leaves hanging — where the list of processes goes if it turns out to be
 needed. Not a renamed property, but the **`implementation-details`** property already inherited
 from `Base`: the list stays opaque at the System View and is parsed at the layer that

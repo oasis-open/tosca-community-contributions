@@ -61,12 +61,12 @@ And §5.3.1 goes further: metadata *"MAY be ignored by TOSCA Orchestrators and S
 runtime behavior."*
 
 **Both consequences are already in the repository**, which is what makes this worth ten minutes
-rather than a footnote. `abstract.base` redeclares the keyname on all five of its derived types,
-so the rule is understood there — but `InteractsWith` in `abstract.application` derives from
-`DependsOn` and declares none, so it has no kind at all; and the vocabulary has drifted in case,
-the base types writing `CONTAINMENT` where the types derived from them write `containment`. Neither is visible on
-an engine that walks the hierarchy for a missing keyname and folds case for a present one, which
-is how at least one implementation copes.
+rather than a footnote. `abstract.base` redeclares the keyname on all six of its derived
+relationship types, so the rule is understood there. `InteractsWith` declared none until N11 moved
+it into `abstract.base` as an association on 09-12, and the vocabulary has drifted in case, the
+base types writing `CONTAINMENT` where the types derived from them write `containment`. Neither was
+visible on an engine that walks the hierarchy for a missing keyname and folds case for a present
+one, which is how at least one implementation copes.
 
 **Preparation:** four options are written up in discussion [#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363). Keep redeclaring and fix what is
 there; drop the metadata and let derivation carry the kind, since the parent type already names

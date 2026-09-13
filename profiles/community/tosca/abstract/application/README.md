@@ -2,15 +2,14 @@
 
 This profile defines the types for deploying applications, derived from the
 abstract `Application` node type in the [base profile](../base/README.md). It
-declares four application node types, an `Endpoint` capability and an
-`InteractsWith` relationship through which applications reach one another, and a
-`Process` data type.
+declares four application node types, the `Endpoint` capability that specializes the
+`Service` port every application has, and a `Process` data type.
 
 ```mermaid
 classDiagram
     Application <|-- MicroServiceApplication
     Application <|-- MicroService
-    Application <|-- SingleHostApplication
+    Application <|-- ServerApplication
     Application <|-- ServerlessApplication
 ```
 
@@ -21,12 +20,22 @@ is deployed on.
 |  | whole application | one component |
 |---|---|---|
 | container platform | `MicroServiceApplication` | `MicroService` |
-| server platform | `SingleHostApplication` | — |
+| server platform | `ServerApplication` | — |
 | serverless platform | `ServerlessApplication` | — |
 
 A whole-application node is frequently a good candidate for replacement by a
 substituting template, since the internal structure it stands for is exactly what
 such a template supplies.
+
+## Interaction between applications
+
+Every application exposes a `service` capability of type `Service`, and reaches another
+application's through an `interacts-with` requirement over `InteractsWith`; both are declared
+on `Application` in the [base profile](../base/README.md). `InteractsWith` is an association,
+so it asserts no deployment order. A type reached over a network refines `service` to
+`Endpoint`, which carries `port`, `target-port`, `name` and `protocol`; `MicroService` and
+`ServerApplication` do. Either end may be any kind of application, and a profile that wants to
+restrict the sources narrows `valid_source_node_types` on the capability.
 
 ## MicroServiceApplication
 
@@ -42,19 +51,16 @@ A single microservice. Deployed on a `ContainerPlatform`.
 
 Choose it where the top-level template explodes the application into its
 microservices, so that each is substituted separately and independently of the
-others. A `MicroService` exposes an `Endpoint` and reaches its peers through an
-`InteractsWith` requirement to theirs.
+others. Its `service` capability is an `Endpoint`, and it reaches its peers through
+`interacts-with`.
 
-## SingleHostApplication
+## ServerApplication
 
-An application whose processes all run on one host — a monolith, a modular
-monolith, or a distributed application whose parts share a host. Deployed on a
-`ServerPlatform`.
+An application that runs on a server platform. Deployed on a `ServerPlatform`.
 
 Several nodes of this type combine to represent an application distributed over
-distinct hosts, such as an N-tier or client-server deployment. The `processes`
-property lists the processes that compose it, and the type exposes an `Endpoint`
-so that peers can reach it.
+distinct servers, such as an N-tier or client-server deployment. Its `service`
+capability is an `Endpoint`, so that peers can reach it.
 
 ## ServerlessApplication
 
@@ -66,13 +72,7 @@ left to a substituting template.
 
 ---
 
-> **Three agreed changes are not yet applied.** `SingleHostApplication` becomes
-> `ServerApplication`, named for the platform it targets rather than for a
-> cardinality, and loses its `processes` property (decision N12). `Endpoint` and
-> `InteractsWith` move up: `Application` gains a property-free `Service`
-> capability that derived types specialize, and the constraint that both ends of
-> an interaction be nodes of the same type is dropped (decision N11). The
-> `runs-on` requirement is renamed `host`, the name used for deployment layering
-> at every level (decision N9). All three were agreed on 2026-09-02; Sections
-> 2.3, 2.6 and 2.7 of the [abstract-profile
-> proposal](../../docs/abstract-profile-proposed-changes.md) carry the detail.
+> **One agreed change is not yet applied.** The `runs-on` requirement is renamed
+> `host`, the name used for deployment layering at every level (decision N9,
+> agreed 2026-09-02). Section 2.3 of the [abstract-profile
+> proposal](../../docs/abstract-profile-proposed-changes.md) carries the detail.

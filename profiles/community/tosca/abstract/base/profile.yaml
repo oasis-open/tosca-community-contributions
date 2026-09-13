@@ -70,6 +70,11 @@ capability_types:
       to a specific network.
     derived_from: Feature
     valid_relationship_types: [LinksTo]
+  Service:
+    description: >-
+      Advertizes the ability to provide a service to other components. Derived
+      types carry the contract a consumer reads to use it.
+    derived_from: Partner
 
 relationship_types:
   # The three base relationship types, one for each relationship kind. Their
@@ -155,6 +160,14 @@ relationship_types:
         type: YAML
         required: false
     valid_capability_types: [Linkable]
+  InteractsWith:
+    description: >-
+      Models interaction between applications: the source uses a service the
+      target provides. An association, so it asserts no deployment order.
+    metadata:
+      relationship_kind: association
+    derived_from: AssociatesWith
+    valid_capability_types: [Service]
 
 interface_types:
   Standard:
@@ -168,7 +181,6 @@ interface_types:
       delete:
         description: >-
           Operation to delete a node.
-
 node_types:
   Base:
     description: >-
@@ -225,7 +237,13 @@ node_types:
     description: >-
       Abstract Node Type modeling a generic application
     derived_from: Base
+    capabilities:
+      service:
+        type: Service
     requirements:
+      - interacts-with:
+          capability: Service
+          relationship: InteractsWith
       - processes:
           capability: DataSource
           relationship: Processes

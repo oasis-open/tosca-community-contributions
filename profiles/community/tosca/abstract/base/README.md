@@ -17,6 +17,7 @@ classDiagram
     Base <|-- Network
     Base <|-- Platform
     Application "0..*" --> "1" Data:Processes
+    Application "0..*" --> "0..*" Application:InteractsWith
     Application "1" --> "1" Platform:RunsOn
     Platform "0..*" --> "1" Network:LinksTo
     Data "1" --> "1" Platform:AvailableOn
@@ -43,6 +44,11 @@ relationships:
 - Application nodes define a relationship of type `Processes` to a
   data node. This is a dependency relationship that defines which
   entity contains the data that are processed by the application.
+- Application nodes define a relationship of type `InteractsWith` to
+  the `service` capability, of type `Service`, that every application
+  exposes. This is an association relationship that records which
+  applications use a service another provides, without implying a
+  deployment order.
 - Data nodes define a relationship of type `AvailableOn` to a
   platform node. This is a containment relationship that defines which
   platform stores persistent copies of the data.
