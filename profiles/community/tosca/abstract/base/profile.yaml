@@ -247,6 +247,20 @@ node_types:
     description: >-
       Abstract Node Type modeling a generic network
     derived_from: Base
+    properties:
+      cidr_block:
+        description: >-
+          Address range of this network, in CIDR notation. Left unset for a
+          forwarding domain that carries no addressing of its own, or one whose
+          range the realization assigns.
+        type: string
+        required: false
+      internet_accessible:
+        description: >-
+          Whether traffic on this network reaches the public internet. A network
+          that does not say so does not.
+        type: boolean
+        default: false
     capabilities:
       linkable:
         type: Linkable

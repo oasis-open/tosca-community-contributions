@@ -821,7 +821,8 @@ today. The two proposals are otherwise independent and can be adopted in either 
 
 ### 2.8 `community.tosca.abstract.network` — what a network is addressed as, and whether it reaches the internet
 
-**Status: proposed as-is and acknowledged provisional (2026-09-02).** No corresponding problem
+**Status: agreed 2026-09-02 as decision N15, acknowledged provisional; in the profiles since
+2026-09-12.** No corresponding problem
 section: the two properties are additions every realization written against `Network` has needed,
 not a defect in the community types. `cidr_block` as a bare string is what keeps the existing AWS,
 Google Cloud and Proxmox realizations working, and it was put forward on that basis rather than as

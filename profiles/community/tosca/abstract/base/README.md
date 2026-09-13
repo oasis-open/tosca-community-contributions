@@ -50,6 +50,14 @@ relationships:
   node. This is a dependency relationship that defines the network(s)
   to which platforms connect.
 
+Network nodes carry two properties. `cidr_block` is the network's
+address range in CIDR notation, left unset for a forwarding domain that
+carries no addressing of its own or one whose range the realization
+assigns. `internet_accessible` states whether traffic on the network
+reaches the public internet; it is `false` unless set, and a substitution
+filter reads it to choose between a reachable and an isolated
+realization of the same network.
+
 ## Base Relationship Types
 
 This profile defines three different *kinds* of top-level
