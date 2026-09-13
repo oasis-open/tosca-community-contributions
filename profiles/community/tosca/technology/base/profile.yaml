@@ -44,6 +44,52 @@ interface_types:
         description: >-
           Operation to delete a node.
 
+relationship_types:
+  # The base relationship types for the technology column, one for each
+  # relationship kind: the same three community.tosca.abstract.base declares for
+  # the System View, so that a technology profile need not import the abstract
+  # layer to use them.
+  ContainedBy:
+    description: >-
+      The ContainedBy type represents a containment relationship
+      between two nodes.
+    metadata:
+      relationship_kind: CONTAINMENT
+    valid_capability_types: [Container]
+  DependsOn:
+    description: >-
+      Generic dependency on a feature
+    metadata:
+      relationship_kind: DEPENDENCY
+    valid_capability_types: [Feature]
+  AssociatesWith:
+    description: >-
+      The AssociatesWith type represents an association relationship
+      between two nodes.
+    metadata:
+      relationship_kind: ASSOCIATION
+    valid_capability_types: [Partner]
+
+capability_types:
+  # The capability types the three base relationship types target.
+  Container:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      ContainedBy relationship.  Advertizes the ability to contain one
+      or more other nodes.
+    valid_relationship_types: [ContainedBy]
+  Feature:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      DependsOn relationship. Derived types define
+      application-specific functionality.
+    valid_relationship_types: [DependsOn]
+  Partner:
+    description: >-
+      Base capability type for capabilities that can be targeted by an
+      AssociatesWith relationship.
+    valid_relationship_types: [AssociatesWith]
+
 node_types:
   Root:
     description: >-

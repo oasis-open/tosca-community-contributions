@@ -13,14 +13,16 @@ forward intact.
 Roberto's. The first has an answer already and needs a decision (item 1). The second needs a
 discussion opened before it can have one (item 8).
 
-**September is the deadline the chair set, and three meetings remain in it.** The `0.1` no
-longer waits on any design decision — it waits on the edits, and on four questions that decide
-what those edits say. Items 1 to 4 are those four. Everything else on this agenda can slip past
+**September is the deadline the chair set, and three meetings remain in it.** Most of the edits
+the `0.1` waits on are now written into the profiles; the second notice below lists them. Two
+remain: N8, once items 2 and 3 have settled what it says, and N9, with the rest of N12, once
+item 5 has said whether I46 goes in first. Items 1 to 4 are the questions that decide what the
+remaining edits and the already-written types say. Everything else on this agenda can slip past
 the tag without changing it, except I46 in item 5, which amends an edit the tag makes and can
 slip only as a breaking change in the next version.
 
-**Items 1 to 10 run to 125 minutes, and the meeting is 60.** The four release-path items take
-55 of those, which is the hour once anything else is reached at all. **Item 6 is the one not to
+**Items 1 to 10 run to 120 minutes, and the meeting is 60.** The four release-path items take
+50 of those, which is the hour once anything else is reached at all. **Item 6 is the one not to
 defer again** — its three drafted resolutions have now been carried past five meetings without
 being read, and if the hour is short it is better to ratify one of them than to move all three
 a sixth time.
@@ -47,12 +49,34 @@ profiles make up the continuum's lower levels. The rest of the content is unchan
 - **Links from outside the repository** to `design-guide.md` stop resolving. Anyone who has
   bookmarked or cited it should update the link; the section anchors are unchanged.
 
+## Notice — written into the profiles since 09-09 — 3 min · **for information**
+
+Five agreed decisions are now in the profiles, and one proposal is withdrawn. Each is marked
+in the [decision log](decision-log.md).
+
+- **A8 — `core` is the standard library.** The six base capability and relationship types are
+  in `abstract.base`, with a copy in `technology.base`, and `core` holds data types, artifact
+  types and functions. `Bash` stays in `core` for now (item 9).
+- **D13 — `CredentialRef` and `NamedCredentialRef` are in `core`.** The vocabulary each platform
+  type accepts arrives with N8.
+- **N11 — one interaction port on `Application`.** Every application exposes `service` and
+  reaches another's through `interacts-with`. `Service` and `InteractsWith` are declared in
+  `abstract.base` beside `Application`, `InteractsWith` as an association, and `Endpoint`
+  derives from `Service`. The two examples in the repository use the new names.
+- **N12, in part — `ServerApplication`.** Renamed, and without `processes`. Its placement
+  requirement becomes `host` with N9.
+- **N15 — `Network` carries `cidr_block` and `internet_accessible`.** Section 2.8, agreed on
+  09-02 and carried until now only in I2, is recorded as a decision. It stays provisional
+  pending the `technology`-based network model I2 describes.
+- **N14 — Section 2.5 is withdrawn** (item 4).
+
 ## 1. `relationship_kind` — metadata carries neither inheritance nor obligation — 10 min · *I44* · **decision sought**
 
 **New, out of Roberto's question last week, and on the release path** because it changes what
-the base relationship types declare and A8 is about to move them.
+the base relationship types declare, and A8 has now moved them into `abstract.base`, with a
+second set in `technology.base`.
 
-The three base relationship types in `core` carry a `relationship_kind` metadata keyname, which
+The three base relationship types carry a `relationship_kind` metadata keyname, which
 an orchestrator reads to decide how deletion and events propagate. Roberto asked whether a
 derived type inherits it. **It does not** — §6.4.2 lists `metadata` among the four common
 keynames that do not survive derivation, alongside `derived_from`, `version` and `description`.
@@ -60,12 +84,12 @@ And §5.3.1 goes further: metadata *"MAY be ignored by TOSCA Orchestrators and S
 runtime behavior."*
 
 **Both consequences are already in the repository**, which is what makes this worth ten minutes
-rather than a footnote. `abstract.base` redeclares the keyname on all five of its derived types,
-so the rule is understood there — but `InteractsWith` in `abstract.application` derives from
-`DependsOn` and declares none, so it has no kind at all; and the vocabulary has drifted in case,
-`core` writing `CONTAINMENT` where `abstract.base` writes `containment`. Neither is visible on
-an engine that walks the hierarchy for a missing keyname and folds case for a present one, which
-is how at least one implementation copes.
+rather than a footnote. `abstract.base` redeclares the keyname on all six of its derived
+relationship types, so the rule is understood there. `InteractsWith` declared none until N11 moved
+it into `abstract.base` as an association on 09-12, and the vocabulary has drifted in case, the
+base types writing `CONTAINMENT` where the types derived from them write `containment`. Neither was
+visible on an engine that walks the hierarchy for a missing keyname and folds case for a present
+one, which is how at least one implementation copes.
 
 **Preparation:** four options are written up in discussion [#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363). Keep redeclaring and fix what is
 there; drop the metadata and let derivation carry the kind, since the parent type already names
@@ -110,45 +134,36 @@ proposal rather than a design position, so this is a question of what to add, no
 declares, so a kind left out here cannot be added by a downstream profile without changing the
 abstract type again — which is why it has to be right before the `0.1` freezes it.
 
-## 4. `RelationalDatabase` — derived type or technology value? — 20 min · *I30 / I31 / I4 / I45*
+## 4. The data profile — `AtRestData`'s name, and the storage inventory — 15 min · *I45 / I31 / I4*
 
-Carried from 09-09, not reached. `Base` already carries `technology` and `product`, so
-`AtRestData` with `technology: relational` and `product: postgresql` expresses the same thing
-Section 2.5 derives a type for. Roberto asks whether the relational/NoSQL distinction belongs at
-this level or is a technology detail; the counter-precedent is `ContainerPlatform` against
-`VirtualizationPlatform`, which sit at this level for a distinction of the same kind.
-
-Roberto's own tiebreaker is the usable one: **a derived type earns its place if it has properties
-specific to it** — a schema, for instance. **Applied, it says this one does not.** Section 2.5
-gives `RelationalDatabase` one property, `credential`, and every at-rest store is authenticated to,
-so nothing in it is specific to relational data. The downstream profile the type came from
-confirms it from the other side:
+**For information: Section 2.5 is withdrawn (decision N14).** It proposed deriving
+`RelationalDatabase` from `AtRestData` with one property, `credential`. Roberto's tiebreaker from
+09-02 — a derived type earns its place if it has properties specific to it, a schema for
+instance — says it does not, since every at-rest store is authenticated to. The downstream
+profile the type came from confirms it from the other side:
 
 - the type was introduced without a recorded reason;
 - no template sets its `credential`, and no realization reads it;
 - its one realization selects on the `technology` property, not on the type.
 
-Nothing depends on the derived type.
+So a relational database is `AtRestData` with `technology: relational` and a `product` naming the
+implementation, until a property specific to relational data gives a derived type something to
+carry. It is the worked case of **I4**: a derived type where it has something of its own to carry,
+a property value where it does not.
 
-This is the concrete instance of **I4**, the abstract-types against minimal-types question, and
-settling it here gives the rule a worked case rather than a principle.
-
-**Also here: I31.** Data and storage have had the least prototyping of any area of the abstract
-profiles, and `AtRestData` is the only at-rest type. Stefano's reverse-engineering work covers
-storage constructs across providers, and an inventory of them would tell us how many more of
-these decisions are coming.
-
-**Also here: I45.** `AtRestData` is named on a security axis, *at rest* as against *in transit*
+**I45 — the name.** `AtRestData` is named on a security axis, *at rest* as against *in transit*
 and *in use*, while its five siblings are named for how data is delivered. So the name suggests
 the others are not at rest, which is not the distinction the profile draws. What sets the type
 apart on the profile's own axis is that data is stored and retrieved on demand; `StoredData` and
 `PersistentData` both read alongside `BatchData` and `StreamingData`. TOSCA has no aliasing, so
 a rename after the `0.1` is a breaking change: rename now, or keep the name.
 
-**Proposed: withdraw Section 2.5.** A relational database is `AtRestData` with `technology:
-relational` and a `product` naming the implementation, until a property specific to relational
-data — a schema — gives a derived type something to carry. Holding the section out of the `0.1`
-remains the fallback; leaving it undecided while the tag is cut is not.
+**Also here: I31.** Data and storage have had the least prototyping of any area of the abstract
+profiles, and `AtRestData` is the only at-rest type. Stefano's reverse-engineering work covers
+storage constructs across providers, and an inventory of them would tell us how many more of
+these decisions are coming.
+
+**Decision sought:** whether to rename `AtRestData` before the `0.1`.
 
 ## 5. `control-host` — the piece 2.3 did not finish — 20 min · *Questions 6 and 8 / I46*
 
@@ -222,7 +237,7 @@ Walked through on 09-09, but to two people, so this is still the group's first l
 credential the model *references*; this covers one the orchestrator *creates* — a key pair
 generated before a VM request, a certificate issued during deployment, a token minted for a
 service. A node type per kind of orchestrated secret, a `Credential` capability on it holding a
-map of `CredentialRef`, and a requirement on every node that needs the material. The certificate
+map of `CredentialRef`, which `core` now declares, and a requirement on every node that needs the material. The certificate
 case is the worked one: common name, alternative names, intended usage and validity on the node
 type; the certificate and key produced as file references on the device that created them; the
 public information published as attributes for whoever reads it.
@@ -337,7 +352,11 @@ Five minutes is enough for either.
   structure into requirements and capabilities, which is what a substitution filter selects on.
   The filters are being refined and are expected to work, but the mechanism has not been walked
   through with the group.
-- **Examples exercising the agreed changes.** Committed on 09-02 for the next couple of meetings.
+- **Examples exercising the agreed changes.** Committed on 09-02. The two examples in the
+  repository, `online_boutique` and the microservice substitution, now use N11's names; examples
+  for the other agreed changes are still to come.
+- **Whether the `Process` data type goes.** N12 dropped the `processes` property that used it,
+  so nothing in the application profile uses it now, and N12 does not say whether it stays.
 - **OPAF participation (C4).** Bringing the Open Process Automation Forum's control-systems
   modelling into these meetings, in both directions.
 - Carried: Kubernetes profile testing (Prachi, Jay); Tal's OpenAPI→TOSCA generator.
@@ -345,9 +364,8 @@ Five minutes is enough for either.
 ---
 
 **Decisions sought:** how a derived relationship type declares its kind (#1); the `mgmt-address`
-type (#2); the container-platform credential vocabulary (#3); withdrawing `RelationalDatabase` in
-favour of `AtRestData` with `technology` and `product`, or an explicit deferral out of the `0.1`,
-and whether to rename `AtRestData` (#4); the `control-host` name, the control-node workload model,
+type (#2); the container-platform credential vocabulary (#3); whether to rename `AtRestData`
+before the `0.1` (#4); the `control-host` name, the control-node workload model,
 and whether I46's single hosting capability goes in before the tag or after it (#5); and whether the §1.2.2 naming amendments are submitted to
 the TC or withdrawn (#10).
 
@@ -358,7 +376,9 @@ each draft.
 discussed, each becoming a decision item once the questions in it are answered.
 
 **Items 1 to 4 are on the `0.1` path, and September has three meetings left.** After those four,
-what stands between the community and its first tag is editing the profiles.
+and item 5's call on I46, what stands between the community and its first tag is two edits, N8
+and N9.
 
-**For information:** the design guide is renamed `modeling-methodology.md` (the notice before
-item 1).
+**For information:** the design guide is renamed `modeling-methodology.md` (the first notice);
+A8, D13, N11, most of N12 and Section 2.8 (N15) are written into the profiles (the second
+notice); and Section 2.5's `RelationalDatabase` is withdrawn (decision N14, item 4).

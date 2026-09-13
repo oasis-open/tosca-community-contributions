@@ -14,6 +14,8 @@ imports:
   namespace: platform
 
 data_types:
+  # Used by no type in this profile since N12 removed the property that did.
+  # Whether it goes is still open.
   Process:
     description: >-
       This data type provides command and parameters needed to launch
@@ -27,11 +29,11 @@ data_types:
         required: false
 
 capability_types:
-  # Used to relate application nodes of the same type
+  # The network specialization of the Service port every Application has.
   Endpoint:
     description: >-
-      Endpoint for interaction between application nodes of the same type
-    derived_from: Feature
+      A service reached over a network.
+    derived_from: Service
     properties:
       port:
         type: Port
@@ -43,15 +45,6 @@ capability_types:
       protocol:
         type: string
         required: false
-    valid_relationship_types: [InteractsWith]
-
-relationship_types:
-  # Used to relate application nodes of the same type
-  InteractsWith:
-    description: >-
-      Models interaction between application nodes of the same type
-    derived_from: DependsOn
-    valid_capability_types: [Endpoint]
 
 node_types:
   MicroServiceApplication:
@@ -78,44 +71,23 @@ node_types:
       its properties, capabilities and requirements.
     derived_from: Application
     capabilities:
-      endpoint:
+      service:
         type: Endpoint
-    requirements:
-      - endpoint:
-          node: MicroService
-          capability: Endpoint
-          relationship: InteractsWith
 
-  SingleHostApplication:
+  ServerApplication:
     description: >-
-      This node type can be used to represent a Monolith, a Modular Monolith
-      or even a Distributed Application made up by several processes running
-      on a single host. Multiple nodes of this type can be combined together
-      to represent distributed applications over distinct nodes (e.g. N-tier
-      or client-server applications)
+      An application that runs on a server platform. Several nodes of this type
+      combine to represent an application distributed over distinct servers,
+      such as an N-tier or client-server deployment.
     derived_from: Application
-    properties:
-      processes:
-        description: >-
-          List of processes that compose the application (which run
-          all on the same host)
-        required: true
-        type: list
-        entry_schema:
-          type: Process
     capabilities:
-      endpoint:
+      service:
         type: Endpoint
     requirements:
-      - endpoint:
-          node: SingleHostApplication
-          capability: Endpoint
-          relationship: InteractsWith
       - runs-on:
           capability: ExecutionEnvironment
           relationship: RunsOn
           node: platform:ServerPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
-
 
   ServerlessApplication:
     description: >-

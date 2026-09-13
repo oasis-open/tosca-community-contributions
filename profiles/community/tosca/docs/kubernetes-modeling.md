@@ -276,7 +276,7 @@ The pressure comes from two TOSCA facts:
    the peer relationship can't just be attached in the substituting template; it
    needs a derived type to carry it.
 2. **The substitution boundary hides the outer node's relationships** — the inner
-   Pod cannot see the abstract `MicroService`'s `endpoint` requirement, so the
+   Pod cannot see the abstract `MicroService`'s `interacts-with` requirement, so the
    interaction has to be re-expressed on a node *inside* the substitution.
 
 Options:

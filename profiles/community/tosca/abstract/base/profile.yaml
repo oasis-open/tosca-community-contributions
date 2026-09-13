@@ -10,6 +10,26 @@ imports:
 - profile: community.tosca.core:0.1
 
 capability_types:
+  # The three base capability types, one for each relationship kind; every
+  # other capability type derives from one of them. The technology column
+  # declares its own copies in community.tosca.technology.base.
+  Container:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      ContainedBy relationship.  Advertizes the ability to contain one
+      or more other nodes.
+    valid_relationship_types: [ContainedBy]
+  Feature:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      DependsOn relationship. Derived types define
+      application-specific functionality.
+    valid_relationship_types: [DependsOn]
+  Partner:
+    description: >-
+      Base capability type for capabilities that can be targeted by an
+      AssociatesWith relationship.
+    valid_relationship_types: [AssociatesWith]
   PlatformHost:
     description: >-
       This capability type is exposed by Platform node types and is
@@ -50,8 +70,36 @@ capability_types:
       to a specific network.
     derived_from: Feature
     valid_relationship_types: [LinksTo]
+  Service:
+    description: >-
+      Advertizes the ability to provide a service to other components. Derived
+      types carry the contract a consumer reads to use it.
+    derived_from: Partner
 
 relationship_types:
+  # The three base relationship types, one for each relationship kind. Their
+  # relationship_kind values are upper case where the types derived from them
+  # below write lower case; I44 settles the convention.
+  ContainedBy:
+    description: >-
+      The ContainedBy type represents a containment relationship
+      between two nodes.
+    metadata:
+      relationship_kind: CONTAINMENT
+    valid_capability_types: [Container]
+  DependsOn:
+    description: >-
+      Generic dependency on a feature
+    metadata:
+      relationship_kind: DEPENDENCY
+    valid_capability_types: [Feature]
+  AssociatesWith:
+    description: >-
+      The AssociatesWith type represents an association relationship
+      between two nodes.
+    metadata:
+      relationship_kind: ASSOCIATION
+    valid_capability_types: [Partner]
   HostedOn:
     description: >-
       Used for Relationship between nodes derived from the abstract
@@ -112,6 +160,14 @@ relationship_types:
         type: YAML
         required: false
     valid_capability_types: [Linkable]
+  InteractsWith:
+    description: >-
+      Models interaction between applications: the source uses a service the
+      target provides. An association, so it asserts no deployment order.
+    metadata:
+      relationship_kind: association
+    derived_from: AssociatesWith
+    valid_capability_types: [Service]
 
 interface_types:
   Standard:
@@ -125,7 +181,6 @@ interface_types:
       delete:
         description: >-
           Operation to delete a node.
-
 node_types:
   Base:
     description: >-
@@ -182,7 +237,13 @@ node_types:
     description: >-
       Abstract Node Type modeling a generic application
     derived_from: Base
+    capabilities:
+      service:
+        type: Service
     requirements:
+      - interacts-with:
+          capability: Service
+          relationship: InteractsWith
       - processes:
           capability: DataSource
           relationship: Processes
@@ -204,6 +265,20 @@ node_types:
     description: >-
       Abstract Node Type modeling a generic network
     derived_from: Base
+    properties:
+      cidr_block:
+        description: >-
+          Address range of this network, in CIDR notation. Left unset for a
+          forwarding domain that carries no addressing of its own, or one whose
+          range the realization assigns.
+        type: string
+        required: false
+      internet_accessible:
+        description: >-
+          Whether traffic on this network reaches the public internet. A network
+          that does not say so does not.
+        type: boolean
+        default: false
     capabilities:
       linkable:
         type: Linkable

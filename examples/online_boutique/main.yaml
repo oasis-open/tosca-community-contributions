@@ -15,44 +15,44 @@ service_template:
       properties:
         name: frontend
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 80
             target-port: 8080
             name: http
       requirements:
-        - endpoint: ad
-        - endpoint: recommend
-        - endpoint: catalog
-        - endpoint: cart
-        - endpoint: shipping
-        - endpoint: currency
-        - endpoint: checkout
+        - interacts-with: ad
+        - interacts-with: recommend
+        - interacts-with: catalog
+        - interacts-with: cart
+        - interacts-with: shipping
+        - interacts-with: currency
+        - interacts-with: checkout
     checkout:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: checkout
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 5050
             target-port: 5050
             name: grpc
       requirements:
-        - endpoint: catalog
-        - endpoint: cart
-        - endpoint: shipping
-        - endpoint: currency
-        - endpoint: payment
-        - endpoint: email
+        - interacts-with: catalog
+        - interacts-with: cart
+        - interacts-with: shipping
+        - interacts-with: currency
+        - interacts-with: payment
+        - interacts-with: email
     ad:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: ad
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 9555
             target-port: 9555
@@ -63,33 +63,33 @@ service_template:
       properties:
         name: recommendation
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 8080
             target-port: 8080
             name: grpc
       requirements:
-        - endpoint: catalog
+        - interacts-with: catalog
     cart:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: cart
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 7070
             target-port: 7070
             name: grpc
       requirements:
-        - endpoint: redis
+        - interacts-with: redis
     catalog:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: product_catalog
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 3550
             target-port: 3550
@@ -100,7 +100,7 @@ service_template:
       properties:
         name: shipping
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 50051
             target-port: 50051
@@ -111,7 +111,7 @@ service_template:
       properties:
         name: currency
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 7000
             target-port: 7000
@@ -122,7 +122,7 @@ service_template:
       properties:
         name: payment
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 50051
             target-port: 50051
@@ -133,7 +133,7 @@ service_template:
       properties:
         name: email
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 5000
             target-port: 8080
@@ -144,7 +144,7 @@ service_template:
       properties:
         name: redis
       capabilities:
-        endpoint:
+        service:
           properties:
             port: 6379
             target-port: 6379

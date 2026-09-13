@@ -38,10 +38,10 @@ The community abstract profiles — `community.tosca.core` and the five
 types declare no properties at all.
 
 Ubicity maintains a set of **extension profiles** (`com.ubicity.abstract.platform`,
-`com.ubicity.abstract.data`, `com.ubicity.abstract.network`, and an empty
-`com.ubicity.abstract.application`) whose only purpose is to derive from the community types
-and add the properties and requirements needed to actually use them: management address,
-credentials, hosting requirements, a concrete `RelationalDatabase`, a network's address range.
+`com.ubicity.abstract.network`, and the empty `com.ubicity.abstract.application` and
+`com.ubicity.abstract.data`, which carry realizations only) whose purpose is to derive from the
+community types and add the properties and requirements needed to actually use them: management
+address, credentials, hosting requirements, a network's address range.
 Where Section 3 discusses a property such as `mgmt-address` or `credentials`, it is describing
 these extension profiles — the community types themselves declare neither.
 
@@ -63,8 +63,9 @@ types and the same-type constraint with them.
 
 ### 2.1 `community.tosca.core` — add `CredentialRef` and `NamedCredentialRef`
 
-**Status: agreed 2026-09-02** — *"I agree with this approach, because it's general, and it
-applies to most of the cases"* (Roberto). Recorded as decision D13. Supersedes the credential
+**Status: agreed 2026-09-02, and both types are in `core` since 2026-09-12** — *"I agree with
+this approach, because it's general, and it applies to most of the cases"* (Roberto). Recorded as
+decision D13. The vocabularies each platform type accepts arrive with Section 2.4 (N8). Supersedes the credential
 model recorded in Sections 2.4 and 2.5. It covers a credential the model *references*; a
 credential the orchestrator *creates* needs the capability and node types proposed in
 [credential-orchestration-proposal.md](credential-orchestration-proposal.md).
@@ -140,8 +141,7 @@ a community profile *below* it is not a deviation — it is the layering working
 credential, and resolved it as specific to the technology being authenticated to. This section
 settles where the reference types are *declared*, so that two profiles naming the same one are
 nominally compatible. A profile is free to type a credential property as a `string` under
-[question 2](#question-2--credential-typing)'s resolution and still import these; `RelationalDatabase` in Section 2.5 does exactly
-that.
+[question 2](#question-2--credential-typing)'s resolution and still import these.
 
 > Note: an earlier draft of this section proposed a flat `Credential` carrying `user_name`,
 > `key_file` and `password_file`, mirroring what `com.ubicity.core` declared at the time. That
@@ -621,38 +621,20 @@ prototyped against them, so there is no evidence yet for what they would need.
 
 ### 2.5 `community.tosca.abstract.data` — `RelationalDatabase`
 
-**Status: open, and the derivation itself is in question (2026-09-02).** `Base` already carries
-`technology` and `product`, so the same thing is expressible as `AtRestData` with
-`technology: relational` and `product: postgresql`, and Roberto asks whether the relational/NoSQL
-distinction belongs at this level or is a technology detail. The counter-precedent is
-`ContainerPlatform` against `VirtualizationPlatform`, which sit at this level for a distinction
-of the same kind, and Roberto's own tiebreaker is that a derived type earns its place if it has
-properties specific to it — a schema, for instance. Tracked as I30 in
-[`open-issues.md`](../../../../governance/open-issues.md); this section is a candidate to hold
-out of the `0.1` rather than freeze unresolved.
-
-```yaml
-node_types:
-  RelationalDatabase:
-    description: >-
-      Represents a relational database — a set of at-rest data managed by a
-      relational database management system.
-    derived_from: AtRestData
-    properties:
-      credential:
-        type: NamedCredentialRef        # Section 2.1
-        required: false
-```
-
-A database is authenticated to one way, so a single property is the right declaration here
-rather than the map keyed by credential kind that Section 2.4 gives the platform types — there
-is only one kind, and nothing for a key to distinguish. It is a `NamedCredentialRef` because a
-database login names the principal it authenticates as.
-[Question 2](#question-2--credential-typing)'s resolution admits either declaration.
+**Status: withdrawn (2026-09-12).** This section proposed deriving `RelationalDatabase` from
+`AtRestData` with one property, `credential`. That property is not specific to relational data —
+every at-rest store is authenticated to — so by Roberto's tiebreaker, that a derived type earns
+its place with properties specific to it, the type does not, and the downstream profile it came
+from depends on nothing it adds. A relational database is `AtRestData` with
+`technology: relational` and a `product` naming the implementation, until a property specific to
+relational data, a schema for instance, gives a derived type something to carry. Recorded as
+decision N14, which closes I30.
 
 ### 2.6 `community.tosca.abstract.application` — one interaction port, specialized per kind
 
-**Status: agreed 2026-09-02** — *"more correct than the previous situation, in which we had
+**Status: agreed 2026-09-02; in the profiles since 2026-09-12**, with `Service` and `InteractsWith`
+declared in `abstract.base` beside the `Application` that uses them — *"more correct than the
+previous situation, in which we had
 specialized interactions between derived nodes of the same type, and only on a subset of them,
 not all"* (Roberto). Recorded as decision N11. Roberto asked whether a `Service` capability that
 adds nothing to `Partner` is worth declaring; the answer, accepted and now recorded as decision
@@ -674,7 +656,7 @@ capability_types:
     description: >-
       Advertizes the ability to provide a service to other components. Derived
       types carry the contract a consumer reads to use it.
-    derived_from: Partner          # community.tosca.core, targeted by AssociatesWith
+    derived_from: Partner          # abstract.base, targeted by AssociatesWith
 
   Endpoint:
     description: >-
@@ -746,7 +728,7 @@ relationship_types:
   InteractsWith:
     metadata:
       relationship_kind: association
-    derived_from: AssociatesWith       # community.tosca.core, was DependsOn
+    derived_from: AssociatesWith       # abstract.base, was DependsOn
     valid_capability_types: [ Service ]
 ```
 
@@ -796,7 +778,9 @@ the only types that declare either name.
 
 ### 2.7 `community.tosca.abstract.application` — name the platform, drop the processes
 
-**Status: agreed 2026-09-02.** Recorded as decision N12. Roberto added the answer to the
+**Status: agreed 2026-09-02, and in the profiles in part since 2026-09-12**: the type is renamed
+and `processes` is dropped, while its placement requirement keeps the name `runs-on` until Section
+2.3 (N9) renames it. Recorded as decision N12. Roberto added the answer to the
 question the section leaves hanging — where the list of processes goes if it turns out to be
 needed. Not a renamed property, but the **`implementation-details`** property already inherited
 from `Base`: the list stays opaque at the System View and is parsed at the layer that
@@ -842,7 +826,8 @@ today. The two proposals are otherwise independent and can be adopted in either 
 
 ### 2.8 `community.tosca.abstract.network` — what a network is addressed as, and whether it reaches the internet
 
-**Status: proposed as-is and acknowledged provisional (2026-09-02).** No corresponding problem
+**Status: agreed 2026-09-02 as decision N15, acknowledged provisional; in the profiles since
+2026-09-12.** No corresponding problem
 section: the two properties are additions every realization written against `Network` has needed,
 not a defect in the community types. `cidr_block` as a bare string is what keeps the existing AWS,
 Google Cloud and Proxmox realizations working, and it was put forward on that basis rather than as
@@ -892,7 +877,9 @@ these two properties are what remains.
 
 ### 2.9 `community.tosca.core` and `community.tosca.abstract.base` — core as a standard library
 
-**Status: open, not yet discussed.** No corresponding problem section: nothing is broken today, and
+**Status: agreed 2026-09-09 as decision A8, and in the profiles since 2026-09-12**, except the
+deletion of the unused `Bash`, which was not reached and stays open with I10. No corresponding
+problem section: nothing is broken today, and
 what the change buys is a `core` that a profile can import without taking a modelling approach with
 it.
 
