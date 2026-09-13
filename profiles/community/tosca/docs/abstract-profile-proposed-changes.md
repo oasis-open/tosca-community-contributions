@@ -63,8 +63,9 @@ types and the same-type constraint with them.
 
 ### 2.1 `community.tosca.core` — add `CredentialRef` and `NamedCredentialRef`
 
-**Status: agreed 2026-09-02** — *"I agree with this approach, because it's general, and it
-applies to most of the cases"* (Roberto). Recorded as decision D13. Supersedes the credential
+**Status: agreed 2026-09-02, and both types are in `core` since 2026-09-12** — *"I agree with
+this approach, because it's general, and it applies to most of the cases"* (Roberto). Recorded as
+decision D13. The vocabularies each platform type accepts arrive with Section 2.4 (N8). Supersedes the credential
 model recorded in Sections 2.4 and 2.5. It covers a credential the model *references*; a
 credential the orchestrator *creates* needs the capability and node types proposed in
 [credential-orchestration-proposal.md](credential-orchestration-proposal.md).

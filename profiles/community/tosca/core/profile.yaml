@@ -94,6 +94,33 @@ data_types:
     derived_from: GenericId
     validation:
       $matches: [$value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"]
+  CredentialRef:
+    description: >-
+      A reference to credential material: the path to the file holding it, and an
+      identifier where one is needed.
+    properties:
+      name:
+        type: string
+        required: false
+        description: >-
+          Populated where the material needs an identifier -- the principal to
+          authenticate as, or the entry to select inside a file that holds
+          several, where leaving it unset selects the file's own default.
+      file:
+        type: string
+        required: true
+        description: >-
+          Path to the file holding the material, read on the host where the
+          credential is used.
+  NamedCredentialRef:
+    description: >-
+      A CredentialRef that authenticates as someone, so it always names the
+      principal.
+    derived_from: CredentialRef
+    properties:
+      name:
+        type: string
+        required: true
 
 artifact_types:
   Bash:

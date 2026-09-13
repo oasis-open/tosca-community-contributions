@@ -5,9 +5,9 @@ be shared by all other profiles.
 
 ## Data Types
 
-Every data type here but one derives from a TOSCA primitive and adds a validation clause, so a
-value is an ordinary string or integer that has been checked. `IPv4Socket` is the exception, a
-complex type composed of two of the others.
+Most data types here derive from a TOSCA primitive and add a validation clause, so a value is an
+ordinary string or integer that has been checked. Three are complex types: `IPv4Socket`, composed
+of two of the others, and the two credential references.
 
 **The regular expressions avoid look-around assertions**, deliberately, so that they work in regex
 engines that do not support them. Two consequences are documented on the types themselves: `Fqdn`
@@ -26,8 +26,7 @@ being fully compliant with RFC 5321 and RFC 5322.
 - **`IPv4`** — a dotted-quad IPv4 address.
 - **`Port`** — an integer from 0 to 65535. Zero is admitted because it is the conventional way to
   ask for an unspecified port; a URL cannot name it, which is why `HttpUrl` accepts only 1 to 65535.
-- **`IPv4Socket`** — an address and a port together, as `ip-address` and `transport-port`. The only
-  complex type in this profile.
+- **`IPv4Socket`** — an address and a port together, as `ip-address` and `transport-port`.
 
 ### Names and addresses
 
@@ -46,13 +45,22 @@ being fully compliant with RFC 5321 and RFC 5322.
 - **`UUID`** — an RFC 4122 UUID, versions 1 through 5.
 - **`UUIDRelaxed`** — the 8-4-4-4-12 hexadecimal form without the version and variant constraints.
 
-> **Two credential reference types are agreed and not yet declared here.** `CredentialRef` carries
-> the path to where credential material is retrieved and, where one is needed, a `name`;
-> `NamedCredentialRef` derives from it and makes `name` mandatory. Agreed on 2026-09-02 as decision
-> D13; Section 2.1 of the [abstract-profile
-> proposal](../docs/abstract-profile-proposed-changes.md) has the detail, and
-> [credential-orchestration-proposal.md](../docs/credential-orchestration-proposal.md) proposes the
-> capability and node types that use them.
+### Credential references
+
+A credential in a model is a reference to material, never the material itself: the material is
+read on the host where it is used and never enters the representation graph.
+
+- **`CredentialRef`** — `file`, the path to the file holding the material, and `name`, populated
+  where the material needs an identifier: the principal to authenticate as, or the entry to
+  select inside a file that holds several, where leaving it unset selects the file's own default.
+- **`NamedCredentialRef`** — a `CredentialRef` whose `name` is required, for a credential that
+  authenticates as a principal.
+
+What kind of credential a value is does not live in the value. A node that needs credentials
+declares a map of them keyed by kind, and each derived type narrows the keys to the kinds it
+accepts. For credentials the orchestrator creates rather than references,
+[credential-orchestration-proposal.md](../docs/credential-orchestration-proposal.md) proposes the
+capability and node types that use these.
 
 ## Artifact Types
 
