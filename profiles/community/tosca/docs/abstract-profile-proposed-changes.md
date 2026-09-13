@@ -653,7 +653,7 @@ capability_types:
     description: >-
       Advertizes the ability to provide a service to other components. Derived
       types carry the contract a consumer reads to use it.
-    derived_from: Partner          # community.tosca.core, targeted by AssociatesWith
+    derived_from: Partner          # abstract.base, targeted by AssociatesWith
 
   Endpoint:
     description: >-
@@ -725,7 +725,7 @@ relationship_types:
   InteractsWith:
     metadata:
       relationship_kind: association
-    derived_from: AssociatesWith       # community.tosca.core, was DependsOn
+    derived_from: AssociatesWith       # abstract.base, was DependsOn
     valid_capability_types: [ Service ]
 ```
 
@@ -871,7 +871,9 @@ these two properties are what remains.
 
 ### 2.9 `community.tosca.core` and `community.tosca.abstract.base` — core as a standard library
 
-**Status: open, not yet discussed.** No corresponding problem section: nothing is broken today, and
+**Status: agreed 2026-09-09 as decision A8, and in the profiles since 2026-09-12**, except the
+deletion of the unused `Bash`, which was not reached and stays open with I10. No corresponding
+problem section: nothing is broken today, and
 what the change buys is a `core` that a profile can import without taking a modelling approach with
 it.
 

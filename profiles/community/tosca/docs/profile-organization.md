@@ -39,8 +39,8 @@ with the relationship and capability types they use.
 `community.tosca.technology.base` is its counterpart for the
 Administrator View and Device View columns. It defines a `Root` node
 type that technology-specific and vendor-specific node types derive
-from, the six-operation `Standard` interface those types implement, and
-a `Bash` artifact type carrying a `host` property, so that a script can
+from, the six-operation `Standard` interface those types implement, its
+own base relationship and capability types, and a `Bash` artifact type carrying a `host` property, so that a script can
 be declared to run on a particular host rather than on the orchestrator.
 Why the two `Standard` definitions differ is covered in [Interface
 Definitions Differ by Level](modeling-methodology.md#interface-definitions-differ-by-level)

@@ -50,6 +50,93 @@ relationships:
   node. This is a dependency relationship that defines the network(s)
   to which platforms connect.
 
+## Base Relationship Types
+
+This profile defines three different *kinds* of top-level
+relationships. The *kind* of the relationship can be used by a TOSCA
+processor to determine how changes in *target* nodes are propagated
+across relationships to the *source* nodes of those relationships.
+
+- A *containment* relationship kind that indicates that the lifecycle
+  of the contained entity (the *source* of the relationship) is
+  dictated by the lifecycle of the containing entity (the *target* of
+  the relationship). This kind of relationship is provided using the
+  `ContainedBy` relationship type. Relationships of type `ContainedBy`
+  target capabilities of type `Container` as specified using the
+  `valid_capability_types` keyword in the type definition.
+- A *dependency* relationship kind that indicates that the state
+  and/or configuration of a dependent node (the *source* of the
+  relationship) depends on the state and/or configuration of the
+  *target* node. This kind of relationship is provided using the
+  `DependsOn` relationship type. Relationships of type `DependsOn`
+  target capabilities of type `Feature` as specified using the
+  `valid_capability_types` keyword in the type definition.
+- An *association* relationship kind that records a relationship
+  between two nodes that carries **no lifecycle, state, or
+  configuration dependency** — the association is informational and
+  neither node's deployment depends on the other. This kind of
+  relationship is provided using the `AssociatesWith` relationship
+  type. Relationships of type `AssociatesWith` target capabilities of
+  type `Partner` as specified using the `valid_capability_types`
+  keyword in the type definition.
+
+  > **Guard against misuse.** If a relationship *does* carry a
+  > deployment or configuration dependency (for example, a cloud
+  > resource that must exist before another node can be associated with
+  > it), it is a *dependency*, not an *association*, and should derive
+  > from `DependsOn` — even when the domain colloquially calls it an
+  > "association." Reserve `AssociatesWith` for genuinely
+  > dependency-free links.
+
+Other relationship types can be derived from one of the three *base* relationship types.
+
+### Naming derived relationship types
+
+Derived relationship type names should express the **semantics** of the
+relationship — the *intent* of the source node toward the target — and
+**not** the wiring mechanism used to realize it. Prefer intent-revealing
+names (`Monitors`, `ManagedBy`, `RegistersWith`, `HostedOn`) over
+mechanism-flavored names (`ConnectsTo`, `BindsTo`, `LinksTo`). A reader
+of a service template should be able to tell *why* two nodes are related
+from the relationship type name alone, without knowing how the
+connection is physically established.
+
+## Base Capability Types
+
+This profile defines three *base* capability types that are matched
+with the three different kinds of base relationship types. Other
+capability types are derived from one of these three base types. The
+following figure shows how the different base relationship types
+target different capability types and how different capability types
+accept different incoming relationship types:
+
+```mermaid
+erDiagram
+    ContainedBy ||--|| Container : targets
+    Container ||--|{ ContainedBy: accepts
+    DependsOn ||--|| Feature : targets
+    Feature ||--|{ DependsOn: accepts
+    AssociatesWith ||--|| Partner : targets
+    Partner ||--|{ AssociatesWith: accepts
+```
+
+### Organizing derived capability types
+
+Capability types derived from `Feature` and `Container` tend to fall
+into a small number of recurring **functional categories** — the
+runtime environment a node offers, the core functionality it exposes,
+its management and monitoring touch points, its security and trust
+surface, and so on. These categories, and the common capability and
+relationship types recommended for each, are described by the
+Component/Port pattern in the
+[design patterns](../../docs/design-patterns.md#componentport-pattern). New derived
+capability types should be slotted into one of those categories rather
+than introduced ad hoc, so the type library stays a catalog rather than
+a loose collection.
+
+The technology column declares its own copies of these six types in
+[`community.tosca.technology.base`](../../technology/base/README.md#relationship-and-capability-types).
+
 ## Adding Implementation Details
 
 Because the abstract node types defined in this profile *hide* the details

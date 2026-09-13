@@ -50,9 +50,10 @@ profiles make up the continuum's lower levels. The rest of the content is unchan
 ## 1. `relationship_kind` — metadata carries neither inheritance nor obligation — 10 min · *I44* · **decision sought**
 
 **New, out of Roberto's question last week, and on the release path** because it changes what
-the base relationship types declare and A8 is about to move them.
+the base relationship types declare, and A8 has now moved them into `abstract.base`, with a
+second set in `technology.base`.
 
-The three base relationship types in `core` carry a `relationship_kind` metadata keyname, which
+The three base relationship types carry a `relationship_kind` metadata keyname, which
 an orchestrator reads to decide how deletion and events propagate. Roberto asked whether a
 derived type inherits it. **It does not** — §6.4.2 lists `metadata` among the four common
 keynames that do not survive derivation, alongside `derived_from`, `version` and `description`.
@@ -63,7 +64,7 @@ runtime behavior."*
 rather than a footnote. `abstract.base` redeclares the keyname on all five of its derived types,
 so the rule is understood there — but `InteractsWith` in `abstract.application` derives from
 `DependsOn` and declares none, so it has no kind at all; and the vocabulary has drifted in case,
-`core` writing `CONTAINMENT` where `abstract.base` writes `containment`. Neither is visible on
+the base types writing `CONTAINMENT` where the types derived from them write `containment`. Neither is visible on
 an engine that walks the hierarchy for a missing keyname and folds case for a present one, which
 is how at least one implementation copes.
 

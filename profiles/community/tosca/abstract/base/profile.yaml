@@ -10,6 +10,26 @@ imports:
 - profile: community.tosca.core:0.1
 
 capability_types:
+  # The three base capability types, one for each relationship kind; every
+  # other capability type derives from one of them. The technology column
+  # declares its own copies in community.tosca.technology.base.
+  Container:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      ContainedBy relationship.  Advertizes the ability to contain one
+      or more other nodes.
+    valid_relationship_types: [ContainedBy]
+  Feature:
+    description: >-
+      Base capability type for capabilities that can be targeted by a
+      DependsOn relationship. Derived types define
+      application-specific functionality.
+    valid_relationship_types: [DependsOn]
+  Partner:
+    description: >-
+      Base capability type for capabilities that can be targeted by an
+      AssociatesWith relationship.
+    valid_relationship_types: [AssociatesWith]
   PlatformHost:
     description: >-
       This capability type is exposed by Platform node types and is
@@ -52,6 +72,29 @@ capability_types:
     valid_relationship_types: [LinksTo]
 
 relationship_types:
+  # The three base relationship types, one for each relationship kind. Their
+  # relationship_kind values are upper case where the types derived from them
+  # below write lower case; I44 settles the convention.
+  ContainedBy:
+    description: >-
+      The ContainedBy type represents a containment relationship
+      between two nodes.
+    metadata:
+      relationship_kind: CONTAINMENT
+    valid_capability_types: [Container]
+  DependsOn:
+    description: >-
+      Generic dependency on a feature
+    metadata:
+      relationship_kind: DEPENDENCY
+    valid_capability_types: [Feature]
+  AssociatesWith:
+    description: >-
+      The AssociatesWith type represents an association relationship
+      between two nodes.
+    metadata:
+      relationship_kind: ASSOCIATION
+    valid_capability_types: [Partner]
   HostedOn:
     description: >-
       Used for Relationship between nodes derived from the abstract
