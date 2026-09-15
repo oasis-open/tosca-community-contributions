@@ -56,6 +56,19 @@ relationships:
   node. This is a dependency relationship that defines the network(s)
   to which platforms connect.
 
+Every node type in the profile derives from `Base`, and so carries four
+properties:
+
+- `name` names the node. Every node carries one, so a realization can
+  name the resource it creates after the node it realizes.
+- `technology` names the technology intended for the implementation, as
+  `relational` does for a relational database. Substitution filters read
+  it to select a realization.
+- `product` names the specific product intended for the implementation,
+  and is read the same way.
+- `implementation-details` carries opaque values for a substituting
+  template; see [Adding Implementation Details](#adding-implementation-details).
+
 Network nodes carry two properties. `cidr_block` is the network's
 address range in CIDR notation, left unset for a forwarding domain that
 carries no addressing of its own or one whose range the realization

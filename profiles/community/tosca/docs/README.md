@@ -51,9 +51,10 @@ lives and what it may claim.
 ## Proposals
 
 - **[abstract-profile-proposed-changes.md](abstract-profile-proposed-changes.md)**
-  — proposed enhancements to the abstract profiles: credentials, containment,
-  platform and network properties, application interaction, and what `core` is
-  for. Section 5 holds what has been raised but not yet worked up.
+  — the proposals for the abstract profiles that are still open: one containment
+  requirement and the control-plane requirement, the platform connection
+  properties, and the application placement change that follows from the first.
+  A proposal leaves the document once it is written into the profiles.
 - **[credential-orchestration-proposal.md](credential-orchestration-proposal.md)** — model
   credentials the orchestrator creates rather than is given: a `Credential` capability, and node
   types for secrets with a lifecycle. The data type half is settled as decision D13.

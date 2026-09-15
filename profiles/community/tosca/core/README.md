@@ -74,8 +74,8 @@ How values reach an implementation and how results come back is in
 [artifact-conventions.md](../docs/artifact-conventions.md), which is the single
 place these are described. `Bash` is also declared in the
 [technology base profile](../technology/base/README.md), which is the copy that
-carries a `host` property; the duplication is addressed by Section 2.9 of the
-[abstract-profile proposal](../docs/abstract-profile-proposed-changes.md).
+carries a `host` property; which copy stays is tracked as I10 in the
+[open issues](../../../../governance/open-issues.md).
 
 ## Functions
 

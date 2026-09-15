@@ -1,384 +1,337 @@
 # TOSCA Community — Proposed Agenda (2026-09-16)
 
 **Status:** Draft agenda for 2026-09-16, following 2026-09-09
-**Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [platform README](../profiles/community/tosca/abstract/platform/README.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [credential-orchestration-proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md) · [artifact-calling-convention-proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md) · [spec-naming-conventions-proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
+**Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [design-patterns](../profiles/community/tosca/docs/design-patterns.md) · [credential-orchestration-proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md) · [artifact-calling-convention-proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md) · [spec-naming-conventions-proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
 
-Last week had two participants. It took the one item that was blocking work — Section 2.9,
-now **decision A8**: `core` becomes the standard library and the six base capability and
-relationship types move out of it — and deliberately held everything else for a meeting with
-fuller attendance rather than settle it thinly. So most of this agenda is last week's, carried
-forward intact.
+The meeting has three parts. **First, what changed since 09-09**, presented rather than
+discussed: a great deal moved in a week, most of it into the profiles, and the group cannot
+decide against changes it has not seen. **Second, the decisions the `0.1` still waits on**, in
+the order the release needs them. **Third, the outstanding proposals**: what each one is, where
+it stands, and what it needs next.
 
-**What is new is what A8 opened.** Two questions came out of that one discussion, and both are
-Roberto's. The first has an answer already and needs a decision (item 1). The second needs a
-discussion opened before it can have one (item 8).
+**September is the deadline the chair set, and after today two meetings remain in it.**
+Everything agreed so far is written into the profiles except two edits, N8 and N9. The six
+questions in Part 2 decide what those two edits say and what the already-written types keep.
+Nothing in Part 3 changes the `0.1`. TOSCA has no aliasing, so any Part 2 question left until
+after the tag comes back as a breaking change in the next version.
 
-**September is the deadline the chair set, and three meetings remain in it.** Most of the edits
-the `0.1` waits on are now written into the profiles; the second notice below lists them. Two
-remain: N8, once items 2 and 3 have settled what it says, and N9, with the rest of N12, once
-item 5 has said whether I46 goes in first. Items 1 to 4 are the questions that decide what the
-remaining edits and the already-written types say. Everything else on this agenda can slip past
-the tag without changing it, except I46 in item 5, which amends an edit the tag makes and can
-slip only as a breaking change in the next version.
-
-**Items 1 to 10 run to 120 minutes, and the meeting is 60.** The four release-path items take
-50 of those, which is the hour once anything else is reached at all. **Item 6 is the one not to
-defer again** — its three drafted resolutions have now been carried past five meetings without
-being read, and if the hour is short it is better to ratify one of them than to move all three
-a sixth time.
+**The three parts fill the hour, and Part 2 is the one to protect.** If the presentation runs
+long, Part 3 gives way. Each of its items links the document to read beforehand, so a proposal
+not reached loses a week, not its preparation.
 
 ---
 
-## Notice — the design guide is now `modeling-methodology.md` — 2 min · **for information**
+## Part 1 — What changed since 09-09 — 15 min · **presentation**
 
-When the documentation was reorganized on 09-02, the design guide kept the methodology alone —
-the Model Continuum, translating between levels, deploying abstract services — and the
-Component/Port pattern and the practices built on it moved to
-[`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md). "Design guide" and
-"design patterns" then no longer said which of the two to open, so the guide is renamed for what
-it holds: [`modeling-methodology.md`](../profiles/community/tosca/docs/modeling-methodology.md),
-titled *TOSCA Community Modeling Methodology*. Beyond the title and the opening paragraph, one
-section is new: [*Two Vantage Points*](../profiles/community/tosca/docs/modeling-methodology.md#two-vantage-points)
-opens the document by saying it is written from the system architect's vantage point rather
-than a target-driven one, with *model once, run everywhere* as its aim, and that target-driven
-profiles make up the continuum's lower levels. The rest of the content is unchanged.
+### Written into the profiles — [#369](https://github.com/oasis-open/tosca-community-contributions/pull/369), 09-12
 
-- **Links inside the repository** are repointed, section anchors included. Where a document
-  cited "the design guide" for the naming principle or for data placement, it now points at the
-  Component/Port pattern, which is where those have lived since 09-02.
-- **Links from outside the repository** to `design-guide.md` stop resolving. Anyone who has
-  bookmarked or cited it should update the link; the section anchors are unchanged.
+Five agreed decisions are now in the YAML, and one proposal is withdrawn. Each is marked in the
+[decision log](decision-log.md).
 
-## Notice — written into the profiles since 09-09 — 3 min · **for information**
-
-Five agreed decisions are now in the profiles, and one proposal is withdrawn. Each is marked
-in the [decision log](decision-log.md).
-
-- **A8 — `core` is the standard library.** The six base capability and relationship types are
-  in `abstract.base`, with a copy in `technology.base`, and `core` holds data types, artifact
-  types and functions. `Bash` stays in `core` for now (item 9).
+- **A8 — `core` is the standard library.** The six base capability and relationship types are in
+  `abstract.base`, with a copy in `technology.base`, and `core` holds data types, artifact types
+  and functions. `Bash` stays in `core` until Part 2 settles it.
 - **D13 — `CredentialRef` and `NamedCredentialRef` are in `core`.** The vocabulary each platform
   type accepts arrives with N8.
 - **N11 — one interaction port on `Application`.** Every application exposes `service` and
-  reaches another's through `interacts-with`. `Service` and `InteractsWith` are declared in
-  `abstract.base` beside `Application`, `InteractsWith` as an association, and `Endpoint`
-  derives from `Service`. The two examples in the repository use the new names.
-- **N12, in part — `ServerApplication`.** Renamed, and without `processes`. Its placement
-  requirement becomes `host` with N9.
-- **N15 — `Network` carries `cidr_block` and `internet_accessible`.** Section 2.8, agreed on
-  09-02 and carried until now only in I2, is recorded as a decision. It stays provisional
-  pending the `technology`-based network model I2 describes.
-- **N14 — Section 2.5 is withdrawn** (item 4).
+  reaches another's through `interacts-with`, and `Endpoint` derives from `Service`. Both examples
+  in the repository use the new names.
+- **N12, in part — `ServerApplication`**, without `processes`. Its placement requirement becomes
+  `host` with N9.
+- **N15 — `Network` carries `cidr_block` and `internet_accessible`.** Agreed on 09-02 and
+  recorded as a decision. It stays provisional pending the `technology`-based network model I2
+  describes.
+- **N14 — `RelationalDatabase` is withdrawn.** A relational database is `AtRestData` with
+  `technology: relational` and a `product`. The proposed `RelationalDatabase` carried nothing of
+  its own: no template set its one property, and its one realization selected on `technology`,
+  not on the type.
 
-## 1. `relationship_kind` — metadata carries neither inheritance nor obligation — 10 min · *I44* · **decision sought**
+**Still to be written:** N8, the platform connection properties, once Part 2 settles I28 and
+I29; and N9 with the rest of N12, once Part 2 says whether I46 goes in first.
 
-**New, out of Roberto's question last week, and on the release path** because it changes what
-the base relationship types declare, and A8 has now moved them into `abstract.base`, with a
-second set in `technology.base`.
+### Proposals drafted for today — [#367](https://github.com/oasis-open/tosca-community-contributions/pull/367), 09-12
 
-The three base relationship types carry a `relationship_kind` metadata keyname, which
-an orchestrator reads to decide how deletion and events propagate. Roberto asked whether a
-derived type inherits it. **It does not** — §6.4.2 lists `metadata` among the four common
-keynames that do not survive derivation, alongside `derived_from`, `version` and `description`.
-And §5.3.1 goes further: metadata *"MAY be ignored by TOSCA Orchestrators and SHOULD NOT affect
-runtime behavior."*
+- **I28 — `mgmt-address` as a URL.** Section 2.4 now carries the findings, and a proposal for
+  what `core` would add. Part 2.1.
+- **I46 — one hosting capability instead of three**, as an amendment to Section 2.3, generalized
+  as the [*One Port, Many Consumers*](../profiles/community/tosca/docs/design-patterns.md#one-port-many-consumers)
+  pattern. Part 2.2.
+- **I29 — the container-platform credential vocabulary**, widened from `[kubeconfig]` to four
+  kinds. Part 2.4.
 
-**Both consequences are already in the repository**, which is what makes this worth ten minutes
-rather than a footnote. `abstract.base` redeclares the keyname on all six of its derived
-relationship types, so the rule is understood there. `InteractsWith` declared none until N11 moved
-it into `abstract.base` as an association on 09-12, and the vocabulary has drifted in case, the
-base types writing `CONTAINMENT` where the types derived from them write `containment`. Neither was
-visible on an engine that walks the hierarchy for a missing keyname and folds case for a present
-one, which is how at least one implementation copes.
+### Documentation
 
-**Preparation:** four options are written up in discussion [#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363). Keep redeclaring and fix what is
-there; drop the metadata and let derivation carry the kind, since the parent type already names
-it; ask for a real `kind` keyname in 2.1 (adjacent to I6); or document it as a convention that
-does not travel. **The second interacts with A8** — one set of base types per column means there
-is no single triple to walk to — and that interaction is the part worth the group's time.
+- **The design guide is now [`modeling-methodology.md`](../profiles/community/tosca/docs/modeling-methodology.md)**,
+  titled *TOSCA Community Modeling Methodology*. The Component/Port pattern moved to
+  `design-patterns.md` on 09-02, and "design guide" no longer said which of the two to open. One
+  section is new, [*Two Vantage Points*](../profiles/community/tosca/docs/modeling-methodology.md#two-vantage-points):
+  the document is written from the system architect's vantage point, with *model once, run
+  everywhere* as its aim, and target-driven profiles make up the continuum's lower levels. Links
+  inside the repository are repointed. **Links to `design-guide.md` from outside the repository
+  stop resolving**; the section anchors are unchanged.
+- **The proposal document now holds only what is still open**: Sections 2.3 and 2.4, and the part
+  of 2.7 that waits on 2.3. The implemented sections have left it, their decisions to the decision
+  log, their types to the profile READMEs, and the one general argument among them, on where
+  application ends and data begins, to the modeling methodology. The one open
+  question found in them, whether `Processes` should tell reading from writing, is now I48.
 
-**Decision sought:** which of the four, and the case convention either way.
+### New issues
 
-## 2. `mgmt-address` — a URL, or a structured type? — 15 min · *I28* · **decision sought**
+- **I45** — `AtRestData` is named on a security axis, where its siblings are named for how data
+  is delivered. Part 2.5.
+- **I46** — one hosting capability. Part 2.2.
+- **I47** — §8.2.1, read literally, lets a derived node type *widen* a capability's
+  `valid_source_node_types`, contradicting §5.1.3, §8.1 and §8.4.1. I46 relies on the narrowing
+  reading. Filed as erratum [oasis-tcs/tosca-specs#371](https://github.com/oasis-tcs/tosca-specs/issues/371).
 
-Carried from 09-09, not reached. **This reopens the 2026-06-24 resolution recorded as N7**, and
-it is the one item that blocks N8, which in turn blocks the `0.1`.
+### Discussions
 
-Section 2.4 gives `ServerPlatform` an `IPv4Socket` and `VirtualizationPlatform` a string.
-Roberto's alternative is to type both as the `HttpUrl`-style URL now in `core`, which validates
-and stays general.
+- **[#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363) — how a
+  derived relationship type declares its kind (I44)**, posted after 09-09 with four options.
+  Roberto has replied with a preference and a fifth option. Part 2.3.
+- **[#365](https://github.com/oasis-open/tosca-community-contributions/discussions/365) — the
+  portability of `core` (I43)**, opened by Roberto on 09-10 with three approaches of his own.
+  Part 3.3.
 
-The open part is whether every management address can honestly be written as a URL. There is no
-registered SSH URL scheme, so adopting one means the community publishes its own convention.
-Against that, a data type chosen at this level of abstraction cannot be corrected from below —
-get it wrong here and no lower layer can fix it.
+### Specification errata (P4)
 
-**Preparation:** the cases to decide against are the six platform types' management addresses as
-they are realized today — a server reached over SSH, a cloud API endpoint, a Kubernetes API
-server, a Proxmox host. If a URL covers all four honestly, it wins on validation alone.
+Eight errata have been filed against TOSCA 2.0 since 09-09. Three bear on decisions this group
+has taken:
 
-**Decision sought:** URL or structured, for each of the two properties.
+- [#369](https://github.com/oasis-tcs/tosca-specs/issues/369) — §15.2–15.5 require type
+  compatibility for property and attribute mappings and say nothing about capability and
+  requirement mappings. N13 rests on the reading that none is required there.
+- [#371](https://github.com/oasis-tcs/tosca-specs/issues/371) — I47, above.
+- [#368](https://github.com/oasis-tcs/tosca-specs/issues/368) and
+  [#370](https://github.com/oasis-tcs/tosca-specs/issues/370) — §15.5.4's rules for a mapping onto
+  a selectable node, and rule 2 reading a type that a `substitution_filter` can narrow.
 
-**Consequence either way:** choosing URL makes `HttpUrl` carry every API-addressed platform type,
-which raises the priority of the second half of I26 — whether `core`'s data types carry test
-cases — from housekeeping to a release concern.
-
-## 3. The container-platform credential vocabulary — 10 min · *I29* · **decision sought**
-
-Carried from 09-09, not reached. Section 2.4 keys `ContainerPlatform`'s credentials map to
-`[kubeconfig]`, which is Kubernetes-specific. A container platform that is Docker with Compose,
-Docker Swarm or Nomad authenticates some other way. Agreed on 09-02 to be an oversight in the
-proposal rather than a design position, so this is a question of what to add, not whether.
-
-**Decision sought:** the vocabulary. §9.4 means a derived type can only narrow what `Platform`
-declares, so a kind left out here cannot be added by a downstream profile without changing the
-abstract type again — which is why it has to be right before the `0.1` freezes it.
-
-## 4. The data profile — `AtRestData`'s name, and the storage inventory — 15 min · *I45 / I31 / I4*
-
-**For information: Section 2.5 is withdrawn (decision N14).** It proposed deriving
-`RelationalDatabase` from `AtRestData` with one property, `credential`. Roberto's tiebreaker from
-09-02 — a derived type earns its place if it has properties specific to it, a schema for
-instance — says it does not, since every at-rest store is authenticated to. The downstream
-profile the type came from confirms it from the other side:
-
-- the type was introduced without a recorded reason;
-- no template sets its `credential`, and no realization reads it;
-- its one realization selects on the `technology` property, not on the type.
-
-So a relational database is `AtRestData` with `technology: relational` and a `product` naming the
-implementation, until a property specific to relational data gives a derived type something to
-carry. It is the worked case of **I4**: a derived type where it has something of its own to carry,
-a property value where it does not.
-
-**I45 — the name.** `AtRestData` is named on a security axis, *at rest* as against *in transit*
-and *in use*, while its five siblings are named for how data is delivered. So the name suggests
-the others are not at rest, which is not the distinction the profile draws. What sets the type
-apart on the profile's own axis is that data is stored and retrieved on demand; `StoredData` and
-`PersistentData` both read alongside `BatchData` and `StreamingData`. TOSCA has no aliasing, so
-a rename after the `0.1` is a breaking change: rename now, or keep the name.
-
-**Also here: I31.** Data and storage have had the least prototyping of any area of the abstract
-profiles, and `AtRestData` is the only at-rest type. Stefano's reverse-engineering work covers
-storage constructs across providers, and an inventory of them would tell us how many more of
-these decisions are coming.
-
-**Decision sought:** whether to rename `AtRestData` before the `0.1`.
-
-## 5. `control-host` — the piece 2.3 did not finish — 20 min · *Questions 6 and 8 / I46*
-
-Carried from 09-09, not reached. N9 settled the requirement name `host`. It did not settle the
-second requirement.
-
-`Platform` declares `host` and `links-to` only, so a platform whose control plane deploys apart
-from what it controls — Kubevirt, and a multi-node Kubernetes cluster — still cannot be written
-down. **The platform README has described this requirement as though it existed**; it does not,
-and the README now marks it as proposed.
-
-Two decisions, and the first is small:
-
-- **The name.** `control-host` is the interim spelling, and `runs-on` is unavailable because it
-  already means *where this application executes*. Now that `host` is settled as the base name,
-  `control-host` reads as its sibling.
-- **Question 8 — whether a control node also hosts workloads.** Owned by the
-  [platform README](../profiles/community/tosca/abstract/platform/README.md#does-a-control-node-also-host-workloads):
-  *set overlap*, where a schedulable control node appears under both `host` and `control-host`,
-  against *disjoint sets with a property*. The first states the topology honestly but cannot be
-  realized, since a requirement mapping cannot distribute a subset of bindings; the second can be
-  built today.
-
-**Also here: I46, which amends the same section — a first look.** Section 2.3 keeps three hosting
-capabilities, `PlatformHost`, `ExecutionEnvironment` and `DataPlatform`. They share a parent,
-declare nothing, and are inherited by every platform, so they neither tell platforms apart nor
-let a component ask for a platform that hosts both applications and data. The amendment collapses
-them into one capability that `Platform` exposes to every kind of guest, narrowed by derived
-platform types through `valid_source_node_types`, and `control-host` then targets that one
-capability. Proposal in the amendment to Section 2.3 of
-[`abstract-profile-proposed-changes.md`](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md),
-reasoning in Problem 8, and generalized as the *One Port, Many Consumers* pattern in
-[`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md#one-port-many-consumers).
-
-**Decision sought:** the name, and which of the two models the profiles adopt. **For I46:** whether
-it goes in before the tag, since it changes the N9 edit the `0.1` makes, or after it as a breaking
-change.
-
-## 6. The drafted resolutions nobody has ratified — 15 min · *I13 / I16(c) / I17* · **ratification sought**
-
-**Fifth time on an agenda without being read.** Three answers are already written, I16(c)'s and
-I17's in [`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md) and I13's in
-[`modeling-methodology.md`](../profiles/community/tosca/docs/modeling-methodology.md), and none
-has been ratified, because none has been reached. They are grouped because the work left on each is the same: read
-the drafted resolution and say yes or no.
-
-- **I17 — the monitoring and security patterns**, drafted 07-15. Monitoring is an observability
-  capability on the monitored node with a `DependsOn`-based monitoring requirement; security
-  splits into perimeter, authentication, authorization and identity/trust. **This one pairs with
-  item 7**: the credential proposal is a worked realization of the authentication sub-pattern, so
-  the pattern can be ratified against working types rather than against prose. I41 is its
-  identity/trust half.
-- **I16(c) — how deep the type hierarchies should go.** (a) was settled by N9 and (b) by N10 on
-  09-02, both indirectly. (c) is what is left of the entry.
-- **I13 — the `type-of-node` function**, drafted 08-04, recommending it **not** be added:
-  platforms of the same type differing only in what each is designated to become cannot be
-  distinguished by type at all, and that case is common, so a property filter covers strictly more
-  ground. It carries a follow-on if ratified — the platform-representation list needs a property
-  for what a platform is *designated to be*.
-
-I16(c) and I17 were not reached on 07-22 and were dropped from 08-05 to make room; I13 sat in
-*if time permits* on 08-05 and 08-12; all three were held on 09-09 for attendance. **That is why
-this is item 6 and not a bullet in the carried list.**
-
-**Ratification sought** on each of the three, or an explicit decision to retire the draft.
-
-## 7. Orchestrated credentials — 10 min · *I27* · **first look for the group**
-
-**[Its own document](../profiles/community/tosca/docs/credential-orchestration-proposal.md).**
-Walked through on 09-09, but to two people, so this is still the group's first look. D13 covers a
-credential the model *references*; this covers one the orchestrator *creates* — a key pair
-generated before a VM request, a certificate issued during deployment, a token minted for a
-service. A node type per kind of orchestrated secret, a `Credential` capability on it holding a
-map of `CredentialRef`, which `core` now declares, and a requirement on every node that needs the material. The certificate
-case is the worked one: common name, alternative names, intended usage and validity on the node
-type; the certificate and key produced as file references on the device that created them; the
-public information published as attributes for whoever reads it.
-
-Raised by Tal on [#281](https://github.com/oasis-open/tosca-community-contributions/discussions/281).
-Two pieces are what the group's input is wanted on:
-
-- **Which profile the `Credential` capability type belongs in.** The chair's answer on 09-09 is
-  the **technology base profile** — orchestration happens in the technology column, and the
-  material reaches an abstract node by attribute mapping rather than by carrying the capability
-  upward. That is a position stated to one other participant, not a decision.
-- **Whether the orchestrated-secret node types belong in the abstract profiles at all**, or only
-  in the technology profiles that know how to create each kind.
-
-**And a sequencing question — I41.** The proposal models *authentication*, and says trust material
-does not belong on the `Credential` port: what a node verifies *others* against is not its own
-proof of identity, and publishing both on one port puts two contracts on it. It belongs on a port
-of its own — and that port has a worked design in use, a `TrustAnchor` capability publishing what
-a node verifies against, `Certification` deriving from it and adding issuance because a leaf
-certificate cannot issue, and `AnchorsOn` targeting the anchor while an enrolment relationship
-stays on the issuance contract. Together the two are the authentication and identity/trust halves
-of I17's security pattern.
-
-The question is when to bring the second one. **Worth a minute at the end of this item**, since
-the answer decides whether the group sees one proposal or two.
-
-Not a decision item. It becomes a Section 2 proposal once those two are answered.
-
-## 8. One function, more than one implementation — 10 min · *I43* · **first look**
-
-**New, and Roberto's.** `core` declares eight functions, and all sixteen implementations across
-their signatures are typed as the `Python` artifact type. His Puccini-based platform executes custom functions as WebAssembly
-plugins under a platform-specific artifact type, so adopting `core` means *editing* `core`. The
-profile is portable in its definitions and unportable in its implementations, and there is
-currently no way to take one without the other.
-
-**This is the general problem, not a function problem.** An operation implementation may be a Bash
-script, a Python module, an Ansible playbook or a Terraform configuration, and which one an
-orchestrator can run is the orchestrator's business rather than the profile's. It is the general
-form of I9, and the language-extension direction is close to I14.
-
-Two directions were raised on 09-09:
-
-- **A repository convention.** Split the function *definitions* from the implementations, so a
-  shared file declares the signatures and each orchestrator supplies its own implementation file
-  against them.
-- **A 2.1 language extension.** Let one profile carry alternative implementations of the same
-  function or operation, with the orchestrator selecting the one it can execute. The chair's
-  preference, since it keeps a single profile rather than a family of near-copies.
-
-**Roberto has opened it as discussion [#365](https://github.com/oasis-open/tosca-community-contributions/discussions/365)**, *About actual portability of the core
-type profile*. Read it before the meeting, so this item is a read rather than a recap. **Input wanted, not a decision:** whether the answer is a convention we adopt now or a
-proposal we take to the TC — and it can be both, in that order.
-
-## 9. The artifact calling convention — one document in — 10 min · *I10* · **first look**
-
-Carried from 09-09, not reached. The specification does not say how an orchestrator passes values
-to an implementation artifact, so the contract can only live in the artifact type, which is profile
-territory. It does not live there today: `Bash` declares `host`, `Python` declares nothing, and two
-orchestrators can both implement `community.tosca.core:Bash` correctly and run the same script to
-different effect.
-
-The proposal replaces the per-input environment variable with a single JSON document in one
-reserved variable. The four failures it cites all trace to one cause — the environment is a flat
-string map the artifact does not own: a boolean spelled two ways depending on whether it arrived
-nested, absence arriving as the four characters `null`, inputs colliding silently with the
-inherited environment, and an input named `mgmt-address` that cannot be an environment variable at
-all. The last of those is a shell's identifier rules setting a naming convention for the profile.
-
-**Two halves, and only one is a recommendation.** The input half proposes the document as a
-*default*, with each artifact type declaring its own channel — a variable for Bash because a shell
-wants one, `stdin` for Python because a script wants a stream — which is already the practice:
-`Ansible` takes a YAML extra-vars file and `Terraform` a `.tfvars.json`. The output half states the
-problem and three options without settling it: `stdout` with a sentinel, a file named by a second
-variable, or a dedicated descriptor.
-
-**It has picked up a second reason to be here.** A8 settled Section 2.9 except for that section's
-proposed deletion of the unused `Bash` artifact type from `core`, which was not reached. `Bash` is
-named by no profile in the repository, and the definition that is wanted — one carrying a `host`
-property — is already in `community.tosca.technology.base`. But if the calling convention is
-declared *by the artifact type* rather than stated in prose, what `core` keeps depends on the
-answer here. **It is also adjacent to item 8**: the same medium, the other direction.
-
-**Input wanted, not a decision:** whether the document is the contract and the channel is each
-type's own business, which of the three output channels, and whether `Bash` leaves `core`.
-
-## 10. The §1.2.2 naming amendments — submit or withdraw — 5 min · *I39* · **decision sought**
-
-Carried from 09-09, where it was given five minutes and not reached. The one document in the
-profiles tree addressed to the OASIS TC rather than to these profiles, drafted and never
-submitted. Two amendments to *TOSCA Naming Conventions*: permit snake case for value names
-alongside dash case, consistent within a profile, and withdraw the stated rationale that dash case
-exists to distinguish value names from keynames; and make the acronym rule context-free, keeping
-acronyms upper throughout — `HTTPEndpoint`, `TCPOrUDP`, `TCP`, `DBMS` — rather than respelling an
-acronym according to what sits beside it.
-
-Normative impact is none. §1.2.2 already says parsers should not enforce these conventions, so no
-document becomes valid or invalid and no existing profile needs editing. CamelCase for entity type
-names is explicitly not touched.
-
-It reaches these profiles through D2, which applies the current conventions to them, and the
-draft's own count is the argument: the convention on paper is not the one the profiles follow.
-
-**Decision sought:** submit it to the TC against the errata track (P4), or withdraw the draft.
-Five minutes is enough for either.
+The other four, [#372](https://github.com/oasis-tcs/tosca-specs/issues/372) to
+[#375](https://github.com/oasis-tcs/tosca-specs/issues/375), concern implementation definitions,
+workflow outputs, and how `$and`, `$or` and `$equal` treat an unassigned value.
 
 ---
 
-## 11. If time permits
+## Part 2 — The decisions the `0.1` still waits on — 30 min · **decisions sought**
+
+In the order the release needs them: I28 decides N8, `control-host` and I46 decide N9, and the
+other four decide what the already-written types keep.
+
+### 2.1 `mgmt-address` — a URL, or a structured type? — 8 min · *I28*
+
+This reopens the 2026-06-24 resolution recorded as N7, and it is what N8 waits on.
+
+**The proposal ([Section 2.4](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md)).**
+Declare `mgmt-address` once on `Platform`, beside `credentials`, typed as a URL, and let each
+platform type narrow the schemes the way it narrows the credential kinds: `ServerPlatform`
+refines it to `SshUrl`, `VirtualizationPlatform` to `HttpUrl`, and `ContainerPlatform` keeps
+`Url` with a validation admitting `https`, `tcp` and `unix`. `core` gains three things:
+
+- **a `Url` type** validating RFC 3986's generic syntax, from which `HttpUrl` derives;
+- **`SshUrl`**, for `ssh://host[:port]`. IANA holds a provisional `ssh` registration from an
+  expired IETF draft, and OpenSSH, Git and Docker agree on this subset, so the community cites a
+  convention rather than publishing one. It carries no user, since the login is the credential's
+  `name`, and no fingerprint, since a host-key fingerprint is trust material (I41);
+- **two functions**, one reading a URL's parts and one composing a URL. The built-ins cannot read
+  a port that may be absent or a bracketed IPv6 host.
+
+**The cost** is that a URL has to be parsed to be read in parts, where a socket yields its host
+by path. The proposal pays it once per realization, in the substituting template's inputs and
+outputs, and nothing below the boundary changes.
+
+**Precondition:** the other platform types' addresses (`PaasPlatform`, `SaasPlatform`,
+`ServerlessPlatform`) have to be listed first, since a derived type can narrow `Url` but cannot
+leave it.
+
+**Decision sought:** take the URL route, which puts `Url`, `SshUrl` and the two functions into
+`core` for the `0.1`, with test cases per I26; or keep per-type structured types. If the URL
+route, the two functions need names.
+
+### 2.2 The control plane, and one hosting capability — 8 min · *Questions 6 and 8 / I46*
+
+N9 settled the requirement name `host`. It did not settle the second requirement a platform
+needs when its control plane deploys apart from what it controls, as Kubevirt and a multi-node
+Kubernetes cluster do. The platform README marks that requirement as proposed.
+
+- **The name.** `control-host` reads as `host`'s sibling. `runs-on` is unavailable, since it
+  already means where an application executes.
+- **Question 8 — whether a control node also hosts workloads**
+  ([platform README](../profiles/community/tosca/abstract/platform/README.md#does-a-control-node-also-host-workloads)).
+  *Set overlap* states the topology honestly but cannot be realized, since a requirement mapping
+  cannot distribute a subset of bindings. *Disjoint sets with a property* can be built today.
+- **I46 — one hosting capability instead of three.** `PlatformHost`, `ExecutionEnvironment` and
+  `DataPlatform` share a parent, declare nothing, and are inherited by every platform, so they
+  neither tell platforms apart nor let a component ask for a platform that hosts both applications
+  and data. The amendment to Section 2.3 collapses them into one capability that `Platform`
+  exposes to every kind of guest, which derived platform types narrow through
+  `valid_source_node_types`. `control-host` then targets it too. It relies on the narrowing reading
+  of §8.2.1 (I47).
+
+**Decisions sought:** the name; which workload model the profiles adopt; and whether I46 goes in
+before the tag, since it changes the N9 edit the `0.1` makes. If it does, the single type needs a
+name.
+
+### 2.3 How a derived relationship type declares its kind — 6 min · *I44* · [#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363)
+
+The base relationship types carry `metadata: {relationship_kind: …}`, which an orchestrator reads
+to decide how deletion and events propagate. §6.4.2 excludes `metadata` from derivation, and
+§5.3.1 says metadata may be ignored and should not affect runtime behavior. `abstract.base`
+redeclares the keyname on all six derived types, but in lower case where the base types write
+upper case, and the profile now carries a comment noting the difference.
+
+Five options:
+
+1. **Redeclare** on every derived type, with one case convention.
+2. **Drop the metadata** and let derivation carry the kind. After A8 that means one set of base
+   types per column for a consumer to recognize.
+3. **A `kind` keyname** on relationship types, asked for in 2.1.
+4. **Document it** as a convention that does not travel.
+5. **New, Roberto's: extend `directives`.** Requirement assignments already take `directives`,
+   admitting `internal` and `external`. Adding `containment`, `dependency` and `association` moves
+   the kind from the relationship type to the node template, and base relationship types split
+   by kind would no longer be needed.
+
+Roberto prefers 3, with 1 in the meantime. Options 3 and 5 are language changes, so what the
+`0.1` ships is 1, 2 or 4.
+
+**Decision sought:** which of those the `0.1` ships, and the case convention; and whether 3 or 5
+goes to the TC.
+
+### 2.4 The container-platform credential vocabulary — 3 min · *I29*
+
+**Proposed resolution ([Section 2.4](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md)):**
+`[kubeconfig, token, x509_cert, x509_key]`, the kinds following from what each connection opens.
+
+- `kubeconfig` for every Kubernetes distribution.
+- `token` for Nomad's ACL token, or a Kubernetes bearer token held without a kubeconfig.
+- `x509_cert` and `x509_key` for a remote Docker daemon over mutual TLS (and so Compose and a
+  Swarm manager, which speak its API), and for Nomad with mutual TLS.
+
+The SSH kinds stay on the `ServerPlatform` hosting the platform, since an SSH login opens the
+host, and `cloud_account` stays on `VirtualizationPlatform`. The draft argues that widening a
+`key_schema` breaks nothing downstream, so this can follow the `0.1` rather than hold it.
+
+**Decision sought:** confirm the vocabulary, and whether it goes into the `0.1` or after it.
+
+### 2.5 `AtRestData`'s name — 3 min · *I45*
+
+"At rest" is a security term, set against data in transit and in use. The data profile's other
+five types are named for how data is delivered, so the name suggests its siblings are not at
+rest, which is not the distinction the profile draws. What sets the type apart on the profile's
+own axis is that data is stored and retrieved on demand. `StoredData` and `PersistentData` both
+read alongside `BatchData`, `StreamingData` and `EventData`.
+
+**Decision sought:** rename before the `0.1`, or keep the name. After the tag a rename is a
+breaking change.
+
+### 2.6 Does `Bash` leave `core`? — 2 min · *I10*
+
+The one part of the `core` proposal that A8 did not settle. No profile in the repository names `core`'s
+`Bash`, and `technology.base` declares the `Bash` that is wanted, carrying `host`. The case for
+waiting: if the calling convention (3.4) is declared by the artifact type, what `core` keeps
+depends on it.
+
+**Decision sought:** delete `core`'s `Bash` for the `0.1`, or keep it until the calling
+convention is settled.
+
+---
+
+## Part 3 — Outstanding proposals — 15 min · **status, and what each needs**
+
+Five proposals have not had the group's attention, three of them drafted resolutions waiting only
+for a yes or a no. This part does not work through them. For each, it says what the proposal is
+and asks what it needs next: a full slot, a written review, ratification, or retirement.
+
+### 3.1 Three drafted resolutions awaiting ratification · *I13 / I16(c) / I17*
+
+Carried past five meetings without being read. **If only one item in Part 3 is reached, it
+should be this one**: each needs a yes or a no, not a discussion.
+
+- **I17 — the monitoring and security patterns**
+  ([`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md)), drafted 07-15.
+  Monitoring is an observability capability on the monitored node with a `DependsOn`-based
+  requirement; security splits into perimeter, authentication, authorization and identity/trust.
+  It pairs with 3.2, a worked realization of its authentication half.
+- **I16(c) — how deep the type hierarchies should go**
+  ([`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md)). Parts (a) and (b)
+  were settled by N9 and N10.
+- **I13 — no `type-of-node` function**
+  ([`modeling-methodology.md`](../profiles/community/tosca/docs/modeling-methodology.md)), drafted
+  08-04. Platforms of one type that differ only in what each is designated to become cannot be
+  told apart by type, so a property filter covers strictly more ground. If ratified, the
+  platform-representation list needs a property for what a platform is designated to be.
+
+### 3.2 Orchestrated credentials · *I27 / I41* · [proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md)
+
+D13 covers a credential the model *references*; this covers one the orchestrator *creates*. A
+node type per kind of orchestrated secret, a `Credential` capability on it holding a map of
+`CredentialRef`, and a requirement on every node that needs the material, with a certificate as
+the worked example. Two questions are open: which profile the `Credential` capability belongs in
+(the chair's position is the technology base profile), and whether the orchestrated-secret node
+types belong in the abstract profiles at all. **I41** asks whether the identity and trust port
+(`TrustAnchor`, `Certification`, `AnchorsOn`) comes with this proposal or after it. I29's
+certificate kinds need that trust anchor too.
+
+### 3.3 One function, more than one implementation · *I43* · [#365](https://github.com/oasis-open/tosca-community-contributions/discussions/365)
+
+`core`'s eight functions carry sixteen implementations, all typed `Python`, so a platform that runs
+custom functions as WebAssembly plugins has to edit `core` to use it. Roberto's discussion sets out
+three approaches:
+
+- **Split `core`** into portable definitions and orchestrator-specific files, with the consumer
+  importing the one for its orchestrator.
+- **Ship no implementations** in the community profiles, and have each orchestrator publish an
+  implementation profile for each community release, refining the function definitions (§10.4).
+- **Conditional inclusion**, a 2.1 extension marking parts of a file for one orchestrator or
+  another.
+
+The 09-09 meeting raised a fourth: one profile carrying alternative implementations, with the
+orchestrator selecting the one it can run. Roberto notes he has not yet tried any of them. The
+same question reaches operation implementations (I9, I14).
+
+**Input wanted:** which approach to prototype first.
+
+### 3.4 The artifact calling convention · *I10* · [proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md)
+
+The specification does not say how an orchestrator passes values to an implementation artifact,
+so the contract belongs in the artifact type. The proposal replaces a variable per input with
+one JSON document, each artifact type declaring its own channel: a variable for Bash, `stdin`
+for Python. The output channel is left open among three options. Adjacent to 3.3, the same medium
+in the other direction, and to 2.6.
+
+### 3.5 The §1.2.2 naming amendments · *I39* · [proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md)
+
+Drafted for the TC and never submitted: permit snake case for value names, and keep acronyms
+upper case throughout. No normative impact, since §1.2.2 already says parsers should not enforce
+the conventions. **Decision sought, and five minutes is enough:** submit it on the errata track
+(P4), or withdraw it.
+
+---
+
+## If time permits
 
 - **Substitution filters against the revised types (I32).** N9 and N11 move the abstract types'
   structure into requirements and capabilities, which is what a substitution filter selects on.
-  The filters are being refined and are expected to work, but the mechanism has not been walked
-  through with the group.
-- **Examples exercising the agreed changes.** Committed on 09-02. The two examples in the
-  repository, `online_boutique` and the microservice substitution, now use N11's names; examples
+  The mechanism has not been walked through with the group.
+- **Examples exercising the agreed changes.** The two in the repository use N11's names; examples
   for the other agreed changes are still to come.
-- **Whether the `Process` data type goes.** N12 dropped the `processes` property that used it,
-  so nothing in the application profile uses it now, and N12 does not say whether it stays.
+- **Whether the `Process` data type goes.** N12 dropped the `processes` property that used it, so
+  nothing in the application profile uses it now.
 - **OPAF participation (C4).** Bringing the Open Process Automation Forum's control-systems
-  modelling into these meetings, in both directions.
+  modelling into these meetings.
 - Carried: Kubernetes profile testing (Prachi, Jay); Tal's OpenAPI→TOSCA generator.
 
 ---
 
-**Decisions sought:** how a derived relationship type declares its kind (#1); the `mgmt-address`
-type (#2); the container-platform credential vocabulary (#3); whether to rename `AtRestData`
-before the `0.1` (#4); the `control-host` name, the control-node workload model,
-and whether I46's single hosting capability goes in before the tag or after it (#5); and whether the §1.2.2 naming amendments are submitted to
-the TC or withdrawn (#10).
+**Decisions sought (Part 2):** the `mgmt-address` type (2.1); the `control-host` name, the
+control-node workload model, and whether I46 goes in before the tag (2.2); how a derived
+relationship type declares its kind (2.3); the container-platform vocabulary and its timing
+(2.4); whether to rename `AtRestData` (2.5); and whether `Bash` leaves `core` (2.6).
 
-**Ratification sought** on the three drafted resolutions in #6, or an explicit decision to retire
-each draft.
+**Also sought (Part 3):** ratification of the three drafted resolutions (3.1), and whether the
+naming amendments are submitted or withdrawn (3.5).
 
-**Items 7, 8 and 9 want input rather than a decision** — three proposals the group has not
-discussed, each becoming a decision item once the questions in it are answered.
+**Input wanted:** on orchestrated credentials (3.2), function portability (3.3) and the calling
+convention (3.4).
 
-**Items 1 to 4 are on the `0.1` path, and September has three meetings left.** After those four,
-and item 5's call on I46, what stands between the community and its first tag is two edits, N8
-and N9.
-
-**For information:** the design guide is renamed `modeling-methodology.md` (the first notice);
-A8, D13, N11, most of N12 and Section 2.8 (N15) are written into the profiles (the second
-notice); and Section 2.5's `RelationalDatabase` is withdrawn (decision N14, item 4).
+**After Part 2, what stands between the community and its first tag is two edits, N8 and N9.**
