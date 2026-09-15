@@ -38,10 +38,10 @@ Five agreed decisions are now in the YAML, and one proposal is withdrawn. Each i
   in the repository use the new names.
 - **N12, in part — `ServerApplication`**, without `processes`. Its placement requirement becomes
   `host` with N9.
-- **N15 — `Network` carries `cidr_block` and `internet_accessible`.** Section 2.8, agreed on 09-02,
+- **N15 — `Network` carries `cidr_block` and `internet_accessible`.** Agreed on 09-02 and
   recorded as a decision. It stays provisional pending the `technology`-based network model I2
   describes.
-- **N14 — Section 2.5 is withdrawn.** A relational database is `AtRestData` with
+- **N14 — `RelationalDatabase` is withdrawn.** A relational database is `AtRestData` with
   `technology: relational` and a `product`. The proposed `RelationalDatabase` carried nothing of
   its own: no template set its one property, and its one realization selected on `technology`,
   not on the type.
@@ -69,6 +69,10 @@ I29; and N9 with the rest of N12, once Part 2 says whether I46 goes in first.
   everywhere* as its aim, and target-driven profiles make up the continuum's lower levels. Links
   inside the repository are repointed. **Links to `design-guide.md` from outside the repository
   stop resolving**; the section anchors are unchanged.
+- **The proposal document now holds only what is still open**: Sections 2.3 and 2.4, and the part
+  of 2.7 that waits on 2.3. The implemented sections have left it, their decisions to the decision
+  log and their types to the profile READMEs, per the rule in its own header. The one open
+  question found in them, whether `Processes` should tell reading from writing, is now I48.
 
 ### New issues
 
@@ -221,7 +225,7 @@ breaking change.
 
 ### 2.6 Does `Bash` leave `core`? — 2 min · *I10*
 
-The one part of Section 2.9 that A8 did not settle. No profile in the repository names `core`'s
+The one part of the `core` proposal that A8 did not settle. No profile in the repository names `core`'s
 `Bash`, and `technology.base` declares the `Bash` that is wanted, carrying `host`. The case for
 waiting: if the calling convention (3.4) is declared by the artifact type, what `core` keeps
 depends on it.

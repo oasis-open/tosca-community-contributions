@@ -116,9 +116,9 @@ locally on the orchestrator.
 
 > `Bash` being declared in two profiles is a defect rather than a design. TOSCA
 > typing is nominal, so the two are distinct types and an artifact of one cannot
-> satisfy a definition expecting the other. Section 2.9 of the
-> [abstract-profile proposal](abstract-profile-proposed-changes.md) proposes
-> removing the core copy, leaving the one that carries `host`.
+> satisfy a definition expecting the other. Removing the core copy, leaving the
+> one that carries `host`, is tracked as I10 in the
+> [open issues](../../../../governance/open-issues.md).
 
 ## Changing these conventions
 

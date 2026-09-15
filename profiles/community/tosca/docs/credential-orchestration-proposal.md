@@ -19,9 +19,8 @@ the path to where the material is retrieved and, where one is needed, a `name`;
 a **map** of them keyed by credential kind, and each derived type refines the map's `key_schema` to
 the kinds it accepts — the key *is* the kind, so no entry carries a type field.
 
-Agreed at the 2026-09-02 community meeting as decision D13, and proposed for
-`community.tosca.core` in Section 2.1 of the
-[abstract-profile proposal](abstract-profile-proposed-changes.md).
+Agreed at the 2026-09-02 community meeting as decision D13; both types are in
+`community.tosca.core`.
 
 ## What this proposes
 
@@ -114,19 +113,14 @@ advertiser named above is technology-level.
 - **For a technology profile.** `community.tosca.technology.base` is the base of the column every
   advertiser sits in. Putting the port in `abstract.base` places it one profile above everything
   that uses it, so a consumer of the abstract profiles imports a vocabulary nothing at that level
-  touches — the same arbitrary division [Section 2.9 of the abstract-profile
-  proposal](abstract-profile-proposed-changes.md#29-communitytoscacore-and-communitytoscaabstractbase--core-as-a-standard-library)
-  argues against, running the other way.
+  touches — the same arbitrary division decision A8 removed from `core`, running the other
+  way.
 - **For `abstract.base`.** An abstract type that needed to *bind* a credential node, rather than
   carry a supplied reference, would need the port visible at its level. Against that: a derived
   type may add a requirement its parent never declared, so such a binding can be introduced later
   without changing the abstract type. The §9.4 constraint that makes the container-platform
   credential vocabulary urgent — a refinement narrows and cannot widen — governs a `key_schema` the
   parent already declares, not a requirement it never did.
-
-The two answers also differ in what else they wait on. A technology profile settles the question on
-its own; `abstract.base` makes it wait on Section 2.9, which decides where the base capability types
-live.
 
 ---
 
