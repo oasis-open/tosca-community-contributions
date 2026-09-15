@@ -71,7 +71,8 @@ I29; and N9 with the rest of N12, once Part 2 says whether I46 goes in first.
   stop resolving**; the section anchors are unchanged.
 - **The proposal document now holds only what is still open**: Sections 2.3 and 2.4, and the part
   of 2.7 that waits on 2.3. The implemented sections have left it, their decisions to the decision
-  log and their types to the profile READMEs, per the rule in its own header. The one open
+  log, their types to the profile READMEs, and the one general argument among them, on where
+  application ends and data begins, to the modeling methodology. The one open
   question found in them, whether `Processes` should tell reading from writing, is now I48.
 
 ### New issues

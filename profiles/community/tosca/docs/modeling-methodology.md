@@ -144,6 +144,26 @@ in the following figure:
 
 ![Generic System View Service Template](../images/generic-template.png)
 
+### Data as a Managed Entity, and Data in Motion
+
+A component that exchanges values with other components can look as though it straddles
+application and data. The line between the two is drawn by independent existence. Every `Data`
+type is a dataset with a lifecycle of its own and a platform it is available on. Values in motion
+between components have neither: nothing deploys them and no platform hosts them. They are an
+interface a running component exposes, so they are modeled as a capability on that component,
+reached by a requirement from the components that consume them.
+
+Signals in a process control system are the clear case. An I/O channel publishes a signal and the
+control logic reading it consumes it, and the two are commissioned independently. The signal is a
+port on the publisher. The base profile draws the same line: `Data` for the managed entity, and the
+`service` capability every `Application` exposes for the interface, with `Endpoint` as its form for
+a service reached over a network.
+
+Where a component does both, such as a historian that runs logic and owns an authoritative
+dataset, it decomposes into an `Application` and a `Data` node joined by `processes`. Whether that
+relationship should distinguish reading a dataset from writing it is an open question, tracked as
+I48 in the [open issues](../../../../governance/open-issues.md).
+
 ## Component-Specific System View Profiles
 
 In practice, abstract service templates generally will not use the
