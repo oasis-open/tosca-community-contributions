@@ -52,7 +52,10 @@ include the following:
 
 A virtualization platform's `credentials` accept `token`, a file holding a
 bearer token, and `cloud_account`, a provider's credentials file whose `name`
-selects a profile within it.
+selects a profile within it. They also accept `ssh_key`, a private key and
+the login it authenticates, for a platform also managed through an SSH login
+on the machine it runs on, where that machine is not modelled as a server
+platform of its own.
 
 ### Container Platforms
 

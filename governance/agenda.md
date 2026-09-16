@@ -87,7 +87,12 @@ language changes, so what the `0.1` ships is one of the first, second or fourth.
 - **URL schemes,** new since N16: `https`, `tcp` and `unix`, as Section 2.4 proposes, covering a
   Kubernetes API server, a remote Docker daemon and a local socket.
 
-**Decisions sought:** both vocabularies, and whether they go into the `0.1` or after it. Widening a
+Related, for confirmation: `VirtualizationPlatform` now also accepts `ssh_key`, for a platform managed
+partly through an SSH login on a machine not modelled as a server platform. The same rule decides
+whether a container platform reached over `ssh://` accepts it.
+
+**Decisions sought:** both vocabularies, whether they go into the `0.1` or after it, and whether the
+rule for `ssh_key` holds. Widening a
 `key_schema` breaks nothing downstream; narrowing it later would.
 
 ### 2.4 `AtRestData`'s name — 3 min · *I45*

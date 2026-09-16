@@ -279,7 +279,9 @@ settled 2026-09-16 as decision N16, as a URL.** **`credentials` is in the profil
 2026-09-16**, declared on `Platform` and narrowed per platform type as the table below shows,
 and `core` declares `Url` and `SshUrl`, with `HttpUrl` derived from `Url`. **`mgmt-address` is
 not declared yet:** it goes in as one change with the two URL functions below and the realizations
-that need them, so that nothing consuming the profiles breaks in between. The credentials
+that need them, so that nothing consuming the profiles breaks in between. `VirtualizationPlatform` also accepts
+`ssh_key` since 2026-09-16, an addition to the table below for a platform managed partly through an
+SSH login on a machine not modelled as a server platform. The credentials
 mechanism is decision D13; the one item still open is the
 container-platform vocabulary, with the URL schemes the container platform admits.
 

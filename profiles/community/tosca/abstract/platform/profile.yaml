@@ -43,18 +43,27 @@ node_types:
       cloud.
     derived_from: Platform
     properties:
-      # The base CredentialRef, not the Named one: neither kind always carries a
-      # name. A token file holds the token alone, and a credentials file's name
-      # selects a profile within it only where it holds more than one.
+      # The base CredentialRef, not the Named one: token and cloud_account do not
+      # always carry a name. A token file holds the token alone, and a
+      # credentials file's name selects a profile within it only where it holds
+      # more than one. An ssh_key always names its login, which a map with one
+      # entry schema cannot require for one kind alone.
+      #
+      # ssh_key is admitted for a platform managed partly through an SSH login on
+      # the machine it runs on, where that machine is not modelled as a server
+      # platform of its own. Where it is, the login belongs on that server
+      # platform instead, the rule I29 applies to container platforms.
       credentials:
         description: >-
-          How the orchestrator authenticates to the platform's API: `token`
-          names a file holding a bearer token, and `cloud_account` names a
-          provider's credentials file, whose `name` selects a profile within it.
+          How the orchestrator authenticates to the platform: `token` names a
+          file holding a bearer token for its API; `cloud_account` names a
+          provider's credentials file, whose `name` selects a profile within it;
+          and `ssh_key` names a private key and the login it authenticates, for
+          a platform also managed through an SSH login on the machine it runs on.
         type: map
         key_schema:
           type: string
-          validation: { $valid_values: [ $value, [ token, cloud_account ] ] }
+          validation: { $valid_values: [ $value, [ token, cloud_account, ssh_key ] ] }
         entry_schema:
           type: CredentialRef
   ContainerPlatform:
