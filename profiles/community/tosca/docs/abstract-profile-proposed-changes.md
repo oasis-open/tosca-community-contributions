@@ -52,8 +52,9 @@ community first.
 
 ### 2.3 `community.tosca.abstract.base` — one containment relationship, one requirement name
 
-**Status: agreed 2026-09-02 on the requirement name; the relationship-type collapse is
-deliberately left open.** Recorded as decision N9. Roberto proposed the three relationship
+**Status: agreed 2026-09-02 on the requirement name, as decision N9; the amendment below, one
+hosting capability, agreed 2026-09-16 as decision N17, which also settles the relationship-type
+collapse.** Neither is in the profiles yet. Roberto proposed the three relationship
 types originally, at a point when it was not yet known whether each would need distinct
 properties or attributes; months of use show they do not. So `host` is the requirement name
 everywhere and the base `HostedOn` is what it declares, and a derived relationship type
@@ -273,9 +274,10 @@ same capability of the node they substitute, so they lose nothing.
 
 ### 2.4 `community.tosca.abstract.platform` — properties and requirements
 
-**Status: agreed 2026-09-02, with two items reopened.** The six community platform types
-declare no properties today. The credentials mechanism is decision D13; the two open items are
-the `mgmt-address` type and the container-platform vocabulary, both flagged in the table below.
+**Status: agreed 2026-09-02 as the write-up of decision N8, with two items reopened; the `mgmt-address` type
+settled 2026-09-16 as decision N16, as a URL.** The six community platform types declare no
+properties today. The credentials mechanism is decision D13; the one item still open is the
+container-platform vocabulary, with the URL schemes the container platform admits.
 
 `credentials` is declared once on `Platform`, as a map of the `CredentialRef` `core` declares (D13). What each
 platform type adds is the **vocabulary of credential kinds it accepts**, as a `key_schema`
@@ -689,7 +691,9 @@ Proposal in the amendment to Section 2.3. **Not yet discussed by the community.*
 
 ### Question 1 — `mgmt-address` typing
 
-*Resolved (2026-06-24), reopened (2026-09-02).* The 2026-06-24 resolution: keep the property
+*Resolved (2026-06-24), reopened (2026-09-02), resolved again (2026-09-16) as decision N16:
+`mgmt-address` is a URL, declared once on `Platform` and narrowed by each platform type.* The
+2026-06-24 resolution it replaces: keep the property
 name and type specific to each derived platform type — a structured socket for servers, a
 `string` or platform-specific `JSON` for URL-addressed API platforms. Do not hoist a single
 `mgmt-address` onto the base `Platform`.
@@ -783,7 +787,7 @@ question and does not belong to this proposal.
 
 ### Question 10 — One hosting capability
 
-*Open (raised 2026-09-11).* Should `PlatformHost`, `ExecutionEnvironment` and `DataPlatform`
+*Resolved (2026-09-16) as decision N17: yes; the single type still needs a name.* Should `PlatformHost`, `ExecutionEnvironment` and `DataPlatform`
 collapse into one hosting capability type, exposed once by `Platform` with no restriction on
 its sources and narrowed by the derived platform types that accept fewer kinds of guest? Doing
 so amends N9's wording, which leaves the capability to say what kind of thing is placed, and
