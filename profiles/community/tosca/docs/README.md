@@ -64,3 +64,7 @@ lives and what it may claim.
 - **[spec-naming-conventions-proposal.md](spec-naming-conventions-proposal.md)**
   — two amendments to §1.2.2 of the specification. This one addresses the OASIS
   TOSCA Technical Committee rather than these profiles.
+- **[spec-implementation-binding-proposal.md](spec-implementation-binding-proposal.md)**
+  — a construct for supplying an implementation for a function or an operation
+  declared elsewhere, and for choosing among several. Also addressed to the OASIS
+  TOSCA Technical Committee.
