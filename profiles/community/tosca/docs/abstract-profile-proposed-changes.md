@@ -1,8 +1,7 @@
 # Proposed Enhancements to the TOSCA Community Abstract Profiles
 
 **Status:** Discussion draft, holding the proposals still open. Section 2.4 was agreed at the
-2026-09-02 community meeting and is in the profiles except `mgmt-address`, which waits on its two
-URL functions, and I29. Each proposal states its own status.
+2026-09-02 community meeting and is in the profiles except I29. Each proposal states its own status.
 
 **A section leaves this document once it reaches the profiles**, in two directions: the decision
 to the [decision log](../../../../governance/decision-log.md), and the description of the types to
@@ -54,9 +53,10 @@ settled 2026-09-16 as decision N16, as a URL.** **`credentials` is in the profil
 2026-09-16**, declared on `Platform` and narrowed per platform type as the table below shows,
 and `core` declares `Url` and `SshUrl`, with `HttpUrl` derived from `Url`. `core` also declares
 `Socket`, replacing `IPv4Socket`, and the two functions below as `ssh_url_to_socket` and
-`socket_to_ssh_url` (2026-09-16), the three names for the group to confirm. **`mgmt-address` is
-not declared yet:** it goes in as one change with the realizations that use those functions, so
-that nothing consuming the profiles breaks in between. `VirtualizationPlatform` also accepts
+`socket_to_ssh_url` (2026-09-16), the three names for the group to confirm. **`mgmt-address` is in
+the profiles since 2026-09-16**, declared on `Platform` as `Url` and narrowed to `SshUrl` on
+`ServerPlatform` and `HttpUrl` on `VirtualizationPlatform`. `ContainerPlatform`'s stays `Url`
+until I29 settles its schemes. `VirtualizationPlatform` also accepts
 `ssh_key` since 2026-09-16, an addition to the table below for a platform managed partly through an
 SSH login on a machine not modelled as a server platform. The credentials
 mechanism is decision D13; the one item still open is the
@@ -78,7 +78,7 @@ URL rather than as a structured socket for one platform kind and a bare string f
 general, and validated in both cases. What has to be established first is whether every
 management address can be written as a URL. The reason to settle it before the `0.1` rather than
 after: a data type chosen at this level cannot be corrected at any lower one. Tracked as I28, and
-it reopens the 2026-06-24 resolution of [Question 1](#question-1--mgmt-address-typing).
+it reopened the 2026-06-24 resolution of Question 1, which N16 has since settled.
 
 **The validated URL type in `core` is not that type.** `HttpUrl` accepts only `http` and
 `https`, so the URL route needs a URL type that does not fix the scheme, leaving the scheme to say
@@ -282,21 +282,6 @@ prototyped against them, so there is no evidence yet for what they would need.
 ---
 
 ## 4. Decisions and open questions
-
-### Question 1 — `mgmt-address` typing
-
-*Resolved (2026-06-24), reopened (2026-09-02), resolved again (2026-09-16) as decision N16:
-`mgmt-address` is a URL, declared once on `Platform` and narrowed by each platform type.* The
-2026-06-24 resolution it replaces: keep the property
-name and type specific to each derived platform type — a structured socket for servers, a
-`string` or platform-specific `JSON` for URL-addressed API platforms. Do not hoist a single
-`mgmt-address` onto the base `Platform`.
-
-What reopens it is not the per-type principle but the choice of types. Roberto proposes a
-validated URL for every case, which is both general and checkable, against a structured socket
-in one place and an unvalidated string in another. The question to settle is whether every
-management address is expressible as a URL — SSH has no official scheme, so the community would
-be publishing a convention of its own. Section 2.4 carries the detail; tracked as I28.
 
 ### Question 3 — Single source of truth for shared types
 

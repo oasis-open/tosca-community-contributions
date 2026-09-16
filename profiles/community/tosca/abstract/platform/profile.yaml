@@ -32,6 +32,11 @@ node_types:
           validation: { $valid_values: [ $value, [ ssh_key, ssh_password ] ] }
         entry_schema:
           type: NamedCredentialRef
+      mgmt-address:
+        description: >-
+          The SSH URL the orchestrator logs in to the server through, in the
+          form ssh://host[:port]. The login is the credential's name.
+        type: SshUrl
     requirements:
       - host:
           node: VirtualizationPlatform
@@ -66,6 +71,10 @@ node_types:
           validation: { $valid_values: [ $value, [ token, cloud_account, ssh_key ] ] }
         entry_schema:
           type: CredentialRef
+      mgmt-address:
+        description: >-
+          The HTTP or HTTPS URL of the platform's management API.
+        type: HttpUrl
   ContainerPlatform:
     description: |
       Container platform node type. Represents a container
@@ -75,7 +84,9 @@ node_types:
     properties:
       # The base CredentialRef, not the Named one: a kubeconfig's name selects a
       # context inside the file and is absent when the file's current context is
-      # wanted. Further credential kinds are open (I29).
+      # wanted. Further credential kinds are open (I29), and so are the schemes
+      # its mgmt-address admits, which stays the Url Platform declares until
+      # I29 settles them.
       credentials:
         description: >-
           How the orchestrator authenticates to the platform: `kubeconfig` names

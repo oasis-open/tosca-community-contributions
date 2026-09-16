@@ -35,7 +35,8 @@ this list is not meant to be exhaustive:
 - *Virtual Machine*: A VM instantiated on a virtualization platform.
 
 A server platform's `credentials` accept `ssh_key` and `ssh_password`, each
-naming the user to log in as. Its `host` requirement is for a virtualization platform,
+naming the user to log in as. Its `mgmt-address` is an `SshUrl`,
+`ssh://host[:port]`, with port 22 where none is given. Its `host` requirement is for a virtualization platform,
 which a virtual machine binds and a physical server leaves unbound.
 
 ### Virtualization Platforms
@@ -55,7 +56,8 @@ bearer token, and `cloud_account`, a provider's credentials file whose `name`
 selects a profile within it. They also accept `ssh_key`, a private key and
 the login it authenticates, for a platform also managed through an SSH login
 on the machine it runs on, where that machine is not modelled as a server
-platform of its own.
+platform of its own. Its `mgmt-address` is an `HttpUrl`, the address of its
+management API.
 
 ### Container Platforms
 
@@ -71,6 +73,8 @@ containerized software. This can include:
 
 A container platform's `credentials` accept `kubeconfig`, a kubeconfig file
 whose `name` selects a context within it where the file holds more than one.
+Its `mgmt-address` is the `Url` every platform declares; which schemes it
+admits is open (I29).
 
 ### PaaS Platforms
 

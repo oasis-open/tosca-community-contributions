@@ -201,6 +201,18 @@ node_types:
         entry_schema:
           type: CredentialRef
         required: false
+      # Declared as the generic Url: each platform type narrows it to the scheme
+      # it is reached by, refining the type where one scheme is admitted, as it
+      # narrows the credential kinds.
+      mgmt-address:
+        description: >-
+          The URL the orchestrator manages this platform through, whose scheme
+          says how the platform is reached. Supplied for a platform the
+          orchestrator connects to; populated by the realization where it
+          provisions the platform. Derived platform types name the schemes
+          they accept.
+        type: Url
+        required: false
     capabilities:
       # No valid_source_node_types: every kind of guest is accepted, and a
       # derived platform type narrows it where it accepts fewer.

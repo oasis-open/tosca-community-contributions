@@ -75,7 +75,12 @@ properties:
 Platform nodes also carry `credentials`: references to the credential
 material the orchestrator authenticates with, keyed by the kind of
 credential. They are supplied for a platform the orchestrator connects to,
-and each platform type narrows the kinds it accepts.
+and each platform type narrows the kinds it accepts. Beside them is
+`mgmt-address`, the URL the orchestrator manages the platform through,
+whose scheme says how the platform is reached. It is supplied for a
+platform the orchestrator connects to and populated by the realization
+for one it provisions, and each platform type narrows the schemes it
+accepts.
 
 Network nodes carry two properties. `cidr_block` is the network's
 address range in CIDR notation, left unset for a forwarding domain that
