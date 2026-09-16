@@ -191,15 +191,9 @@ observation:
   node type saying where control is hosted, alongside `host` saying
   where the data plane is.
 
-  > **Proposed, not yet present.** `Platform` declares `host` and
-    `links-to` only, so the models below cannot be written down against
-    the profile as it stands. The requirement is proposed as
-    **`control-host`** in [Section 2.3 of the abstract-profile
-    changes](../../docs/abstract-profile-proposed-changes.md#23-communitytoscaabstractbase--one-containment-relationship-one-requirement-name), which also answers the question this section used to
-    ask — whether a distinct relationship type is needed, or a distinct
-    requirement name suffices. A distinct name suffices: the same
-    relationship carries both senses either way, so the difference
-    belongs on the requirement.
+  `Platform` declares this second requirement as **`control-host`**. It
+  uses the same `HostedOn` relationship and `Host` capability as `host`,
+  and the requirement name says which of the two planes is placed.
   
 Using this approach, the abstract `VirtualizationPlatform` node that
 represents the Kubevirt node has a `HostedOn` relationship to the
@@ -223,7 +217,7 @@ that the runtime runs.
 ```mermaid
 graph BT
     engine["ContainerPlatform<br/>(container runtime)"] -->|HostedOn| server["ServerPlatform<br/>(server)"]
-    app["Application"] -->|RunsOn| engine
+    app["Application"] -->|HostedOn| engine
 ```
 
 A container runtime provides its control plane on the same host that
@@ -285,10 +279,9 @@ bindings as shown in the following figure:
 
 ### Does a control node also host workloads?
 
-The third question above is the one the model does not yet answer. Assume the
+The third question above is the one the model does not yet answer. A
 `ContainerPlatform` has two placement requirements — `host` for the servers that run workloads
-and a second for the control plane, proposed as `control-host` in
-[the abstract-profile changes](../../docs/abstract-profile-proposed-changes.md#23-communitytoscaabstractbase--one-containment-relationship-one-requirement-name).
+and `control-host` for the control plane.
 Having both does not by itself settle how to say that the machine running the control plane is
 *also* available for workloads. Two models, recorded here as the choice rather than the
 answer.

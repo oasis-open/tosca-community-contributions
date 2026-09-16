@@ -56,9 +56,7 @@ node_types:
       its properties, capabilities and requirements
     derived_from: Application
     requirements:
-      - runs-on:
-          capability: ExecutionEnvironment
-          relationship: RunsOn
+      - host:
           node: platform:ContainerPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
 
   MicroService:
@@ -84,9 +82,7 @@ node_types:
       service:
         type: Endpoint
     requirements:
-      - runs-on:
-          capability: ExecutionEnvironment
-          relationship: RunsOn
+      - host:
           node: platform:ServerPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
 
   ServerlessApplication:
@@ -98,8 +94,6 @@ node_types:
       its properties, capabilities and requirements
     derived_from: Application
     requirements:
-      - runs-on:
-          capability: ExecutionEnvironment
-          relationship: RunsOn
+      - host:
           node: platform:ServerlessPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
 

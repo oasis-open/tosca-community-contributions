@@ -246,12 +246,9 @@ proliferation of near-identical types.
 
 ## One Port, Many Consumers
 
-> **Proposed resolution for issue I46**, and a partial answer to how
-> deep type hierarchies should go (I16). Generalizes the hosting
-> amendment in [Section 2.3 of the abstract-profile proposal](abstract-profile-proposed-changes.md#23-communitytoscaabstractbase--one-containment-relationship-one-requirement-name);
-> the reasoning is in its
-> [Problem 8](abstract-profile-proposed-changes.md#problem-8--three-hosting-capabilities-that-every-platform-exposes).
-> Not yet discussed by the community.
+> **Adopted for `Platform` as decision N17** (2026-09-16), and a partial
+> answer to how deep type hierarchies should go (I16). The community base
+> profile declares the single capability as `Host`.
 
 **Problem.** Several kinds of node often use the same function of a
 target. A platform places applications, data, networks and other
@@ -299,9 +296,9 @@ node_types:
         valid_source_node_types: [ Application ]   # accepts fewer
 ```
 
-(The hosting names follow the Section 2.3 proposal, where `Host` is a
-placeholder. The `ServerlessPlatform` restriction illustrates the
-mechanism and is not proposed for that type.)
+(The hosting names are the community base profile's. The
+`ServerlessPlatform` restriction illustrates the mechanism and is not
+proposed for that type.)
 
 The rules behind the shape:
 

@@ -18,9 +18,10 @@ classDiagram
     Base <|-- Platform
     Application "0..*" --> "1" Data:Processes
     Application "0..*" --> "0..*" Application:InteractsWith
-    Application "1" --> "1" Platform:RunsOn
+    Application "1" --> "1" Platform:HostedOn
     Platform "0..*" --> "1" Network:LinksTo
-    Data "1" --> "1" Platform:AvailableOn
+    Data "1" --> "1" Platform:HostedOn
+    Network "0..*" --> "0..1" Platform:HostedOn
 ```
 
 The abstract nodes in the diagram above are intended to be decomposed
@@ -38,9 +39,14 @@ may build a service from scratch by:
 These node types relate to one-another using the following
 relationships:
 
-- Application nodes define a relationship of type `RunsOn` to a
-  platform node. This is a containment relationship that defines which
-  platform runs the application.
+- Every node defines a relationship of type `HostedOn`, through its
+  `host` requirement, to the platform that hosts it: an application to
+  the platform that runs it, data to the platform that stores it, a
+  network to the platform that provides it, and a platform to the
+  platform it is layered on. This is a containment relationship, and it
+  targets the single `host` capability, of type `Host`, that every
+  platform exposes. A platform whose control plane runs apart from what
+  it controls also binds `control-host`, over `HostedOn` too.
 - Application nodes define a relationship of type `Processes` to a
   data node. This is a dependency relationship that defines which
   entity contains the data that are processed by the application.
@@ -49,9 +55,6 @@ relationships:
   exposes. This is an association relationship that records which
   applications use a service another provides, without implying a
   deployment order.
-- Data nodes define a relationship of type `AvailableOn` to a
-  platform node. This is a containment relationship that defines which
-  platform stores persistent copies of the data.
 - Platform nodes define a relationship of type `LinksTo` to a network
   node. This is a dependency relationship that defines the network(s)
   to which platforms connect.

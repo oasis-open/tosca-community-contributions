@@ -28,15 +28,16 @@ presentation runs long. Each of its items links the document to read beforehand.
   property follows with the two URL functions and the realizations that need them.
 - **N17 — one hosting capability on `Platform`.** Derived platform types restrict what they host,
   rather than the base differentiating it. Amends N9, and settles the relationship-type collapse N9
-  left open. It goes into the profiles with N9.
+  left open. Written into the profiles on 09-16 with N9, with the capability type named `Host`.
 
-To be written into the profiles with those two: the names of the two URL functions `core` gains
-(N16), and the name of the single hosting capability (N17).
+Still to name: the two URL functions `core` gains (N16).
 
 ### Written into the profiles since 09-16
 
 - **N8, `credentials`** — declared on `Platform`, and narrowed on the server, virtualization and
   container platforms to the credential kinds each accepts.
+- **N9 and N17** — `host` declared once on `Base`, one hosting capability of type `Host`, and
+  `control-host` on `Platform`; `RunsOn` and `AvailableOn` are gone.
 
 ### Discussions and errata
 
@@ -50,20 +51,21 @@ To be written into the profiles with those two: the names of the two URL functio
 
 ## Part 2 — The decisions the `0.1` still waits on — 35 min · **decisions sought**
 
-### 2.1 The control plane — 10 min · *Questions 6 and 8*
+### 2.1 The control plane — 10 min · **confirmation sought**
 
-N9 settled `host`; N17 settled what it targets. A platform whose control plane deploys apart from
-what it controls, such as Kubevirt or a multi-node Kubernetes cluster, needs a second requirement,
-and last week's view was that two requirements is the right model.
+`control-host` is declared on `Platform` since 09-16, beside `host` and targeting the same `Host`
+capability, for a platform whose control plane deploys apart from what it controls, such as
+Kubevirt or a multi-node Kubernetes cluster. What remains is to confirm the names, and a workload
+question that does not block them: both models below use the same two requirements.
 
-- **The name.** `control-host` reads as `host`'s sibling. `runs-on` is unavailable, since it
-  already means where an application executes.
-- **Question 8 — whether a control node also hosts workloads**
+- **The names.** `control-host` reads as `host`'s sibling, and `Host` names the capability both target.
+- **Whether a control node also hosts workloads**
   ([platform README](../profiles/community/tosca/abstract/platform/README.md#does-a-control-node-also-host-workloads)).
   *Set overlap* states the topology honestly but cannot be realized, since a requirement mapping
   cannot distribute a subset of bindings. *Disjoint sets with a property* can be built today.
 
-**Decisions sought:** the name, and which workload model the profiles adopt.
+**Decisions sought:** confirm `control-host` and `Host`. The workload model can wait until a
+realization needs a schedulable control node.
 
 ### 2.2 How a derived relationship type declares its kind — 8 min · *I44* · [#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363)
 
@@ -178,7 +180,7 @@ input and output.
 
 ---
 
-**Decisions sought (Part 2):** the control-plane requirement's name and workload model (2.1); how a
+**Decisions sought (Part 2):** confirming `control-host` and `Host` (2.1); how a
 derived relationship type declares its kind (2.2); the container platform's credential kinds and URL
 schemes (2.3); `AtRestData`'s name (2.4); whether `Bash` leaves `core` (2.5); and the release's
 version string, compatibility statement and announcement (2.6).
