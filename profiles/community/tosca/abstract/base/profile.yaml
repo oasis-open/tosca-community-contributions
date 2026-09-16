@@ -219,6 +219,23 @@ node_types:
       Abstract Node Type modeling a generic platform, providing resources
       and capabilities to host a running application and/or to store a dataset
     derived_from: Base
+    properties:
+      # Declared without a vocabulary of kinds: each platform type states the
+      # kinds it accepts by refining key_schema, and a refinement's validation
+      # adds to the parent's, so the kinds can only be narrowed below here.
+      credentials:
+        description: >-
+          How the orchestrator authenticates to this platform, as references to
+          credential material keyed by kind. Supplied for a platform the
+          orchestrator connects to; left unset where the realization provisions
+          the platform and creates its own access. Derived platform types name
+          the kinds they accept.
+        type: map
+        key_schema:
+          type: string
+        entry_schema:
+          type: CredentialRef
+        required: false
     capabilities:
       host:
         type: PlatformHost

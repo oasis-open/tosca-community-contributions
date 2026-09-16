@@ -5,8 +5,8 @@ be shared by all other profiles.
 
 ## Data Types
 
-Most data types here derive from a TOSCA primitive and add a validation clause, so a value is an
-ordinary string or integer that has been checked. Three are complex types: `IPv4Socket`, composed
+Most data types here derive from a TOSCA primitive, directly or through another type here, and add
+a validation clause, so a value is an ordinary string or integer that has been checked. Three are complex types: `IPv4Socket`, composed
 of two of the others, and the two credential references.
 
 **The regular expressions avoid look-around assertions**, deliberately, so that they work in regex
@@ -32,7 +32,12 @@ being fully compliant with RFC 5321 and RFC 5322.
 
 - **`Email`** — an email address.
 - **`Fqdn`** — a fully qualified domain name.
-- **`HttpUrl`** — an HTTP or HTTPS URL whose host is `localhost`, an FQDN or an IPv4 address,
+- **`Url`** — a URL in RFC 3986's generic syntax: a scheme, a colon, and a remainder built from the
+  characters a URL permits. It checks the generic syntax only, and the scheme says how the resource
+  is reached; the types below derive from it and add a scheme's own rules.
+- **`SshUrl`** — a `Url` for reaching a host over SSH, `ssh://host[:port]`, where the host is a DNS
+  name, an IPv4 address or a bracketed IPv6 literal and the port is 22 when omitted.
+- **`HttpUrl`** — a `Url` using HTTP or HTTPS, whose host is `localhost`, an FQDN or an IPv4 address,
   optionally followed by a port and by a path, query or fragment built from the characters RFC 3986
   permits. Anchored at both ends, so the whole value must be a URL rather than merely begin with
   one.

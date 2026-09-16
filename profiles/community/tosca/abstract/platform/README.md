@@ -34,6 +34,10 @@ this list is not meant to be exhaustive:
   firmware pre-installed.
 - *Virtual Machine*: A VM instantiated on a virtualization platform.
 
+A server platform's `credentials` accept `ssh_key` and `ssh_password`, each
+naming the user to log in as. Its `host` requirement is for a virtualization platform,
+which a virtual machine binds and a physical server leaves unbound.
+
 ### Virtualization Platforms
 
 The `VirtualizationPlatform` node type represents systems or services
@@ -46,6 +50,10 @@ include the following:
   on-demand creation of networks, virtual machines and storage in the
   cloud.
 
+A virtualization platform's `credentials` accept `token`, a file holding a
+bearer token, and `cloud_account`, a provider's credentials file whose `name`
+selects a profile within it.
+
 ### Container Platforms
 
 The `ContainerPlatform` node type represents systems that can host
@@ -57,6 +65,9 @@ containerized software. This can include:
   the host it is installed on.
 - *Kubernetes Clusters*: To orchestrate container-based applications
   across one or more hosts.
+
+A container platform's `credentials` accept `kubeconfig`, a kubeconfig file
+whose `name` selects a context within it where the file holds more than one.
 
 ### PaaS Platforms
 

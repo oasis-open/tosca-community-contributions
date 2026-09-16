@@ -1,8 +1,8 @@
 # Proposed Enhancements to the TOSCA Community Abstract Profiles
 
 **Status:** Discussion draft, holding the proposals still open. Section 2.3 was agreed at the
-2026-09-02 community meeting on the requirement name and carries an open amendment (I46);
-Section 2.4 was agreed there with two items reopened (I28, I29); Section 2.7 is in the profiles
+2026-09-02 community meeting on the requirement name and carries the amendment agreed as N17;
+Section 2.4 is in the profiles except `mgmt-address`, which waits on its two URL functions, and I29; Section 2.7 is in the profiles
 except the part that waits on Section 2.3. Each proposal states its own status.
 
 **A section leaves this document once it reaches the profiles**, in two directions: the decision
@@ -275,8 +275,12 @@ same capability of the node they substitute, so they lose nothing.
 ### 2.4 `community.tosca.abstract.platform` — properties and requirements
 
 **Status: agreed 2026-09-02 as the write-up of decision N8, with two items reopened; the `mgmt-address` type
-settled 2026-09-16 as decision N16, as a URL.** The six community platform types declare no
-properties today. The credentials mechanism is decision D13; the one item still open is the
+settled 2026-09-16 as decision N16, as a URL.** **`credentials` is in the profiles since
+2026-09-16**, declared on `Platform` and narrowed per platform type as the table below shows,
+and `core` declares `Url` and `SshUrl`, with `HttpUrl` derived from `Url`. **`mgmt-address` is
+not declared yet:** it goes in as one change with the two URL functions below and the realizations
+that need them, so that nothing consuming the profiles breaks in between. The credentials
+mechanism is decision D13; the one item still open is the
 container-platform vocabulary, with the URL schemes the container platform admits.
 
 `credentials` is declared once on `Platform`, as a map of the `CredentialRef` `core` declares (D13). What each

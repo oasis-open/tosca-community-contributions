@@ -56,6 +56,33 @@ data_types:
     derived_from: string
     validation:
       $matches: [$value, "^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$"]
+  Url:
+    description: >-
+      A string holding a URL in the generic syntax of RFC 3986: a scheme,
+      a colon, and a remainder built from the characters a URL permits. The
+      scheme says how the resource is reached. The pattern checks the generic
+      syntax only; derived types add the rules of a particular scheme.
+    derived_from: string
+    # Look-around assertions are avoided for regex-engine portability, as in
+    # the other patterns here. A bare '%' is accepted rather than requiring a
+    # percent-encoded octet, matching HttpUrl's existing leniency, so that
+    # rederiving HttpUrl from this type changes no value HttpUrl accepts.
+    validation:
+      $matches: [$value, "^[A-Za-z][A-Za-z0-9+.-]*:[A-Za-z0-9._~%!$&'()*+,;=:@/?#\\[\\]-]*$"]
+  SshUrl:
+    description: >-
+      A URL for reaching a host over SSH, in the form ssh://host[:port]. The
+      host is a DNS name, an IPv4 address or a bracketed IPv6 literal, and the
+      port, from 1 to 65535, is 22 when omitted. The whole value is the scheme,
+      the host and the optional port.
+    derived_from: Url
+    # The common subset of the provisional IANA registration and what OpenSSH,
+    # Git and Docker accept. No user: the login name is the credential's name,
+    # and a second source could disagree with it. No host-key fingerprint: that
+    # is trust material, not an address. No path: its meaning differs by tool.
+    # IPv6 literals are checked for their characters only, not their structure.
+    validation:
+      $matches: [$value, "^ssh://(\\[[0-9A-Fa-f:.]+\\]|[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*)(:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?$"]
   HttpUrl:
     description: >
       The HttpUrl type defines a string that contains an HTTP or HTTPS URL.
@@ -66,7 +93,7 @@ data_types:
       pattern is anchored at both ends, so the whole value must be a URL.
       Look-around assertions are intentionally avoided to maximize
       compatibility with regex engines that do not support them.
-    derived_from: string
+    derived_from: Url
     validation:
       $matches: [$value, "^https?:\/\/(localhost|([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+)|(((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])))(:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?([/?#][A-Za-z0-9._~%!$&'()*+,;=:@/?#-]*)?$"]
   GenericId:

@@ -69,6 +69,11 @@ properties:
 - `implementation-details` carries opaque values for a substituting
   template; see [Adding Implementation Details](#adding-implementation-details).
 
+Platform nodes also carry `credentials`: references to the credential
+material the orchestrator authenticates with, keyed by the kind of
+credential. They are supplied for a platform the orchestrator connects to,
+and each platform type narrows the kinds it accepts.
+
 Network nodes carry two properties. `cidr_block` is the network's
 address range in CIDR notation, left unset for a forwarding domain that
 carries no addressing of its own or one whose range the realization

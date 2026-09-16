@@ -24,13 +24,19 @@ presentation runs long. Each of its items links the document to read beforehand.
 
 - **N16 — `mgmt-address` is a URL.** A URL type in `core`, with `SshUrl` and `HttpUrl` derived from
   it; `Platform` declares `mgmt-address` once, and each platform type narrows the scheme as it
-  narrows the credential kinds. Supersedes N7. It goes into the profiles with N8.
+  narrows the credential kinds. Supersedes N7. `Url` and `SshUrl` are in `core` since 09-16; the
+  property follows with the two URL functions and the realizations that need them.
 - **N17 — one hosting capability on `Platform`.** Derived platform types restrict what they host,
   rather than the base differentiating it. Amends N9, and settles the relationship-type collapse N9
   left open. It goes into the profiles with N9.
 
 To be written into the profiles with those two: the names of the two URL functions `core` gains
 (N16), and the name of the single hosting capability (N17).
+
+### Written into the profiles since 09-16
+
+- **N8, `credentials`** — declared on `Platform`, and narrowed on the server, virtualization and
+  container platforms to the credential kinds each accepts.
 
 ### Discussions and errata
 
