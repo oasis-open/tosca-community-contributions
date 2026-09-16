@@ -52,9 +52,11 @@ community first.
 **Status: agreed 2026-09-02 as the write-up of decision N8, with two items reopened; the `mgmt-address` type
 settled 2026-09-16 as decision N16, as a URL.** **`credentials` is in the profiles since
 2026-09-16**, declared on `Platform` and narrowed per platform type as the table below shows,
-and `core` declares `Url` and `SshUrl`, with `HttpUrl` derived from `Url`. **`mgmt-address` is
-not declared yet:** it goes in as one change with the two URL functions below and the realizations
-that need them, so that nothing consuming the profiles breaks in between. `VirtualizationPlatform` also accepts
+and `core` declares `Url` and `SshUrl`, with `HttpUrl` derived from `Url`. `core` also declares
+`Socket`, replacing `IPv4Socket`, and the two functions below as `ssh_url_to_socket` and
+`socket_to_ssh_url` (2026-09-16), the three names for the group to confirm. **`mgmt-address` is
+not declared yet:** it goes in as one change with the realizations that use those functions, so
+that nothing consuming the profiles breaks in between. `VirtualizationPlatform` also accepts
 `ssh_key` since 2026-09-16, an addition to the table below for a platform managed partly through an
 SSH login on a machine not modelled as a server platform. The credentials
 mechanism is decision D13; the one item still open is the
@@ -146,14 +148,14 @@ address the ‡ resolution below gives `ContainerPlatform`, which then inherits 
 declaring its own.
 
 **The cost of the URL route is that a URL has to be parsed to be read in parts.** A structured
-socket yields its host by path, as `[mgmt-address, ip-address]`. A URL yields a host and a port
+socket yields its host by path, as `[mgmt-address, address]`. A URL yields a host and a port
 only by parsing, and the built-in functions do not parse one: `$token` returns the substring at a
 fixed index between separator characters, so it cannot read a port that may be absent, or a
 bracketed IPv6 host whose colons are themselves separators. A realization would otherwise have to
 hand the whole URL to an artifact that parses it. That is the main argument against the URL
 route, and `core` can answer it.
 
-**What `core` would add if the route is taken.**
+**What `core` adds.**
 
 - **A `Url` type that validates RFC 3986's generic syntax**, `scheme ":" hier-part [ "?" query ]
   [ "#" fragment ]`, rather than any one scheme's rules, so that `unix:///var/run/docker.sock`
@@ -171,24 +173,23 @@ route, and `core` can answer it.
   repeated on every property that admits `ssh`, and a realization that receives one can rely on
   there being no path and no user in what it parses. It carries test cases for the same reason
   `Url` does.
-- **A function that reads a URL's parts. This one is required.** An address supplied to the
-  abstract node travels *down* to technology types that want its host and its port apart, and no
-  built-in function can take them out reliably. It returns one part at a time — scheme, host, port
-  or path — rather than a decoded structure, because a function's result cannot be followed by a
-  path, so a structure would be unusable where a realization needs the host. For a part the URL
-  does not carry, it returns a default the caller passes, such as 22 for an `ssh` port. The default
-  has to be an argument: TOSCA has no built-in function that substitutes one for an absent value,
-  and RFC 3986 recommends leaving out a port that equals the scheme's default, so a well-formed
-  `ssh://host` often carries no port at all.
-- **A function that composes one.** An address a realization produces travels *up* — a
-  provisioned server's IP address and port becoming its platform's `mgmt-address` — and has to be
-  assembled. `$concat` covers a DNS name or an IPv4 address, but produces an invalid URL from an
-  IPv6 host, which must be bracketed, and cannot leave out a port that is absent. A composing
-  function that brackets the host, omits an absent port and validates its result keeps what a
-  realization produces as valid as what an author assigns.
+- **A `Socket` type replacing `IPv4Socket`**, with `address`, a string holding a DNS name, an IPv4
+  address or an IPv6 address, and `port`, a `Port`. `IPv4Socket` typed its host as `IPv4`, which
+  holds neither of the other two, so not every `SshUrl` converts into one. Its one user,
+  `technology.base`'s `Bash.host`, uses `Socket` instead.
+- **`ssh_url_to_socket`, for an address that travels *down*:** supplied to the abstract node as a
+  URL, to technology types that want its host and its port apart, which no built-in function can
+  take out reliably. It returns the whole socket, with the brackets removed from an IPv6 host and
+  the port 22 where the URL gives none, as `SshUrl` defines. A realization that needs one part
+  assigns the socket to an input and reads the part from that input by path.
+- **`socket_to_ssh_url`, for an address that travels *up*:** a provisioned server's address
+  becoming its platform's `mgmt-address`. `$concat` covers a DNS name or an IPv4 address, but
+  produces an invalid URL from an IPv6 host, which must be bracketed. The function brackets it, and
+  leaves out a port of 22, as RFC 3986 asks of a URI producer for a scheme's default port. It
+  rejects port 0, which `Port` admits and a URL cannot name.
 
 The two functions follow the two directions a credential also travels, supplied downward and
-produced upward, which is why they come as a pair. Like `core`'s other functions they would be
+produced upward, which is why they come as a pair. Like `core`'s other functions they are
 implemented in Python, which I43 notes is the only implementation a profile can carry for a
 function today.
 
@@ -197,9 +198,7 @@ types to match (§15.2), so the translation is not in the mapping. It sits in th
 template's own inputs and outputs, between a boundary-typed value and the technology types below,
 in the form the [modeling methodology](modeling-methodology.md#passing-implementation-details-across-a-substitution-boundary)
 uses for `implementation-details`: a mapped input of the abstract type, and a second input whose
-`value` a `core` function derives from it, there `$decode_yaml`. In the sketches below,
-`$url_part` and `$compose_url` stand for the two functions above; naming them is the group's
-call.
+`value` a `core` function derives from it, there `$decode_yaml`.
 
 Downward, for a realization onto a server whose technology types take a socket:
 
@@ -208,10 +207,8 @@ inputs:
   mgmt-address:              # boundary-typed: exactly the abstract node's type
     type: SshUrl
   mgmt-socket:               # derived: what the technology types below expect
-    type: IPv4Socket
-    value:
-      ip-address: { $url_part: [ { $get_input: mgmt-address }, host ] }
-      transport-port: { $url_part: [ { $get_input: mgmt-address }, port, 22 ] }
+    type: Socket
+    value: { $ssh_url_to_socket: [ { $get_input: mgmt-address } ] }
 ```
 
 Upward, for a realization that provisions the server and reports its address:
@@ -223,13 +220,11 @@ substitution_mappings:
 outputs:
   mgmt_url:
     type: SshUrl
-    value: { $compose_url: [ ssh, { $get_attribute: [ server, address ] } ] }
+    value: { $socket_to_ssh_url: [ { $get_attribute: [ server, address ] } ] }
 ```
 
-**The downward translation can lose information; the upward one cannot.** A URL's host may be a
-DNS name or a bracketed IPv6 literal, and `IPv4Socket` types its host as `IPv4`, which holds
-neither. A realization whose technology types need an IPv4 literal says so in its substitution
-filter, which is one more place the reading function is used. A socket always composes into a URL.
+**Neither translation loses information.** Every host an `SshUrl` admits is a `Socket` address,
+and a socket whose address is a host composes into an `SshUrl`.
 
 **The cost is paid once per realization.** Nothing below the boundary changes: the translation is
 written in each realization's inputs and outputs, not in the node templates or artifacts it

@@ -25,12 +25,13 @@ presentation runs long. Each of its items links the document to read beforehand.
 - **N16 — `mgmt-address` is a URL.** A URL type in `core`, with `SshUrl` and `HttpUrl` derived from
   it; `Platform` declares `mgmt-address` once, and each platform type narrows the scheme as it
   narrows the credential kinds. Supersedes N7. `Url` and `SshUrl` are in `core` since 09-16; the
-  property follows with the two URL functions and the realizations that need them.
+  property follows with the realizations that use the two conversion functions.
 - **N17 — one hosting capability on `Platform`.** Derived platform types restrict what they host,
   rather than the base differentiating it. Amends N9, and settles the relationship-type collapse N9
   left open. Written into the profiles on 09-16 with N9, with the capability type named `Host`.
 
-Still to name: the two URL functions `core` gains (N16).
+**Names to confirm:** `Host` and `control-host` (2.1), and N16's `Socket`, `ssh_url_to_socket` and
+`socket_to_ssh_url`.
 
 ### Written into the profiles since 09-16
 
@@ -38,6 +39,9 @@ Still to name: the two URL functions `core` gains (N16).
   container platforms to the credential kinds each accepts.
 - **N9 and N17** — `host` declared once on `Base`, one hosting capability of type `Host`, and
   `control-host` on `Platform`; `RunsOn` and `AvailableOn` are gone.
+- **N16's conversion functions** — `core` declares `ssh_url_to_socket` and `socket_to_ssh_url`, and
+  a `Socket` type, an `address` string and a `port` of type `Port`, replaces `IPv4Socket`, whose `IPv4`
+  host could hold neither a DNS name nor an IPv6 address. `technology.base`'s `Bash.host` uses it.
 
 ### Discussions and errata
 

@@ -28,14 +28,23 @@ data_types:
       The Port type defines integer that contain valid ports
     derived_from: integer
     validation: {$in_range: [$value, [0, 65535]]}
-  IPv4Socket:
+  Socket:
     description: >-
-      This complex type represents an IPv4 socket (address+port)
+      Where a service is reached over the network: an address and a port.
+      The address is a DNS name, an IPv4 address or an IPv6 address, the
+      last without the brackets a URL puts around it.
+    # The address is a string rather than IPv4 or Fqdn so that one type holds
+    # every form a host takes, as SshUrl's host does; ssh_url_to_socket and
+    # socket_to_ssh_url convert between the two.
     properties:
-      ip-address:
-        type: IPv4
-      transport-port:
+      address:
+        type: string
+        description: >-
+          The host: a DNS name, an IPv4 address or an IPv6 address.
+      port:
         type: Port
+        description: >-
+          The port the service listens on.
   Email:
     description: >
       The Email type defines a string that contains an email address.
@@ -240,6 +249,36 @@ functions:
           primary:
             type: Python
             file: functions/decode_yaml.py
+  ssh_url_to_socket:
+    description: >-
+      Convert an SshUrl to a Socket. The socket's address is the URL's host,
+      with the brackets removed from an IPv6 literal, and its port is the
+      URL's port, or 22 where the URL gives none.
+    signatures:
+      - arguments:
+          - type: SshUrl
+            description: >-
+              The URL to convert.
+        result: Socket
+        implementation:
+          primary:
+            type: Python
+            file: functions/ssh_url_to_socket.py
+  socket_to_ssh_url:
+    description: >-
+      Convert a Socket to an SshUrl. An IPv6 address is bracketed, and a port
+      of 22 is left out, since SshUrl reads an absent port as 22. A socket
+      with port 0 is rejected, since a URL cannot name it.
+    signatures:
+      - arguments:
+          - type: Socket
+            description: >-
+              The socket to convert.
+        result: SshUrl
+        implementation:
+          primary:
+            type: Python
+            file: functions/socket_to_ssh_url.py
   in_range:
     description: >
         This function provides true if the first argument (value) is within
