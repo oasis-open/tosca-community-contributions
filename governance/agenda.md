@@ -53,6 +53,9 @@ presentation runs long. Each of its items links the document to read beforehand.
   approach runs into, and a proposal for the `0.1`.
 - **[oasis-tcs/tosca-specs#376](https://github.com/oasis-tcs/tosca-specs/issues/376)** — the
   positional function refinement rules, filed as an erratum after last week's discussion.
+- **[#372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)** — a
+  built-in `$relationship_count`, so a substitution filter can choose a realization by whether a
+  requirement is bound without narrowing the requirement to a node type (I49). Discussed in 3.6.
 
 ---
 
@@ -132,7 +135,7 @@ The release has not had a slot of its own, and three things about it need the gr
   release notes, since the profiles will change as they are used.
 - **How it is announced,** and to whom.
 
-**Decisions sought:** all three, so the tag can follow once N8 and N9 are written.
+**Decisions sought:** all three, so the tag can follow once Part 2's other decisions are written.
 
 ---
 
@@ -175,6 +178,14 @@ input and output.
 
 **Decision sought, and five minutes is enough:** submit on the errata track (P4), or withdraw.
 
+### 3.6 Counting a requirement's relationships · *I49* · [#372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)
+
+Pairs of realizations that differ only in whether an optional requirement is bound can be told
+apart today only by reading a value on the target, which forces the requirement to name a target
+node type so the read can be validated. The discussion proposes a built-in that counts the
+relationships instead. **Input wanted:** the name, whether a missing index means all
+relationships, and whether §15.1 should say requirements are resolved before a candidate is chosen.
+
 ---
 
 ## If time permits
@@ -192,7 +203,9 @@ derived relationship type declares its kind (2.2); the container platform's cred
 schemes (2.3); `AtRestData`'s name (2.4); whether `Bash` leaves `core` (2.5); and the release's
 version string, compatibility statement and announcement (2.6).
 
-**Also sought (Part 3):** ratification of the three drafted resolutions (3.1), and whether the
-naming amendments are submitted or withdrawn (3.5).
+**Also sought (Part 3):** ratification of the three drafted resolutions (3.1), whether the
+naming amendments are submitted or withdrawn (3.5), and input on counting a requirement's
+relationships (3.6).
 
-**After Part 2, what stands between the community and its first tag is writing N8 and N9.**
+**After Part 2, what stands between the community and its first tag is writing its decisions into
+the profiles.** N8, N9, N16 and N17 already are.
