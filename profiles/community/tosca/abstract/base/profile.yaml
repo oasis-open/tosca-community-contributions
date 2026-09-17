@@ -30,30 +30,11 @@ capability_types:
       Base capability type for capabilities that can be targeted by an
       AssociatesWith relationship.
     valid_relationship_types: [AssociatesWith]
-  PlatformHost:
+  Host:
     description: >-
-      This capability type is exposed by Platform node types and is
-      targeted by HostedOn relationships. It expresses the ability of
-      a node template derived from the Platform node type to host
-      another platform.
+      The ability of a platform to host other nodes: applications, data,
+      networks and other platforms. Targeted by HostedOn relationships.
     derived_from: Container
-    valid_relationship_types: [HostedOn]
-  ExecutionEnvironment:
-    description: >-
-      This capability type is exposed by Platform node types and is
-      targeted by RunsOn relationships. It expresses the ability of a
-      node template derived from the Platform node type to provide the
-      execution environment for a specific application.
-    derived_from: Container
-    valid_relationship_types: [RunsOn]
-  DataPlatform:
-    description: >-
-      This capability type is exposed by Platform node types and is
-      targeted by AvailableOn relationships. It expresses the ability
-      of a node template derived from the Platform node type to host
-      data.
-    derived_from: Container
-    valid_relationship_types: [AvailableOn]
   DataSource:
     description: >-
       This capability type is exposed by Data node types and is
@@ -100,10 +81,12 @@ relationship_types:
     metadata:
       relationship_kind: ASSOCIATION
     valid_capability_types: [Partner]
+  # The one relationship for deployment layering. The constraint sits on this
+  # side only: Host names no relationship types, so the two lists cannot drift.
   HostedOn:
     description: >-
-      Used for Relationship between nodes derived from the abstract
-      Platform node types defined here
+      Places a node on the platform that hosts it: an application, data, a
+      network or another platform, or a platform's control plane.
     metadata:
       relationship_kind: containment
     derived_from: ContainedBy
@@ -111,31 +94,7 @@ relationship_types:
       implementation-details:
         type: YAML
         required: false
-    valid_capability_types: [PlatformHost]
-  RunsOn:
-    description: >-
-      Used for Relationship between nodes derived from the abstract
-      Application and Platform node types defined here
-    metadata:
-      relationship_kind: containment
-    derived_from: ContainedBy
-    properties:
-      implementation-details:
-        type: YAML
-        required: false
-    valid_capability_types: [ExecutionEnvironment]
-  AvailableOn:
-    description: >-
-      Used for Relationship between nodes derived from the abstract
-      Data and Platform node types defined here
-    metadata:
-      relationship_kind: containment
-    derived_from: ContainedBy
-    properties:
-      implementation-details:
-        type: YAML
-        required: false
-    valid_capability_types: [DataPlatform]
+    valid_capability_types: [Host]
   Processes:
     description: >-
       Used for Relationship between nodes derived from the abstract
@@ -211,6 +170,12 @@ node_types:
           substituting templates.
         type: YAML
         required: false
+    requirements:
+      # Declared once here; a child narrows it where it must (Network's
+      # count_range) and the source node's type says what is being placed.
+      - host:
+          capability: Host
+          relationship: HostedOn
     interfaces:
       Standard:
         type: Standard
@@ -219,16 +184,48 @@ node_types:
       Abstract Node Type modeling a generic platform, providing resources
       and capabilities to host a running application and/or to store a dataset
     derived_from: Base
+    properties:
+      # Declared without a vocabulary of kinds: each platform type states the
+      # kinds it accepts by refining key_schema, and a refinement's validation
+      # adds to the parent's, so the kinds can only be narrowed below here.
+      credentials:
+        description: >-
+          How the orchestrator authenticates to this platform, as references to
+          credential material keyed by kind. Supplied for a platform the
+          orchestrator connects to; left unset where the realization provisions
+          the platform and creates its own access. Derived platform types name
+          the kinds they accept.
+        type: map
+        key_schema:
+          type: string
+        entry_schema:
+          type: CredentialRef
+        required: false
+      # Declared as the generic Url: each platform type narrows it to the scheme
+      # it is reached by, refining the type where one scheme is admitted, as it
+      # narrows the credential kinds.
+      mgmt-address:
+        description: >-
+          The URL the orchestrator manages this platform through, whose scheme
+          says how the platform is reached. Supplied for a platform the
+          orchestrator connects to; populated by the realization where it
+          provisions the platform. Derived platform types name the schemes
+          they accept.
+        type: Url
+        required: false
     capabilities:
+      # No valid_source_node_types: every kind of guest is accepted, and a
+      # derived platform type narrows it where it accepts fewer.
       host:
-        type: PlatformHost
-      execution-environment:
-        type: ExecutionEnvironment
-      data-platform:
-        type: DataPlatform
+        type: Host
     requirements:
-      - host:
-          capability: PlatformHost
+      # host is inherited from Base, so control-host follows it directly.
+      - control-host:
+          description: >-
+            Where this platform's control plane is deployed, for a platform
+            whose control plane runs apart from the resources it controls. Left
+            unbound where the control plane runs with the platform itself.
+          capability: Host
           relationship: HostedOn
       - links-to:
           capability: Linkable
@@ -247,9 +244,6 @@ node_types:
       - processes:
           capability: DataSource
           relationship: Processes
-      - runs-on:
-          capability: ExecutionEnvironment
-          relationship: RunsOn
   Data:
     description: >-
       Abstract Node Type modeling a generic set of data
@@ -257,10 +251,6 @@ node_types:
     capabilities:
       data-source:
         type: DataSource
-    requirements:
-      - available-on:
-          capability: DataPlatform
-          relationship: AvailableOn
   Network:
     description: >-
       Abstract Node Type modeling a generic network
@@ -279,6 +269,10 @@ node_types:
           that does not say so does not.
         type: boolean
         default: false
+    requirements:
+      # A network is hosted by at most one platform.
+      - host:
+          count_range: [0, 1]
     capabilities:
       linkable:
         type: Linkable

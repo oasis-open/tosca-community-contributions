@@ -28,14 +28,23 @@ data_types:
       The Port type defines integer that contain valid ports
     derived_from: integer
     validation: {$in_range: [$value, [0, 65535]]}
-  IPv4Socket:
+  Socket:
     description: >-
-      This complex type represents an IPv4 socket (address+port)
+      Where a service is reached over the network: an address and a port.
+      The address is a DNS name, an IPv4 address or an IPv6 address, the
+      last without the brackets a URL puts around it.
+    # The address is a string rather than IPv4 or Fqdn so that one type holds
+    # every form a host takes, as SshUrl's host does; ssh_url_to_socket and
+    # socket_to_ssh_url convert between the two.
     properties:
-      ip-address:
-        type: IPv4
-      transport-port:
+      address:
+        type: string
+        description: >-
+          The host: a DNS name, an IPv4 address or an IPv6 address.
+      port:
         type: Port
+        description: >-
+          The port the service listens on.
   Email:
     description: >
       The Email type defines a string that contains an email address.
@@ -56,6 +65,33 @@ data_types:
     derived_from: string
     validation:
       $matches: [$value, "^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$"]
+  Url:
+    description: >-
+      A string holding a URL in the generic syntax of RFC 3986: a scheme,
+      a colon, and a remainder built from the characters a URL permits. The
+      scheme says how the resource is reached. The pattern checks the generic
+      syntax only; derived types add the rules of a particular scheme.
+    derived_from: string
+    # Look-around assertions are avoided for regex-engine portability, as in
+    # the other patterns here. A bare '%' is accepted rather than requiring a
+    # percent-encoded octet, matching HttpUrl's existing leniency, so that
+    # rederiving HttpUrl from this type changes no value HttpUrl accepts.
+    validation:
+      $matches: [$value, "^[A-Za-z][A-Za-z0-9+.-]*:[A-Za-z0-9._~%!$&'()*+,;=:@/?#\\[\\]-]*$"]
+  SshUrl:
+    description: >-
+      A URL for reaching a host over SSH, in the form ssh://host[:port]. The
+      host is a DNS name, an IPv4 address or a bracketed IPv6 literal, and the
+      port, from 1 to 65535, is 22 when omitted. The whole value is the scheme,
+      the host and the optional port.
+    derived_from: Url
+    # The common subset of the provisional IANA registration and what OpenSSH,
+    # Git and Docker accept. No user: the login name is the credential's name,
+    # and a second source could disagree with it. No host-key fingerprint: that
+    # is trust material, not an address. No path: its meaning differs by tool.
+    # IPv6 literals are checked for their characters only, not their structure.
+    validation:
+      $matches: [$value, "^ssh://(\\[[0-9A-Fa-f:.]+\\]|[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*)(:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?$"]
   HttpUrl:
     description: >
       The HttpUrl type defines a string that contains an HTTP or HTTPS URL.
@@ -66,7 +102,7 @@ data_types:
       pattern is anchored at both ends, so the whole value must be a URL.
       Look-around assertions are intentionally avoided to maximize
       compatibility with regex engines that do not support them.
-    derived_from: string
+    derived_from: Url
     validation:
       $matches: [$value, "^https?:\/\/(localhost|([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+)|(((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])))(:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|[1-5][0-9]{4}|[1-9][0-9]{0,3}))?([/?#][A-Za-z0-9._~%!$&'()*+,;=:@/?#-]*)?$"]
   GenericId:
@@ -213,6 +249,36 @@ functions:
           primary:
             type: Python
             file: functions/decode_yaml.py
+  ssh_url_to_socket:
+    description: >-
+      Convert an SshUrl to a Socket. The socket's address is the URL's host,
+      with the brackets removed from an IPv6 literal, and its port is the
+      URL's port, or 22 where the URL gives none.
+    signatures:
+      - arguments:
+          - type: SshUrl
+            description: >-
+              The URL to convert.
+        result: Socket
+        implementation:
+          primary:
+            type: Python
+            file: functions/ssh_url_to_socket.py
+  socket_to_ssh_url:
+    description: >-
+      Convert a Socket to an SshUrl. An IPv6 address is bracketed, and a port
+      of 22 is left out, since SshUrl reads an absent port as 22. A socket
+      with port 0 is rejected, since a URL cannot name it.
+    signatures:
+      - arguments:
+          - type: Socket
+            description: >-
+              The socket to convert.
+        result: SshUrl
+        implementation:
+          primary:
+            type: Python
+            file: functions/socket_to_ssh_url.py
   in_range:
     description: >
         This function provides true if the first argument (value) is within

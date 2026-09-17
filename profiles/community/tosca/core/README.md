@@ -5,9 +5,9 @@ be shared by all other profiles.
 
 ## Data Types
 
-Most data types here derive from a TOSCA primitive and add a validation clause, so a value is an
-ordinary string or integer that has been checked. Three are complex types: `IPv4Socket`, composed
-of two of the others, and the two credential references.
+Most data types here derive from a TOSCA primitive, directly or through another type here, and add
+a validation clause, so a value is an ordinary string or integer that has been checked. Three are complex types: `Socket`, an address and
+a port, and the two credential references.
 
 **The regular expressions avoid look-around assertions**, deliberately, so that they work in regex
 engines that do not support them. Two consequences are documented on the types themselves: `Fqdn`
@@ -26,13 +26,20 @@ being fully compliant with RFC 5321 and RFC 5322.
 - **`IPv4`** — a dotted-quad IPv4 address.
 - **`Port`** — an integer from 0 to 65535. Zero is admitted because it is the conventional way to
   ask for an unspecified port; a URL cannot name it, which is why `HttpUrl` accepts only 1 to 65535.
-- **`IPv4Socket`** — an address and a port together, as `ip-address` and `transport-port`.
+- **`Socket`** — where a service is reached: `address`, a DNS name, an IPv4 address or an IPv6
+  address without brackets, and `port`. The functions `ssh_url_to_socket` and `socket_to_ssh_url`
+  convert between a `Socket` and an `SshUrl`.
 
 ### Names and addresses
 
 - **`Email`** — an email address.
 - **`Fqdn`** — a fully qualified domain name.
-- **`HttpUrl`** — an HTTP or HTTPS URL whose host is `localhost`, an FQDN or an IPv4 address,
+- **`Url`** — a URL in RFC 3986's generic syntax: a scheme, a colon, and a remainder built from the
+  characters a URL permits. It checks the generic syntax only, and the scheme says how the resource
+  is reached; the types below derive from it and add a scheme's own rules.
+- **`SshUrl`** — a `Url` for reaching a host over SSH, `ssh://host[:port]`, where the host is a DNS
+  name, an IPv4 address or a bracketed IPv6 literal and the port is 22 when omitted.
+- **`HttpUrl`** — a `Url` using HTTP or HTTPS, whose host is `localhost`, an FQDN or an IPv4 address,
   optionally followed by a port and by a path, query or fragment built from the characters RFC 3986
   permits. Anchored at both ends, so the whole value must be a URL rather than merely begin with
   one.
@@ -82,6 +89,10 @@ carries a `host` property; which copy stays is tracked as I10 in the
 This profile defines custom functions whose implementations are Python
 files under [`functions/`](functions). The entry point in each file has
 the same name as the TOSCA function.
+
+`ssh_url_to_socket` and `socket_to_ssh_url` convert between an `SshUrl` and a `Socket`, in the two
+directions an address crosses a substitution boundary: supplied as a URL and taken apart for the
+types below, or produced as a socket and published as a URL.
 
 Most of these implementations use the Python **standard library only**, so
 a processor can execute them without provisioning anything. The two YAML

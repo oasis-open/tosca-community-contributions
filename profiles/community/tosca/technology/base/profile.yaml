@@ -19,7 +19,7 @@ artifact_types:
     file_ext: [sh]
     properties:
       host:
-        type: IPv4Socket
+        type: Socket
         required: false
 
 interface_types:

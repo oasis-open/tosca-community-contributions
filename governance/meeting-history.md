@@ -172,6 +172,41 @@ and the naming amendments — was held for a meeting with fuller attendance. **T
 target of releasing the `0.1` during September 2026** and announcing it to the community as a
 usable deliverable.
 
+**2026-09-16** (Chris, Roberto), the third two-person meeting running, on an agenda restructured into
+three parts: what changed since 09-09, the decisions the `0.1` still waits on, and the outstanding
+proposals. The first part was presented, and the second produced two decisions, both on the
+release path. **N16: `mgmt-address` is a URL**, declared once on `Platform` as a URL type in
+`core` with `SshUrl` and `HttpUrl` derived from it, each platform type narrowing the scheme;
+Roberto had read the proposal and agreed. **N17: one hosting capability on `Platform`**, as
+permissive as possible, with derived platform types restricting what they host rather than the
+base differentiating it. The argument that carried it: a derived type cannot remove an inherited
+capability, and a requirement cannot ask for a platform offering two capabilities at once, which
+the O-PAS case of a component needing both compute and attached I/O runs into. Roberto supplied
+the history, that three capabilities existed because three relationship types did, and the chair
+recalled the NFV base types, which assumed every workload was a virtual machine and left
+container-based functions with nothing to be placed on. `control-host` as a second requirement was
+held for the following week.
+
+The rest was discussion. On the relationship kind (I44), Roberto restated the proposal to give the
+kind through `directives` on a requirement assignment; the chair's view was that the kind is a
+matter of type design rather than template design, floating a wider vocabulary of kinds aligned
+with UML's relationships and noting Tal's likely objection to putting that semantics in the
+language. On function portability (I43), both agreed that a function can be refined only inside a
+service template and that the positional refinement syntax cannot be implemented
+(tosca-specs#376). The chair described separating implementations from function and operation
+definitions, so that a profile could associate an implementation with a definition it does not
+own; Roberto preferred a list of implementations per signature to repeated signatures. Both saw the
+same need for operations, with implementations varying by the target platform's technology, by
+the orchestrator and by the tooling, and the chair suggested that attaching implementations may be
+the missing translation from Device View to Instance View, recalling work from the Stuttgart group
+that overlaid alternative implementations on an existing model. On the calling convention (I10),
+Roberto proposed a distinct `Bash` artifact type per convention for passing values, which the chair
+welcomed. The chair said the `0.1` is close, with release planning for the next week or two;
+Roberto asked whether to number it `0.1` or `0.1.0`, and the chair proposed semantic versioning, a
+missing patch number read as zero, and no compatibility commitment before 1.0, to be confirmed with
+more participants. Not reached: I29, I45, the `Bash` deletion, the drafted resolutions for I13,
+I16(c) and I17, orchestrated credentials, and the §1.2.2 amendments.
+
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
 [decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
 
@@ -182,12 +217,12 @@ usable deliverable.
 | Theme | Evolution across the series |
 |-------|------------------------------|
 | **Modeling philosophy** | Minimal types + property-based substitution vs. more derived types — the recurring tension. Resolved pragmatically per case; Roberto's top-down abstraction became the backbone. |
-| **Credentials / mgmt-address** | ~6-month arc: endpoint capability + credential type (M16) → simplification to file references (M21–M22) → platform-specific, not base-harmonized (M38). |
-| **Platform layering** | Server → virtualization → container; KubeVirt/Kubernetes; control-plane vs. data-plane; `kind`/`product` properties to drive substitution; managed clusters lose topology info. |
-| **Artifacts & functions** | Bash/Python artifact types; JSON env-var I/O; standardize on a single-module / matching-name / single-arg approach; community impls as reference implementations + JSON stdin/stdout protocol; `integrations/` directory. **2026-09-09:** the portability problem restated as a profile problem — `core` names a `Python` implementation per function, so an orchestrator that runs functions another way must fork the profile (I43). |
+| **Credentials / mgmt-address** | ~6-month arc: endpoint capability + credential type (M16) → simplification to file references (M21–M22) → platform-specific, not base-harmonized (M38). **2026-09-16:** `mgmt-address` a URL, declared once on `Platform` and narrowed per type (N16). |
+| **Platform layering** | Server → virtualization → container; KubeVirt/Kubernetes; control-plane vs. data-plane; `kind`/`product` properties to drive substitution; managed clusters lose topology info. **2026-09-16:** one hosting capability on `Platform`, restricted by derived types (N17). |
+| **Artifacts & functions** | Bash/Python artifact types; JSON env-var I/O; standardize on a single-module / matching-name / single-arg approach; community impls as reference implementations + JSON stdin/stdout protocol; `integrations/` directory. **2026-09-09:** the portability problem restated as a profile problem — `core` names a `Python` implementation per function, so an orchestrator that runs functions another way must fork the profile (I43). **2026-09-16:** implementations vary by target platform, orchestrator and tooling; separating them from definitions discussed as a language extension; a `Bash` type per calling convention proposed. |
 | **Spec gaps → errata** | Implementation surfaced TOSCA 2.0 gaps: metadata support, property refinement in data types, artifact-type-mandatory ambiguity, substitution-mapping limits, a proposed `type-of-node` function — feeding a 2.01 errata effort and resumed TC language meetings. |
 | **Tooling** | Puccini (TOSCA 2.0 support), OpenAPI→TOSCA generators, Redfish/AnyTOSCA and Ansible translators, visualization (Winery, Inria CloudNet, Mermaid). |
-| **Release process** | Surfaced at M38; at **M39** adopted a simple process — a GitHub workflow packaging CSAR artifacts and a `0.1` release, flat directory structure (version subdirectories rejected). **2026-07-08:** adapt an existing, proven release workflow into the community repo; target a stable `0.1` of core by ~2026-07-15. **2026-07-15:** workflow reviewed and in place; `0.1` scoped to `core` + five `abstract.*` (technology profiles held), and held until the new core data types (D9) land. **2026-09-09:** no longer waiting on a design decision, only on the edits; target **September 2026**. |
+| **Release process** | Surfaced at M38; at **M39** adopted a simple process — a GitHub workflow packaging CSAR artifacts and a `0.1` release, flat directory structure (version subdirectories rejected). **2026-07-08:** adapt an existing, proven release workflow into the community repo; target a stable `0.1` of core by ~2026-07-15. **2026-07-15:** workflow reviewed and in place; `0.1` scoped to `core` + five `abstract.*` (technology profiles held), and held until the new core data types (D9) land. **2026-09-09:** no longer waiting on a design decision, only on the edits; target **September 2026**. **2026-09-16:** close; semantic versioning proposed, with no compatibility commitment before 1.0. |
 
 ---
 

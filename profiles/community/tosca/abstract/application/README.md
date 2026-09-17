@@ -70,9 +70,3 @@ A complete serverless application, not one of its functions. Deployed on a
 Choose it, as with `MicroServiceApplication`, where the individual functions are
 left to a substituting template.
 
----
-
-> **One agreed change is not yet applied.** The `runs-on` requirement is renamed
-> `host`, the name used for deployment layering at every level (decision N9,
-> agreed 2026-09-02). Section 2.3 of the [abstract-profile
-> proposal](../../docs/abstract-profile-proposed-changes.md) carries the detail.

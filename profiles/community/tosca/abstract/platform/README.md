@@ -34,6 +34,11 @@ this list is not meant to be exhaustive:
   firmware pre-installed.
 - *Virtual Machine*: A VM instantiated on a virtualization platform.
 
+A server platform's `credentials` accept `ssh_key` and `ssh_password`, each
+naming the user to log in as. Its `mgmt-address` is an `SshUrl`,
+`ssh://host[:port]`, with port 22 where none is given. Its `host` requirement is for a virtualization platform,
+which a virtual machine binds and a physical server leaves unbound.
+
 ### Virtualization Platforms
 
 The `VirtualizationPlatform` node type represents systems or services
@@ -46,6 +51,14 @@ include the following:
   on-demand creation of networks, virtual machines and storage in the
   cloud.
 
+A virtualization platform's `credentials` accept `token`, a file holding a
+bearer token, and `cloud_account`, a provider's credentials file whose `name`
+selects a profile within it. They also accept `ssh_key`, a private key and
+the login it authenticates, for a platform also managed through an SSH login
+on the machine it runs on, where that machine is not modelled as a server
+platform of its own. Its `mgmt-address` is an `HttpUrl`, the address of its
+management API.
+
 ### Container Platforms
 
 The `ContainerPlatform` node type represents systems that can host
@@ -57,6 +70,11 @@ containerized software. This can include:
   the host it is installed on.
 - *Kubernetes Clusters*: To orchestrate container-based applications
   across one or more hosts.
+
+A container platform's `credentials` accept `kubeconfig`, a kubeconfig file
+whose `name` selects a context within it where the file holds more than one.
+Its `mgmt-address` is the `Url` every platform declares; which schemes it
+admits is open (I29).
 
 ### PaaS Platforms
 
@@ -177,15 +195,9 @@ observation:
   node type saying where control is hosted, alongside `host` saying
   where the data plane is.
 
-  > **Proposed, not yet present.** `Platform` declares `host` and
-    `links-to` only, so the models below cannot be written down against
-    the profile as it stands. The requirement is proposed as
-    **`control-host`** in [Section 2.3 of the abstract-profile
-    changes](../../docs/abstract-profile-proposed-changes.md#23-communitytoscaabstractbase--one-containment-relationship-one-requirement-name), which also answers the question this section used to
-    ask — whether a distinct relationship type is needed, or a distinct
-    requirement name suffices. A distinct name suffices: the same
-    relationship carries both senses either way, so the difference
-    belongs on the requirement.
+  `Platform` declares this second requirement as **`control-host`**. It
+  uses the same `HostedOn` relationship and `Host` capability as `host`,
+  and the requirement name says which of the two planes is placed.
   
 Using this approach, the abstract `VirtualizationPlatform` node that
 represents the Kubevirt node has a `HostedOn` relationship to the
@@ -209,7 +221,7 @@ that the runtime runs.
 ```mermaid
 graph BT
     engine["ContainerPlatform<br/>(container runtime)"] -->|HostedOn| server["ServerPlatform<br/>(server)"]
-    app["Application"] -->|RunsOn| engine
+    app["Application"] -->|HostedOn| engine
 ```
 
 A container runtime provides its control plane on the same host that
@@ -271,10 +283,9 @@ bindings as shown in the following figure:
 
 ### Does a control node also host workloads?
 
-The third question above is the one the model does not yet answer. Assume the
+The third question above is the one the model does not yet answer. A
 `ContainerPlatform` has two placement requirements — `host` for the servers that run workloads
-and a second for the control plane, proposed as `control-host` in
-[the abstract-profile changes](../../docs/abstract-profile-proposed-changes.md#23-communitytoscaabstractbase--one-containment-relationship-one-requirement-name).
+and `control-host` for the control plane.
 Having both does not by itself settle how to say that the machine running the control plane is
 *also* available for workloads. Two models, recorded here as the choice rather than the
 answer.

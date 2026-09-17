@@ -18,6 +18,28 @@ node_types:
       device on which operating system or hypervisor software needs to
       be installed.
     derived_from: Platform
+    properties:
+      # A NamedCredentialRef, since an SSH login always authenticates as a
+      # named user.
+      credentials:
+        description: >-
+          How the orchestrator logs in to the server: `ssh_key` names a private
+          key file and `ssh_password` a file holding the password, each with the
+          user to log in as.
+        type: map
+        key_schema:
+          type: string
+          validation: { $valid_values: [ $value, [ ssh_key, ssh_password ] ] }
+        entry_schema:
+          type: NamedCredentialRef
+      mgmt-address:
+        description: >-
+          The SSH URL the orchestrator logs in to the server through, in the
+          form ssh://host[:port]. The login is the credential's name.
+        type: SshUrl
+    requirements:
+      - host:
+          node: VirtualizationPlatform
   VirtualizationPlatform:
     description: |
       Represents a platform that allows on-demand creation of
@@ -25,12 +47,57 @@ node_types:
       Hypervisor installed on a device or an IaaS platform in the
       cloud.
     derived_from: Platform
+    properties:
+      # The base CredentialRef, not the Named one: token and cloud_account do not
+      # always carry a name. A token file holds the token alone, and a
+      # credentials file's name selects a profile within it only where it holds
+      # more than one. An ssh_key always names its login, which a map with one
+      # entry schema cannot require for one kind alone.
+      #
+      # ssh_key is admitted for a platform managed partly through an SSH login on
+      # the machine it runs on, where that machine is not modelled as a server
+      # platform of its own. Where it is, the login belongs on that server
+      # platform instead, the rule I29 applies to container platforms.
+      credentials:
+        description: >-
+          How the orchestrator authenticates to the platform: `token` names a
+          file holding a bearer token for its API; `cloud_account` names a
+          provider's credentials file, whose `name` selects a profile within it;
+          and `ssh_key` names a private key and the login it authenticates, for
+          a platform also managed through an SSH login on the machine it runs on.
+        type: map
+        key_schema:
+          type: string
+          validation: { $valid_values: [ $value, [ token, cloud_account, ssh_key ] ] }
+        entry_schema:
+          type: CredentialRef
+      mgmt-address:
+        description: >-
+          The HTTP or HTTPS URL of the platform's management API.
+        type: HttpUrl
   ContainerPlatform:
     description: |
       Container platform node type. Represents a container
       orchestration system that handles scheduling, scaling, load
       balancing, networking, and self-healing of applications.
     derived_from: Platform
+    properties:
+      # The base CredentialRef, not the Named one: a kubeconfig's name selects a
+      # context inside the file and is absent when the file's current context is
+      # wanted. Further credential kinds are open (I29), and so are the schemes
+      # its mgmt-address admits, which stays the Url Platform declares until
+      # I29 settles them.
+      credentials:
+        description: >-
+          How the orchestrator authenticates to the platform: `kubeconfig` names
+          a kubeconfig file, whose `name` selects a context within it where the
+          file holds more than one.
+        type: map
+        key_schema:
+          type: string
+          validation: { $valid_values: [ $value, [ kubeconfig ] ] }
+        entry_schema:
+          type: CredentialRef
   PaasPlatform:
     description: |
       PaaS platform node type. Represents a platform for developing

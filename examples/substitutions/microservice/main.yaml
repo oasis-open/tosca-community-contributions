@@ -68,7 +68,7 @@ service_template:
     requirements:
       # Fan the abstract platform requirement out to every resource's cluster
       # requirement (inherited from k8s:Resource).
-      - runs-on:
+      - host:
           - [service-account, cluster]
           - [pod, cluster]
           - [deployment, cluster]
