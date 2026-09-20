@@ -128,6 +128,36 @@ is of the convention in force when those profiles were written: pass values as o
 the boundary moves, but the names already chosen are what authors reach for when a name has to
 become an identifier.
 
+### Where dash case is the norm, and where it is not
+
+Dash case is not an odd choice, and the amendment does not claim it is. It is the norm wherever
+a name stays text: CSS properties (`background-color`), HTML attributes (`aria-label`) and
+custom element names, which the HTML specification requires to contain a hyphen; HTTP header
+fields (`Content-Type`); DNS labels and URL slugs, where an underscore is not permitted at all;
+command-line options (`--dry-run`); package names on npm and Debian; Kubernetes object names,
+which are RFC 1123 labels. In none of these does the name become a variable in a program.
+
+The case that deserves a direct answer is **YANG** (RFC 7950), and the models built on it. YANG
+is a modelling language for systems, the closest analogue TOSCA has, and its identifiers are
+dash case: `oper-status`, `router-id`, `admin-state`. Anyone arguing against this amendment
+should raise it, and it is visible in TOSCA profiles already: the `net.openconfig` profile in
+the Ubicity set, generated from OpenConfig models, carries `router-id`, `next-hop`,
+`route-distinguisher` and `interface-ref` straight from the YANG. Generated profiles are
+excluded from the counts above, for the reason the method gives, and cited here as prior art
+rather than as an author's choice.
+
+What YANG shows, though, is what happens next. A YANG name is not usable as an identifier in the
+languages that consume the model, so every binding converts it: `pyangbind` turns `oper-status`
+into `oper_status` to make it a Python attribute, and the same conversion appears in Java, Go and
+C bindings. The dash survives in the model and is transliterated at every code boundary. That is
+precisely the cost described above, paid by an ecosystem large enough to have automated it.
+
+TOSCA's position differs in one way that matters. A YANG model is consumed through generated
+bindings, where a naming rule is applied once by a generator. A TOSCA property reaches an
+implementation through an artifact a human wrote, in a language of that author's choosing, with
+no generator in between. Where there is no binding layer to absorb the conversion, the author
+absorbs it.
+
 ### What this proposes
 
 Permit either separator for value names, consistent within a profile, and remove the
