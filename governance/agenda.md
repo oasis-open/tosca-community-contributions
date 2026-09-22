@@ -1,7 +1,7 @@
 # TOSCA Community — Proposed Agenda (2026-09-23)
 
 **Status:** Draft agenda for 2026-09-23, following 2026-09-16
-**Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [design-patterns](../profiles/community/tosca/docs/design-patterns.md) · [credential-orchestration-proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md) · [artifact-calling-convention-proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md) · [spec-naming-conventions-proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
+**Related documents:** [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [design-patterns](../profiles/community/tosca/docs/design-patterns.md) · [credential-orchestration-proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md) · [artifact-calling-convention-proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
 
 The same three parts as last week. **First, what changed since 09-16**, presented rather than
 discussed. **Second, the decisions the `0.1` still waits on**, now fewer: last week settled the
@@ -30,8 +30,8 @@ presentation runs long. Each of its items links the document to read beforehand.
   rather than the base differentiating it. Amends N9, and settles the relationship-type collapse N9
   left open. Written into the profiles on 09-16 with N9, with the capability type named `Host`.
 
-**Names to confirm:** `Host` and `control-host` (2.1), and N16's `Socket`, `ssh_url_to_socket` and
-`socket_to_ssh_url`.
+**Names to confirm:** `Host` and `control-host` (2.1), N16's `Socket`, `ssh_url_to_socket` and
+`socket_to_ssh_url`, and the four renames the D2 check produced.
 
 ### Written into the profiles since 09-16
 
@@ -45,6 +45,29 @@ presentation runs long. Each of its items links the document to read beforehand.
 - **N16, `mgmt-address`** — declared on `Platform` as `Url`, and narrowed to `SshUrl` on the server
   platform and `HttpUrl` on the virtualization platform. The container platform's stays `Url` until
   its schemes are settled (2.3).
+- **D2, the naming conventions, applied.** All 140 names §1.2.2 governs were checked across `core`,
+  the five `abstract.*` profiles and `technology.base`. Fifteen deviated, in four patterns, and all
+  four are fixed: the interface name `Standard` is `standard` on `Base`, on `technology.base`'s
+  `Root` and on the six `io.kubernetes:1.35` types that refine it; the metadata key is
+  `relationship-kind` on all ten relationship types, which bears on 2.2; `UUIDRelaxed` is
+  `UuidRelaxed`; and `Network`'s `cidr_block` and `internet_accessible` are `cidr-block` and
+  `internet-accessible`. Everything else already conformed, including every requirement,
+  capability, operation and function name.
+
+  **Three of those are breaking**, so anyone tracking these profiles renames with them: the
+  interface name, the metadata key and the two `Network` properties. An orchestrator that reads
+  the interface or the kind key by its old spelling should accept both.
+
+  **D2's own wording is the odd one out.** It records camelCase for entity types and acronyms
+  upper throughout, where §1.2.2 describes Pascal case and treats an acronym as a word inside a
+  compound. The profiles follow §1.2.2, so D2's wording is what should change.
+- **The §1.2.2 naming amendments are withdrawn** (P7). Three were drafted for the TC: permit snake
+  case for value names, keep acronyms upper throughout, and call the entity-type convention Pascal
+  case. The acronym one runs adjacent acronyms together, as `HTTPURL` where the current rule keeps
+  `HttpUrl` readable. The snake case one asks the specification to relax the rule these profiles
+  now follow, and the same rule is being put to other groups adopting TOSCA, where *it is the
+  specification's own convention* is the argument that carries. The editorial one stands on its
+  own and goes to the errata track separately (I50). The proposal document is deleted.
 
 ### Discussions and errata
 
@@ -55,7 +78,7 @@ presentation runs long. Each of its items links the document to read beforehand.
   positional function refinement rules, filed as an erratum after last week's discussion.
 - **[#372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)** — a
   built-in `$relationship_count`, so a substitution filter can choose a realization by whether a
-  requirement is bound without narrowing the requirement to a node type (I49). Discussed in 3.6.
+  requirement is bound without narrowing the requirement to a node type (I49). Discussed in 3.5.
 
 ---
 
@@ -175,19 +198,7 @@ its own channel. New since last week: Roberto's proposal of a `Bash` artifact ty
 or a keyname naming the convention. Tal's input is wanted, since that implementation uses standard
 input and output.
 
-### 3.5 The §1.2.2 naming amendments · *I39* · [proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md)
-
-Still two amendments, but not the same two as on 09-16. **Snake case for value names** stays,
-now argued from §1.2.2's own rule for function names rather than from shell variables alone,
-since a document-based calling convention would remove that cost. **The acronym amendment is
-withdrawn:** keeping acronyms upper throughout runs adjacent ones together, as `HTTPURL`, where
-the current rule keeps `HttpUrl` readable. **New and editorial:** §1.2.2 calls the entity-type
-convention camel case and describes Pascal case, which every example under it uses.
-
-**Decision sought, and five minutes is enough:** submit the two on the errata track (P4), or
-withdraw.
-
-### 3.6 Counting a requirement's relationships · *I49* · [#372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)
+### 3.5 Counting a requirement's relationships · *I49* · [#372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)
 
 Pairs of realizations that differ only in whether an optional requirement is bound can be told
 apart today only by reading a value on the target, which forces the requirement to name a target
@@ -212,9 +223,8 @@ derived relationship type declares its kind (2.2); the container platform's cred
 schemes (2.3); `AtRestData`'s name (2.4); whether `Bash` leaves `core` (2.5); and the release's
 version string, compatibility statement and announcement (2.6).
 
-**Also sought (Part 3):** ratification of the three drafted resolutions (3.1), whether the
-naming amendments are submitted or withdrawn (3.5), and input on counting a requirement's
-relationships (3.6).
+**Also sought (Part 3):** ratification of the three drafted resolutions (3.1), and input on
+counting a requirement's relationships (3.5).
 
 **After Part 2, what stands between the community and its first tag is writing its decisions into
 the profiles.** N8, N9, N16 and N17 already are.
