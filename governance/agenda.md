@@ -176,14 +176,15 @@ input and output.
 
 ### 3.5 The §1.2.2 naming amendments · *I39* · [proposal](../profiles/community/tosca/docs/spec-naming-conventions-proposal.md)
 
-Three amendments since 09-16, not two. The third is editorial: §1.2.2 calls the entity-type
-convention camel case and describes Pascal case, which every example under it uses. The snake
-case argument no longer rests on shell variables alone, since a document-based calling
-convention would remove that cost; it rests on §1.2.2 prescribing snake case for function names
-for the same reason a property name needs it.
+Still two amendments, but not the same two as on 09-16. **Snake case for value names** stays,
+now argued from §1.2.2's own rule for function names rather than from shell variables alone,
+since a document-based calling convention would remove that cost. **The acronym amendment is
+withdrawn:** keeping acronyms upper throughout runs adjacent ones together, as `HTTPURL`, where
+the current rule keeps `HttpUrl` readable. **New and editorial:** §1.2.2 calls the entity-type
+convention camel case and describes Pascal case, which every example under it uses.
 
-**Decision sought, and five minutes is enough:** submit on the errata track (P4), or withdraw.
-Whether the editorial amendment travels with the other two is part of it.
+**Decision sought, and five minutes is enough:** submit the two on the errata track (P4), or
+withdraw.
 
 ### 3.6 Counting a requirement's relationships · *I49* · [#372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)
 
