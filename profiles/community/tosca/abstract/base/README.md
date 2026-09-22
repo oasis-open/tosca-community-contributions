@@ -82,10 +82,10 @@ platform the orchestrator connects to and populated by the realization
 for one it provisions, and each platform type narrows the schemes it
 accepts.
 
-Network nodes carry two properties. `cidr_block` is the network's
+Network nodes carry two properties. `cidr-block` is the network's
 address range in CIDR notation, left unset for a forwarding domain that
 carries no addressing of its own or one whose range the realization
-assigns. `internet_accessible` states whether traffic on the network
+assigns. `internet-accessible` states whether traffic on the network
 reaches the public internet; it is `false` unless set, and a substitution
 filter reads it to choose between a reachable and an isolated
 realization of the same network.

@@ -123,9 +123,9 @@ data_types:
     derived_from: GenericId
     validation:
       $matches: [$value, "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"]
-  UUIDRelaxed:
+  UuidRelaxed:
     description: >-
-      The UUIDRelaxed type represents an identifier with format 8-4-4-4-12 (hex digits with dashes),
+      The UuidRelaxed type represents an identifier with format 8-4-4-4-12 (hex digits with dashes),
       but without full compliance to IETF RFC4122
     derived_from: GenericId
     validation:

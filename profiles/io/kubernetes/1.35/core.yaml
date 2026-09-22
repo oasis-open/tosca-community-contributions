@@ -35,7 +35,7 @@ node_types:
           relationship: base:ContainedBy
           count_range: [1, 1]
     interfaces:
-      Standard:
+      standard:
         inputs:
           kubeconfig: {$get_attribute: [SELF, RELATIONSHIP, cluster, TARGET, kubeconfig]}
           context:
@@ -71,7 +71,7 @@ node_types:
           conventions.md#spec-and-status
         type: NamespaceStatus
     interfaces:
-      Standard:
+      standard:
         operations:
           create:
             inputs:
@@ -388,7 +388,7 @@ node_types:
       A Standalone Pod is intended to be deployed without a controller
     derived_from: BasePod
     interfaces:
-      Standard:
+      standard:
         operations:
           create:
             inputs:
@@ -586,7 +586,7 @@ node_types:
     capabilities:
       identity: Identity
     interfaces:
-      Standard:
+      standard:
         operations:
           create:
             inputs:
@@ -644,7 +644,7 @@ node_types:
           node: Pod
           count_range: [1, 1]
     interfaces:
-      Standard:
+      standard:
         operations:
           create:
             inputs:

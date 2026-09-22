@@ -79,8 +79,9 @@ realization needs a schedulable control node.
 
 ### 2.2 How a derived relationship type declares its kind — 8 min · *I44* · [#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363)
 
-The base relationship types carry `metadata: {relationship_kind: …}`, which is not inherited and
-which the specification says should not affect runtime behavior. The options: redeclare it on every
+The base relationship types carry `metadata: {relationship-kind: …}`, spelled `relationship_kind`
+until 09-21, when D2's check renamed it to follow §1.2.2. It is not inherited, and the
+specification says it should not affect runtime behavior. The options: redeclare it on every
 derived type with one case convention; drop it and let derivation carry the kind; ask for a `kind`
 keyname in 2.1; document it as a convention that does not travel; or give the kind through
 `directives` on a requirement assignment, Roberto's option.

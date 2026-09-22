@@ -50,7 +50,7 @@ being fully compliant with RFC 5321 and RFC 5322.
   by a type that adds the validation its identifiers need.
 - **`AlphanumericId`** — letters and digits, any length.
 - **`UUID`** — an RFC 4122 UUID, versions 1 through 5.
-- **`UUIDRelaxed`** — the 8-4-4-4-12 hexadecimal form without the version and variant constraints.
+- **`UuidRelaxed`** — the 8-4-4-4-12 hexadecimal form without the version and variant constraints.
 
 ### Credential references
 
