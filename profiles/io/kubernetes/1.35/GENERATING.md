@@ -278,7 +278,7 @@ Step 1). For example, on `Deployment`:
 
 ```yaml
 interfaces:
-  Standard:
+  standard:
     operations:
       create:
         inputs:  { spec: {$get_property: [SELF, spec]} }

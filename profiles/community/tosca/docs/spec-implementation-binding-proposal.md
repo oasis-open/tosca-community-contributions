@@ -1,16 +1,15 @@
 # Binding Implementations to Functions and Operations
 
 **Status:** Draft — not submitted.
-**Audience:** OASIS TOSCA Technical Committee. Like `spec-naming-conventions-proposal.md`, this
-document addresses the specification rather than the community profiles.
+**Audience:** OASIS TOSCA Technical Committee. This document addresses the specification rather
+than the community profiles.
 **Purpose:** Propose a construct that lets a TOSCA file supply an implementation for a function or
 an operation declared elsewhere, and lets a processor choose among several.
 **Normative impact:** New grammar. Every document valid today stays valid: the construct is
 optional, and nothing about existing implementation definitions changes.
 
 **Related documents:** [modeling-methodology](modeling-methodology.md) ·
-[artifact-calling-convention-proposal](artifact-calling-convention-proposal.md) ·
-[spec-naming-conventions-proposal](spec-naming-conventions-proposal.md)
+[artifact-calling-convention-proposal](artifact-calling-convention-proposal.md)
 
 ---
 

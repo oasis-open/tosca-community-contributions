@@ -59,27 +59,27 @@ capability_types:
 
 relationship_types:
   # The three base relationship types, one for each relationship kind. Their
-  # relationship_kind values are upper case where the types derived from them
+  # relationship-kind values are upper case where the types derived from them
   # below write lower case; I44 settles the convention.
   ContainedBy:
     description: >-
       The ContainedBy type represents a containment relationship
       between two nodes.
     metadata:
-      relationship_kind: CONTAINMENT
+      relationship-kind: CONTAINMENT
     valid_capability_types: [Container]
   DependsOn:
     description: >-
       Generic dependency on a feature
     metadata:
-      relationship_kind: DEPENDENCY
+      relationship-kind: DEPENDENCY
     valid_capability_types: [Feature]
   AssociatesWith:
     description: >-
       The AssociatesWith type represents an association relationship
       between two nodes.
     metadata:
-      relationship_kind: ASSOCIATION
+      relationship-kind: ASSOCIATION
     valid_capability_types: [Partner]
   # The one relationship for deployment layering. The constraint sits on this
   # side only: Host names no relationship types, so the two lists cannot drift.
@@ -88,7 +88,7 @@ relationship_types:
       Places a node on the platform that hosts it: an application, data, a
       network or another platform, or a platform's control plane.
     metadata:
-      relationship_kind: containment
+      relationship-kind: containment
     derived_from: ContainedBy
     properties:
       implementation-details:
@@ -100,7 +100,7 @@ relationship_types:
       Used for Relationship between nodes derived from the abstract
       Application and Data node types defined here
     metadata:
-      relationship_kind: dependency
+      relationship-kind: dependency
     derived_from: DependsOn
     properties:
       implementation-details:
@@ -112,7 +112,7 @@ relationship_types:
       Used for Relationship between nodes derived from the abstract
       Platform and Netork node types defined here
     metadata:
-      relationship_kind: dependency
+      relationship-kind: dependency
     derived_from: DependsOn
     properties:
       implementation-details:
@@ -124,7 +124,7 @@ relationship_types:
       Models interaction between applications: the source uses a service the
       target provides. An association, so it asserts no deployment order.
     metadata:
-      relationship_kind: association
+      relationship-kind: association
     derived_from: AssociatesWith
     valid_capability_types: [Service]
 
@@ -177,7 +177,7 @@ node_types:
           capability: Host
           relationship: HostedOn
     interfaces:
-      Standard:
+      standard:
         type: Standard
   Platform:
     description: >-
@@ -256,14 +256,14 @@ node_types:
       Abstract Node Type modeling a generic network
     derived_from: Base
     properties:
-      cidr_block:
+      cidr-block:
         description: >-
           Address range of this network, in CIDR notation. Left unset for a
           forwarding domain that carries no addressing of its own, or one whose
           range the realization assigns.
         type: string
         required: false
-      internet_accessible:
+      internet-accessible:
         description: >-
           Whether traffic on this network reaches the public internet. A network
           that does not say so does not.

@@ -108,7 +108,7 @@ node_types:
         description: Most recently observed status of the Deployment.
         type: DeploymentStatus
     interfaces:
-      Standard:
+      standard:
         operations:
           create:
             inputs:

@@ -54,20 +54,20 @@ relationship_types:
       The ContainedBy type represents a containment relationship
       between two nodes.
     metadata:
-      relationship_kind: CONTAINMENT
+      relationship-kind: CONTAINMENT
     valid_capability_types: [Container]
   DependsOn:
     description: >-
       Generic dependency on a feature
     metadata:
-      relationship_kind: DEPENDENCY
+      relationship-kind: DEPENDENCY
     valid_capability_types: [Feature]
   AssociatesWith:
     description: >-
       The AssociatesWith type represents an association relationship
       between two nodes.
     metadata:
-      relationship_kind: ASSOCIATION
+      relationship-kind: ASSOCIATION
     valid_capability_types: [Partner]
 
 capability_types:
@@ -96,5 +96,5 @@ node_types:
       Common parent type for all technology-specifc and
       vendor-specific node types.
     interfaces:
-      Standard:
+      standard:
         type: Standard
