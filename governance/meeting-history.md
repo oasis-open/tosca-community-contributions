@@ -207,6 +207,35 @@ missing patch number read as zero, and no compatibility commitment before 1.0, t
 more participants. Not reached: I29, I45, the `Bash` deletion, the drafted resolutions for I13,
 I16(c) and I17, orchestrated credentials, and the §1.2.2 amendments.
 
+**2026-09-23** (Chris, Roberto), the fourth two-person meeting running; Stefano and Damien were
+kept away by university commitments. The meeting turned on the release. **R6: cut the `0.1` now**,
+as published CSAR release artifacts, numbered `0.1`, which Roberto confirmed as the version string;
+the workflow that builds the CSARs on a tag already exists. Two questions the `0.1` had been
+waiting on were settled by deferring them rather than answering them. **D14: custom function
+implementations and artifact types stay in `core` for the `0.1`**, until there is a strategy for
+carrying alternative implementations (I43), which also means `Bash` is not deleted from `core` for
+this release (I10). **N18: `AtRestData` becomes `StoredData`** (I45), a name drawn from the same
+axis as `BatchData`, `StreamingData` and `EventData`, which classify data by how it is delivered.
+
+The naming question closed in the other direction from where it started. The chair had drafted
+amendments asking the specification to permit snake case; they are withdrawn, and the profiles
+standardize on §1.2.2 as published, which is dash case (P7, D2). Roberto agreed. The chair
+reported what had gone into the profiles since 09-16: `mgmt-address` as a URL, which now accepts a
+DNS name as readily as an IP address, the two properties on `Network`, and `kubeconfig` among the
+container platform's credential kinds. Both noted that a `key_schema` can be widened later without
+breaking anything, which is what makes shipping a narrow credential vocabulary in the `0.1` safe.
+
+Roberto will open a pull request adding a `to_lowercase` function to `core`, which the chair will
+merge before the tag. Roberto also asked for the technology-specific profiles, which the chair
+proposed as the deliverable after the `0.1`, and reported trouble with requirements in substitution
+mappings; the chair offered to present a worked example next week, together with an error found in
+the specification's use of the `UNBOUNDED` keyword. `control-host` was not confirmed: it goes back
+to the Kubernetes example, where the chair wants the same abstract service template for the Online
+Boutique realized by two profiles and two orchestrators. The chair also asked for a wider agenda
+and more participation. Not reached: I29's vocabularies, I44, and the drafted
+resolutions for I13, I16(c) and I17.
+
+
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
 [decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
 

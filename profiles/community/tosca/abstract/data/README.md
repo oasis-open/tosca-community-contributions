@@ -8,7 +8,7 @@ The profile currently defines the following node type hierarchy:
 
 ```mermaid
 classDiagram
-    Data <|-- AtRestData
+    Data <|-- StoredData
     Data <|-- BatchData
     Data <|-- StreamingData
     Data <|-- EventData
@@ -19,10 +19,10 @@ classDiagram
 The following sections provides further details about the proposed types.
 
 
-## AtRestData
+## StoredData
 **Characteristics**: Authoritative, persistent data stored within the system’s trust boundary. It is durably persisted, accessible on demand with predictable latency, and independent of streaming or event-driven mechanisms.
 
-**_AtRestData_** acts as a system of record and follows a “store-and-retrieve” paradigm.
+**_StoredData_** acts as a system of record and follows a “store-and-retrieve” paradigm.
 
 **Examples**:
 - File-based storage (local filesystems, network filesystems)
@@ -100,4 +100,4 @@ The following sections provides further details about the proposed types.
 ## ApiData vs other Data types
 It is worth to observe that from a broader perspective all data are accessed through an API, exception made for those available in the local filesystem. However, it makes definitely sense to distinguish **_ApiData_** from other types, based on the distinctive characteristics previously described.
 
-For example, **_AtRestData_** refers to data that resides on a storage system, is durable, follows a “store-and-retrieve” semantic model, and is independent of any application logic (examples: S3, databases, filesystems). Differently, **_ApiData_** refers to data obtained from a remote service that applies its own application logic (business logic), not merely storage operations (examples: a partner’s REST API, a microservice API).
+For example, **_StoredData_** refers to data that resides on a storage system, is durable, follows a “store-and-retrieve” semantic model, and is independent of any application logic (examples: S3, databases, filesystems). Differently, **_ApiData_** refers to data obtained from a remote service that applies its own application logic (business logic), not merely storage operations (examples: a partner’s REST API, a microservice API).
