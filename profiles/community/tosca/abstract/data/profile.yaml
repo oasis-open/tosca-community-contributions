@@ -15,7 +15,7 @@ imports:
 
 
 node_types:
-  AtRestData:
+  StoredData:
     description: >-
       This node type represents a set of authoritative,
       persistent data stored within the system’s trust
