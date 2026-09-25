@@ -172,6 +172,7 @@ artifact_types:
     file_ext: [py]
     #properties: TBD (e.g. to specify the Python version to use, or the script entry point)
 
+
 functions:
   to_string:
     description: >-
@@ -199,6 +200,28 @@ functions:
           primary:
             type: Python
             file: functions/to_uppercase.py
+  to_lowercase:
+    description: >-
+      Convert a string to lower case
+    signatures:
+      - arguments:
+          - type: string
+            description: >-
+              The string to convert to lower case.
+        result: string
+        implementation:
+          primary:
+            type: Python
+            file: functions/to_lowercase.py
+  random_number:
+    description: >-
+      Generate a float random number between 0 and 1
+    signatures:
+      - result: float
+        implementation:
+          primary:
+            type: Python
+            file: functions/random_number.py
   validate_json:
     description: >-
       Check if a string argument contains valid JSON.
@@ -391,3 +414,28 @@ functions:
           primary:
             type: Python
             file: functions/in_range_strict.py
+  now:
+    description: >-
+      Provides the current timestamp, following the TOSCA 2.0 specification
+      (i.e. a string following IETF RFC 3339 format)
+    signatures:
+      - result: timestamp
+        implementation:
+          primary:
+            type: Python
+            file: functions/now.py
+  generate_token:
+    description: >
+      Generates a unique token as a string, composed of a given number
+      of characters randomly selected from the specified character set
+    signatures:
+      - arguments:
+          - type: string
+            description: The character set to use for generating the token
+          - type: integer
+            description: The length of the token to generate
+        result: string
+        implementation:
+          primary:
+            type: Python
+            file: functions/generate_token.py
