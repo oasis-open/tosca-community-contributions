@@ -594,9 +594,9 @@ node_types:
               imagePullSecrets: {$get_property: [SELF, imagePullSecrets]}
               secrets: {$get_property: [SELF, secrets]}
             outputs:
-              automountServiceAccountToken: [SELF, automountServiceAccountToken]
-              imagePullSecrets: [SELF, imagePullSecrets]
-              secrets: [SELF, secrets]
+              automountServiceAccountToken: {mapping: [SELF, automountServiceAccountToken], required: false}
+              imagePullSecrets: {mapping: [SELF, imagePullSecrets], required: false}
+              secrets: {mapping: [SELF, secrets], required: false}
             implementation:
               primary:
                 file: artifacts/service_account/create.sh

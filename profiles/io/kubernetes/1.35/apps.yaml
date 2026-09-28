@@ -115,7 +115,7 @@ node_types:
               spec: {$get_property: [SELF, spec]}
             outputs:
               spec: [SELF, spec]
-              status: [SELF, status]
+              status: {mapping: [SELF, status], required: false}
             implementation:
               primary:
                 file: artifacts/deployment/create.sh

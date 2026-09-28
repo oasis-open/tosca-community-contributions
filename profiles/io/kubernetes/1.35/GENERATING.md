@@ -282,13 +282,21 @@ interfaces:
     operations:
       create:
         inputs:  { spec: {$get_property: [SELF, spec]} }
-        outputs: { spec: [SELF, spec], status: [SELF, status] }
+        outputs:
+          spec: [SELF, spec]
+          status: { mapping: [SELF, status], required: false }
         implementation:
           primary: { file: artifacts/deployment/create.sh, type: base:Bash }
       delete:
         implementation:
           primary: { file: artifacts/deployment/delete.sh, type: base:Bash }
 ```
+
+An output is required unless it says otherwise, and an operation that succeeds without producing
+a required output fails. So an output of a field the resource does not always report -- one the
+OpenAPI schema does not list as required, such as `status` right after an apply, or a
+`ServiceAccount`'s `automountServiceAccountToken`, `imagePullSecrets` and `secrets` -- is mapped
+with `required: false`, as `status` is above.
 
 Only the types that are actually deployed carry these — currently `Namespace`,
 `StandalonePod`, `Service`, `ServiceAccount`, and `Deployment`. The artifacts
