@@ -1,0 +1,93 @@
+tosca_definitions_version: tosca_2_0
+
+description: >-
+  Substituting service for a ContainerPlatform placed on several servers: one
+  cluster agent per bound server, each agent taking one of the platform's host
+  assignments.
+
+imports:
+  - profile: community.tosca.abstract.platform:0.1
+    namespace: platform
+  - profile: community.tosca.core:0.1
+    namespace: core
+
+data_types:
+
+  Details:
+    description: >-
+      The fields this realization expects to find in the substituted node's
+      implementation-details.
+    properties:
+      agent-count:
+        type: integer
+
+node_types:
+
+  Agent:
+    description: >-
+      One cluster member, placed on exactly one server. A real profile would
+      derive this from a technology-specific type and give it operations; here
+      it exists to receive one placement.
+    derived_from: platform:Platform
+    requirements:
+      # One server per agent. The mapping below is what makes that true, by
+      # giving each agent a different assignment.
+      - host:
+          capability: platform:Host
+          relationship: platform:HostedOn
+          node: platform:ServerPlatform
+          count_range: [1, 1]
+
+service_template:
+
+  substitution_mappings:
+
+    node_type: platform:ContainerPlatform
+
+    properties:
+      name: name
+      implementation-details: details
+
+    requirements:
+      # Every `host` assignment on the substituted node crosses the boundary,
+      # and each one binds the `host` requirement of a DIFFERENT agent:
+      # $relationship_index names the assignment being mapped, and selects the
+      # agent representation with that index.
+      #
+      # The key is a two-element sequence, which is the grammar the
+      # specification asks for where the count is UNBOUNDED. A YAML parser that
+      # requires hashable keys, PyYAML among them, cannot load this file at all;
+      # ruamel.yaml can.
+      - [host, UNBOUNDED]: [agent, $relationship_index, host]
+
+  inputs:
+
+    name:
+      type: string
+
+    # Boundary-typed, matching the abstract node's property, and a second input
+    # whose value is derived from it, which is how a realization re-establishes
+    # typing over an opaque value.
+    details:
+      type: core:YAML
+
+    agents:
+      type: Details
+      value: {$core:decode_yaml: [{$get_input: details}]}
+
+  node_templates:
+
+    agent:
+      type: Agent
+      # One agent per server the substituted node binds.
+      count: {$get_input: [agents, agent-count]}
+      properties:
+        # Named after the server it was placed on, which is also what proves
+        # each agent got a different one. The read crosses a requirement that
+        # admits exactly one relationship and expects a scalar, so an agent
+        # holding several servers, or none, fails here rather than deploying.
+        name:
+          $concat:
+            - {$get_input: name}
+            - "-"
+            - {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
