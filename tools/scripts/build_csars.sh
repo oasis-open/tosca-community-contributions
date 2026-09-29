@@ -17,6 +17,12 @@ PROFILES_ROOT="${ROOT}/profiles/community/tosca"
 
 mkdir -p "${CSARS_DIR}"
 
+# Profiles the release holds back, matched against the advertised name. R5
+# ships `core` and the five `abstract.*` profiles; the technology profiles are
+# not yet mature enough to release, `community.tosca.technology.base` included
+# (confirmed 2026-09-29).
+HELD_BACK='^community\.tosca\.technology\.'
+
 # Package one profile directory (identified by its TOSCA.meta) as a CSAR,
 # naming it from the profile keyword in the declared entry file.
 build_csar() {
@@ -27,6 +33,10 @@ build_csar() {
     name_version=$(awk '/^profile:/{print $2; exit}' "${dir}/${entry}")
     if [ -z "${name_version}" ]; then
         echo "WARNING: no 'profile:' keyword in ${dir}/${entry}; skipping" >&2
+        return
+    fi
+    if [[ "${name_version}" =~ ${HELD_BACK} ]]; then
+        echo "Holding back ${name_version}"
         return
     fi
     csar="${name_version/:/.}.csar"   # community.tosca.core:0.1 -> community.tosca.core.0.1.csar
