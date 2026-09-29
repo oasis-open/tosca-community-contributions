@@ -3,6 +3,10 @@
 # Script to create a Kubernetes namespace
 
 set -e  # Exit on error
+# And on a failure anywhere in a pipeline: the details published below come
+# from kubectl piped through jq, which exits 0 on the empty output of a
+# kubectl that failed.
+set -o pipefail
 
 # Import definitions from common library
 HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")

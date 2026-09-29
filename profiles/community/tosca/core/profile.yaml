@@ -176,7 +176,7 @@ artifact_types:
 functions:
   to_string:
     description: >-
-      Convert an integer to string
+      Convert an integer to a string. An argument without a value is refused.
     signatures:
       - arguments:
           - type: integer
@@ -189,7 +189,7 @@ functions:
             file: functions/to_string.py
   to_uppercase:
     description: >-
-      Convert a string to upper case
+      Convert a string to upper case. An argument without a value is refused.
     signatures:
       - arguments:
           - type: string
@@ -202,7 +202,7 @@ functions:
             file: functions/to_uppercase.py
   to_lowercase:
     description: >-
-      Convert a string to lower case
+      Convert a string to lower case. An argument without a value is refused.
     signatures:
       - arguments:
           - type: string
