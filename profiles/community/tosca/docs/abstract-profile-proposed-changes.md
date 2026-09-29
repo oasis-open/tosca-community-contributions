@@ -1,7 +1,9 @@
 # Proposed Enhancements to the TOSCA Community Abstract Profiles
 
 **Status:** Discussion draft, holding the proposals still open. Section 2.4 was agreed at the
-2026-09-02 community meeting and is in the profiles except I29. Each proposal states its own status.
+2026-09-02 community meeting and is in the profiles except the container platform's vocabulary and
+schemes, agreed as N19 on 2026-09-23 and written into the profiles with the `0.2`. Each proposal
+states its own status.
 
 **A section leaves this document once it reaches the profiles**, in two directions: the decision
 to the [decision log](../../../../governance/decision-log.md), and the description of the types to
@@ -55,8 +57,8 @@ and `core` declares `Url` and `SshUrl`, with `HttpUrl` derived from `Url`. `core
 `Socket`, replacing `IPv4Socket`, and the two functions below as `ssh_url_to_socket` and
 `socket_to_ssh_url` (2026-09-16), the three names for the group to confirm. **`mgmt-address` is in
 the profiles since 2026-09-16**, declared on `Platform` as `Url` and narrowed to `SshUrl` on
-`ServerPlatform` and `HttpUrl` on `VirtualizationPlatform`. `ContainerPlatform`'s stays `Url`
-until I29 settles its schemes. `VirtualizationPlatform` also accepts
+`ServerPlatform` and `HttpUrl` on `VirtualizationPlatform`. `ContainerPlatform`'s stays `Url`, which N19 narrows
+by a validation admitting `https`, `tcp` and `unix` when that change is written. `VirtualizationPlatform` also accepts
 `ssh_key` since 2026-09-16, an addition to the table below for a platform managed partly through an
 SSH login on a machine not modelled as a server platform. The credentials
 mechanism is decision D13; the one item still open is the
@@ -232,7 +234,8 @@ deploys.
 
 **‡ `[kubeconfig]` is too restrictive** and was agreed on 2026-09-02 to be an oversight rather
 than a position. A container platform can equally be Docker with Compose, Docker Swarm or Nomad,
-none of which authenticate with a kubeconfig. Tracked as I29.
+none of which authenticate with a kubeconfig. Agreed as N19 on 2026-09-23, in the form the
+resolution below proposes.
 
 **Proposed resolution (2026-09-11).** The kinds follow from what a connection opens: a platform
 records how the orchestrator reaches it on the node that connection opens, as the

@@ -131,8 +131,8 @@ categories of functionality are shown in the following picture:
   a capability of the monitoring tool — keeps the direction consistent
   with management: the touch point lives on the node being acted upon.
 
-  > **Proposed resolution for issue I17.** Formalizes the monitoring
-  > pattern that was discussed in the TOSCA TC but never written down.
+  > **Decision N21** (2026-09-30). Formalizes the monitoring pattern that
+  > was discussed in the TOSCA TC but never written down, settling I17.
 
 - **Security**: securing access to a node is not one concern but
   several, each modeled with its own capability/relationship pair. Note in
@@ -164,10 +164,10 @@ categories of functionality are shown in the following picture:
     declare a *registration requirement* (e.g. `RegistersWith`) so that
     their signed requests can later be verified by relying parties.
 
-  > **Proposed resolution for issue I17.** Replaces "this pattern needs
-  > further work" by splitting security into perimeter, authentication,
-  > authorization, and identity/trust sub-patterns — keeping authentication
-  > and authorization distinct rather than fused under "credentials."
+  > **Decision N21** (2026-09-30). Splits security into perimeter,
+  > authentication, authorization, and identity/trust sub-patterns, keeping
+  > authentication and authorization distinct rather than fused under
+  > "credentials".
 
 **The category list is open-ended.** The categories above are the
 *common* ones, not an exhaustive set. Other recurring cross-cutting
@@ -185,13 +185,12 @@ categories of functionality. These types are discussed next.
 
 ### Best Practices
 
-> **Proposed resolutions for issue I16.** The three questions below were
-> previously open; the recommendations are proposed for community
-> ratification. Related to I4 (abstract-vs-minimal types). Since they
-> were drafted, decision N9 has settled question 1 and decision N10 the
-> question of when to derive, and questions 2 and 3 are worded to match
-> N10. How deep type hierarchies should go is answered in part by the
+> **Decision N20** (2026-09-30), settling I16. Question 1 was settled
+> independently by decision N9, and N10 settled when to derive at all;
+> questions 2 and 3 are worded to match N10, and how deep type hierarchies
+> should go is answered in part by the
 > [One Port, Many Consumers](#one-port-many-consumers) pattern below.
+> Related to I4 (abstract-vs-minimal types), which stays open.
 
 **1. Where should the capability↔relationship constraint be declared —
 `valid_capability_types`, `valid_relationship_types`, or both?**
@@ -247,7 +246,7 @@ proliferation of near-identical types.
 ## One Port, Many Consumers
 
 > **Adopted for `Platform` as decision N17** (2026-09-16), and a partial
-> answer to how deep type hierarchies should go (I16). The community base
+> answer to how deep type hierarchies should go (N20). The community base
 > profile declares the single capability as `Host`.
 
 **Problem.** Several kinds of node often use the same function of a

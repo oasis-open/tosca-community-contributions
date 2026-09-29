@@ -47,7 +47,7 @@ leaves open. Part 3 is the proposals set aside while the release was cut.
 
 ---
 
-## Part 2 — What the community does next — 22 min · **decisions sought**
+## Part 2 — What the community does next — 20 min · **decisions sought**
 
 ### 2.1 Announcing the release — 5 min · *I8*
 
@@ -89,11 +89,6 @@ does not travel, or give the kind through `directives` on a requirement assignme
 
 **Decision sought:** what the profiles do, now that the release no longer constrains the answer.
 
-### 2.4 The container platform's credential kinds and URL schemes — 2 min · *I29*
-
-Deferred past the `0.1` deliberately, since widening a `key_schema` breaks nothing downstream. It
-needs an owner and a target release rather than a decision today.
-
 ---
 
 ## Part 3 — Outstanding proposals — 15 min · **status, and what each needs**
@@ -106,38 +101,27 @@ presents with the example.
 
 **Decision sought:** whether it is an erratum (P4) or a misreading.
 
-### 3.2 Three drafted resolutions awaiting ratification · *I13 / I16(c) / I17*
-
-**Carried past seven meetings without being read.** Each needs a yes or a no, not a discussion.
-
-- **I17 — the monitoring and security patterns**
-  ([`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md)).
-- **I16(c) — how deep the type hierarchies should go**
-  ([`design-patterns.md`](../profiles/community/tosca/docs/design-patterns.md)). N17's "permission
-  at the base, restriction below it" is a partial answer.
-- **I13 — no `type-of-node` function**
-  ([`modeling-methodology.md`](../profiles/community/tosca/docs/modeling-methodology.md)).
-
-### 3.3 Orchestrated credentials · *I27 / I41* · [proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md)
+### 3.2 Orchestrated credentials · *I27 / I41* · [proposal](../profiles/community/tosca/docs/credential-orchestration-proposal.md)
 
 A credential the orchestrator creates rather than references. Open: which profile the `Credential`
 capability belongs in, and whether the orchestrated-secret node types belong in the abstract
-profiles at all. I29's certificate kinds need the trust anchor I41 describes.
+profiles at all. The certificate kinds N19 adds to the container platform need the trust anchor I41
+describes.
 
-### 3.4 Implementations for functions and operations · *I43* · [#365](https://github.com/oasis-open/tosca-community-contributions/discussions/365)
+### 3.3 Implementations for functions and operations · *I43* · [#365](https://github.com/oasis-open/tosca-community-contributions/discussions/365)
 
 Implementations vary by the target platform's technology, by the orchestrator and by the tooling,
 for operations as much as for functions, and a profile can name only one. Roberto prefers a list of
 implementations per signature to repeated signatures. Both directions need a language extension.
 D14 kept the implementations in `core` for the `0.1`, which was a deferral rather than an answer.
 
-### 3.5 The artifact calling convention · *I10* · [proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md)
+### 3.4 The artifact calling convention · *I10* · [proposal](../profiles/community/tosca/docs/artifact-calling-convention-proposal.md)
 
 One structured document of inputs in place of a variable per input, each artifact type declaring its
 own channel. Roberto's alternative is a `Bash` artifact type per convention, or a keyname naming the
 convention. Tal's input is wanted, since that implementation uses standard input and output.
 
-### 3.6 Counting a requirement's relationships · *I49* · [#372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)
+### 3.5 Counting a requirement's relationships · *I49* · [#372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)
 
 Pairs of realizations that differ only in whether an optional requirement is bound can be told apart
 today only by reading a value on the target, which forces the requirement to name a target node type
@@ -161,5 +145,4 @@ instead. **Input wanted:** the name, whether a missing index means all relations
 around and the versioning rule that opens it (2.2); and how a derived relationship type declares
 its kind (2.3).
 
-**Also sought (Part 3):** whether the `UNBOUNDED` use is an erratum (3.1), and ratification of the
-three drafted resolutions (3.2).
+**Also sought (Part 3):** whether the `UNBOUNDED` use is an erratum (3.1).

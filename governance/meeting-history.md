@@ -235,8 +235,11 @@ and `ssh_key` among the virtualization platform's credential kinds. What goes ba
 Kubernetes example is the workload question, whether a control node also hosts workloads, where
 the chair wants the same abstract service template for the Online Boutique realized by two
 profiles and two orchestrators. The chair also asked for a wider agenda
-and more participation. Not reached: I29's vocabularies, I44, and the drafted
-resolutions for I13, I16(c) and I17.
+and more participation. **I29 was agreed as drafted** (N19): the container platform accepts
+`[kubeconfig, token, x509_cert, x509_key]`, the SSH kinds stay on the server platform that hosts
+it, and its `mgmt-address` admits `https`, `tcp` and `unix`. Roberto agreed to all three; the
+profile change follows the `0.1`, since widening a `key_schema` breaks nothing. Not reached: I44,
+and the drafted resolutions for I13, I16(c) and I17.
 
 
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
