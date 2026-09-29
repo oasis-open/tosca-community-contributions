@@ -41,7 +41,11 @@ build_csar() {
     fi
     csar="${name_version/:/.}.csar"   # community.tosca.core:0.1 -> community.tosca.core.0.1.csar
     echo "Creating ${name_version}  ->  ${csar}"
-    ( cd "${dir}" && zip -r "${CSARS_DIR}/${csar}" . > /dev/null )
+    # Documentation images stay out of the archive a consumer imports: they
+    # serve the README as it renders in the repository, and one profile's
+    # sources directory carries a presentation file larger than every other
+    # CSAR. The README itself ships; its image links resolve in the repository.
+    ( cd "${dir}" && zip -r "${CSARS_DIR}/${csar}" . -x 'images/*' > /dev/null )
 }
 
 # Discover profiles by their TOSCA.meta entry-point markers.
