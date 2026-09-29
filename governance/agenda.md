@@ -101,8 +101,12 @@ does not travel, or give the kind through `directives` on a requirement assignme
 
 ### 3.1 A worked substitution-mappings example, and an error in the specification · *I51*
 
-Roberto asked for an example after trouble with requirements in substitution mappings. Building one
-turned up an apparent error in the specification's use of the `UNBOUNDED` keyword, which the chair
+Roberto asked for an example after trouble with requirements in substitution mappings. One is
+written: [`examples/substitutions/container-platform-cluster`](../examples/substitutions/container-platform-cluster),
+a `ContainerPlatform` placed on several servers whose realization gives each placement to a
+different cluster agent through `$relationship_index`. Building it turned up an apparent error in
+the specification's use of the `UNBOUNDED` keyword, filed as
+[oasis-tcs/tosca-specs#362](https://github.com/oasis-tcs/tosca-specs/issues/362), which the chair
 presents with the example.
 
 **Decision sought:** whether it is an erratum (P4) or a misreading.
