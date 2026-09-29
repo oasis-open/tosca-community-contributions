@@ -10,10 +10,39 @@ This is the requirement mapping people get wrong first, and the one the
 specification's own grammar is hardest to read on. The two files here are
 complete and small:
 
-- [`main.yaml`](main.yaml) — three `ServerPlatform` nodes and a
-  `ContainerPlatform` whose `host` requirement binds all three.
-- [`cluster.yaml`](cluster.yaml) — the substituting service: a counted `agent`
-  template, and the mapping that hands each agent a different server.
+- [`main.yaml`](main.yaml) — the abstract service, in the System View: three
+  `ServerPlatform` nodes and a `ContainerPlatform` whose `host` requirement
+  binds all three.
+- [`cluster.yaml`](cluster.yaml) — the realization, in the technology column: a
+  counted `agent` template, and the mapping that hands each agent a different
+  server.
+
+## Which layer each file is in
+
+Substitution is how the [policy continuum](../README.md) crosses from one layer
+to the next, so a realization's own nodes belong to the layer below the node it
+substitutes. That is worth stating as a rule, because it is easy to break by
+accident:
+
+- `main.yaml` uses System View types and nothing else.
+- `cluster.yaml` names one System View type, `platform:ContainerPlatform`, as
+  the `node_type` of its `substitution_mappings`. Everything else it uses comes
+  from the technology column, and no requirement in it names a System View type.
+
+An abstract type is what a realization substitutes, never what it is built from.
+A node type derived from a System View type, or a requirement in the realization
+pinned to one, puts an abstract type into an implementation and collapses the two
+layers into one.
+
+The community has no technology-specific profiles yet, so the realization defines
+the node type it needs, `Agent`, in its own file, derived from `Root` in
+[`community.tosca.technology.base`](../../../profiles/community/tosca/technology/base/profile.yaml).
+That profile is the technology column's base: its own `Standard` interface, its
+own `Bash` artifact type, and its own copies of the three base relationship and
+capability types, so a technology type never has to reach into the abstract
+layer. It is in the repository and is not part of the `0.1` release. Once
+technology profiles exist, `Agent` is what one of them would define against a
+product, with operations that install and join the thing.
 
 ## The mapping
 
@@ -36,23 +65,25 @@ requirement. That is sometimes exactly right: the
 microservice talks to is consumed by the one pod. It is wrong for a cluster,
 where it would ask every agent to host every server.
 
-The agent's own requirement is declared `count_range: [1, 1]`, and each agent is
-named after the server it was placed on:
+What holds one server per agent is the agent's own requirement:
 
 ```yaml
-name:
-  $concat:
-    - {$get_input: name}
-    - "-"
-    - {$get_property: [SELF, RELATIONSHIP, host, TARGET, name]}
+- host:
+    capability: tech:Container
+    relationship: tech:ContainedBy
+    count_range: [1, 1]
 ```
 
-The names come out `cluster-server_1`, `cluster-server_2`, `cluster-server_3`,
-which is the distribution made visible. It is also what enforces it: the read
-crosses a requirement admitting one relationship and expects a scalar, so an
-agent holding several servers, or none, fails at validation rather than
-deploying into a topology nobody asked for. The mapping states the intent; the
-count and the scalar read are what hold it.
+An agent that ended up with several placements, or with none, fails validation
+rather than deploying into a topology nobody asked for. The mapping states the
+intent; the count is what holds it.
+
+That requirement names no target node type. The machine an agent is placed on is
+contributed by the realization of the server the placement came from, which is a
+different substitution in a different file, so the type to pin would have to be
+one both realizations share, from a technology profile the community does not
+have yet. The type that must not be pinned here is the one this file could
+name today, `platform:ServerPlatform`: that is the layering rule above, broken.
 
 ## Two things the example has to work around
 
@@ -64,6 +95,13 @@ decoded into a typed input on the other side. A built-in that counts
 relationships would remove the need, which is what community issue I49 and
 [discussion #372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)
 propose.
+
+The unpinned requirement above is the same constraint seen from the other side:
+what would make a read across it type-checkable is a pinned target type, and
+there is none to pin that does not reach into the layer above. So an agent is
+named from `$node_index` rather than from the server it was placed on, and which
+agent got which server is read from the relationships, not from a property
+copied across the boundary.
 
 **The mapping key cannot be parsed by every YAML library.** `[host, UNBOUNDED]`
 is a sequence used as a mapping key. PyYAML refuses it, because it requires
