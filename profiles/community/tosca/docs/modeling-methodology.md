@@ -648,7 +648,7 @@ call out. Location, capabilities, capacity and access describe what a
 platform *is and can do*; selecting a realization additionally needs to
 know what it is *designated to be*.
 
-> **Decision D15** (2026-09-30), settling I13 (`type-of-node` / "hash type"
+> **Decision D15** (2026-09-29), settling I13 (`type-of-node` / "hash type"
 > function). The function is *not* added: property-based selection is
 > strictly more general. Consistent with the direction recorded for I4
 > (abstract-types vs. minimal-types), which leans toward property-based

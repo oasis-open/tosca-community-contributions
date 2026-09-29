@@ -40,6 +40,12 @@ leaves open. Part 3 is the proposals set aside while the release was cut.
 - **The names approved on 09-23** now read as approved: `Host`, `control-host`, `Socket`,
   `ssh_url_to_socket`, `socket_to_ssh_url`, and `ssh_key` among the virtualization platform's
   credential kinds.
+- **Three resolutions carried since July are adopted** ([#381](https://github.com/oasis-open/tosca-community-contributions/pull/381),
+  merged 09-29): N20 on where a capability-to-relationship constraint is declared and when to derive
+  a type (I16), N21 on monitoring and security in the component and port pattern (I17), and D15 on
+  not adding a `type-of-node` function (I13). Each was dropped twice for time and postponed twice
+  because two participants attended, so they were put up for objection rather than read out a fifth
+  time. **An objection reopens the resolution in question.**
 - **A proposal for the test suite, the conformance clause index**
   ([`tests/conformance-clauses.md`](../tests/conformance-clauses.md)): how the suite organizes and
   reports its own evidence. What a conformance claim means is the TC's to define, so it is not a

@@ -131,7 +131,7 @@ categories of functionality are shown in the following picture:
   a capability of the monitoring tool — keeps the direction consistent
   with management: the touch point lives on the node being acted upon.
 
-  > **Decision N21** (2026-09-30). Formalizes the monitoring pattern that
+  > **Decision N21** (2026-09-29). Formalizes the monitoring pattern that
   > was discussed in the TOSCA TC but never written down, settling I17.
 
 - **Security**: securing access to a node is not one concern but
@@ -164,7 +164,7 @@ categories of functionality are shown in the following picture:
     declare a *registration requirement* (e.g. `RegistersWith`) so that
     their signed requests can later be verified by relying parties.
 
-  > **Decision N21** (2026-09-30). Splits security into perimeter,
+  > **Decision N21** (2026-09-29). Splits security into perimeter,
   > authentication, authorization, and identity/trust sub-patterns, keeping
   > authentication and authorization distinct rather than fused under
   > "credentials".
@@ -185,7 +185,7 @@ categories of functionality. These types are discussed next.
 
 ### Best Practices
 
-> **Decision N20** (2026-09-30), settling I16. Question 1 was settled
+> **Decision N20** (2026-09-29), settling I16. Question 1 was settled
 > independently by decision N9, and N10 settled when to derive at all;
 > questions 2 and 3 are worded to match N10, and how deep type hierarchies
 > should go is answered in part by the
