@@ -40,12 +40,14 @@ leaves open. Part 3 is the proposals set aside while the release was cut.
 - **The names approved on 09-23** now read as approved: `Host`, `control-host`, `Socket`,
   `ssh_url_to_socket`, `socket_to_ssh_url`, and `ssh_key` among the virtualization platform's
   credential kinds.
-- **A new proposal, the conformance clause index**
-  ([`tests/conformance-clauses.md`](../tests/conformance-clauses.md)), which is item 2.2.
+- **A proposal for the test suite, the conformance clause index**
+  ([`tests/conformance-clauses.md`](../tests/conformance-clauses.md)): how the suite organizes and
+  reports its own evidence. What a conformance claim means is the TC's to define, so it is not a
+  community agenda item.
 
 ---
 
-## Part 2 — What the community does next — 30 min · **decisions sought**
+## Part 2 — What the community does next — 22 min · **decisions sought**
 
 ### 2.1 Announcing the release — 5 min · *I8*
 
@@ -54,16 +56,7 @@ list, Discord, and LinkedIn.
 
 **Decision sought:** where the announcement goes, and who writes it.
 
-### 2.2 The conformance clause index — 8 min · [proposal](../tests/conformance-clauses.md)
-
-The test suite is organized by specification section. The proposal indexes it by the conformance
-clauses of Chapter 18 instead, so an implementer can run the tests for a clause and state a
-self-certification claim against that clause rather than against a list of sections.
-
-**Decision sought:** whether the suite adopts the clause index, which also decides what a
-self-certification claim the community offers would say.
-
-### 2.3 What the `0.2` is for — 10 min
+### 2.2 What the `0.2` is for — 10 min
 
 The `0.1` was the organizing goal for a month. The candidates for the next one, each with someone
 who has asked for it:
@@ -76,9 +69,17 @@ who has asked for it:
 - **The test suite**, which has had no active contributor since June and carries 35 open issues.
   I19 asks for it to be described in the governance documents at all.
 
-**Decision sought:** which of these the next release is organized around. One, not four.
+**And the version the profiles carry.** Every profile still advertises `0.1`, the version the
+released CSARs carry, so anyone tracking `master` imports a name that no longer says what they
+get. Bumping the seven profiles to `0.2` separates the release from the work; the rule for when a
+version bumps and what an unreleased version means has never been written down, which I8 records
+as the one unbuilt part of the release process. A rule is proposed in
+[`docs/versioning.md`](../profiles/community/tosca/docs/versioning.md).
 
-### 2.4 How a derived relationship type declares its kind — 5 min · *I44* · [#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363)
+**Decisions sought:** which of these the next release is organized around, one and not four; and
+the versioning rule, with the bump to `0.2` that follows from it.
+
+### 2.3 How a derived relationship type declares its kind — 5 min · *I44* · [#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363)
 
 Carried since 09-09 and not reached twice. The base relationship types carry
 `metadata: {relationship-kind: …}`, which is not inherited and which the specification says should
@@ -88,7 +89,7 @@ does not travel, or give the kind through `directives` on a requirement assignme
 
 **Decision sought:** what the profiles do, now that the release no longer constrains the answer.
 
-### 2.5 The container platform's credential kinds and URL schemes — 2 min · *I29*
+### 2.4 The container platform's credential kinds and URL schemes — 2 min · *I29*
 
 Deferred past the `0.1` deliberately, since widening a `key_schema` breaks nothing downstream. It
 needs an owner and a target release rather than a decision today.
@@ -156,9 +157,9 @@ instead. **Input wanted:** the name, whether a missing index means all relations
 
 ---
 
-**Decisions sought (Part 2):** where the release is announced (2.1); whether the test suite adopts
-the conformance clause index (2.2); what the `0.2` is organized around (2.3); and how a derived
-relationship type declares its kind (2.4).
+**Decisions sought (Part 2):** where the release is announced (2.1); what the `0.2` is organized
+around and the versioning rule that opens it (2.2); and how a derived relationship type declares
+its kind (2.3).
 
 **Also sought (Part 3):** whether the `UNBOUNDED` use is an erratum (3.1), and ratification of the
 three drafted resolutions (3.2).

@@ -6,6 +6,11 @@
 implementer can run the tests for a clause, see which statements of that clause the tests cover,
 and state a self-certification claim against the clause rather than against a list of sections.
 
+**Scope:** this proposes how the suite organizes and reports its own evidence, and nothing more.
+What a conformance claim means, whether self-certification is the route, and what a published
+result is worth are the TOSCA Technical Committee's to define. The index serves whatever the TC
+decides; it does not decide it.
+
 **Related documents:** [README](README.md) · [framework](framework.md) ·
 [validation](validation.md) ·
 [TOSCA 2.0, Chapter 18](https://github.com/oasis-tcs/tosca-specs/blob/published/tosca_2_0/TOSCA-v2.0-os.md#conformance)
