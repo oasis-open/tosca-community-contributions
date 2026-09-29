@@ -229,9 +229,12 @@ Roberto will open a pull request adding a `to_lowercase` function to `core`, whi
 merge before the tag. Roberto also asked for the technology-specific profiles, which the chair
 proposed as the deliverable after the `0.1`, and reported trouble with requirements in substitution
 mappings; the chair offered to present a worked example next week, together with an error found in
-the specification's use of the `UNBOUNDED` keyword. `control-host` was not confirmed: it goes back
-to the Kubernetes example, where the chair wants the same abstract service template for the Online
-Boutique realized by two profiles and two orchestrators. The chair also asked for a wider agenda
+the specification's use of the `UNBOUNDED` keyword. The names written into the profiles since
+09-16 were approved: `Host`, `control-host`, `Socket`, `ssh_url_to_socket` and `socket_to_ssh_url`,
+and `ssh_key` among the virtualization platform's credential kinds. What goes back to the
+Kubernetes example is the workload question, whether a control node also hosts workloads, where
+the chair wants the same abstract service template for the Online Boutique realized by two
+profiles and two orchestrators. The chair also asked for a wider agenda
 and more participation. Not reached: I29's vocabularies, I44, and the drafted
 resolutions for I13, I16(c) and I17.
 
