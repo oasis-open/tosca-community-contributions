@@ -648,11 +648,11 @@ call out. Location, capabilities, capacity and access describe what a
 platform *is and can do*; selecting a realization additionally needs to
 know what it is *designated to be*.
 
-> **Proposed resolution for issue I13** (`type-of-node` / "hash type"
-> function). Recommends *not* adding the function, on the grounds that
-> property-based selection is strictly more general. Consistent with the
-> direction already recorded for I4 (abstract-types vs. minimal-types),
-> which leans toward property-based substitution.
+> **Decision D15** (2026-09-29), settling I13 (`type-of-node` / "hash type"
+> function). The function is *not* added: property-based selection is
+> strictly more general. Consistent with the direction recorded for I4
+> (abstract-types vs. minimal-types), which leans toward property-based
+> substitution.
 
 **Filters must be mutually exclusive.** A processor selects the *first*
 candidate whose substitution filter matches, and raises an error when

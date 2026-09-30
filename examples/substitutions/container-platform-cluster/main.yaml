@@ -1,0 +1,63 @@
+tosca_definitions_version: tosca_2_0
+
+description: >-
+  A ContainerPlatform placed on three servers, substituted by a service that
+  creates one cluster agent per server.
+
+imports:
+  - profile: community.tosca.abstract.platform:0.1
+    namespace: platform
+
+service_template:
+
+  node_templates:
+
+    # Three servers, each a platform in its own right. They carry no
+    # realization here: what this example shows is how the cluster's placements
+    # reach its agents, not how a server is brought up.
+    server_1:
+      type: platform:ServerPlatform
+      properties:
+        name: server_1
+        technology: physical
+
+    server_2:
+      type: platform:ServerPlatform
+      properties:
+        name: server_2
+        technology: physical
+
+    server_3:
+      type: platform:ServerPlatform
+      properties:
+        name: server_3
+        technology: physical
+
+    # The cluster. `host` is inherited from `Base`, which declares no
+    # count_range, so the TOSCA 2.0 default [0, UNBOUNDED] applies and a
+    # platform may be placed on as many servers as it spans. Here, all three.
+    cluster:
+      type: platform:ContainerPlatform
+      directives: [substitute]
+      properties:
+        name: cluster
+        technology: kubernetes
+        # How many agents the realization creates. It matches the number of
+        # `host` assignments below, and it has to be stated because nothing in
+        # TOSCA counts the relationships a requirement produced; that gap is
+        # the subject of community issue I49.
+        implementation-details: |
+          agent-count: 3
+      requirements:
+        - host: server_1
+        - host: server_2
+        - host: server_3
+
+  outputs:
+
+    # Observation only: the servers the cluster is placed on, in binding order.
+    cluster-hosts:
+      type: list
+      entry_schema:
+        type: string
+      value: {$get_property: [cluster, RELATIONSHIP, host, ALL, TARGET, name]}

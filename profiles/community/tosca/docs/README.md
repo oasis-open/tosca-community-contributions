@@ -65,3 +65,6 @@ lives and what it may claim.
   — a construct for supplying an implementation for a function or an operation
   declared elsewhere, and for choosing among several. Also addressed to the OASIS
   TOSCA Technical Committee.
+- **[versioning.md](versioning.md)** — when a profile's version changes, what a
+  version means to someone importing it, and what the community promises across
+  versions.

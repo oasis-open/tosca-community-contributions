@@ -40,3 +40,14 @@ microservice can be transformed not just into Kubernetes resources,
 but also into any other containerized or legacy application, including
 Nomad, Docker Compose, serverless, etc.
 
+
+## The examples
+
+- [`microservice`](microservice) — the *policy continuum* described above: a
+  `MicroService` node in an abstract service is decomposed into Kubernetes
+  resources, with property, capability and requirement mappings across the
+  boundary.
+- [`container-platform-cluster`](container-platform-cluster) — requirement
+  mapping when one requirement carries many assignments: a `ContainerPlatform`
+  placed on several servers, each placement reaching a different cluster agent
+  through `$relationship_index`.

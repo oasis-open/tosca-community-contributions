@@ -1,0 +1,106 @@
+tosca_definitions_version: tosca_2_0
+
+description: >-
+  Realization for a ContainerPlatform placed on several servers: one cluster
+  agent per bound server, each agent taking one of the platform's host
+  assignments. The nodes here are technology-column types; the abstract profile
+  is imported for the node type at the boundary and for nothing else.
+
+imports:
+  # The System View, for the one type this file substitutes.
+  - profile: community.tosca.abstract.platform:0.1
+    namespace: platform
+  # The technology column, which is where a realization's own node types live.
+  - profile: community.tosca.technology.base:0.1
+    namespace: tech
+  - profile: community.tosca.core:0.1
+    namespace: core
+
+data_types:
+
+  Details:
+    description: >-
+      The fields this realization expects to find in the substituted node's
+      implementation-details.
+    properties:
+      agent-count:
+        type: integer
+
+node_types:
+
+  Agent:
+    description: >-
+      One cluster member, placed on exactly one machine. A technology profile
+      would define this against a product and give it operations; here it
+      derives from the technology column's Root and exists to receive one
+      placement.
+    derived_from: tech:Root
+    properties:
+      name:
+        type: string
+    requirements:
+      # One machine per agent, and no target node type: the machine is
+      # contributed by the realization of the server this placement came from,
+      # a different substitution in a different file, so the type to pin would
+      # have to be one both realizations share, out of a technology profile the
+      # community does not define yet. The type this file could name today,
+      # platform:ServerPlatform, is System View and pinning it here would put
+      # an abstract type into an implementation. The capability and
+      # relationship types are the technology column's own.
+      - host:
+          capability: tech:Container
+          relationship: tech:ContainedBy
+          count_range: [1, 1]
+
+service_template:
+
+  substitution_mappings:
+
+    node_type: platform:ContainerPlatform
+
+    properties:
+      name: name
+      implementation-details: details
+
+    requirements:
+      # Every `host` assignment on the substituted node crosses the boundary,
+      # and each one binds the `host` requirement of a DIFFERENT agent:
+      # $relationship_index names the assignment being mapped, and selects the
+      # agent representation with that index.
+      #
+      # The key is a two-element sequence, which is the grammar the
+      # specification asks for where the count is UNBOUNDED. A YAML parser that
+      # requires hashable keys, PyYAML among them, cannot load this file at all;
+      # ruamel.yaml can.
+      - [host, UNBOUNDED]: [agent, $relationship_index, host]
+
+  inputs:
+
+    name:
+      type: string
+
+    # Boundary-typed, matching the abstract node's property, and a second input
+    # whose value is derived from it, which is how a realization re-establishes
+    # typing over an opaque value.
+    details:
+      type: core:YAML
+
+    agents:
+      type: Details
+      value: {$core:decode_yaml: [{$get_input: details}]}
+
+  node_templates:
+
+    agent:
+      type: Agent
+      # One agent per server the substituted node binds.
+      count: {$get_input: [agents, agent-count]}
+      properties:
+        # Distinguished by the index of the representation, which is the only
+        # thing an agent knows about itself. Reading a name off the placement's
+        # target would reach into the layer above.
+        name:
+          $concat:
+            - {$get_input: name}
+            - "-agent-"
+            - {$core:to_string: [$node_index]}
