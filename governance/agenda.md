@@ -20,7 +20,8 @@ leaves open. Part 3 is the proposals set aside while the release was cut.
   `technology.base` with them (R5).
 - **The release notes** say what the profiles are for, how to verify a download, and that no
   compatibility is promised before `1.0`.
-- **What the process has never done is announce a release.** That is item 2.1.
+- **Announced on Discord** on 09-29, which is as far as the process has ever taken an announcement.
+  Which other channels carry it is item 2.1.
 
 ### Written into the profiles since 09-23
 
@@ -55,12 +56,23 @@ leaves open. Part 3 is the proposals set aside while the release was cut.
 
 ## Part 2 — What the community does next — 20 min · **decisions sought**
 
-### 2.1 Announcing the release — 5 min · *I8*
+### 2.1 Announcing the release, beyond Discord — 5 min · *I8*
 
-The release is public and nobody has been told. The candidates reach different people: the OASIS
-list, Discord, and LinkedIn.
+The Discord post went up on 09-29: what the six profiles are, what the abstract types are for, that
+no compatibility is promised before `1.0`, and the release link. That reaches the people already
+here. The channels that reach anyone else are undecided, and each reaches a different room:
 
-**Decision sought:** where the announcement goes, and who writes it.
+- **The OASIS TOSCA TC list.** The people who wrote the specification. It is also where the `kind`
+  keyname request in 2.3 and the `UNBOUNDED` erratum in 3.1 are headed, and a release the TC has
+  seen is a release it can argue with.
+- **The OASIS-wide announcement channels**, which need OASIS staff to post and a few lines they can
+  work from. They reach people who know OASIS and do not follow this work.
+- **LinkedIn**, from the chair, the only channel here that reaches practitioners who follow neither.
+- **The repository itself.** The README points at no release today, and a pinned entry in
+  Discussions is what someone arriving from any of the above reads next.
+
+**Decision sought:** which of these, who writes each, and whether they carry the Discord post's
+words or their own.
 
 ### 2.2 What the `0.2` is for — 10 min
 
@@ -88,12 +100,33 @@ the versioning rule, with the bump to `0.2` that follows from it.
 ### 2.3 How a derived relationship type declares its kind — 5 min · *I44* · [#363](https://github.com/oasis-open/tosca-community-contributions/discussions/363)
 
 Carried since 09-09 and not reached twice. The base relationship types carry
-`metadata: {relationship-kind: …}`, which is not inherited and which the specification says should
-not affect runtime behavior. The options are unchanged: redeclare it on every derived type, drop it
-and let derivation carry the kind, ask for a `kind` keyname in 2.1, document it as a convention that
-does not travel, or give the kind through `directives` on a requirement assignment.
+`metadata: {relationship-kind: …}`, which **§6.4.2** excludes from derivation and which **§5.3.1**
+says MAY be ignored and SHOULD NOT affect runtime behavior. The five options are in
+[I44](open-issues.md).
 
-**Decision sought:** what the profiles do, now that the release no longer constrains the answer.
+**The chair's recommendation: the kind follows the standard derivation rules.** A derived
+relationship type inherits its parent's kind, and a derived type may narrow a kind, never broaden
+it, which is the rule that already governs the rest of a type definition. Three things follow:
+
+- **Derived types stop declaring it.** `abstract.base`'s four derived relationship types redeclare
+  the keyname today, and that is also where the case drifted: the base types write `CONTAINMENT`,
+  the types derived from them write `containment`. Under inheritance the kind is declared once, on
+  the base type, and the case question goes with the redeclarations. An implementation that walks
+  the type hierarchy for a missing keyname already reads the profiles this way.
+- **The kind cannot stay in `metadata`.** Inheritance and narrowing are derivation semantics, and
+  metadata has none. So this recommendation carries the request for a real `kind` keyname on a
+  relationship type in 2.1, option 3, whose definition states both rules. It is adjacent to I6.
+- **Narrowing needs a vocabulary with room to narrow.** The three kinds are disjoint today, so
+  inheritance is the half that operates and a declared kind is in practice fixed. Narrowing becomes
+  real if the vocabulary grows sub-kinds, which is the wider vocabulary aligned with UML's
+  relationships floated on 09-16.
+
+It is not option 5, the kind given through `directives` on a requirement assignment: the kind
+belongs to the relationship type rather than to a template's use of it, and a template that can
+restate it can contradict it.
+
+**Decision sought:** adopt the derivation rule, drop the redeclarations from the profiles in the
+`0.2`, and take the `kind` keyname to the TC for 2.1.
 
 ---
 
@@ -151,7 +184,7 @@ instead. **Input wanted:** the name, whether a missing index means all relations
 
 ---
 
-**Decisions sought (Part 2):** where the release is announced (2.1); what the `0.2` is organized
+**Decisions sought (Part 2):** which further channels announce the release (2.1); what the `0.2` is organized
 around and the versioning rule that opens it (2.2); and how a derived relationship type declares
 its kind (2.3).
 
