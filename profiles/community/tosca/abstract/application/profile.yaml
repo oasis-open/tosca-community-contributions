@@ -1,6 +1,6 @@
 tosca_definitions_version: tosca_2_0
 
-profile: community.tosca.abstract.application:0.1
+profile: community.tosca.abstract.application:0.2
 
 description: >-
   TOSCA Application Profile type definitions. This files contains
@@ -8,9 +8,9 @@ description: >-
   Application abstract node type
 
 imports:
-- profile: community.tosca.core:0.1
-- profile: community.tosca.abstract.base:0.1
-- profile: community.tosca.abstract.platform:0.1
+- profile: community.tosca.core:0.2
+- profile: community.tosca.abstract.base:0.2
+- profile: community.tosca.abstract.platform:0.2
   namespace: platform
 
 data_types:

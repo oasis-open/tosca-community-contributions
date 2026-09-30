@@ -157,7 +157,7 @@ The concrete edits:
      after aggregation (Part 1, Step 3) these must point at the local file names
      (`- url: meta.yaml`).
    - **Add the external profile import** the generator never emits but the
-     post-processing needs: `community.tosca.technology.base:0.1` (`base`). It
+     post-processing needs: `community.tosca.technology.base:0.2` (`base`). It
      provides the `Root` node type, the `Bash` artifact type (used in Step 8),
      and — via its own `community.tosca.core` import — the base
      capability/relationship types and the `$in_range` function. The `cluster`
@@ -170,7 +170,7 @@ The concrete edits:
 5. **`$in_range` import.** `in_range` is a v1.3 *built-in* but a v2.0 *function*
    (defined in `community.tosca.core` and re-exported by
    `community.tosca.technology.base`). Any file that uses it therefore needs the
-   `- profile: community.tosca.technology.base:0.1` import (namespace `base`, from
+   `- profile: community.tosca.technology.base:0.2` import (namespace `base`, from
    which `$in_range` resolves unprefixed). Files with no `in_range` need no such
    import. (`meta.yaml`, `networking.yaml`, and `storage.yaml` required it.)
 

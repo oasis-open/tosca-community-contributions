@@ -1,13 +1,13 @@
 tosca_definitions_version: tosca_2_0
 
-profile: community.tosca.abstract.base:0.1
+profile: community.tosca.abstract.base:0.2
 
 description: >-
   TOSCA Base Profile type definitions. This files contains
   highest-level definitions of abstract types.
 
 imports:
-- profile: community.tosca.core:0.1
+- profile: community.tosca.core:0.2
 
 capability_types:
   # The three base capability types, one for each relationship kind; every

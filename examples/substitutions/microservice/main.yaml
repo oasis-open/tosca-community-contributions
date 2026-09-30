@@ -9,11 +9,11 @@ description: >-
   community.tosca.technology.kubernetes profile.
 
 imports:
-  - profile: community.tosca.abstract.application:0.1
+  - profile: community.tosca.abstract.application:0.2
     namespace: app
   - profile: io.kubernetes:1.35
     namespace: k8s
-  - profile: community.tosca.core:0.1
+  - profile: community.tosca.core:0.2
     namespace: core
 
 node_types:

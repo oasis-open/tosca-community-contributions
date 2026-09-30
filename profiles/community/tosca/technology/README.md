@@ -22,5 +22,5 @@ rationale for modeling Kubernetes with TOSCA now lives in
 
 ## `base`
 
-- [`base`](base) — `community.tosca.technology.base:0.1`, the shared technology
+- [`base`](base) — `community.tosca.technology.base:0.2`, the shared technology
   base profile (Root and common building blocks that technology profiles import).
