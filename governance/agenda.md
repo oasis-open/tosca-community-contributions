@@ -67,7 +67,8 @@ here. The channels that reach anyone else are undecided, and each reaches a diff
   seen is a release it can argue with.
 - **The OASIS-wide announcement channels**, which need OASIS staff to post and a few lines they can
   work from. They reach people who know OASIS and do not follow this work.
-- **LinkedIn**, from the chair, the only channel here that reaches practitioners who follow neither.
+- **LinkedIn**, as a personal post, the only channel here that reaches practitioners who follow
+  neither.
 - **The repository itself.** The README points at no release today, and a pinned entry in
   Discussions is what someone arriving from any of the above reads next.
 
@@ -79,7 +80,7 @@ words or their own.
 The `0.1` was the organizing goal for a month. The candidates for the next one, each with someone
 who has asked for it:
 
-- **The technology-specific profiles**, which Roberto asked for and which the chair proposed as the
+- **The technology-specific profiles**, which Roberto asked for and which I proposed as the
   deliverable after the `0.1`.
 - **The implementation strategy** (I43): a profile carries one implementation per signature, and
   which one belongs there is unsettled. D14 held it out of the `0.1` rather than answering it.
@@ -104,7 +105,7 @@ Carried since 09-09 and not reached twice. The base relationship types carry
 says MAY be ignored and SHOULD NOT affect runtime behavior. The five options are in
 [I44](open-issues.md).
 
-**The chair's recommendation: the kind follows the standard derivation rules.** A derived
+**My recommendation: the kind follows the standard derivation rules.** A derived
 relationship type inherits its parent's kind, and a derived type may narrow a kind, never broaden
 it, which is the rule that already governs the rest of a type definition. Three things follow:
 
@@ -139,8 +140,8 @@ written: [`examples/substitutions/container-platform-cluster`](../examples/subst
 a `ContainerPlatform` placed on several servers whose realization gives each placement to a
 different cluster agent through `$relationship_index`. Building it turned up an apparent error in
 the specification's use of the `UNBOUNDED` keyword, filed as
-[oasis-tcs/tosca-specs#362](https://github.com/oasis-tcs/tosca-specs/issues/362), which the chair
-presents with the example.
+[oasis-tcs/tosca-specs#362](https://github.com/oasis-tcs/tosca-specs/issues/362), which I present
+with the example.
 
 **Decision sought:** whether it is an erratum (P4) or a misreading.
 

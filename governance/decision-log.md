@@ -1,6 +1,6 @@
 # TOSCA Community — Decision Log
 
-**Status:** Working log, maintained by the chair
+**Status:** Working log, maintained by Chris
 **Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/docs/prior-art.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [meeting-history](meeting-history.md) · [open-issues](open-issues.md)
 
 Decisions and agreements reached in the weekly TOSCA Community meetings. Older

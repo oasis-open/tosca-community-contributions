@@ -1,6 +1,6 @@
 # TOSCA Community Meetings — History and Analysis
 
-**Status:** Working summary, maintained by the chair
+**Status:** Working summary, maintained by Chris
 **Scope:** Synthesis of the weekly TOSCA Community meeting summaries
 **Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/docs/prior-art.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
 
@@ -168,7 +168,7 @@ example, and placed the `Credential` capability type in the technology base prof
 happening in the technology column and reaching abstract nodes by attribute mapping; Roberto to
 review. Everything else on the agenda — `mgmt-address`, the container-platform vocabulary,
 `RelationalDatabase`, `control-host`, the three unratified drafts, the artifact calling convention
-and the naming amendments — was held for a meeting with fuller attendance. **The chair stated a
+and the naming amendments — was held for a meeting with fuller attendance. **Chris stated a
 target of releasing the `0.1` during September 2026** and announcing it to the community as a
 usable deliverable.
 
@@ -182,27 +182,27 @@ permissive as possible, with derived platform types restricting what they host r
 base differentiating it. The argument that carried it: a derived type cannot remove an inherited
 capability, and a requirement cannot ask for a platform offering two capabilities at once, which
 the O-PAS case of a component needing both compute and attached I/O runs into. Roberto supplied
-the history, that three capabilities existed because three relationship types did, and the chair
+the history, that three capabilities existed because three relationship types did, and Chris
 recalled the NFV base types, which assumed every workload was a virtual machine and left
 container-based functions with nothing to be placed on. `control-host` as a second requirement was
 held for the following week.
 
 The rest was discussion. On the relationship kind (I44), Roberto restated the proposal to give the
-kind through `directives` on a requirement assignment; the chair's view was that the kind is a
+kind through `directives` on a requirement assignment; Chris's view was that the kind is a
 matter of type design rather than template design, floating a wider vocabulary of kinds aligned
 with UML's relationships and noting Tal's likely objection to putting that semantics in the
 language. On function portability (I43), both agreed that a function can be refined only inside a
 service template and that the positional refinement syntax cannot be implemented
-(tosca-specs#376). The chair described separating implementations from function and operation
+(tosca-specs#376). Chris described separating implementations from function and operation
 definitions, so that a profile could associate an implementation with a definition it does not
 own; Roberto preferred a list of implementations per signature to repeated signatures. Both saw the
 same need for operations, with implementations varying by the target platform's technology, by
-the orchestrator and by the tooling, and the chair suggested that attaching implementations may be
+the orchestrator and by the tooling, and Chris suggested that attaching implementations may be
 the missing translation from Device View to Instance View, recalling work from the Stuttgart group
 that overlaid alternative implementations on an existing model. On the calling convention (I10),
-Roberto proposed a distinct `Bash` artifact type per convention for passing values, which the chair
-welcomed. The chair said the `0.1` is close, with release planning for the next week or two;
-Roberto asked whether to number it `0.1` or `0.1.0`, and the chair proposed semantic versioning, a
+Roberto proposed a distinct `Bash` artifact type per convention for passing values, which Chris
+welcomed. Chris said the `0.1` is close, with release planning for the next week or two;
+Roberto asked whether to number it `0.1` or `0.1.0`, and Chris proposed semantic versioning, a
 missing patch number read as zero, and no compatibility commitment before 1.0, to be confirmed with
 more participants. Not reached: I29, I45, the `Bash` deletion, the drafted resolutions for I13,
 I16(c) and I17, orchestrated credentials, and the §1.2.2 amendments.
@@ -217,24 +217,24 @@ carrying alternative implementations (I43), which also means `Bash` is not delet
 this release (I10). **N18: `AtRestData` becomes `StoredData`** (I45), a name drawn from the same
 axis as `BatchData`, `StreamingData` and `EventData`, which classify data by how it is delivered.
 
-The naming question closed in the other direction from where it started. The chair had drafted
+The naming question closed in the other direction from where it started. Chris had drafted
 amendments asking the specification to permit snake case; they are withdrawn, and the profiles
-standardize on §1.2.2 as published, which is dash case (P7, D2). Roberto agreed. The chair
+standardize on §1.2.2 as published, which is dash case (P7, D2). Roberto agreed. Chris
 reported what had gone into the profiles since 09-16: `mgmt-address` as a URL, which now accepts a
 DNS name as readily as an IP address, the two properties on `Network`, and `kubeconfig` among the
 container platform's credential kinds. Both noted that a `key_schema` can be widened later without
 breaking anything, which is what makes shipping a narrow credential vocabulary in the `0.1` safe.
 
-Roberto will open a pull request adding a `to_lowercase` function to `core`, which the chair will
-merge before the tag. Roberto also asked for the technology-specific profiles, which the chair
+Roberto will open a pull request adding a `to_lowercase` function to `core`, which Chris will
+merge before the tag. Roberto also asked for the technology-specific profiles, which Chris
 proposed as the deliverable after the `0.1`, and reported trouble with requirements in substitution
-mappings; the chair offered to present a worked example next week, together with an error found in
+mappings; Chris offered to present a worked example next week, together with an error found in
 the specification's use of the `UNBOUNDED` keyword. The names written into the profiles since
 09-16 were approved: `Host`, `control-host`, `Socket`, `ssh_url_to_socket` and `socket_to_ssh_url`,
 and `ssh_key` among the virtualization platform's credential kinds. What goes back to the
 Kubernetes example is the workload question, whether a control node also hosts workloads, where
-the chair wants the same abstract service template for the Online Boutique realized by two
-profiles and two orchestrators. The chair also asked for a wider agenda
+Chris wants the same abstract service template for the Online Boutique realized by two
+profiles and two orchestrators. Chris also asked for a wider agenda
 and more participation. **I29 was agreed as drafted** (N19): the container platform accepts
 `[kubeconfig, token, x509_cert, x509_key]`, the SSH kinds stay on the server platform that hosts
 it, and its `mgmt-address` admits `https`, `tcp` and `unix`. Roberto agreed to all three; the
@@ -263,7 +263,7 @@ and the drafted resolutions for I13, I16(c) and I17.
 
 ## Participants and roles
 
-- **Chris (chair)** — organizes the meetings; produces most implementations and
+- **Chris (coordinator)** — organizes the meetings; produces most implementations and
   demos; carries the large majority of action items.
 - **Roberto** — principal co-designer: top-down abstraction, data node types,
   relationship-type simplification, repo reorganization, `inRange` functions,
