@@ -45,6 +45,27 @@ refer to the [Known TOSCA
 Implementations](https://github.com/oasis-open/tosca-community-contributions/wiki/Known-TOSCA-Implementations)
 wiki page.
 
+## Releases
+
+The community profiles are published as release artifacts, one signed CSAR per profile, so that a
+template can import a version that does not change under it.
+
+The current release is
+**[`0.1`](https://github.com/oasis-open/tosca-community-contributions/releases/tag/v0.1)**: the
+`community.tosca.core` profile and the five `community.tosca.abstract.*` profiles, with a checksum
+manifest and Sigstore signatures. The release notes say what the profiles are for and how to verify
+a download.
+
+A template imports a released profile by the name and version the profile advertises:
+
+```yaml
+imports:
+  - profile: community.tosca.core:0.1
+```
+
+A published release is immutable, while the profiles in this repository continue to be worked on.
+No compatibility is promised across versions before `1.0`.
+
 ## How To Contribute
 
 As documented in [Public Participation

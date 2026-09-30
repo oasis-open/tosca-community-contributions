@@ -1,10 +1,11 @@
 # Versioning the community profiles
 
-**Status:** Proposal — for discussion at the 2026-09-30 meeting.
+**Status:** Adopted 2026-09-30 (P8).
 **Audience:** TOSCA Community.
 **Purpose:** State when a profile's version changes, what a version means to someone importing it,
 and what the community promises across versions. Decisions R1 to R6 settled how a release is built
-and cut; I8 records that the rule for the version strings themselves was never written.
+and cut; I8 recorded that the rule for the version strings themselves was never written, which
+is what this document does.
 
 **Related documents:** [decision-log](../../../../governance/decision-log.md) ·
 [open-issues](../../../../governance/open-issues.md) ·
@@ -19,21 +20,23 @@ and cut; I8 records that the rule for the version strings themselves was never w
 A profile advertises its name and version in one string, and a template imports that string:
 
 ```yaml
-profile: community.tosca.core:0.1
+profile: community.tosca.core:0.2
 ```
 
 ```yaml
 imports:
-  - profile: community.tosca.core:0.1
+  - profile: community.tosca.core:0.2
 ```
 
 Nothing else identifies the profile, so the version string is the whole contract between a profile
-and the templates that import it. Two consequences follow, and both are live today.
+and the templates that import it. Two consequences followed from that, and the rules below
+settle both.
 
-**A released version and the work after it carry the same name.** `0.1` was tagged on 2026-09-29
-and published as six signed CSARs. Every profile on `master` still says `0.1`, so a template
-importing `community.tosca.core:0.1` resolves to the released CSAR for one consumer and to
-whatever has been merged since for another. The CSARs are immutable; the name is not.
+**A released version and the work after it carried the same name.** `0.1` was tagged on
+2026-09-29 and published as six signed CSARs, and every profile on `master` still said `0.1`, so a
+template importing `community.tosca.core:0.1` resolved to the released CSAR for one consumer and to
+whatever had been merged since for another. The CSARs are immutable; the name was not. Rule 1 is
+what removes that, and the bump it calls for was made on 2026-09-30.
 
 **A git tag and a profile version are different things.** The release workflow builds a CSAR per
 profile and names each from the `profile:` keyword, not from the tag, so a tag alone does not
@@ -87,13 +90,16 @@ The decision log already records each release. What it should also record, in on
 is which profile versions that release published, so that the mapping from a tag to a set of
 version strings is written down rather than recoverable only from the artifacts.
 
-## What this asks of the group
+## What was decided
 
-1. Adopt rules 1 to 3.
-2. Accept rule 4 for now, publishing two-part versions only, and take the matching question to the
-   TC if anyone needs three-part versions.
-3. Raise the seven profiles to `0.2` as the first act of the next cycle.
+Adopted at the 2026-09-30 meeting (P8), with rule 4 accepted for now: the community publishes
+two-part versions only, and the matching question goes to the TC if anyone needs three-part ones.
 
-The bump touches 24 references in this repository: the profiles' own imports, the `io.kubernetes`
-copy, the microservice example and the tests. Consumers that build from a checkout rather than from
-the released CSARs follow in the same change.
+The seven profiles were raised to `0.2` the same day, along with everything in this repository that
+imports them: the profiles' own imports, the `io.kubernetes` copy, the examples, and the
+documentation that names a version.
+
+**A consumer that imports a released CSAR is unaffected by the bump and should not follow it.** The
+released `0.1` artifacts keep the name they were published under, so a template importing
+`community.tosca.core:0.1` continues to resolve to them. Only a consumer building from a checkout
+of `master` moves to `0.2`.

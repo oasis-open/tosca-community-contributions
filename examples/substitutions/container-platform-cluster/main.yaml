@@ -5,7 +5,7 @@ description: >-
   creates one cluster agent per server.
 
 imports:
-  - profile: community.tosca.abstract.platform:0.1
+  - profile: community.tosca.abstract.platform:0.2
     namespace: platform
 
 service_template:

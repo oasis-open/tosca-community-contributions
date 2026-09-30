@@ -242,6 +242,52 @@ profile change follows the `0.1`, since widening a `key_schema` breaks nothing. 
 and the drafted resolutions for I13, I16(c) and I17.
 
 
+**2026-09-30** (Chris, Roberto), the fifth two-person meeting running, and the first with a
+published release to report. Roberto had read the release notes and had no comments. The meeting
+settled the two questions the release left open and left the third where it was.
+
+**R7: the release is announced on three further channels.** Chris emails the TOSCA TC list and
+links the release from the top-level README; Roberto posts to the OASIS TOSCA LinkedIn group,
+which Chris asked for so that the announcement carries more than one name. Chris will also look
+into whether people watching the repository can be notified. Nobody proposed another channel.
+**P8: the version on `master` moves as soon as a release is cut.** All seven profiles go to `0.2`
+now, including the technology profiles the `0.1` did not carry, which is what Roberto asked about
+and accepted as consistent, and everything in the repository that imports them moves with them.
+Chris will revisit it if keeping the set in step proves tedious, on the view that what matters is
+being right by `1.0`.
+
+I44 was discussed and not decided. Chris described treating the relationship kind as a derivation
+rule, where a derived type that declares none takes its parent's, and said plainly that this is
+inconsistent with what §5.3.1 and §6.4.2 say about metadata, but that nothing stops the community
+adopting a convention for particular metadata keys. Roberto has not raised it with Tal. It stays
+on the list, and may become a proposed change to the specification when spec work resumes.
+
+The rest of the meeting was the substitution-mappings example Roberto asked for on 09-23. Chris
+walked through the abstract service, the realization, the `[host, UNBOUNDED]` key with
+`$relationship_index` giving one assignment to each counted agent, and the `implementation-details`
+mechanism that carries the agent count across the boundary. Roberto raised no objection and
+observed that requirement mappings are a very tricky part. Chris said he has yet to meet a case
+the 2.0 grammar cannot express, apart from the §15.5 error he has filed (I51, tosca-specs#362),
+where a lone mapping is presented as shorthand for consuming every assignment while the same form
+elsewhere consumes one. Tal asked about requirement mappings on Discord and is to be pointed at
+both the example and the issue.
+
+Two items came out of the example. Roberto asked whether the requirement-count function proposed
+in #372 would remove the need for the count in `implementation-details`; it would not on its own,
+because the abstract node has no property to reflect a count into, so a **cluster or platform size
+property** on the abstract type is what would reduce the mechanism to a plain property mapping
+(I52, with I49). And the repository does not separate examples that use the community profiles
+from other contributions, while where technology- or orchestrator-specific substituting templates
+belong, in `profiles/` or in `examples/`, has been discussed before without a decision (I53).
+
+What follows the release is Kubernetes examples: Chris to realize the Online Boutique with the
+generated `io.kubernetes` profile, hoping for next week, beside Roberto's realization with Tal's
+Kubernetes types, and Roberto noted the abstract Online Boutique template itself has to be brought
+to the revised profiles. Roberto reported filing an issue against his own parser over the
+refinement of keynames that are not mandatory, found while parsing the released CSARs, and noted
+that the CSARs carry Python implementations his toolchain will not use, which is I43 seen from a
+consumer.
+
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
 [decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
 

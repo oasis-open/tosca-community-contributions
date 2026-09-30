@@ -8,12 +8,12 @@ description: >-
 
 imports:
   # The System View, for the one type this file substitutes.
-  - profile: community.tosca.abstract.platform:0.1
+  - profile: community.tosca.abstract.platform:0.2
     namespace: platform
   # The technology column, which is where a realization's own node types live.
-  - profile: community.tosca.technology.base:0.1
+  - profile: community.tosca.technology.base:0.2
     namespace: tech
-  - profile: community.tosca.core:0.1
+  - profile: community.tosca.core:0.2
     namespace: core
 
 data_types:

@@ -115,7 +115,7 @@ and nothing else.
 
 ```yaml
 function_implementations:
-  - function: community.tosca.core:0.1:to_string    # the declaring profile and name
+  - function: community.tosca.core:0.2:to_string    # the declaring profile and name
     signature: from-integer                         # optional; all signatures if omitted
     implementation:
       primary:
@@ -123,7 +123,7 @@ function_implementations:
         file: functions/to_string.py
 
 operation_implementations:
-  - node_type: community.tosca.technology.base:0.1:Root
+  - node_type: community.tosca.technology.base:0.2:Root
     interface: Standard
     operation: create
     implementation:
