@@ -288,47 +288,16 @@ prototyped against them, so there is no evidence yet for what they would need.
 
 ### Question 3 — Single source of truth for shared types
 
-*Open, but the blocker is
-gone (2026-08-23):* should `Credential`, `IPv4Socket`, etc. be owned solely by
-`community.tosca.core`, with other profiles importing rather than redefining
-them? The stated obstacle was that there is no immutable artifact to pin to, so
-a consumer would be pinning to a moving `master`. **Release automation now
-produces signed, checksummed CSARs (see [question 4](#question-4--release-process)), so tagging `0.1` removes
-that obstacle.** What remains is the community's decision on ownership, not a
-technical impediment.
+*Open (I1):* should shared types such as `CredentialRef` and `Socket` be owned solely by
+`community.tosca.core`, with other profiles importing rather than redefining them? The
+obstacle once raised, that there was no immutable artifact to pin to, is gone: the `0.1` is
+published as signed, checksummed CSARs (R6), and downstream profiles import those. The general
+rule is drafted as question 4 of *Best Practices* in
+[`design-patterns.md`](design-patterns.md#best-practices): a profile never declares a type that
+means what an imported type already means. What remains is the community's decision on that
+rule, and on which profile owns each shared type.
 
-**Note that downstream consumers already carry this dependency in its unsafe
-form.** The Ubicity profiles, for example, import `community.tosca.core:0.1`,
-`community.tosca.abstract.data:0.1` and `community.tosca.abstract.platform:0.1`
-today — by static name-version string, against a moving `master`. So cutting a
-release does not create a new coupling; **it makes an existing one safe.**
-
-**This question is now forced by N8 — the abstract-profile property work tracked in [`open-issues.md`](../../../../governance/open-issues.md) — and the two have to move together.** The
-abstract platform connection properties want a structured socket for
-`ServerPlatform`. A downstream profile that derives from
-`community.tosca.abstract.platform:ServerPlatform` while declaring
-`mgmt-address` against *its own* `IPv4Socket` hits a property-refinement type
-conflict the moment N8 declares the same property upstream — the two socket
-types are structurally identical but independently defined, so neither derives
-from the other. That is not a soft compatibility concern; it breaks the derived
-profile.
-
-**Consequence for sequencing: N8, the `0.1` tag, and downstream convergence are
-one coordinated cut, not three steps.** Land N8 against the community types, tag
-`0.1`, and update downstream profiles to import the released community
-`IPv4Socket` / `Credential` and drop their own copies — with the downstream
-change prepared in advance so it can land immediately, leaving no interval in
-which a *released* downstream profile references a half-converged type set.
-
-### Question 4 — Release process
-
-*Automation shipped (PR #350, July 2026); no release cut yet.* A pushed semver tag (`v0.1`,
-`v0.1.0`, and rc variants) or a manual dispatch builds a CSAR per `community.tosca.*` profile,
-named from the profile name-version, so `community.tosca.core:0.1` becomes
-`community.tosca.core.0.1.csar`; signs every artifact with Sigstore keyless signing; publishes a
-signed SHA256 checksum manifest; and opens a **draft** GitHub Release for review. The repository
-still carries no tags. What the `0.1` waits on is tracked as I8 in
-[`open-issues.md`](../../../../governance/open-issues.md). Owed with it: the versioning and
-governance documentation, including the rule that profile name-version strings are bumped when a
-version is frozen and the next one opened, since CSAR names derive from those strings rather than
-from the git tag.
+Duplicates are not a soft compatibility concern. Under nominal typing, a downstream profile
+that refines an inherited property against *its own* copy of a type the community also
+declares hits a property-refinement type conflict: the two are structurally identical but
+independently defined, so neither derives from the other.

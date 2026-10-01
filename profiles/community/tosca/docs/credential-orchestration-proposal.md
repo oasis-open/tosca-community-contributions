@@ -75,9 +75,12 @@ both cases and never learns which origin it was.
 
 **A node type whose material serves more than one kind splits into subtypes**, and the reason is a
 constraint of the language rather than a preference. For minted material the map is written by
-`create`, so at the time a requirement is matched it is unset: a `node_filter` over it evaluates to
-null and drops out rather than rejecting, and the kind cannot be constrained that way. Only the node
-*type* is known early enough. The same bytes that serve as a password to whoever sends HTTP Basic
+`create`, so at the time a requirement is matched it is unset, and a `node_filter` over it cannot
+decide. TOSCA 2.0 postpones fulfilling a requirement whose filter refers to a value not yet
+initialized (§4.2.2), so the match waits on the very operation the binding is meant to precede;
+an implementation that does not postpone treats the clause as undefined and ignores it, so it
+constrains nothing ([tosca-specs#375](https://github.com/oasis-tcs/tosca-specs/issues/375)).
+Either way the kind cannot be constrained that way. Only the node *type* is known early enough. The same bytes that serve as a password to whoever sends HTTP Basic
 serve as a bearer token to whoever sets an authorization header, so those are two types over one
 material, each narrowing its map's `key_schema` to its own kind. Where a node type already implies
 exactly one kind, no subtype is needed and the map states that kind directly.

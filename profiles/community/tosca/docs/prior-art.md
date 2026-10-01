@@ -806,9 +806,10 @@ place to keep what is needed to reach one, specialized per cloud
 hosts, in support of the Ansible *hosts* concept.
 
 **A credential node, separate from both.** Ubicity reaches the same sharing
-outcome by a third route: platforms are a `VirtualInfrastructureTarget`
-specialized per cloud, and the credentials are their own `Account` node type
-rather than a property of a provider. Modeling a credential as a node has a
+outcome by a third route: platforms are an `IaasPlatform` specialized per cloud,
+and the credentials are held by node types of their own, a `Principal` per
+provider (`aws:Account`, `az:Subscription`, `gcp:Project`), rather than by a
+property of a provider. Modeling a credential as a node has a
 consequence the other approaches do not have — a node has a lifecycle, so a
 credential can be created by the orchestrator rather than only supplied to it.
 

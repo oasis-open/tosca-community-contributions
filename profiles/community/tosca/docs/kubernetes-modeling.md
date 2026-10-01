@@ -103,7 +103,7 @@ descriptions:
 ### Substitution Mapping
 
 One approach leverages the [model
-continuum](https://github.com/oasis-open/tosca-community-contributions/blob/master/profiles/community/tosca/README.md#the-model-continuum-in-support-of-abstraction)
+continuum](modeling-methodology.md#the-model-continuum-in-support-of-abstraction)
 design pattern that defines different TOSCA profiles for different
 levels of abstraction:
 

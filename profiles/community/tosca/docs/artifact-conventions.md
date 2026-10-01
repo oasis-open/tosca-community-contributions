@@ -38,10 +38,14 @@ An artifact can implement two different things, and the contracts differ:
   as **JSON-encoded strings**. A shell script decodes them before use, with
   [`jq`](https://jqlang.github.io/jq/) or equivalent.
 - An input that has no value — an optional input, or one whose value expression
-  resolved to nothing — is passed as the four characters `null`. This is not the
-  same as an empty string, which is passed as an empty variable, so a script can
-  tell the two apart. A script that treats "no value" and "empty" alike should
-  test for both.
+  resolved to nothing — is not passed: its variable is unset. An empty string is
+  passed as an empty variable, so a script can tell the two apart, with
+  `[ -n "${x+set}" ]`; one that treats "no value" and "empty" alike tests
+  `[ -n "${x:-}" ]`.
+- Within a JSON-encoded value, a field without a value is left out. Note that
+  `jq -r` prints the four characters `null` for a missing key, so a script that
+  reads a field with `jq -r` tests for `null` as well as for the empty string,
+  or uses `jq -r '.field // empty'`.
 
 ### Reserved names
 
