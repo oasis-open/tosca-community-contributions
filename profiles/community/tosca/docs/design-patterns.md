@@ -243,6 +243,23 @@ target node type, and `node` in the requirement definition of the
 source node type. This keeps the type hierarchies shallow and avoids a
 proliferation of near-identical types.
 
+> **Proposed amendment, tracked as I1.** Question 4 is not yet decided.
+
+**4. May a profile declare a type that means what an imported type
+already means?**
+
+No. Use the imported type, or derive from it. TOSCA typing is nominal:
+two types with the same meaning, the same name or the same definition are
+still unrelated unless one derives from the other. A requirement naming
+one is never satisfied by a capability of the other, a filter on one
+never matches the other, and the two drift apart as each profile evolves.
+
+This is not what decision N13 permits. N13 lets each level of
+abstraction define its own relationship and capability types, because
+the levels are in different chains and a substitution maps between them.
+Within one chain, a type has one definition, and every profile importing
+it uses that one.
+
 ## One Port, Many Consumers
 
 > **Adopted for `Platform` as decision N17** (2026-09-16), and a partial
