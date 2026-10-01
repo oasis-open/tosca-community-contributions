@@ -446,6 +446,27 @@ attribute values and are used exclusively to control service topology.
 Where a value must cross the boundary, a property or attribute mapping
 carries it, and those *are* type compatible.
 
+**The inner requirement must still be satisfiable where its mapping
+ends.** What the mappings leave free is the relation between the
+substituted node's types and the substituting service's. What they do
+not relax is the rule for every requirement: the capability its
+relationship targets must be of the requirement's capability type. A
+requirement mapped out of a substituting service takes the target of the
+substituted node's relationship. Where that target is itself
+substituted, the capability mapping in the target's substituting service
+names the one capability the relationship finally reaches, and that
+capability must satisfy the inner requirement. This constrains a
+realization that maps several inner requirements onto one requirement of
+the substituted node, as a server realization does when it places both a
+virtual machine and the key pair the machine is created with on the
+platform the server is hosted on. A capability mapping reaches one
+capability, so its type must satisfy every inner requirement mapped onto
+it. Where those requirements ask for different capability types, the
+capability's type must derive from each of them, which single
+inheritance allows only when the types are in one chain; otherwise the
+requirements that cannot be met are left out of the mapping and
+fulfilled inside the realization, by a node filter.
+
 The consequence for profile organization is that **relationship types
 and capability types need not be shared across levels of
 abstraction.** A System View profile and a Device View profile may each
