@@ -1,5 +1,9 @@
 # Ubicity TOSCA Profiles
 
+> **Snapshot.** These are the Ubicity profiles at version 2.5, as contributed on 2026-05-20
+> (#307). They are kept as a record of that version and are not maintained; Ubicity's current
+> profiles differ from them.
+
 The following diagram shows how the profiles in this repository relate
 to each other via TOSCA `imports`. Arrows point from a profile to the
 profiles it imports. Transitive edges have been omitted to keep the

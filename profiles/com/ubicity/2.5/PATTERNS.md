@@ -1,5 +1,9 @@
 # TOSCA Profile Design Patterns
 
+> **Snapshot.** These are the design patterns of the Ubicity profiles at version 2.5, as contributed on 2026-05-20
+> (#307). They are kept as a record of that version and are not maintained; Ubicity's current
+> profiles differ from them.
+
 Ubicity uses a number of design patterns to aid the development of
 TOSCA profiles. These patterns are described in this section.
 

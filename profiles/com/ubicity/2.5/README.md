@@ -1,5 +1,9 @@
 # Ubicity Profile Node Types
 
+> **Snapshot.** These are the Ubicity profiles at version 2.5, as contributed on 2026-05-20
+> (#307). They are kept as a record of that version and are not maintained; Ubicity's current
+> profiles differ from them.
+
 This directory contains the main Ubicity TOSCA Profile. This profile
 primarily defines *administrator view* types that model components
 that use specific technologies. Many of the node types defined in this

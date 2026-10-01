@@ -542,7 +542,8 @@ Ubicity profiles define general purpose TOSCA types that aim to
 implement common design patterns to handle
 [abstraction](https://github.com/oasis-open/tosca-community-contributions/blob/master/profiles/com/ubicity/README.md). The
 Ubicity main profile types are organized in the following node type
-hiearchy:
+hiearchy. These diagrams show the Ubicity profiles at version 2.5, as contributed on 2026-05-20,
+and are kept as a snapshot of that version rather than updated as the profiles change:
 
 ```mermaid
 classDiagram
