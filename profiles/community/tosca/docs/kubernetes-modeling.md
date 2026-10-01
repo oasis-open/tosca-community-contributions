@@ -263,39 +263,58 @@ The DNS/env row is different in kind. "Microservice A talks to microservice B" i
 a **system-view** relationship between *applications* (`InteractsWith` on an
 `Endpoint`), not between Kubernetes resources. Yet its Kubernetes realization —
 the peer's address injected into the consumer's container `env` — is authored on
-the *Pod*. To generate that `env`, the Pod needs an `InteractsWith` requirement to
-the peer's Service, so `{$get_property: [SELF, RELATIONSHIP, endpoint, TARGET,
-address]}` resolves. That forces a microservice-realization profile to **derive
-`k8s:Pod` and add an application-level `endpoint` requirement** — putting a
-system-view relationship on a device-view type, which the modeling methodology cautions
-against.
+the *Pod*, which therefore needs a requirement through which it can read that
+address, `{$get_property: [SELF, RELATIONSHIP, <requirement>, CAPABILITY, address]}`.
 
-The pressure comes from two TOSCA facts:
+Two TOSCA facts decide where that requirement comes from:
 
-1. **Requirements are declared on node *types*, not added per node template** — so
-   the peer relationship can't just be attached in the substituting template; it
-   needs a derived type to carry it.
-2. **The substitution boundary hides the outer node's relationships** — the inner
-   Pod cannot see the abstract `MicroService`'s `interacts-with` requirement, so the
-   interaction has to be re-expressed on a node *inside* the substitution.
+1. **Requirements are declared on node *types*, not added per node template**, so
+   the Pod's requirement needs a Pod type that declares it.
+2. **A substitution boundary does not hide the substituted node's relationships.**
+   A requirement mapping in the substituting template maps the abstract
+   `MicroService`'s `interacts-with` onto a requirement of a node inside the
+   substitution, which then takes the outer relationship's target.
 
-Options:
+Together they allow the interaction to be realized without any type crossing
+between levels:
 
-- **A — extend the Kubernetes types** (the current approach). Put `endpoint` on a
-  derived `Pod`/`Service`. Works and keeps the topology explicit, but mixes
-  abstraction levels and makes every realization profile re-extend the base types.
-- **B — keep interaction purely at the `MicroService` level** and have the
-  substitution translate it into env vars *without* an `endpoint` requirement on
-  the Pod. Blocked today: a substituting template has no way to read the
-  substituted node's relationships and turn them into container `env`; the fallback
-  is passing peer addresses as plain inputs, which discards the topology edge.
-- **C — push the injection into the orchestrator.** Model the interaction only
-  between abstract `MicroService` nodes and have the engine inject the resolved
-  peer addresses during substitution. Cleanest layering, but needs engine support
-  that does not exist.
+- **The Pod's requirement is a device-view one**: a Kubernetes-level relationship
+  to a Kubernetes-level endpoint capability on the peer's `Service`. The generated
+  `io.kubernetes` `Service` declares no such capability today, so the realization
+  adds one, or the generator does. No system-view type appears in the Kubernetes
+  profile.
+- **The substituting template for microservice A maps** A's `interacts-with` onto
+  that requirement of its Pod.
+- **The substituting template for microservice B maps** B's `Endpoint` capability
+  onto the endpoint capability of its own `Service`. The Pod's requirement, which
+  follows the outer relationship to B, follows B's capability mapping to that
+  `Service`, and binds there.
+- **The requirement is type-checked where the mapping ends.** The two sides of the
+  substitution need not share types; the Pod's requirement must be satisfiable by
+  the concrete capability the mapping reaches.
 
-This question generalizes beyond microservices: it recurs whenever a *system-view*
+The topology edge stays explicit, at both levels, and no profile mixes levels.
+
+**Ordering.** `InteractsWith` is an association (N11) and orders nothing, while the
+Pod needs the peer's address when it is created, so the Pod's requirement is a
+dependency. Interactions that form a cycle at the system view would then form a
+cycle of dependencies at the Kubernetes level, which cannot be deployed. Whether
+that arises in practice, and what the Pod's requirement should declare, is what
+realizing the [Online Boutique](../../../../examples/online_boutique/README.md)
+with the `io.kubernetes` profile is expected to show.
+
+Two other approaches remain open where this one does not fit:
+
+- **Keep interaction purely at the `MicroService` level** and have the
+  substitution translate it into `env` without a requirement on the Pod. This
+  needs a way for a substituting template to read the substituted node's
+  relationships and turn them into container `env`; without one, the fallback is
+  passing peer addresses as plain inputs, which discards the topology edge.
+- **Push the injection into the orchestrator**: model the interaction only between
+  abstract `MicroService` nodes and have the orchestrator inject the resolved peer
+  addresses during substitution. This needs orchestrator support that does not
+  exist.
+
+The question generalizes beyond microservices: it recurs whenever a *system-view*
 relationship between abstract components must be realized as *configuration* on a
-lower-level resource (env vars, connection strings, credentials). Settling it —
-even on **A** as a pragmatic convention — would give a consistent answer instead
-of an ad-hoc one per profile.
+lower-level resource (env vars, connection strings, credentials).
