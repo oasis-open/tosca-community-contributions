@@ -88,7 +88,7 @@ rather than one column of three:
 
 |                        | **Platform**                                              | **Application**                        |
 | ---------------------- | --------------------------------------------------------- | -------------------------------------- |
-| **Administrator View** | a Kubernetes cluster; a container runtime; an OCI registry | a certificate authority; an image registry |
+| **Administrator View** | a Kubernetes cluster; a container runtime                | a certificate authority; an image registry |
 | **Device View**        | k3s, k0s, minikube, kubeadm; containerd, Docker Engine     | step-ca; zot; Harbor                   |
 
 A type that appears to belong in two of these categories at once is not

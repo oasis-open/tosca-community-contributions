@@ -35,10 +35,13 @@ downstream profile set. They are worth listing because each traces to the same c
 - **A value can disagree with itself.** A boolean passed as a bare input and the same boolean
   nested inside a map went through different encoders and arrived spelled differently. Four
   provider flags tested for the wrong spelling and silently never fired; one of them left a
-  cluster endpoint public when the template asked for private.
-- **Absence is a magic string.** An input with no value arrives as the four characters `null`,
-  so `[ -z "$x" ]` never fires. Five artifacts discovered this by hand and test for the
-  literal.
+  cluster endpoint public when the template asked for private. The orchestrator in question
+  now spells a bare boolean as JSON does, but the two encoders still have to be kept in step
+  by hand.
+- **Absence has two spellings.** An input with no value is not passed at all, so its variable
+  is unset; a field with no value inside a JSON-encoded input is left out, and reading it with
+  `jq -r` yields the four characters `null`. A script needs a different test for each, and
+  five artifacts test for the literal.
 - **The namespace is shared and unowned.** Inputs sit alongside the inherited host environment
   and whatever the orchestrator injects for itself. On a collision the orchestrator wins and
   the input is lost without a diagnostic.

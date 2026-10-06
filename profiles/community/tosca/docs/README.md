@@ -65,6 +65,10 @@ lives and what it may claim.
   — a construct for supplying an implementation for a function or an operation
   declared elsewhere, and for choosing among several. Also addressed to the OASIS
   TOSCA Technical Committee.
+- **[association-proposal.md](association-proposal.md)** — what an association
+  relationship may carry: no deployment order, but operations that run once both
+  ends exist, so two nodes that configure each other need not form a cycle of
+  dependencies.
 - **[versioning.md](versioning.md)** — when a profile's version changes, what a
   version means to someone importing it, and what the community promises across
   versions.
