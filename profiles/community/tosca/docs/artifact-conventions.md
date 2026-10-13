@@ -30,40 +30,76 @@ An artifact can implement two different things, and the contracts differ:
 
 ### Input values
 
-- Input values are passed as **environment variables**, one for each input
-  defined in the corresponding interface operation, each named after the input.
-- Values of *TOSCA Primitive Types* and *TOSCA Special Types* are passed
-  directly, in their TOSCA spelling — a boolean arrives as `true` or `false`.
-- Values of *TOSCA Complex Data Types* and *TOSCA Collection Types* are passed
-  as **JSON-encoded strings**. A shell script decodes them before use, with
-  [`jq`](https://jqlang.github.io/jq/) or equivalent.
+An operation's input values reach the artifact as **one document**, in a file
+whose path is in the `TOSCA_INPUTS` environment variable. Each artifact type
+reads that document in its own form: `Bash` reads shell assignments, `Python`
+reads JSON.
+
+- The document is keyed by the input names defined in the corresponding
+  interface operation.
+- `TOSCA_INPUTS` is set for every invocation and names a file that is always
+  there, holding no inputs for an operation that declares none.
 - An input that has no value — an optional input, or one whose value expression
-  resolved to nothing — is not passed: its variable is unset. An empty string is
-  passed as an empty variable, so a script can tell the two apart, with
-  `[ -n "${x+set}" ]`; one that treats "no value" and "empty" alike tests
-  `[ -n "${x:-}" ]`.
-- Within a JSON-encoded value, a field without a value is left out. Note that
-  `jq -r` prints the four characters `null` for a missing key, so a script that
-  reads a field with `jq -r` tests for `null` as well as for the empty string,
-  or uses `jq -r '.field // empty'`.
+  resolved to nothing — is not in the document.
+- The file is readable by the account the artifact runs as and by nobody else.
+  An artifact that runs on a remote host finds it beside the artifact in the
+  staging directory, and it goes with that directory.
+- The inputs are in the document only. The artifact's environment carries
+  `TOSCA_INPUTS` and whatever the orchestrator sets for its own purposes, and no
+  input value.
+
+#### `Bash`: shell assignments
+
+The file holds one `export name='value'` line per input, each value
+single-quoted, so that sourcing it assigns every value and runs none:
+
+```bash
+load_inputs() {
+    . "$TOSCA_INPUTS"
+}
+```
+
+- Each input is the shell variable of its name with every `-` read as `_`, so an
+  input named `mgmt-address` is `$mgmt_address` and the dash-case names TOSCA
+  recommends are usable unchanged.
+- Values of *TOSCA Primitive Types* and *TOSCA Special Types* are assigned in
+  their TOSCA spelling — a boolean as `true` or `false`.
+- Values of *TOSCA Complex Data Types* and *TOSCA Collection Types* are assigned
+  as **JSON-encoded strings**. A script decodes them with
+  [`jq`](https://jqlang.github.io/jq/) or equivalent.
+- Sourcing the file needs nothing beyond the shell, so an artifact needs `jq`
+  only where it reads a list or a map.
+
+TOSCA permits names a shell variable cannot hold, and an operation implemented
+by a `Bash` artifact can use only the names it can: ASCII letters, digits and
+`_` once each `-` is read as `_`, not beginning with a digit, each mapping to a
+distinct variable, and none of them a variable the shell or the orchestrator
+depends on (*Reserved names*). An orchestrator reports an operation that breaks
+this when the profile or the service template naming it is onboarded.
+
+#### `Python`: a JSON document
+
+The file holds a JSON object keyed by input name, in which each value keeps the
+type the model gave it — a list arrives as a list and a map as a map, with
+nothing to decode:
+
+```python
+import json, os
+inputs = json.load(open(os.environ["TOSCA_INPUTS"]))
+```
+
+It is `{}` for an operation that declares no inputs, and every name TOSCA
+permits for an input can be read from it.
 
 ### Reserved names
 
-Input values share a namespace with any environment variable the orchestrator
-sets for its own purposes, and with the environment the script inherits from the
-host it runs on. Two consequences:
-
-- An orchestrator that sets its own variables **must document their names**, so
-  that artifact designers can avoid declaring operation inputs that collide with
-  them. Where a collision does occur, the orchestrator's value wins and the input
-  is silently lost.
-- Names that are conventionally significant to a shell — `PATH`, `HOME`, `USER`,
-  `IFS` and their like — should not be used as input names.
-
-> Reserving a prefix for orchestrator-set variables would make collisions
-> structurally impossible rather than a matter of documentation and care.
-> Adopting one is a breaking change for existing artifacts, so it is noted here
-> as a direction rather than a rule.
+`TOSCA_INPUTS` is the orchestrator's, and an operation cannot declare an input
+of that name. Beyond it, an orchestrator that sets environment variables of its
+own **must document their names**, so that an artifact designer can avoid them
+and, for a `Bash` artifact, so that no input is given a name that would replace
+one. The names a shell holds for itself are unavailable to an input for the same
+reason: `PATH`, `HOME`, `USER`, `IFS` and their like, the read-only ones such as
+`UID`, and the ones a shell treats specially such as `RANDOM`.
 
 ### Output values
 
@@ -85,14 +121,22 @@ error.
 
 ## The function convention
 
-- Arguments are passed as an **ordered list of values**, matching the
+- Arguments are passed as **one ordered list of values**, matching the
   `arguments` of the signature the function was called through. They are not
   named, and they are not passed as environment variables.
-- The artifact returns a **single value**, of the type the signature's `result`
-  declares. There are no named outputs.
-- The artifact defines an **entry point named after the TOSCA function**:
-  `to_uppercase` is implemented by a `to_uppercase` callable in
-  `functions/to_uppercase.py`.
+- The artifact defines an **entry point named after the TOSCA function**, taking
+  that list as its single parameter: `to_uppercase` is implemented by a
+  `to_uppercase` callable in `functions/to_uppercase.py`.
+- The entry point returns a **single value**, of the type the signature's
+  `result` declares. There are no named outputs.
+
+```python
+def to_uppercase(args):
+    return args[0].upper()
+```
+
+A function whose signature declares no arguments is called with the list all the
+same, and it is empty.
 
 ## The runtime environment
 
@@ -124,8 +168,12 @@ locally on the orchestrator.
 > one that carries `host`, is tracked as I10 in the
 > [open issues](../../../../governance/open-issues.md).
 
-## Changing these conventions
+## What is still open
 
-A proposal to replace the per-input environment variable with a single
-structured document is in
-[artifact-calling-convention-proposal.md](artifact-calling-convention-proposal.md).
+[artifact-calling-convention-proposal.md](artifact-calling-convention-proposal.md)
+sets out the reasoning for one document in and the channels that were considered
+for carrying it, and leaves two questions open: which channel returns an
+operation's output values, since `stdout` is shared with everything else the
+artifact prints; and whether the convention should be declared by the artifact
+type rather than stated in prose here. The second is I10 in the
+[open issues](../../../../governance/open-issues.md).
