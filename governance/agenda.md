@@ -1,87 +1,63 @@
-# TOSCA Community — Proposed Agenda (2026-10-07)
+# TOSCA Community — Proposed Agenda (2026-10-21)
 
-**Status:** Draft agenda for 2026-10-07, following 2026-09-30
-**Related documents:** [kubernetes-modeling](../profiles/community/tosca/docs/kubernetes-modeling.md) · [association-proposal](../profiles/community/tosca/docs/association-proposal.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [design-patterns](../profiles/community/tosca/docs/design-patterns.md) · [versioning](../profiles/community/tosca/docs/versioning.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
+**Status:** Draft agenda for 2026-10-21, following 2026-10-07 (2026-10-14 was cancelled)
+**Related documents:** [kubernetes-modeling](../profiles/community/tosca/docs/kubernetes-modeling.md) · [association-proposal](../profiles/community/tosca/docs/association-proposal.md) · [design-patterns](../profiles/community/tosca/docs/design-patterns.md) · [application README](../profiles/community/tosca/abstract/application/README.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
 
-The `0.2` is open on `master` and nothing has been decided for it beyond the version string. Last
-week pointed at Kubernetes examples without choosing among the four candidates on the table, so
-Part 2 asks that question again, with the two items the substitution-mappings example turned up.
-Part 3 is what was written since 09-30.
-
----
-
-## Part 1 — Since 09-30 — 5 min · **presentation**
-
-- **The `0.2` is open** (P8): all seven profiles advertise `0.2` on `master`, with the examples and
-  the `io.kubernetes` copy. A template importing a released `0.1` CSAR is unaffected.
-- **The release is announced** (R7): on the TOSCA TC list, on LinkedIn by Roberto, and from the
-  README, which now has a `Releases` section. The twelve repository watchers were notified when the
-  release was published; GitHub has no way to reach the 45 who starred the repository.
-- **Requirement refinement** ([#377](https://github.com/oasis-open/tosca-community-contributions/discussions/377)):
-  Paul, Tal and I agreed that a refinement need not repeat a mandatory keyname it inherits, which
-  §6.4.2 already says. Tal asks for the keyname tables to say so too. Item 3.3.
+The `0.2` is organized around the Online Boutique (R8). Roberto has brought the abstract template
+to the revised profiles and, in doing so, questioned what the `Endpoint` capability carries. That
+question decides what the abstract template says about every microservice, so it comes first.
+Part 3 carries the 10-07 items that were not reached.
 
 ---
 
-## Part 2 — What the `0.2` is for — 25 min · **decisions sought**
+## Part 1 — Since 10-07 — 5 min · **presentation**
 
-### 2.1 The organizing deliverable — 10 min
-
-On 09-30 the next work was named as Kubernetes examples: the Online Boutique realized with the
-generated `io.kubernetes` profile, and the abstract Online Boutique template brought to the revised
-profiles. The four candidates set out last week were not ranked: the technology-specific profiles,
-the implementation strategy (I43), the artifact calling convention (I10), and the test suite.
-
-**Proposed: organize the `0.2` around the Online Boutique, abstract and realized.** It exercises the
-abstract application profile end to end, it is the first realization against a technology profile
-the community already has, and [`kubernetes-modeling.md`](../profiles/community/tosca/docs/kubernetes-modeling.md#where-application-level-interaction-should-live)
-now names it as the test of how an interaction crosses a substitution boundary: a requirement
-mapping carries a `MicroService`'s `interacts-with` onto a requirement of its Pod, so no type
-crosses levels, but the Pod needs its peer's address when it is created, and interactions that
-form a cycle would form a cycle of dependencies. The realization is not written yet.
-
-**Decision sought:** the Online Boutique, or one of the four.
-
-### 2.2 A size for the abstract platform types — 5 min · *I52*
-
-A `ContainerPlatform` bound to several servers has no property saying how large it is, so a
-realization that creates one node per placement learns the number only through
-`implementation-details`, as the [cluster example](../examples/substitutions/container-platform-cluster)
-does. A function counting a requirement's relationships (I49) does not remove the need, because
-the count has nowhere to be reflected.
-
-**Decision sought:** whether to add it in the `0.2`, and on which type: `ContainerPlatform` alone,
-or `Platform`, where every platform that spans several hosts would inherit it.
-
-### 2.3 Where examples and substituting templates live — 5 min · *I53*
-
-The profiles have a defined home, `profiles/community/tosca`; the examples do not, so nothing marks
-an example that uses the community profiles apart from a contribution demonstrating something
-else. Where substituting templates for particular technologies belong, with the profiles or with
-the examples, has come up more than once without a decision.
-
-**Decision sought:** who drafts a directory structure, and the answer for substituting templates.
-
-### 2.4 Credential kinds in dash case — 5 min
-
-The kinds that key every credentials map are the one vocabulary in the profiles still in snake
-case: `ssh_key` and `ssh_password` on the server platform, `cloud_account` and `ssh_key` on the
-virtualization platform, and `x509_cert` and `x509_key` among the kinds N19 adds to the container
-platform. §1.2.2 puts the names a model chooses in dash case, metadata keys among them, which is
-the convention D2 applied to everything else in the profiles.
-
-**Proposed: `ssh-key`, `ssh-password`, `cloud-account`, `x509-cert` and `x509-key` in the `0.2`**,
-with `token` and `kubeconfig` unchanged, and N19's container platform kinds written in the new
-spelling when that change goes in, since it edits the same lists. A template importing the `0.1`
-is unaffected; one moving to the `0.2` renames the keys it supplies, which is a break the `0.1`'s
-compatibility statement allows for. In this repository it is eleven occurrences in the platform
-profile, four in its README and fourteen in two proposal documents.
-
-**Decision sought:** rename in the `0.2`.
+- **The abstract Online Boutique, revised** (Roberto, by email on 10-15): a `cluster` node of type
+  `ContainerPlatform` that every microservice is hosted on, `technology` and
+  `implementation-details` on every node, and the implementation details taken as inputs.
 
 ---
 
-## Part 3 — Proposals written since 09-30 — 15 min · **first reading**
+## Part 2 — What the abstract types carry — 20 min · **decision sought**
+
+### 2.1 `Endpoint` carries a Kubernetes Service's properties — 20 min · *I56*
+
+`Application` gives every application a `service` capability of the base type `Service`, and N11
+rederived `Endpoint` from it for the network-addressable case. `MicroService` and
+`ServerApplication` refine `service` to `Endpoint`, whose `port` and `target-port`, both required,
+with `name` and `protocol`, are the fields of a Kubernetes Service port: an exposed port forwarded
+to a container port. They come from the first draft of the application profile and were carried
+through N11 and N12 unchanged.
+
+**Roberto's question:** the properties are technology-specific, so an abstract profile and an
+abstract template are not the place for them; the values could travel in `implementation-details`,
+supplied by the user and passed to the substituting template as is. The revised template shows the
+point: `frontend` maps port 80 to 8080 and `email` 5000 to 8080, a translation that means nothing
+above the Kubernetes realization.
+
+**The same defect reaches `ServerApplication` harder.** Software on a server has no second port to
+forward to, so it carries a `target-port` that means nothing, and software that serves nothing,
+such as a command-line tool, cannot be typed `ServerApplication` at all. Ubicity found this
+rederiving its server-hosted realizations, which stay on the base `Application` until it is
+settled.
+
+**Nothing at the abstract level needs the port.** In the interaction pattern of
+[`kubernetes-modeling.md`](../profiles/community/tosca/docs/kubernetes-modeling.md#where-application-level-interaction-should-live),
+a consuming Pod reads its peer's address and port from the peer's Kubernetes `Service`, reached
+through the peer's capability mapping, at the device view.
+
+**Proposed for the `0.2`:** `MicroService` and `ServerApplication` keep the inherited `Service`,
+and `Endpoint` is removed; the port values move to each microservice's `implementation-details`;
+the abstract Online Boutique follows. This follows N12's reasoning for dropping `processes`, that
+what runs on a host is below the System View. Removing the properties breaks any template that
+assigns them, which the `0.2` may do, since no compatibility is promised before `1.0`.
+
+**Decision sought:** remove `Endpoint`, or keep it property-free as a marker of the
+network-addressable case; and whether the port values belong in `implementation-details`.
+
+---
+
+## Part 3 — Carried from 10-07 — 20 min · **first reading**
 
 ### 3.1 What an association may carry · *I54* · [proposal](../profiles/community/tosca/docs/association-proposal.md)
 
@@ -107,30 +83,20 @@ tables. Tal proposes the tables say "mandatory if not derived". A candidate for 
 
 **Input wanted:** any disagreement, and whether Tal files it.
 
-### 3.4 Also written
-
-- **A requirement mapped out of a realization must be satisfiable where it ends**
-  ([modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md)): mappings
-  impose no type compatibility across the boundary, but the requirement still binds to one
-  capability, which must be of its capability type.
-- **Corrections to the guides**: an input with no value is unset rather than the string `null`, a
-  node filter over a value set in `create` cannot decide under either reading of the
-  specification, and the 2.5 profile set contributed on 2026-05-20 is marked as a dated snapshot.
-
 ---
 
 ## If time permits
 
+- **Where examples and substituting templates live (I53)**: Roberto or Stefano to circulate a
+  proposal, from 10-07.
 - **I44, the relationship kind**: carried until more participants attend. Tal has not been asked.
-- **Counting a requirement's relationships (I49)**, now paired with 2.2.
 - **Orchestrated credentials (I27, I41)**, **implementations for functions and operations (I43)**,
   **the artifact calling convention (I10)**.
 - **A pinned announcement in Discussions**, deferred on 09-30.
 
 ---
 
-**Decisions sought (Part 2):** what the `0.2` is organized around (2.1); a size property for the
-platform types, and where (2.2); who drafts the repository structure (2.3); and the credential
-kinds in dash case (2.4).
+**Decision sought (Part 2):** what `Endpoint` becomes in the `0.2`, and where the port values go
+(2.1).
 
 **Also sought (Part 3):** whether the refinement erratum goes forward (3.3).
