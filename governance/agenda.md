@@ -18,6 +18,9 @@ carries the 10-07 items that were not reached.
   `implementation-details` on every node, and the implementation details taken as inputs.
 - **`ContainerPlatform`'s size (N22) is not in the profile yet.** It was agreed on 10-07 as an
   experiment; I have not yet added it or updated the Kubernetes realizations that would use it.
+- **N19 is in the `0.2` profile.** `ContainerPlatform`'s credentials accept `kubeconfig`, `token`,
+  `x509_cert` and `x509_key`, and its `mgmt-address` admits the `https`, `tcp` and `unix` schemes,
+  so an `http` address no longer validates.
 
 ---
 
@@ -118,6 +121,9 @@ tables. Tal proposes the tables say "mandatory if not derived". A candidate for 
 
 ## If time permits
 
+- **What a platform is designated to be (I57)**: D15 has realizations select on a property
+  saying what a platform is designated to become, and no platform type carries one. Its name, its
+  values and whether it belongs on `Platform` or `Base` are open.
 - **Where examples and substituting templates live (I53)**: Roberto or Stefano to circulate a
   proposal, from 10-07.
 - **I44, the relationship kind**: carried until more participants attend. Tal has not been asked.
