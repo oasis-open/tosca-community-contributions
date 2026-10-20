@@ -1,14 +1,13 @@
 # TOSCA Community — Proposed Agenda (2026-10-21)
 
 **Status:** Draft agenda for 2026-10-21, following 2026-10-07 (2026-10-14 was cancelled)
-**Related documents:** [kubernetes-modeling](../profiles/community/tosca/docs/kubernetes-modeling.md) · [association-proposal](../profiles/community/tosca/docs/association-proposal.md) · [design-patterns](../profiles/community/tosca/docs/design-patterns.md) · [application README](../profiles/community/tosca/abstract/application/README.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
+**Related documents:** [kubernetes-modeling](../profiles/community/tosca/docs/kubernetes-modeling.md) · [application README](../profiles/community/tosca/abstract/application/README.md) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
 
 The `0.2` is organized around the Online Boutique (R8). Roberto has brought the abstract template
 to the revised profiles, and Part 2 reviews it. His main concern is with the `Endpoint`
 capability, and that concern and the changes he proposes motivate Part 3, on the capability types
 the abstract application profile uses, and Part 4 revisits the hierarchy of its node types. Part 5
-takes up discussion 384, on what the profiles' implementations are for, and Part 6 carries the
-10-07 items that were not reached.
+takes up discussion 384, on what the profiles' implementations are for.
 
 ---
 
@@ -163,32 +162,6 @@ direction I9 records. **Input wanted:** Tal's view, which the discussion has and
 
 ---
 
-## Part 6 — Carried from 10-07 — 15 min · **first reading**
-
-### 6.1 What an association in the technology column may carry · *I54* · [proposal](../profiles/community/tosca/docs/association-proposal.md)
-
-System View relationship types carry no operations, the consequence A8 rests on: substitution
-replaces a node's operations with the substituting template's workflows, and nothing replaces a
-relationship's, so an operation on an abstract relationship has nothing to implement it. The
-question is open in the technology column. There an association that does nothing leaves no
-model for two components that configure each other, each needing the other to exist and neither
-needing it first: two dependencies form a cycle, and the association has nowhere to run the
-configuration. Proposed: an association in the technology column, `technology.base`'s
-`AssociatesWith` and the types derived from it, orders neither end and may carry operations that
-connect its ends once both exist, never the ordered operations of a dependency. In both columns,
-a source that needs its target first is a dependency. Independent of I44.
-
-### 6.2 Requirement refinement in the specification · [#377](https://github.com/oasis-open/tosca-community-contributions/discussions/377)
-
-§6.4.2 says a refinement need not restate an inherited keyname, but the keyname tables mark
-keynames mandatory without saying "unless inherited", and at least one implementation follows the
-tables. Tal proposes the tables say "mandatory if not derived". A candidate for the errata track
-(P4), with I50 and I51, once spec work resumes.
-
-**Input wanted:** any disagreement, and whether Tal files it.
-
----
-
 ## If time permits
 
 - **What a platform is designated to be (I57)**: D15 has realizations select on a property
@@ -213,5 +186,3 @@ tables. Tal proposes the tables say "mandatory if not derived". A candidate for 
 
 **Decisions sought (Part 5):** what the profiles say their implementations are, and whether
 they move out of `core` for the `0.2`.
-
-**Also sought (Part 6):** whether the refinement erratum goes forward (6.2).

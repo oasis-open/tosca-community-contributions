@@ -1,30 +1,33 @@
-# What an Association May Carry
+# What an Administrator View Association May Carry
 
 *Drafted with an AI assistant (Claude); reviewed and submitted by Chris Lauwers.*
 
 **Status:** Proposal — for discussion. Tracked as I54.
 **Audience:** TOSCA Community.
-**Purpose:** Say what an association relationship may do, so that two nodes that configure
-each other can be modeled without a deployment order neither of them needs.
+**Purpose:** Say what an association relationship in an Administrator View profile may do, so
+that two nodes that configure each other can be modeled without a deployment order neither of
+them needs.
 
-**Related documents:** [abstract base README](../abstract/base/README.md) — the current
-definition of the three relationship kinds · [design-patterns](design-patterns.md) ·
-[modeling-methodology](modeling-methodology.md)
+**Related documents:** [abstract base README](../abstract/base/README.md) — the three
+relationship kinds · [technology base profile](../technology/base/profile.yaml) — the
+Administrator View's `AssociatesWith` · [modeling-methodology](modeling-methodology.md)
 
 ---
 
-## The current definition
+## Where the question arises
 
-The abstract base profile defines an association as a relationship that *"carries no
-lifecycle, state, or configuration dependency — the association is informational and
-neither node's deployment depends on the other"*, and guards against misuse: a relationship
-that carries a deployment or configuration dependency is a dependency and derives from
-`DependsOn`.
+In the System View, an association is a relationship that imposes no order on the deployment
+of its two nodes, and that is all it is. System View relationship types carry no operations:
+substitution replaces a node's operations with the substituting template's workflows, and
+nothing replaces a relationship's, so an operation on an abstract relationship has nothing to
+implement it (A8).
 
-That joins two things that are separate: whether a relationship **orders** its ends, and
-whether it **does** anything. An association as defined does neither.
+An Administrator View relationship type is different. Its operations are implemented by
+artifacts, so what an association may carry there is a real question. The community's
+Administrator View base, `community.tosca.technology.base`, declares `AssociatesWith` as *"an
+association relationship between two nodes"* and says nothing more.
 
-## The case it does not cover
+## The case it must cover
 
 Two components that exchange data with each other: each is configured with the other's
 address, or subscribes to the other's signals. Neither needs the other to exist first, and
@@ -34,13 +37,13 @@ each needs the other to exist before its configuration can be completed.
   before the other, and a processor that derives its deployment order from dependencies has
   no order to follow. A group of components that exchange signals forms such cycles as a
   matter of course.
-- **As an association**, under the current definition, the configuration has nowhere to run.
-  The relationship is informational, so the operations that connect the two ends are
-  modeled nowhere.
+- **As an association that does nothing**, the configuration has nowhere to run, so the
+  operations that connect the two ends are modeled nowhere.
 
 ## The proposal
 
-**An association orders neither end, and may carry operations that need both ends present.**
+**An Administrator View association orders neither end, and may carry operations that need
+both ends present.**
 
 1. **No order.** An association imposes no order on the deployment or teardown of its ends,
    so associations may form cycles, and a processor must not derive an order from them.
@@ -59,17 +62,16 @@ each needs the other to exist before its configuration can be completed.
    *before* the source, the relationship is a dependency. If both ends only need each other
    to exist, it is an association, whether or not it carries operations.
 
-The definition in the abstract base README would read: *an association records a relationship
-between two nodes that imposes no order on their deployment; it may carry operations that run
-once both nodes exist.*
+`technology.base`'s `AssociatesWith` would state (1) and (2) in its description, and (3) and
+(4) would be the rule for the Administrator View profiles derived from it.
 
 ## What follows
 
-- **Nothing in the abstract profiles changes.** `InteractsWith` is already an association and
-  asserts no deployment order. Its realizations may now carry the operations that connect
-  the two ends.
-- **The technology column gains a rule.** The community profiles declare no relationship
-  interface types today. When a technology profile does, it follows (3).
+- **The System View is unaffected.** `InteractsWith` is an association and asserts no
+  deployment order, as the abstract base README defines one. Its realizations, in the
+  Administrator View, may carry the operations that connect the two ends.
+- **Administrator View profiles gain a rule.** The community profiles declare no relationship
+  interface types today. When an Administrator View profile does, it follows (3).
 - **Independent of I44.** How a derived relationship type declares its kind is a separate
   question; this proposal is about what the association kind means once declared.
 
@@ -83,5 +85,5 @@ dependencies is refused before any workflow runs.
 
 ## Decision sought
 
-Adopt the definition, and the restated guard, for the abstract base README; and adopt (3) as
-the rule for relationship interfaces in the technology column.
+Adopt (1) and (2) as the meaning of `technology.base`'s `AssociatesWith`, and (3) and (4) as the
+rule for relationship types and interfaces in Administrator View profiles.
