@@ -178,13 +178,7 @@ configuration. Proposed: an association in the technology column, `technology.ba
 connect its ends once both exist, never the ordered operations of a dependency. In both columns,
 a source that needs its target first is a dependency. Independent of I44.
 
-### 6.2 One meaning, one type · *I1* · [design-patterns](../profiles/community/tosca/docs/design-patterns.md#best-practices)
-
-Drafted as question 4 under Best Practices: a profile never declares a type that means what an
-imported type already means, since nominal typing leaves the two unrelated however alike they
-are. Which profile owns each shared type is still open.
-
-### 6.3 Requirement refinement in the specification · [#377](https://github.com/oasis-open/tosca-community-contributions/discussions/377)
+### 6.2 Requirement refinement in the specification · [#377](https://github.com/oasis-open/tosca-community-contributions/discussions/377)
 
 §6.4.2 says a refinement need not restate an inherited keyname, but the keyname tables mark
 keynames mandatory without saying "unless inherited", and at least one implementation follows the
@@ -220,4 +214,4 @@ tables. Tal proposes the tables say "mandatory if not derived". A candidate for 
 **Decisions sought (Part 5):** what the profiles say their implementations are, and whether
 they move out of `core` for the `0.2`.
 
-**Also sought (Part 6):** whether the refinement erratum goes forward (6.3).
+**Also sought (Part 6):** whether the refinement erratum goes forward (6.2).
