@@ -112,8 +112,7 @@ across relationships to the *source* nodes of those relationships.
   target capabilities of type `Feature` as specified using the
   `valid_capability_types` keyword in the type definition.
 - An *association* relationship kind that records a relationship
-  between two nodes that carries **no lifecycle, state, or
-  configuration dependency** — the association is informational and
+  between two nodes that **imposes no order on their deployment**:
   neither node's deployment depends on the other. This kind of
   relationship is provided using the `AssociatesWith` relationship
   type. Relationships of type `AssociatesWith` target capabilities of

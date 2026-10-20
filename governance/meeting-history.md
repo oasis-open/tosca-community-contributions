@@ -288,6 +288,40 @@ refinement of keynames that are not mandatory, found while parsing the released 
 that the CSARs carry Python implementations his toolchain will not use, which is I43 seen from a
 consumer.
 
+**2026-10-07** (Chris, Roberto, Stefano), the first three-person meeting since 09-02. Stefano is
+working through the Online Boutique with Tal and is analysing TOSCA repositories for his doctoral
+work, on which a paper and its dataset are already published. Chris reported the week: the
+profiles on `master` at `0.2`, the release announced on the TC list, LinkedIn and Discord, and
+the agreement in #377 that a refinement need not repeat an inherited keyname.
+
+**R8: the `0.2` is organized around the Online Boutique**, one abstract service realized with two
+different Kubernetes profiles and orchestrators, to show the same topology deployed two ways.
+Chris asked whether anything else should come first, and nobody proposed anything. Roberto
+confirmed the approach and noted that the abstract example is out of date and lacks its
+requirement to a platform. Chris had not finished his part of it, his week having gone to his own
+release work.
+
+**N22: `ContainerPlatform` gains a size, defaulting to 1** (I52). Roberto knew of no container
+platform without one, so it belongs on `ContainerPlatform` rather than on `Platform`, and the
+default lets a realization that does not need it ignore it. Chris will add it, update the
+Kubernetes realizations that distribute placements across nodes, and look at Docker Swarm over
+the next weeks, as an experiment in what the property looks like across implementations.
+
+**N23: the credential kinds keep their spelling**, against the agenda's proposal. Chris argued
+the case for leaving them: the kinds are values listed in a `$valid_values` clause rather than
+names, §1.2.2 says nothing about values, and they are published in the `0.1`. Roberto would have
+accepted either, there being no compatibility to keep before `1.0`, and Stefano preferred one
+convention for everything over distinguishing names from values. Both found Tal's profiles mixed
+on the point. No objection was raised to leaving them.
+
+Where examples and substituting templates live (I53) was discussed without a decision. Roberto
+suggested an `abstract` folder under `examples` and substituting templates grouped by
+orchestrator, including standard ones for technologies such as Kubernetes microservices; Chris
+suggested renaming `examples` to `services`, since what is there is a catalogue of services
+meant to work, with `abstract` and `substitutions` beneath it. Roberto or Stefano are to put
+proposals in a discussion or an email for comment. Not reached: the association proposal (I54),
+one meaning one type (I1), I44, and whether Tal files the refinement erratum.
+
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
 [decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
 
@@ -324,7 +358,7 @@ consumer.
   provisioning, ingress.
 - **Jay & Prachi (Westminster)** — *Swarmchestrate*; OpenAPI→TOSCA tooling.
 - **Stefano** — infrastructure reverse-engineering and visualization; CloudNet
-  tools. **Mohamed (Telefonica)**, **Paul Jordan** (spec test cases) — newer
+  tools; an analysis of TOSCA repositories, with Tal. **Mohamed (Telefonica)**, **Paul Jordan** (spec test cases) — newer
   / peripheral contributors.
 
 ---

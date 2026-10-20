@@ -43,11 +43,10 @@ service_template:
         name: cluster
         technology: kubernetes
         # How many agents the realization creates. It matches the number of
-        # `host` assignments below, and it has to be stated because nothing in
-        # TOSCA counts the relationships a requirement produced; that gap is
-        # the subject of community issue I49.
-        implementation-details: |
-          agent-count: 3
+        # `host` assignments below by the author's care alone: nothing in TOSCA
+        # counts the relationships a requirement produced, which is the subject
+        # of community issue I49.
+        size: 3
       requirements:
         - host: server_1
         - host: server_2

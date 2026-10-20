@@ -84,20 +84,46 @@ node_types:
     properties:
       # The base CredentialRef, not the Named one: a kubeconfig's name selects a
       # context inside the file and is absent when the file's current context is
-      # wanted. Further credential kinds are open (I29), and so are the schemes
-      # its mgmt-address admits, which stays the Url Platform declares until
-      # I29 settles them.
+      # wanted, and a token, certificate or key file carries no name at all.
+      #
+      # No SSH kinds (N19): an SSH login opens the host the platform runs on, so
+      # it belongs on that server platform's credentials, not on the platform.
       credentials:
         description: >-
-          How the orchestrator authenticates to the platform: `kubeconfig` names
-          a kubeconfig file, whose `name` selects a context within it where the
-          file holds more than one.
+          How the orchestrator authenticates to the platform's API: `kubeconfig`
+          names a kubeconfig file, whose `name` selects a context within it where
+          the file holds more than one; `token` names a file holding a bearer
+          token; and `x509_cert` and `x509_key` name a client certificate and its
+          private key, for an API that authenticates clients with TLS.
         type: map
         key_schema:
           type: string
-          validation: { $valid_values: [ $value, [ kubeconfig ] ] }
+          validation: { $valid_values: [ $value, [ kubeconfig, token, x509_cert, x509_key ] ] }
         entry_schema:
           type: CredentialRef
+      # Kept as the Url Platform declares and narrowed by scheme, since the three
+      # forms have no common syntax below the scheme that a derived type could
+      # state: a unix URL carries a path and no host.
+      mgmt-address:
+        description: >-
+          The URL of the platform's API: `https` for an API served over TLS, such
+          as a Kubernetes API server; `tcp` for one reached on a TCP port, such as
+          a remote Docker daemon; and `unix` for one reached through a local
+          socket.
+        type: Url
+        validation:
+          $matches: [$value, "^(https|tcp|unix)://"]
+      # Agreed as an experiment (N22): to be tried against the Kubernetes
+      # realizations and Docker Swarm before it is settled. Nothing checks it
+      # against the number of host bindings; a count of a requirement's
+      # relationships (I49) is what would.
+      size:
+        description: >-
+          The number of nodes the platform spans, so that a realization knows
+          how many to create. 1 for a platform on a single node.
+        type: integer
+        default: 1
+        validation: { $greater_or_equal: [ $value, 1 ] }
   PaasPlatform:
     description: |
       PaaS platform node type. Represents a platform for developing
