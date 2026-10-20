@@ -89,10 +89,11 @@ name today, `platform:ServerPlatform`: that is the layering rule above, broken.
 
 **Nothing counts the assignments.** The realization has to know how many agents
 to create, and TOSCA offers no way to ask how many relationships a requirement
-produced. Here the number travels across the boundary in the substituted node's
-`implementation-details`, the `YAML` property `Base` declares for opaque values,
-decoded into a typed input on the other side. A built-in that counts
-relationships would remove the need, which is what community issue I49 and
+produced. The number comes from the platform's `size`, mapped to an input like
+any other property, and it matches the number of `host` bindings only because the
+template's author made it match. A built-in that counts relationships would let a
+realization check the two against each other, or derive one from the other, which
+is what community issue I49 and
 [discussion #372](https://github.com/oasis-open/tosca-community-contributions/discussions/372)
 propose.
 

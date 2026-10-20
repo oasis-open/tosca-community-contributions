@@ -16,16 +16,6 @@ imports:
   - profile: community.tosca.core:0.2
     namespace: core
 
-data_types:
-
-  Details:
-    description: >-
-      The fields this realization expects to find in the substituted node's
-      implementation-details.
-    properties:
-      agent-count:
-        type: integer
-
 node_types:
 
   Agent:
@@ -60,7 +50,7 @@ service_template:
 
     properties:
       name: name
-      implementation-details: details
+      size: size
 
     requirements:
       # Every `host` assignment on the substituted node crosses the boundary,
@@ -79,22 +69,15 @@ service_template:
     name:
       type: string
 
-    # Boundary-typed, matching the abstract node's property, and a second input
-    # whose value is derived from it, which is how a realization re-establishes
-    # typing over an opaque value.
-    details:
-      type: core:YAML
-
-    agents:
-      type: Details
-      value: {$core:decode_yaml: [{$get_input: details}]}
+    size:
+      type: integer
 
   node_templates:
 
     agent:
       type: Agent
       # One agent per server the substituted node binds.
-      count: {$get_input: [agents, agent-count]}
+      count: {$get_input: size}
       properties:
         # Distinguished by the index of the representation, which is the only
         # thing an agent knows about itself. Reading a name off the placement's

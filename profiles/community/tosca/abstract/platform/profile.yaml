@@ -113,6 +113,17 @@ node_types:
         type: Url
         validation:
           $matches: [$value, "^(https|tcp|unix)://"]
+      # Agreed as an experiment (N22): to be tried against the Kubernetes
+      # realizations and Docker Swarm before it is settled. Nothing checks it
+      # against the number of host bindings; a count of a requirement's
+      # relationships (I49) is what would.
+      size:
+        description: >-
+          The number of nodes the platform spans, so that a realization knows
+          how many to create. 1 for a platform on a single node.
+        type: integer
+        default: 1
+        validation: { $greater_or_equal: [ $value, 1 ] }
   PaasPlatform:
     description: |
       PaaS platform node type. Represents a platform for developing

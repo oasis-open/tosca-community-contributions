@@ -16,8 +16,9 @@ carries the 10-07 items that were not reached.
 - **The abstract Online Boutique, revised** (Roberto, by email on 10-15): a `cluster` node of type
   `ContainerPlatform` that every microservice is hosted on, `technology` and
   `implementation-details` on every node, and the implementation details taken as inputs.
-- **`ContainerPlatform`'s size (N22) is not in the profile yet.** It was agreed on 10-07 as an
-  experiment; I have not yet added it or updated the Kubernetes realizations that would use it.
+- **`ContainerPlatform` has a `size` (N22)**, an integer defaulting to 1, and the cluster example
+  takes its agent count from it rather than from `implementation-details`. Trying it against the
+  Kubernetes realizations and Docker Swarm, as agreed on 10-07, waits on a `0.2` release.
 - **N19 is in the `0.2` profile.** `ContainerPlatform`'s credentials accept `kubeconfig`, `token`,
   `x509_cert` and `x509_key`, and its `mgmt-address` admits the `https`, `tcp` and `unix` schemes,
   so an `http` address no longer validates.

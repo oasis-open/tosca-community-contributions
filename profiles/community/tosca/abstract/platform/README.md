@@ -79,7 +79,9 @@ TLS. A login to the machine the platform runs on belongs to that server
 platform's `credentials`. Its `mgmt-address` is a URL whose scheme is `https`,
 for an API served over TLS such as a Kubernetes API server; `tcp`, for one
 reached on a TCP port such as a remote Docker daemon; or `unix`, for a local
-socket.
+socket. Its `size` is the number of nodes it spans, 1 unless a template says
+otherwise, so that a realization creating one node per server knows how many to
+create.
 
 ### PaaS Platforms
 
