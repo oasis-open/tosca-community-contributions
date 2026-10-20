@@ -165,14 +165,18 @@ direction I9 records. **Input wanted:** Tal's view, which the discussion has and
 
 ## Part 6 — Carried from 10-07 — 15 min · **first reading**
 
-### 6.1 What an association may carry · *I54* · [proposal](../profiles/community/tosca/docs/association-proposal.md)
+### 6.1 What an association in the technology column may carry · *I54* · [proposal](../profiles/community/tosca/docs/association-proposal.md)
 
-The abstract base profile defines an association as informational, carrying no lifecycle, state
-or configuration dependency. That joins two separate questions, whether a relationship orders its
-ends and whether it does anything, and leaves no model for two components that configure each
-other: two dependencies form a cycle, and an informational association has nowhere to run the
-configuration. Proposed: an association orders neither end and may carry operations that run once
-both ends exist, never the ordered operations of a dependency. Independent of I44.
+System View relationship types carry no operations, the consequence A8 rests on: substitution
+replaces a node's operations with the substituting template's workflows, and nothing replaces a
+relationship's, so an operation on an abstract relationship has nothing to implement it. The
+question is open in the technology column. There an association that does nothing leaves no
+model for two components that configure each other, each needing the other to exist and neither
+needing it first: two dependencies form a cycle, and the association has nowhere to run the
+configuration. Proposed: an association in the technology column, `technology.base`'s
+`AssociatesWith` and the types derived from it, orders neither end and may carry operations that
+connect its ends once both exist, never the ordered operations of a dependency. In both columns,
+a source that needs its target first is a dependency. Independent of I44.
 
 ### 6.2 One meaning, one type · *I1* · [design-patterns](../profiles/community/tosca/docs/design-patterns.md#best-practices)
 
