@@ -322,6 +322,57 @@ meant to work, with `abstract` and `substitutions` beneath it. Roberto or Stefan
 proposals in a discussion or an email for comment. Not reached: the association proposal (I54),
 one meaning one type (I1), I44, and whether Tal files the refinement erratum.
 
+**2026-10-21** (Chris, Roberto). Roberto had hoped Tal would attend for the discussion-384 item.
+Chris reported the two 10-07 decisions written into the `0.2` profile: `ContainerPlatform`'s
+`size` (N22), so that a substitution reads the number of nodes from a property rather than from
+`implementation-details`, and the credential kinds and address schemes of N19, which cover Docker,
+Docker Compose and Docker Swarm as well as Kubernetes. Roberto is to look them over.
+
+**`Endpoint` was discussed without a decision** (I56). Chris agreed with Roberto that `port` and
+`target-port` are too technology-specific for an abstract profile, and that on `ServerApplication`
+they are worse, having nothing beneath them in a substitution. He set out three options: remove
+`Endpoint` and use the base `Service`; keep it without properties; or keep it with a URL that
+says how the service is reached, as `mgmt-address` does on the platform types, so that the port
+stays and only `target-port` moves to `implementation-details`. Roberto asked what the second
+option adds over `Service`, and Chris agreed it adds nothing. Chris is to try the URL on Roberto's
+latest Online Boutique, and Roberto will hold the template until `Endpoint` is decided and then
+update it.
+
+**The application node types were discussed as a first reading** (I58). Chris's argument was that
+the types differ only in the host they expect, that the System View's application types describe
+an application's architecture independent of its platform, and that placement could decide
+whether a component is realized on a Kubernetes cluster or installed on a server, with that
+choice driving the substitution. The types would then differ by the service they provide or
+require. Roberto described it as moving the knowledge from the node type to the capability type,
+more abstract and harder to see, and noted that the types are still distinct node types, each
+adding a capability, a requirement or properties. Chris recalled the ONF Common Information Model,
+which abstracted until everything was a thing, as the risk on the other side. On
+`MicroServiceApplication`, which specializes nothing, Roberto explained it as a black box, an
+application known only to be built from microservices, against `MicroService` as one node of an
+exploded topology; Chris saw a use for it as a whole Helm chart or manifest, the whole Online
+Boutique as one node, but no reason it should differ from `MicroService` unless what it exposes or
+requires does. Roberto suggested taking the question to a GitHub discussion, where Tal is more
+likely to respond.
+
+**D16: the function implementations leave `core` for the `0.2`** (I9). Chris now agrees with Tal
+that implementations do not belong in the most abstract profiles, so that each orchestrator adds
+its own, and Roberto agreed. The signatures were not settled. Roberto asked whether they could go
+too, or the artifact types with them, since in TOSCA 2.0 an implementation can be attached only
+inside a service template (I55) and every template would have to repeat it; `JSON` and `YAML`
+validate through `$validate_json` and `$validate_yaml`, which he would derive from `string` with
+the validation added by an orchestrator-specific profile. Chris wants the signatures kept: a
+function without one is a name nothing can be validated against, and the argument types are what
+select among a function's several signatures. He would attach implementations to the profile once,
+through an orchestrator-specific extension, rather than in every template, as Tal's own
+implementation already does outside the standard, and he sees a separate copy of `core` per
+orchestrator as inviting divergence. Chris is to write the mechanism up for discussion next time.
+
+Roberto commented that the container-platform cluster example represents the cluster's structure
+at the top level, three servers bound to the cluster, where his Online Boutique has a single
+cluster node and leaves the servers to the substituting template. Chris said the example exists to
+demonstrate the requirement mapping, agreed that the top level should stay abstract, and is to
+look at it again (I59).
+
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
 [decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
 
