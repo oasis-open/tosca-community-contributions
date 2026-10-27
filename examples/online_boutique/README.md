@@ -16,27 +16,48 @@ Manifest](https://github.com/GoogleCloudPlatform/microservices-demo/blob/main/re
 that can be used to deploy the entire microservice.
 
 This directory defines a TOSCA service template that models the online
-boutique and that can be used to deploy the service. This service
-template is shown in the following figure:
+boutique and that can be used to deploy the service. The following
+figure shows its microservices and how they interact:
 
 ![Online Boutique Service Template](images/online_boutique.png)
 
-This service template imports the [microservices
-profile](../../profiles/community/tosca/microservices/profile.yaml)
-and defines nodes of type `MicroService` to model the topology of the
-service.
+The service template, [`main.yaml`](main.yaml), imports the [abstract
+application profile](../../profiles/community/tosca/abstract/application/profile.yaml)
+and the [abstract platform
+profile](../../profiles/community/tosca/abstract/platform/profile.yaml).
+Every microservice is a `MicroService` node hosted on a single `cluster`
+node of type `ContainerPlatform`. Every node carries `technology` and
+`implementation-details`, and the implementation details are taken as
+inputs, one per node, which the template passes to the substituting
+template unchanged.
 
-> This example assumes that the `MicroService` node type can be
-  *parameterized* through property values to represent the
-  configurations for each of the microservices in the Online Boutique
-  example. If this is not the case, then microservice-specific derived
-  node types may need to be created and added to the [microservices
-  profile](../../profiles/community/tosca/microservices/profile.yaml).
+Each node is annotated with the `substitute` directive and is intended
+to be *realized* by a substituting template. The [substituting template
+for `MicroService` nodes](../substitutions/microservice/main.yaml) is one
+such realization.
 
-Each of the abstract microservice nodes in the online boutique service
-template is annotated with the `substitute` directive and is intended
-to be *realized* using a [substituting template for `MicroService`
-nodes](../substitutions/microservice/main.yaml) that uses nodes from
-the [kubernetes
-profile](../../profiles/community/tosca/kubernetes/profile.yaml).
+## What a microservice's endpoint carries
 
+What the `Endpoint` capability of a microservice should carry is not
+decided (community issue I56), so the directory holds the template in
+two forms:
+
+- [`main.yaml`](main.yaml) assigns `Endpoint` as the `0.2` application
+  profile defines it: a `port`, a `target-port` and a `name` on every
+  microservice. The values are those of a Kubernetes Service: `frontend`
+  exposes port 80 and forwards it to container port 8080, and `email`
+  exposes 5000 and forwards it to 8080.
+- [`main-endpoint-url.yaml`](main-endpoint-url.yaml) gives `Endpoint` a
+  single `url` in their place, as the platform types give their
+  management address one. The scheme says how the service is reached,
+  `grpc`, `http` or `redis`, and the port is the one its consumers
+  connect to, so `frontend` is `http://:80` and `email` is
+  `grpc://:5000`. The host is left out, since it is known only once the
+  service is deployed. The container port behind it belongs to the
+  realization and travels as `target-port` in each microservice's
+  `implementation-details`, whose values are in
+  [`inputs/main-endpoint-url.yaml`](inputs/main-endpoint-url.yaml). This
+  form does not validate against the `0.2` profile, whose `Endpoint` has
+  no `url`.
+
+*The `url` form was drafted with an AI assistant (Claude).*
