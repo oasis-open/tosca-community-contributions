@@ -141,8 +141,12 @@ that declared the definitions, rather than a parallel grammar for refinements. A
 declares nothing, a refinement is never a second definition of the same name, which is what
 §10.4's rule against overlapping definitions prevents.
 
-An implementing file carries a `profile` name of its own, so that it can be imported and
-configured by name. Where one artifact implements many definitions, as a single plugin may
+An implementing file follows the ordinary rule for `profile`: the keyname is optional, and the
+file needs a name of its own only to be imported by profile name, as an orchestrator's own
+profile imports one in Section 3. A processor configured with the file finds it by its
+`implements` value rather than its name. A name with its own version is still the natural way to
+release a corrected implementation of an unchanged profile, and to identify which file was in
+effect for a service. Where one artifact implements many definitions, as a single plugin may
 implement every function of a profile, the definition is written once and repeated with a YAML
 anchor and aliases.
 
