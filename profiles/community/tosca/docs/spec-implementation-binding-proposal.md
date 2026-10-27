@@ -31,7 +31,7 @@ Of the TC:
 
 1. **Give a function signature a name**, so that something other than its position in a list can
    address it.
-2. **Add a companion profile**: two top-level keynames that let a TOSCA file supply
+2. **Add a companion profile**: a top-level keyname that lets a TOSCA file supply
    implementations for functions and operations declared in a profile it imports, and nothing
    else.
 3. **Let a processor be configured with companion profiles** that apply wherever their target
@@ -122,14 +122,15 @@ A companion profile names definitions contributed by a profile it imports and su
 implementations for them. It declares no types or functions of its own, and its target ships
 nothing executable.
 
-**`implementations`** maps a symbolic name to an implementation definition, so that one
-implementation is not restated for every definition that uses it. This is Tal Liron's proposal
-from #384, adopted as written.
+**`implementations`** binds implementations to definitions contributed by an
+imported profile. Its contents mirror the grammar of the entity being refined, and
+`implementation` is the only keyname permitted inside, holding an implementation definition in
+the grammar functions and operations already use.
 
-**`implementation_refinements`** binds implementations to definitions contributed by an imported
-profile. Its contents mirror the grammar of the entity being refined, and `implementation` is
-the only keyname permitted inside. `implementation` accepts either a symbolic name from
-`implementations` or a full implementation definition.
+Where one artifact implements many definitions, as a single plugin may implement every function
+of a profile, the definition is written once and repeated with a YAML anchor and aliases, as in
+the examples below. The binding and the implementation always sit in the same file, so a name
+that connects them would add a lookup and nothing else.
 
 Refinements sit in a section of their own rather than in `functions` or `node_types`. Under
 nominal typing an entry in `node_types` naming an imported type is an error today, so reusing
@@ -170,17 +171,14 @@ imports:
     namespace: wasm
 
 implementations:
-  core:
-    primary:
-      type: wasm:WasmPlugin
-      file: artifacts/core-0.2.wasm
-
-implementation_refinements:
   functions:
     to_uppercase:
-      implementation: core
+      implementation: &core
+        primary:
+          type: wasm:WasmPlugin
+          file: artifacts/core-0.2.wasm
     now:
-      implementation: core
+      implementation: *core
 ```
 
 An `implementation` directly under a function applies to every signature. A companion profile
@@ -193,7 +191,7 @@ profile: community.tosca.core.python:0.2
 imports:
   - profile: community.tosca.core:0.2
 
-implementation_refinements:
+implementations:
   functions:
     to_string:
       signatures:
@@ -225,19 +223,16 @@ imports:
     namespace: wasm
 
 implementations:
-  kubernetes:
-    primary:
-      type: wasm:WasmPlugin
-      file: artifacts/kubernetes-1.36.wasm
-
-implementation_refinements:
   interface_types:
     k8s:Kubernetes:
       operations:
         create:
-          implementation: kubernetes
+          implementation: &kubernetes
+            primary:
+              type: wasm:WasmPlugin
+              file: artifacts/kubernetes-1.36.wasm
         delete:
-          implementation: kubernetes
+          implementation: *kubernetes
 
   node_types:
     k8s:Deployment:
@@ -245,7 +240,7 @@ implementation_refinements:
         Kubernetes:
           operations:
             apply:
-              implementation: kubernetes
+              implementation: *kubernetes
 ```
 
 Refining an interface type's operation is the case §11.4 has no site for today: it permits an
@@ -275,7 +270,7 @@ and the binding lives beside it.
 A processor with no companion profile for a target can still parse, validate and reason about
 every template that imports it, and fails only if asked to execute an operation or evaluate a
 function for which it has no implementation. That is the §18.3 processor and §18.4 orchestrator
-split, unchanged. The target profile is also self-contained: it declares no symbolic name it
+split, unchanged. The target profile is also self-contained: it names no implementation it
 cannot resolve and imports nothing that exists only per orchestrator, so a processor with no
 orchestration capability reads it as published.
 
@@ -312,8 +307,6 @@ Two consequences follow for `core`:
   matched rather than redefined.
 - **Artifact paths.** `file` is relative to the companion profile's own archive root, not the
   target's.
-- **Symbolic name scope.** Whether a name declared in `implementations` is visible to importing
-  profiles under their namespace prefix, or private to the profile that declares it.
 - **Validation.** A refinement naming an entity, interface, operation, function or signature its
   target does not define is an error, detectable at onboarding without a service template.
 - **Refinement and derivation.** What a type derived from a refined type inherits, and whether a
@@ -350,16 +343,20 @@ Two consequences follow for `core`:
 **Extend §10.4's refinement scope** from the service template to any file that imports the
 definition. It makes the function half legal with almost no new grammar, which is attractive
 before 2.1, but it covers functions only, keeps positional addressing, and becomes a second way
-to do what `implementation_refinements` does.
+to do what `implementations` does.
 
-**Symbolic names resolved by profile remapping.** Tal Liron's form in #384 puts the symbolic name
-at the `implementation` keyname in the profile that declares the function, and has that profile
-import an `implementations:0.1` profile whose content each orchestrator maps to its own file. The
-named implementations are the same idea adopted here; the difference is the direction of the
-reference. The declaring profile stops being self-contained, since it holds a name it cannot
-resolve and imports a profile that exists only per orchestrator. And one profile name then
-denotes different content on different engines, where §6.7.3 asks designers to *"use the proper
-string name to make sure they import the desired versions of these profiles"*.
+**Named implementations.** Tal Liron proposed in #384 a top-level `implementations` keyname with
+a different meaning from the one proposed here: it maps a symbolic name to an implementation
+definition, with `implementation` accepting the name wherever a definition is allowed. In his
+form the name is what connects two files: the profile that declares a function holds the name,
+and imports an `implementations:0.1` profile whose content each orchestrator maps to its own
+file. Here the binding and the implementation are always in the companion profile, so the name
+connects nothing that is not already together, and the reuse it offers within a file is what
+YAML anchors already give. The remapping itself is declined for two reasons. The declaring
+profile stops being self-contained, since it holds a name it cannot resolve and imports a
+profile that exists only per orchestrator. And one profile name then denotes different content
+on different engines, where §6.7.3 asks designers to *"use the proper string name to make sure
+they import the desired versions of these profiles"*.
 
 **Several implementations in one published set, the processor choosing the first it can
 execute.** One set of artifacts would then serve several processors, but the declaring profile or
