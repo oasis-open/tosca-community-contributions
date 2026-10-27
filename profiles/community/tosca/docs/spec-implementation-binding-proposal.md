@@ -317,12 +317,27 @@ that file is an orchestrator's own profile or a companion profile. This needs no
 processor beyond the grammar in Sections 1 and 2.
 
 **By configuration.** A processor may be configured with companion profiles, each applying
-wherever its target profile is imported. Only a companion profile qualifies: a profile applied
-without being imported must not bring types or functions into a template that never asked for
-them, so a configured profile may contain nothing but implementations. A service template then imports the target profile and
+wherever its target profile is imported. A service template then imports the target profile and
 nothing else: it never names a companion profile, because which implementation runs is not a
 modelling question. This is §10.4's *"preconfigured to handle the function call"* given a form
 that can be inspected, and extended to operations.
+
+**Configuring a profile is what makes it a companion.** The file carries no marker: any profile
+with an `implementations` section may be imported, and the same file may be imported by one
+template and configured into a processor. What distinguishes a companion is the operator's act of
+configuring it, so a processor always knows which of its profiles are companions. At that act it
+checks that the file qualifies, containing nothing but an `implementations` section and the
+imports it needs, and refuses it otherwise: a profile applied without being imported must not
+bring types or functions into a template that never asked for them.
+
+**A companion's targets are the profiles whose definitions it refines**, not every profile it
+imports. A companion may import a profile only for the artifact types its implementations name,
+as the WebAssembly example imports `com.example.wasm`; that import makes it no target. A
+companion refining definitions from two profiles applies wherever either is imported.
+
+**A configured companion that a template also imports is one source.** Its refinements arrive
+once, and do not conflict with themselves under the rule in Section 7 against two files refining
+the same definition.
 
 Configuration happens in two steps. **Onboarding installs the binding.** The companion profile
 enters the processor's catalog beside the profile it refines, and is checked there against that
