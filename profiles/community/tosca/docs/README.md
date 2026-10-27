@@ -67,6 +67,10 @@ lives and what it may claim.
   supplies its own for a profile that ships signatures only, and a service template
   imports the technology-independent profile and nothing else. The grammar is also
   addressed to the OASIS TOSCA Technical Committee.
+- **[application-types-proposal.md](application-types-proposal.md)** — distinguish
+  the abstract application types by what an application does and how it is reached
+  rather than by the platform it runs on: `ServiceApplication` in place of
+  `ServerApplication`, and no application type narrowing `host`.
 - **[association-proposal.md](association-proposal.md)** — what an association
   in an Administrator View profile may carry: no deployment order, but operations
   that run once both ends exist, so two nodes that configure each other need not
