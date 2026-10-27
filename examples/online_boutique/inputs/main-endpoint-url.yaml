@@ -1,0 +1,26 @@
+# Input values for main-endpoint-url.yaml. Each microservice's container port,
+# which the abstract template no longer carries, travels in its
+# implementation-details for the substituting template to read.
+cluster-implementation-details: "{}"
+frontend-implementation-details: |
+  target-port: 8080
+checkout-implementation-details: |
+  target-port: 5050
+ad-implementation-details: |
+  target-port: 9555
+recommendation-implementation-details: |
+  target-port: 8080
+cart-implementation-details: |
+  target-port: 7070
+product-catalog-implementation-details: |
+  target-port: 3550
+shipping-implementation-details: |
+  target-port: 50051
+currency-implementation-details: |
+  target-port: 7000
+payment-implementation-details: |
+  target-port: 50051
+email-implementation-details: |
+  target-port: 8080
+redis-implementation-details: |
+  target-port: 6379

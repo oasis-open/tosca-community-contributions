@@ -1,19 +1,80 @@
 tosca_definitions_version: tosca_2_0
 
-imports:
-  - profile: community.tosca.abstract.application:0.2
-    namespace: app
+metadata:
+  template_name: online-boutique
+  template_version: 0.2
+  template_author: TOSCA Community
 
 description: >-
-  Online Boutique service template
+  Service Template for the Online Boutique demo application by Google
+  (see https://github.com/GoogleCloudPlatform/microservices-demo). It
+  is a microservices-based cloud native application that is composed
+  of 11 microservices. The application is designed to demonstrate the
+  use of TOSCA for modeling complex applications.
+
+imports:
+- profile: community.tosca.core:0.2
+- profile: community.tosca.abstract.application:0.2
+  namespace: app
+- profile: community.tosca.abstract.platform:0.2
+  namespace: platform
 
 service_template:
+
+  inputs:
+    cluster-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node cluster, passed to its substituting template.
+    frontend-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node frontend, passed to its substituting template.
+    checkout-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node checkout, passed to its substituting template.
+    ad-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node ad, passed to its substituting template.
+    recommendation-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node recommendation, passed to its substituting template.
+    cart-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node cart, passed to its substituting template.
+    product-catalog-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node product-catalog, passed to its substituting template.
+    shipping-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node shipping, passed to its substituting template.
+    currency-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node currency, passed to its substituting template.
+    payment-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node payment, passed to its substituting template.
+    email-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node email, passed to its substituting template.
+    redis-implementation-details:
+      type: YAML
+      description: Opaque implementation details for node redis, passed to its substituting template.
+
   node_templates:
+    cluster:
+      type: platform:ContainerPlatform
+      directives: [substitute]
+      properties:
+        name: cluster
+        technology: kubernetes
+        implementation-details: {$get_input: cluster-implementation-details}
+
     frontend:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: frontend
+        technology: kubernetes
+        implementation-details: {$get_input: frontend-implementation-details}
       capabilities:
         service:
           properties:
@@ -21,18 +82,22 @@ service_template:
             target-port: 8080
             name: http
       requirements:
-        - interacts-with: ad
-        - interacts-with: recommend
-        - interacts-with: catalog
-        - interacts-with: cart
-        - interacts-with: shipping
-        - interacts-with: currency
-        - interacts-with: checkout
+      - host: cluster
+      - interacts-with: ad
+      - interacts-with: recommendation
+      - interacts-with: product-catalog
+      - interacts-with: cart
+      - interacts-with: shipping
+      - interacts-with: currency
+      - interacts-with: checkout
+
     checkout:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: checkout
+        technology: kubernetes
+        implementation-details: {$get_input: checkout-implementation-details}
       capabilities:
         service:
           properties:
@@ -40,28 +105,37 @@ service_template:
             target-port: 5050
             name: grpc
       requirements:
-        - interacts-with: catalog
-        - interacts-with: cart
-        - interacts-with: shipping
-        - interacts-with: currency
-        - interacts-with: payment
-        - interacts-with: email
+      - host: cluster
+      - interacts-with: product-catalog
+      - interacts-with: cart
+      - interacts-with: shipping
+      - interacts-with: currency
+      - interacts-with: payment
+      - interacts-with: email
+
     ad:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: ad
+        technology: kubernetes
+        implementation-details: {$get_input: ad-implementation-details}
       capabilities:
         service:
           properties:
             port: 9555
             target-port: 9555
             name: grpc
-    recommend:
+      requirements:
+      - host: cluster
+
+    recommendation:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: recommendation
+        technology: kubernetes
+        implementation-details: {$get_input: recommendation-implementation-details}
       capabilities:
         service:
           properties:
@@ -69,12 +143,16 @@ service_template:
             target-port: 8080
             name: grpc
       requirements:
-        - interacts-with: catalog
+      - host: cluster
+      - interacts-with: product-catalog
+
     cart:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: cart
+        technology: kubernetes
+        implementation-details: {$get_input: cart-implementation-details}
       capabilities:
         service:
           properties:
@@ -82,71 +160,101 @@ service_template:
             target-port: 7070
             name: grpc
       requirements:
-        - interacts-with: redis
-    catalog:
+      - host: cluster
+      - interacts-with: redis
+
+    product-catalog:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: product_catalog
+        technology: kubernetes
+        implementation-details: {$get_input: product-catalog-implementation-details}
       capabilities:
         service:
           properties:
             port: 3550
             target-port: 3550
             name: grpc
+      requirements:
+      - host: cluster
+
     shipping:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: shipping
+        technology: kubernetes
+        implementation-details: {$get_input: shipping-implementation-details}
       capabilities:
         service:
           properties:
             port: 50051
             target-port: 50051
             name: grpc
+      requirements:
+      - host: cluster
+
     currency:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: currency
+        technology: kubernetes
+        implementation-details: {$get_input: currency-implementation-details}
       capabilities:
         service:
           properties:
             port: 7000
             target-port: 7000
             name: grpc
+      requirements:
+      - host: cluster
+
     payment:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: payment
+        technology: kubernetes
+        implementation-details: {$get_input: payment-implementation-details}
       capabilities:
         service:
           properties:
             port: 50051
             target-port: 50051
             name: grpc
+      requirements:
+      - host: cluster
+
     email:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: email
+        technology: kubernetes
+        implementation-details: {$get_input: email-implementation-details}
       capabilities:
         service:
           properties:
             port: 5000
             target-port: 8080
             name: grpc
+      requirements:
+      - host: cluster
+
     redis:
       type: app:MicroService
       directives: [substitute]
       properties:
         name: redis
+        technology: kubernetes
+        implementation-details: {$get_input: redis-implementation-details}
       capabilities:
         service:
           properties:
             port: 6379
             target-port: 6379
             name: tcp-redis
-
+      requirements:
+      - host: cluster
