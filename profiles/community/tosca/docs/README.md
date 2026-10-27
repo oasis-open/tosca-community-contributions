@@ -62,10 +62,11 @@ lives and what it may claim.
   — replace the per-input environment variable convention with a single
   structured document, so an artifact runs unchanged on any orchestrator.
 - **[spec-implementation-binding-proposal.md](spec-implementation-binding-proposal.md)**
-  — attaching implementations to imported definitions: a companion profile supplies
-  each orchestrator's implementations for a profile that ships signatures only, so a
-  service template imports the technology-independent profile and nothing else. The
-  grammar is also addressed to the OASIS TOSCA Technical Committee.
+  — attaching implementations to imported definitions: an `implementations` section,
+  in an orchestrator's own profile or in a companion profile, supplies its
+  implementations for a profile that ships signatures only, so a service template
+  imports the technology-independent profile and nothing else. The grammar is also
+  addressed to the OASIS TOSCA Technical Committee.
 - **[association-proposal.md](association-proposal.md)** — what an association
   in an Administrator View profile may carry: no deployment order, but operations
   that run once both ends exist, so two nodes that configure each other need not
