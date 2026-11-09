@@ -9,6 +9,7 @@ HERE=$(dirname "$(readlink --canonicalize "$BASH_SOURCE")")
 mkdir -p ${CSARS_DIR}
 
 cd ${SUBSTITUTIONS_DIR}/microservice
+rm -f ${CSARS_DIR}/microservice.csar
 zip -r ${CSARS_DIR}/microservice.csar .
 
 # Onboard substitutions
