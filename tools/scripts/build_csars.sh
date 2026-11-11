@@ -45,6 +45,10 @@ build_csar() {
     # serve the README as it renders in the repository, and one profile's
     # sources directory carries a presentation file larger than every other
     # CSAR. The README itself ships; its image links resolve in the repository.
+    # zip -r adds to an archive that exists and never removes from it, so the CSAR is
+    # removed first: a file deleted from the profile would otherwise still ship. Only
+    # this CSAR is removed, since ${CSARS_DIR} is shared with other builds.
+    rm -f "${CSARS_DIR}/${csar}"
     ( cd "${dir}" && zip -r "${CSARS_DIR}/${csar}" . -x 'images/*' > /dev/null )
 }
 

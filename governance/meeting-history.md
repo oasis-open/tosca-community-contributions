@@ -373,6 +373,57 @@ cluster node and leaves the servers to the substituting template. Chris said the
 demonstrate the requirement mapping, agreed that the top level should stay abstract, and is to
 look at it again (I59).
 
+**2026-10-28** (Chris, Roberto), held at the usual European time and an hour later in the US, in
+the one week between the two daylight saving changes. Chris will be travelling on 11-04, so that
+meeting is cancelled and the next is 11-11.
+
+**Implementing files were presented and well received** (I43). Roberto had read the proposal
+beforehand and liked that the implementing file names the profile it implements, so the abstract
+profile stays the same, where Tal's form in #384 had the reference the other way. Chris stressed
+that the rules must allow nothing but implementations: no new types and no new functions, or an
+implementing file could change the contract a consumer relies on without the consumer knowing.
+Two details came up that the proposal does not yet address. An implementation may need supporting
+definitions, such as a helper function, which Chris and Roberto agreed would be scoped to the
+implementing file and visible nowhere else. And whether the file needs a profile name of its own:
+Chris saw versioning the implementation separately from the implemented profile as the only
+reason, and suggested an implementing file should not be importable. Roberto suggested instead a
+top-level keyname in the form of `profile`, naming the implementation, with the implemented
+profile imported as usual; Chris preferred `implements`, since reusing imports invites importing
+several profiles, and Roberto called it a detail, the concept being clear. They agreed that a
+function may carry an implementation at the function level, applying to every signature, and that
+an implementation on a signature overrides it. Chris will prototype it after next week, Roberto
+is to point Tal at the document, and it would then go to the TC as a language extension, which
+an orchestrator may implement in the meantime.
+
+**The `url` form of `Endpoint` was shown in the Online Boutique** (I56). Chris noted that the host
+is not known before deployment, but the scheme and port still say how a service is reached, and
+the container port a Kubernetes realization needs travels in `implementation-details`, as the
+example's inputs file shows. Roberto had no strong preference between the `url` and removing
+`Endpoint`, and found the `url` more general, not tied to Kubernetes.
+
+**N24: the application node types are distinguished by what an application does, not by the
+platform it runs on** (I58). Chris argued that placement comes first, and that the same abstract
+node realized on a cluster or installed on a server needs different implementations, so the
+platform belongs to placement and substitution rather than to the type. The one distinction that
+the models so far need is an application that provides a service across the network, a
+`ServiceApplication` whose `Endpoint` carries the `url`; Roberto described it as a long-running
+process exposing a service. Roberto asked whether `Application` is worth keeping if
+`ServiceApplication` is its only child, and whether `MicroService`, `MicroServiceApplication` and
+`ServiceApplication` should sit side by side under it; he suggested `ServerlessApplication` could
+derive from `ServiceApplication`, as a service on a different kind of platform. He questioned
+whether a cron job or a batch job belongs in a topology at all, rather than being an operation
+or an implementation detail, and noted that a daemon collecting metrics or logs exposes no
+endpoint. The compromise was to keep `Application`, add `ServiceApplication` beneath it, and add
+other derived types only as use cases call for them. Chris also raised whether the base
+capability should still be called `Service`, since the word suggests a network, and suggested
+looking at how Kubernetes classifies its workloads. Chris will simplify the proposal.
+
+Chris hopes the OPAF TOSCA profile for process control systems will take the community profiles
+as its starting point once the O-PAS draft standard's approval completes, which would bring new
+kinds of application and, he hopes, a participant from OPAF (C4). He also suggested asking whether
+network functions, classified by what they provide rather than whether they run on virtual
+machines or containers, would change the hierarchy.
+
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
 [decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
 

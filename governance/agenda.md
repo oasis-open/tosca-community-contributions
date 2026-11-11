@@ -1,106 +1,105 @@
-# TOSCA Community — Proposed Agenda (2026-10-28)
+# TOSCA Community — Proposed Agenda (2026-11-11)
 
-**Status:** Draft agenda for 2026-10-28, following 2026-10-21
-**Related documents:** [spec-implementation-binding-proposal](../profiles/community/tosca/docs/spec-implementation-binding-proposal.md) · [application-types-proposal](../profiles/community/tosca/docs/application-types-proposal.md) · [Online Boutique](../examples/online_boutique) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
+**Status:** Draft agenda for 2026-11-11, following 2026-10-28 (2026-11-04 was cancelled)
+**Related documents:** [application-types-proposal](../profiles/community/tosca/docs/application-types-proposal.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [container-platform-cluster](../examples/substitutions/container-platform-cluster) · [open-issues](open-issues.md) · [decision-log](decision-log.md)
 
-On 10-21 we agreed that the function implementations leave `core` for the `0.2` (D16), and I
-undertook to write up how an orchestrator supplies its own without every service template
-repeating them. Part 2 is that write-up. Part 3 returns to the `Endpoint` capability with the
-`url` option now written into the Online Boutique, and Part 4 is the application node types,
-which depend on what Part 3 decides.
-
----
-
-## Part 1 — Since 10-21 — 5 min · **presentation**
-
-- **The 10-21 record**: D16, the `Endpoint` discussion (I56), the application node types as a new
-  issue (I58), and Roberto's comment on the cluster example (I59).
-- **The Online Boutique is in the repository in two forms**: Roberto's revision, with `Endpoint`
-  as the `0.2` profile defines it, and the same template with a single `url` (Part 3).
+Roberto opened six discussions between 11-02 and 11-06, and I have replied to each. Part 2 takes
+them in turn: three question something the community has published, two propose profile changes,
+and one is a specification erratum. Part 3 is the application types proposal, simplified to what
+we agreed on 10-28.
 
 ---
 
-## Part 2 — Attaching implementations to `core` — 20 min · **first reading** · *I9, I43, I55* · [proposal](../profiles/community/tosca/docs/spec-implementation-binding-proposal.md)
+## Part 1 — Since 10-28 — 5 min · **presentation**
 
-In TOSCA 2.0 a function receives an implementation where it is declared or in a service template,
-and an operation in a derived type or a template, and from nothing else. Roberto's concern on
-10-21 was the template: with `core` shipping signatures only, every template would repeat
-the implementations.
-
-**Proposed:** a TOSCA file that names a profile with a new `implements` keyname may only add
-implementations to that profile's definitions, written in the grammar that declared them, with
-function signatures given a `name` so that a refinement addresses them by name rather than
-position. An orchestrator supplies `core`'s implementations in such a file, and a template
-receives them in one of two ways:
-
-- **By import.** The orchestrator's own profile imports the implementing file, and templates
-  written for that orchestrator receive the implementations through the imports they already have.
-- **By configuration.** The processor is configured with the implementing file, which applies
-  wherever `core` is imported, so a template imports `core` and nothing else. This is the
-  specification's *"preconfigured to handle the function call"* given a form that can be
-  inspected.
-
-`core` stays self-contained: it names nothing it cannot resolve and imports nothing that exists
-only per orchestrator. The same file covers operations, which have no refinement site outside a
-derived type or a template today. Tal's named implementations from #384 are among the
-alternatives, with why the reference runs the other way here.
-
-**Input wanted:** whether this answers the concern; and whether it goes to discussions 365 and 384
-and then to the TC, which would have to adopt the grammar.
+- **The 10-28 record**: N24, the application types distinguished by what an application does
+  rather than the platform it runs on, and the implementing-file proposal received (I43).
+- **Implementing files**: the prototype has not started, and Tal has not yet commented.
 
 ---
 
-## Part 3 — What `Endpoint` carries — 15 min · **decision sought** · *I56* · [Online Boutique](../examples/online_boutique)
+## Part 2 — Roberto's discussions — 40 min
 
-Two options remain from 10-21, the property-free `Endpoint` having been agreed to add nothing over
-`Service`:
+### 2.1 Reverting A8 · [#391](https://github.com/oasis-open/tosca-community-contributions/discussions/391) · 10 min · **decision sought**
 
-1. **Remove `Endpoint`**, so that `MicroService` keeps the base `Service`, and both the port and
-   the container port travel in `implementation-details`.
-2. **Keep `Endpoint` with a single `url`**, as the platform types carry `mgmt-address`.
-   [`main-endpoint-url.yaml`](../examples/online_boutique/main-endpoint-url.yaml) shows it: the
-   scheme says how a service is reached and the port is the one consumers connect to, so
-   `frontend` is `http://:80` and the gRPC services `grpc://:<port>`, with the host left out until
-   deployment. Each container port travels as `target-port` in `implementation-details`.
+Roberto proposes returning the base capability and relationship types to `core`: a requirement
+mapping passes the target node across the boundary, so in the cluster example the agent's
+`tech:Container` requirement ends on an abstract server node exposing only abstract capability
+types. My reply: the server node is itself substituted, and the methodology's rule that a mapped
+requirement must be satisfiable where it ends has the agent reach the capability the server's
+realization maps, which must be a `tech:Container`. Shared base types would let the agent
+type-check against the abstract node itself. What the check cannot do is run at design time, and
+the example shows no server realization.
 
-The `url` keeps at the abstract level what is meaningful there, such as where the storefront is
-reached, and moves only the container port, which belongs to the realization.
+**Decision sought:** keep A8, and add a server realization to the example (with I59).
 
-**Decision sought:** which of the two. Roberto then brings the Online Boutique to the chosen form,
-and the `microservice` substitution example follows.
+### 2.2 Requirement mapping syntax · [#387](https://github.com/oasis-open/tosca-community-contributions/discussions/387) · 10 min · **input wanted**
+
+§15.5 defines a mapping's target as `[node, requirement]`. The cluster example's
+`[agent, $relationship_index, host]` is not in the specification, and the specification does not
+say what mapping onto a counted node template means. I have said I will correct the example's
+README and comments to describe the form as an extension.
+
+**Input wanted:** whether pairing the assignments of one requirement with the representations of a
+counted template goes to the TC, beside tosca-specs#362.
+
+### 2.3 Deriving inputs in the `implementation-details` pattern · [#388](https://github.com/oasis-open/tosca-community-contributions/discussions/388) · 10 min · **decision sought**
+
+§9.8 allows `value` only on outgoing parameters, so the methodology's step that defines one input
+from another is not conformant. Roberto's alternatives: decode into a property of a node in the
+substituting template, accessor functions in `core`, or an `any` type from the TC. I prefer the
+first, since the property's data type still validates the decoded value.
+
+**Decision sought:** revise the pattern to decode into a typed node property.
+
+### 2.4 The duplicate `Bash` artifact type · [#389](https://github.com/oasis-open/tosca-community-contributions/discussions/389) · 5 min · **decision sought**
+
+`core` and `technology.base` both declare `Bash`, and `technology.base` imports `core` into its
+default namespace, a name conflict under §6.8.4. Roberto prefers removing it from `core`.
+
+**Decision sought:** remove `Bash` and `Python` from `core` together with the function
+implementations (D16, I9).
+
+### 2.5 `ca_bundle` for `ContainerPlatform` · [#392](https://github.com/oasis-open/tosca-community-contributions/discussions/392) · 5 min · **decision sought**
+
+A connection by `token` or client certificate to an API server with a private CA needs the CA,
+which only a `kubeconfig` carries. A CA bundle authenticates the server rather than the
+orchestrator, so either `credentials` is broadened to what the orchestrator connects with, or the
+trust anchor gets a property of its own.
+
+**Decision sought:** add `ca_bundle` with a broadened description, or a separate property.
+
+### 2.6 The TOSCA Path grammar · [#390](https://github.com/oasis-open/tosca-community-contributions/discussions/390) · 2 min · **for information**
+
+The §10.3 BNF admits stray commas, and Roberto's EBNF fixes it. A specification erratum, for
+Roberto to file against tosca-specs.
 
 ---
 
-## Part 4 — The abstract application node types — 15 min · **first reading** · *I58* · [proposal](../profiles/community/tosca/docs/application-types-proposal.md)
+## Part 3 — The application types, simplified — 15 min · **decision sought** · *I58, I56* · [proposal](../profiles/community/tosca/docs/application-types-proposal.md)
 
-Three of the four application types differ only in the platform they accept, which decides
-placement in the type, before a realization is selected. Proposed: type an application by what it
-does and how it is reached, and leave where it runs to the template's `host` assignment and the
-realization's selection.
+Following N24, the proposal reduces the application profile to one node type and one capability
+type:
 
-- No application type narrows `host`.
-- `ServiceApplication`, an application that provides a service across the network, replaces
-  `ServerApplication` and carries `Endpoint`.
-- `MicroService` and `MicroServiceApplication` derive from `ServiceApplication`;
-  `ServerlessApplication` derives from `Application`.
-- `Service` stays without properties.
+- **`ServiceApplication`**, deriving from `Application`, an application that provides a service
+  across the network. It narrows no requirement, so where it runs is left to its `host`
+  assignment and its `technology`.
+- **`Endpoint`** with a single optional `url` in place of `port`, `target-port`, `name` and
+  `protocol`: the scheme and the port consumers connect to, the host published by the
+  realization, and a differing container port in `implementation-details`.
+- **`MicroServiceApplication`, `MicroService`, `ServerApplication` and `ServerlessApplication` go**,
+  each being a `ServiceApplication` placed on a particular kind of platform.
+- **`Application` and `Service` stay** unchanged.
 
-It assumes Part 3 keeps `Endpoint`: without it, `ServiceApplication` adds nothing to
-`Application`.
+The Online Boutique keeps its `url` form, and the `microservice` substitution example follows.
 
-**Input wanted:** whether the platform axis goes; whether `MicroService` and
-`MicroServiceApplication` should differ; and whether to continue in a GitHub discussion, as
-Roberto suggested, so that Tal can take part.
+**Decision sought:** adopt the proposal for the `0.2`, which also settles I56.
 
 ---
 
 ## If time permits
 
-- **The cluster example (I59)**: keeping the top level abstract while still showing the
-  requirement mapping.
-- **What a platform is designated to be (I57)**: D15 has realizations select on a property
-  saying what a platform is designated to become, and no platform type carries one. Part 4 relies
-  on it.
+- **What a platform is designated to be (I57)**: Part 3 relies on it for selecting a realization.
 - **Where examples and substituting templates live (I53)**: Roberto or Stefano to circulate a
   proposal, from 10-07.
 - **I44, the relationship kind**: carried until more participants attend. Tal has not been asked.
@@ -109,10 +108,9 @@ Roberto suggested, so that Tal can take part.
 
 ---
 
-**Input wanted (Part 2):** whether implementing files answer the concern of 10-21, and whether
-the proposal goes to the discussions and the TC.
+**Decisions sought (Part 2):** A8 kept (2.1); the `implementation-details` pattern revised (2.3);
+`Bash` and `Python` leave `core` (2.4); how a CA bundle is carried (2.5).
 
-**Decision sought (Part 3):** whether `Endpoint` is removed or carries a single `url`.
+**Input wanted (Part 2):** whether requirement mapping onto counted templates goes to the TC (2.2).
 
-**Input wanted (Part 4):** whether the application node types stop naming a platform, with
-`ServiceApplication` replacing `ServerApplication`.
+**Decision sought (Part 3):** the simplified application types, with `Endpoint`'s `url`.

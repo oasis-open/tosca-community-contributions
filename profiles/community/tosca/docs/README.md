@@ -68,9 +68,9 @@ lives and what it may claim.
   imports the technology-independent profile and nothing else. The grammar is also
   addressed to the OASIS TOSCA Technical Committee.
 - **[application-types-proposal.md](application-types-proposal.md)** — distinguish
-  the abstract application types by what an application does and how it is reached
-  rather than by the platform it runs on: `ServiceApplication` in place of
-  `ServerApplication`, and no application type narrowing `host`.
+  the abstract application types by what an application does rather than the
+  platform it runs on: one `ServiceApplication` whose `Endpoint` carries a `url`,
+  in place of the four platform-specific types.
 - **[association-proposal.md](association-proposal.md)** — what an association
   in an Administrator View profile may carry: no deployment order, but operations
   that run once both ends exist, so two nodes that configure each other need not
