@@ -283,7 +283,7 @@ belong, in `profiles/` or in `examples/`, has been discussed before without a de
 What follows the release is Kubernetes examples: Chris to realize the Online Boutique with the
 generated `io.kubernetes` profile, hoping for next week, beside Roberto's realization with Tal's
 Kubernetes types, and Roberto noted the abstract Online Boutique template itself has to be brought
-to the revised profiles. Roberto reported filing an issue against his own parser over the
+to the revised profiles. Roberto reported filing an issue against Puccini over the
 refinement of keynames that are not mandatory, found while parsing the released CSARs, and noted
 that the CSARs carry Python implementations his toolchain will not use, which is I43 seen from a
 consumer.
@@ -423,6 +423,62 @@ as its starting point once the O-PAS draft standard's approval completes, which 
 kinds of application and, he hopes, a participant from OPAF (C4). He also suggested asking whether
 network functions, classified by what they provide rather than whether they run on virtual
 machines or containers, would change the hierarchy.
+
+**2026-11-11** (Chris, Roberto), given to the six discussions Roberto opened between 11-02 and
+11-06, most of them found by running the community examples and profiles through Puccini. Chris
+welcomed having two implementations read the same templates.
+
+**Reverting A8 was discussed without a decision** (I60, #391). Roberto's case is a template in
+which only one abstract node is substituted and the nodes related to it are not, as in the cluster
+example, where only the cluster is substituted: the mapped requirement then ends on a node with no
+compatible capability type, and Puccini rejects the template. Chris's case is that the model
+continuum has every abstract node substituted, so a mapped requirement reaches the capability the
+target's realization maps, which is the only use capability mappings have, and his implementation
+follows them down until it finds a compatible one; keeping the base types out of `core` enforces
+that pattern. Roberto agreed it is good practice and was unsure it should be enforced; Chris added
+that the types were in `core` in the first place to encourage the three relationship kinds across
+all profiles, an argument for putting them back. Chris is to check what reverting would mean for
+his implementation and to seek other views, from Tal and from Calin, and the decision is for
+11-18. Both agreed the cluster example puts an implementation detail at the top level: the
+abstract template should hold one cluster node, and a single substituting template should create
+its nodes from the platform's `size`, one control node and a counted set of workers (I59).
+
+**The specification questions go to a TC meeting** (I61, #387, #390). Chris agreed that the cluster
+example's requirement mapping is not in the specification, and that the specification cannot
+express what it does: whether a requirement's assignments all go to one target or are distributed
+across the representations of a counted template. Roberto would accept extending the specification
+with the example's form. Chris will extend tosca-specs#362 or file a new issue. On the TOSCA Path
+grammar, Chris agreed with Roberto and added a second defect: a path that names no index should
+mean all relationships rather than the first, as 2.0 already changed an unstated `count_range` to
+`[0, UNBOUNDED]`. Roberto also asked whether a `$get_property` over `ALL` needs its result wrapped
+in a list; Chris holds that it returns a list already, and noted that his implementation returns a
+single value where a requirement's `count_range` is `[1, 1]` even without `ALL`, which the
+specification does not say either. Chris plans a TC meeting before the end of the year to take up
+errata, and leans towards publishing them against 2.0 rather than issuing a new version, unless the
+implementation binding proposal, which is new function, makes it a 2.1. Roberto, not an OASIS
+member, may attend as an observer.
+
+**The `implementation-details` pattern decodes into a node template** (I62, #388). Both agreed
+`value` on an input is not allowed by §9.8 and that the simplest correction is Roberto's first
+alternative, decoding the details in a node template of the substituting template. Chris also sees
+no reason for the restriction, citing an identifier allocated once per service and an operation
+input fixed by a derived type, and wants the TC to revisit it.
+
+**D17: `Bash` leaves `core`** (I10, #389). Both agreed, the conflict with `technology.base` and
+D16 together arguing for it. Roberto is to submit the pull request. `Python` waits for 11-18:
+Chris's own profiles import community `core` and use its function implementations, so he will
+prepare for their removal first.
+
+**N25: `ContainerPlatform`'s credentials accept `ca_bundle`** (#392). Roberto needed it for a
+platform with a self-signed certificate, and chose `credentials` over a new property as the more
+reasonable place, though a CA bundle is not strictly a credential. He will include it in the same
+pull request. He also pointed out that the credential kinds, as map keys, would read better in
+dash case; Chris noted that the specification's naming rules cover names rather than the keys and
+values of a map, but that treating map keys like property names is the more consistent practice,
+as with the `relationship-kind` metadata key, and will change them unless his own profiles make
+that costly (I64, reopening N23).
+
+The application types proposal moves to 11-18.
 
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
 [decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
