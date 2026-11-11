@@ -98,7 +98,7 @@ node_types:
         type: map
         key_schema:
           type: string
-          validation: { $valid_values: [ $value, [ kubeconfig, token, x509_cert, x509_key ] ] }
+          validation: { $valid_values: [ $value, [ kubeconfig, token, ca_bundle, x509_cert, x509_key ] ] }
         entry_schema:
           type: CredentialRef
       # Kept as the Url Platform declares and narrowed by scheme, since the three
