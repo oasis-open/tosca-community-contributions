@@ -159,12 +159,6 @@ data_types:
         required: true
 
 artifact_types:
-  Bash:
-    description: >-
-      Artifact type representing a script for the Bash shell
-    mime_type: application/x-sh
-    file_ext: [sh]
-    #properties: TBD (e.g. to specify the shell to use, or the script entry point)
   Python:
     description: >-
       Artifact type representing a Python script
