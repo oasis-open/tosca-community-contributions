@@ -535,6 +535,8 @@ refinement rules, rather than a change to the abstract type, and noted that he k
 themselves and the authority that certifies them in separate data types, so a CA bundle may not
 belong in this structure at all. Roberto to write it up.
 
+**Roberto takes the implementation.** By email after the meeting he offered to carry all three profile changes, the `Python` removal, dash case and the application types, in one pull request, being in the middle of revisiting his service templates and preferring to adapt them to the new types in one pass. Chris agreed.
+
 Next week is Thanksgiving in the US. Wednesday is a working day and the meeting stands unless Chris
 says otherwise, with the application changes implemented by then if possible.
 
