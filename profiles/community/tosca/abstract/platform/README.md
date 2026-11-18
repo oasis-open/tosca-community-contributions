@@ -34,7 +34,7 @@ this list is not meant to be exhaustive:
   firmware pre-installed.
 - *Virtual Machine*: A VM instantiated on a virtualization platform.
 
-A server platform's `credentials` accept `ssh_key` and `ssh_password`, each
+A server platform's `credentials` accept `ssh-key` and `ssh-password`, each
 naming the user to log in as. Its `mgmt-address` is an `SshUrl`,
 `ssh://host[:port]`, with port 22 where none is given. Its `host` requirement is for a virtualization platform,
 which a virtual machine binds and a physical server leaves unbound.
@@ -52,8 +52,8 @@ include the following:
   cloud.
 
 A virtualization platform's `credentials` accept `token`, a file holding a
-bearer token, and `cloud_account`, a provider's credentials file whose `name`
-selects a profile within it. They also accept `ssh_key`, a private key and
+bearer token, and `cloud-account`, a provider's credentials file whose `name`
+selects a profile within it. They also accept `ssh-key`, a private key and
 the login it authenticates, for a platform also managed through an SSH login
 on the machine it runs on, where that machine is not modelled as a server
 platform of its own. Its `mgmt-address` is an `HttpUrl`, the address of its
@@ -73,7 +73,7 @@ containerized software. This can include:
 
 A container platform's `credentials` accept `kubeconfig`, a kubeconfig file
 whose `name` selects a context within it where the file holds more than one;
-`token`, a file holding a bearer token; and `x509_cert` and `x509_key`, a client
+`token`, a file holding a bearer token; and `x509-cert` and `x509-key`, a client
 certificate and its private key, for an API that authenticates clients with
 TLS. A login to the machine the platform runs on belongs to that server
 platform's `credentials`. Its `mgmt-address` is a URL whose scheme is `https`,

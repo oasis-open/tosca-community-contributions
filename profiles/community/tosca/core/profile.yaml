@@ -158,15 +158,6 @@ data_types:
         type: string
         required: true
 
-artifact_types:
-  Python:
-    description: >-
-      Artifact type representing a Python script
-    mime_type: text/x-python
-    file_ext: [py]
-    #properties: TBD (e.g. to specify the Python version to use, or the script entry point)
-
-
 functions:
   to_string:
     description: >-
@@ -177,10 +168,6 @@ functions:
             description: >-
               The integer to convert to string
         result: string
-        implementation:
-          primary:
-            type: Python
-            file: functions/to_string.py
   to_uppercase:
     description: >-
       Convert a string to upper case. An argument without a value is refused.
@@ -190,10 +177,6 @@ functions:
             description: >-
               The string to convert to upper case.
         result: string
-        implementation:
-          primary:
-            type: Python
-            file: functions/to_uppercase.py
   to_lowercase:
     description: >-
       Convert a string to lower case. An argument without a value is refused.
@@ -203,19 +186,11 @@ functions:
             description: >-
               The string to convert to lower case.
         result: string
-        implementation:
-          primary:
-            type: Python
-            file: functions/to_lowercase.py
   random_number:
     description: >-
       Generate a float random number between 0 and 1
     signatures:
       - result: float
-        implementation:
-          primary:
-            type: Python
-            file: functions/random_number.py
   validate_json:
     description: >-
       Check if a string argument contains valid JSON.
@@ -225,20 +200,12 @@ functions:
             description: >-
               The json string to validate.
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/validate_json.py
   decode_json:
     signatures:
       - arguments:
           - type: string
             description: >-
               The json string to decode
-        implementation:
-          primary:
-            type: Python
-            file: functions/decode_json.py
   validate_yaml:
     description: >-
       Check if a string argument contains a well-formed YAML document.
@@ -248,10 +215,6 @@ functions:
             description: >-
               The yaml string to validate.
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/validate_yaml.py
   decode_yaml:
     description: >-
       Decode a YAML string. The result carries no declared type: it is
@@ -262,10 +225,6 @@ functions:
           - type: string
             description: >-
               The yaml string to decode
-        implementation:
-          primary:
-            type: Python
-            file: functions/decode_yaml.py
   ssh_url_to_socket:
     description: >-
       Convert an SshUrl to a Socket. The socket's address is the URL's host,
@@ -277,10 +236,6 @@ functions:
             description: >-
               The URL to convert.
         result: Socket
-        implementation:
-          primary:
-            type: Python
-            file: functions/ssh_url_to_socket.py
   socket_to_ssh_url:
     description: >-
       Convert a Socket to an SshUrl. An IPv6 address is bracketed, and a port
@@ -292,10 +247,6 @@ functions:
             description: >-
               The socket to convert.
         result: SshUrl
-        implementation:
-          primary:
-            type: Python
-            file: functions/socket_to_ssh_url.py
   in_range:
     description: >
         This function provides true if the first argument (value) is within
@@ -311,46 +262,26 @@ functions:
           - type: list
             entry_schema: integer
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range.py
       - arguments:
           - type: float
           - type: list
             entry_schema: float
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range.py
       - arguments:
           - type: string
           - type: list
             entry_schema: string
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range.py
       - arguments:
           - type: timestamp
           - type: list
             entry_schema: timestamp
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range.py
       - arguments:
           - type: version
           - type: list
             entry_schema: version
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range.py
   in_range_strict:
     description: >
         This function provides true if the first argument (value) is within
@@ -368,56 +299,32 @@ functions:
           - type: list
             entry_schema: integer
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range_strict.py
       - arguments:
           - type: float
           - type: list
             entry_schema: float
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range_strict.py
       - arguments:
           - type: string
           - type: list
             entry_schema: string
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range_strict.py
       - arguments:
           - type: timestamp
           - type: list
             entry_schema: timestamp
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range_strict.py
       - arguments:
           - type: version
           - type: list
             entry_schema: version
         result: boolean
-        implementation:
-          primary:
-            type: Python
-            file: functions/in_range_strict.py
   now:
     description: >-
       Provides the current timestamp, following the TOSCA 2.0 specification
       (i.e. a string following IETF RFC 3339 format)
     signatures:
       - result: timestamp
-        implementation:
-          primary:
-            type: Python
-            file: functions/now.py
   generate_token:
     description: >
       Generates a unique token as a string, composed of a given number
@@ -429,7 +336,3 @@ functions:
           - type: integer
             description: The length of the token to generate
         result: string
-        implementation:
-          primary:
-            type: Python
-            file: functions/generate_token.py

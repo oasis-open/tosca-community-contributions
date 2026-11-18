@@ -32,68 +32,23 @@ capability_types:
   # The network specialization of the Service port every Application has.
   Endpoint:
     description: >-
-      A service reached over a network.
+      A service reached over a network, at the address its url gives.
     derived_from: Service
     properties:
-      port:
-        type: Port
-      target-port:
-        type: Port
-      name:
-        type: string
-        required: false
-      protocol:
-        type: string
+      url:
+        description: >-
+          The URL the service is reached at. Its scheme says how the service
+          is reached and its port is the one consumers connect to. Supplied
+          with or without a host; the realization populates the full address.
+        type: Url
         required: false
 
 node_types:
-  MicroServiceApplication:
+  ServiceApplication:
     description: >-
-      This node type represents a whole microservice application
-      (i.e. not the single microservice). In some cases it may be
-      a good candidate for being replaced by a substituting template.
-      It is derived from the Application abstract type and inherits
-      its properties, capabilities and requirements
-    derived_from: Application
-    requirements:
-      - host:
-          node: platform:ContainerPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
-
-  MicroService:
-    description: >-
-      This node type represents a single microservice, and can be used
-      when the Service Template at the top-level explodes the topology
-      of microservices. In that case, each single microservice shall
-      be substituted separately and independently from the others.
-      This type inherits from the Application abstract type and inherits
-      its properties, capabilities and requirements.
+      An application that provides a service across the network, reached at
+      the address its service capability carries.
     derived_from: Application
     capabilities:
       service:
         type: Endpoint
-
-  ServerApplication:
-    description: >-
-      An application that runs on a server platform. Several nodes of this type
-      combine to represent an application distributed over distinct servers,
-      such as an N-tier or client-server deployment.
-    derived_from: Application
-    capabilities:
-      service:
-        type: Endpoint
-    requirements:
-      - host:
-          node: platform:ServerPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
-
-  ServerlessApplication:
-    description: >-
-      This node type represents a whole serverless application
-      (i.e. not the single serverless function). In some cases it may be
-      a good candidate for being replaced by a substituting template.
-      It is derived from the Application abstract type and inherits
-      its properties, capabilities and requirements
-    derived_from: Application
-    requirements:
-      - host:
-          node: platform:ServerlessPlatform   # shall be defined in Platform Profile as derived from Platform abstract node
-
