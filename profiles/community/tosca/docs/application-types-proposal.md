@@ -2,7 +2,7 @@
 
 *Drafted with an AI assistant (Claude); reviewed and submitted by Chris Lauwers.*
 
-**Status:** Proposal — for discussion. Tracked as I58 and I56; carries out N24.
+**Status:** Adopted 2026-11-18 as N27, for the `0.2`. Settles I58 and I56; carries out N24.
 **Audience:** TOSCA Community.
 **Purpose:** Reduce the abstract application types to the one distinction the models so far need,
 an application that provides a service across the network, and leave where an application runs to
@@ -124,12 +124,21 @@ These are left until a use case needs an answer:
 - **Further derived types.** Kubernetes classifies its workloads, and the process control systems
   OPAF models, or network functions classified by what they provide, may call for others.
 - **Jobs and scheduled jobs.** Whether a task that runs and terminates belongs in a topology at
-  all, or is an operation or a detail of a realization.
+  all, or is an operation or a detail of a realization. Raised again on 2026-11-18 as a batch
+  application, something that runs at intervals and writes a file or feeds a topic. The test agreed
+  there: a type earns its place when it takes part in a topology differently, which shows up as
+  different capabilities, requirements or properties. Left until a use case shows that.
 - **The name `Service`.** The word suggests a network, which `Endpoint` now carries; a more general
   name for the base capability may read better.
 
-## Decision sought
+## Adopted
 
-Adopt items 1 to 5 for the `0.2`: `ServiceApplication` with an `Endpoint` carrying an optional
-`url`; the four platform-specific types removed; `Application` and `Service` unchanged; and the
-examples and README follow.
+Items 1 to 5 were adopted on 2026-11-18 for the `0.2`, as N27: `ServiceApplication` with an
+`Endpoint` carrying an optional `url`; the four platform-specific types removed; `Application` and
+`Service` unchanged; and the examples and README follow. What decided the removal of `MicroService`
+and `MicroServiceApplication` is that they differ only in the capability they expose, and that
+whether an application is one black box or a topology of microservices is a question of which
+substituting template realizes it rather than of its type: two templates can realize the same
+abstract node, one creating several node templates of the same type and relating them, the other
+hiding the structure. Roberto carries the implementation, together with the `Python` removal (D18)
+and the credential kinds in dash case (N26).
