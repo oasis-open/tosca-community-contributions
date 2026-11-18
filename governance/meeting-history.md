@@ -480,6 +480,64 @@ that costly (I64, reopening N23).
 
 The application types proposal moves to 11-18.
 
+**2026-11-18** (Chris, Roberto), a short meeting that settled all four items held over from 11-11.
+
+**A8 stands** (I60, #391). Chris set out what reverting would cost: his technology and device view
+profiles associate interfaces with the base relationship types, and the interface type differs by
+kind, because an association orders neither end, so the pre-configure and post-configure steps that
+a dependency or a containment interface carries mean nothing for one. Reverting would move that
+declaration onto each of the twenty to twenty-five derived relationship types, to be remembered
+again for every new one. Roberto: *"absolutely, it's not a blocker, we can keep the things as they
+are today, so we can accept the decision we already made."* He would still like other opinions, and
+no one else has spoken. Chris named the more elegant alternative for a future revisit: derive his
+own three from the community types rather than declare them, which would require namespace prefixes,
+since his `core` imports community `core` without one precisely so the two read alike. I60 is
+closed.
+
+**D18: `Python` and the function implementations leave `core`** (I10, D16, #389). Chris had asked on
+11-11 to prepare his profiles first, and reported that nothing of his calls `core`'s functions yet,
+so removing the artifact type and losing the implementations costs him nothing for now. Roberto
+recalled the Kubernetes scripts deriving environment variable names with `to_uppercase`; Chris
+placed that in the Online Boutique rather than in anything he currently runs. Removal buys him the
+time to restore the functionality without implementations in `core`.
+
+**N26: the credential kinds are respelled in dash case** (I64, reopening N23). A breaking change,
+which Chris accepted on the ground that few people use these types yet, and his artifact processors
+can accept both spellings while the profiles move. Roberto has only templates to change. Agreed for
+consistency with every other name in the profiles.
+
+**N27: one `ServiceApplication`** (I58, I56). The application profile keeps `Application` and
+`Service` and adds a single derived type advertising an `Endpoint` rather than the generic `Service`
+capability; `MicroServiceApplication`, `MicroService`, `ServerApplication` and
+`ServerlessApplication` go. Roberto confirmed `MicroService` and `MicroServiceApplication` differ
+only in the capability they expose, and that whether an application is one black box or a topology
+of microservices is a question of substitution rather than of type: two substituting templates can
+realize the same abstract node, one creating several node templates of the same type and relating
+them, the other hiding the structure. Placement is decided first and drives the selection. Roberto
+raised a batch application, something that runs at intervals and writes a file or feeds a Kafka
+topic, as a type that might be genuinely different; Chris put the test as whether it takes part in a
+topology or is an implementation mechanism, which would show up as different capabilities,
+requirements and properties, and both agreed to wait for a use case. Types will be re-added as use
+cases motivate them. I58 and I56 are closed.
+
+**R9: the `0.2` carries this.** Chris proposed that the application change together with the
+artifact type removals is enough to justify the release, and that it moves the group's attention to
+application-level modelling, where little work has been done, rather than to platforms.
+
+**I65, new: a `value` on the credential reference.** Roberto asked whether `CredentialRef`, which
+carries a `name` and a `file`, should also carry a value. The Puccini Kubernetes profile wants the
+CA bundle and the certificate as separate values, which he can extract from a `kubeconfig` but then
+has nowhere to put, and he does not want to write them to temporary files in the orchestrator's
+environment. Chris's objection is that the model is what tooling inspects in order to make
+orchestration decisions, so the current credential types deliberately keep no secret in the model or
+the representation graph; he suggested a derived type used in a technology profile, reached by the
+refinement rules, rather than a change to the abstract type, and noted that he keeps the credentials
+themselves and the authority that certifies them in separate data types, so a CA bundle may not
+belong in this structure at all. Roberto to write it up.
+
+Next week is Thanksgiving in the US. Wednesday is a working day and the meeting stands unless Chris
+says otherwise, with the application changes implemented by then if possible.
+
 *This narrative skips 2026-07-22, 2026-08-05 and 2026-08-12, whose decisions are recorded in
 [decision-log.md](decision-log.md) (A7, D10–D12, I26) but were never written up here.*
 
