@@ -108,6 +108,12 @@ assigns a credential, and a migration path for services already deployed. Worth 
 the lists have already diverged: my orchestrator recognizes a `token` kind that `core` does not
 list.
 
+The transition itself is safe, which is the argument for doing it at a boundary rather than not at
+all: an orchestrator can accept both spellings on the way in, since a credentials map is read at one
+point, so templates and deployed services keep working while profiles respell. What cannot accept
+both is the profile's own validation, because `$has_all_keys` requires every key it lists. So the
+profiles move in one step and the orchestrators absorb the overlap.
+
 **Decision sought:** respell the credential kinds in dash case, and when — with the `0.2` profile
 bump, so consumers absorb it at a version boundary, rather than as a change to `0.2` in flight.
 
