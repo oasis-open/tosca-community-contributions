@@ -190,7 +190,7 @@ node_types:
         properties:
           credentials:
             key_schema:
-              validation: {$valid_values: [$value, [x509_cert, x509_key]]}
+              validation: {$valid_values: [$value, [x509-cert, x509-key]]}
       # The chain a relying party verifies this certificate against is not this
       # node's proof of identity, so it is published on a port of its own rather
       # than here.
@@ -205,12 +205,12 @@ node_types:
 **No value is assigned to the map, and that is the point.** `credentials` is declared as a property
 so that one declaration yields both views, but nothing is assigned here: `create` writes the
 reflected attribute along the path a consumer reads,
-`[SELF, CAPABILITY, credential, credentials, x509_cert, file]`. A supplied credential would assign
+`[SELF, CAPABILITY, credential, credentials, x509-cert, file]`. A supplied credential would assign
 the same map under `capabilities.credential.properties` instead. The consumer reads it the same way
 in both cases and never learns which origin it was.
 
-**Two kinds, one node, no subtypes.** The `key_schema` narrows the map to `x509_cert` and
-`x509_key`, which are the two parts of one identity rather than two ways of using the same material
+**Two kinds, one node, no subtypes.** The `key_schema` narrows the map to `x509-cert` and
+`x509-key`, which are the two parts of one identity rather than two ways of using the same material
 — a certificate and the private key that proves it. They are separate roles, one each, so they
 occupy separate keys without collision, and there is nothing for a binding to choose between. That
 is the case the proposal contrasts with material that serves two kinds at once, where only the node
