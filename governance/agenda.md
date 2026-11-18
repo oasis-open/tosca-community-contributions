@@ -31,8 +31,37 @@ of `core` enforces that pattern. Roberto agreed it is good practice and was unsu
 enforced. Against that, the types were in `core` originally to encourage the three relationship
 kinds across all profiles, which argues for putting them back.
 
-I undertook to report two things: what reverting would mean for my implementation, and whether Tal
-and Calin see it differently.
+I undertook to report what reverting would mean for my implementation, taking reverting to mean that
+a downstream profile deletes its own copies and uses `core`'s. **The capability types can come back
+at no cost; the relationship types cannot.**
+
+The three capability types are substantively identical to mine, down to the wording, and the 32
+types that derive from them in my profiles would re-point at `core`'s with nothing else changing.
+
+The three relationship types differ in one respect that carries everything: mine declare an
+interface and `abstract.base`'s declare none. `AssociatesWith` declares `configure` of an
+`Associate` interface type, `DependsOn` and `ContainedBy` declare `configure` of a `Configure`
+interface type, and **21 of the 25 relationship types in my base profile inherit that declaration
+rather than making their own**, as do the 30 types deriving from the three across my profiles. It is
+how an orchestrator finds a relationship's lifecycle operations. Deleting the three takes the
+declaration out of the chain.
+
+The six also cannot be separated, which is presumably why A8 moved them together: `core`'s
+`Container` would name `core`'s `ContainedBy` in `valid_relationship_types`, so adopting the
+capability types while keeping my own relationship types makes my `ContainedBy` invalid for
+`core`'s `Container`.
+
+That leaves three ways to revert, and I do not find any of them clean: declare `configure` on each
+of the 30 derived types, which puts on thirty types what belongs on three; derive my own three from
+`core`'s and declare the interfaces there, which is declaring three types again under the same
+names; or have `core`'s three declare the interfaces, which means `core` grows interface types a
+week after D16 and D17 moved execution content out of it.
+
+**The question this raises is worth more than the decision:** whether a base relationship type
+should declare an interface at all. `abstract.base` says no and my profiles say yes, and I44 on the
+relationship kind sits next to it.
+
+I have not yet heard from Tal or Calin.
 
 **Decision sought:** revert A8, or keep it and add the server realization the example lacks (I59).
 
