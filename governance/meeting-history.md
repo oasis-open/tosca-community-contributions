@@ -2,7 +2,7 @@
 
 **Status:** Working summary, maintained by Chris
 **Scope:** Synthesis of the weekly TOSCA Community meeting summaries
-**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/docs/prior-art.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [abstract-profile-proposed-changes](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
+**Related documents:** [README](../profiles/community/tosca/README.md) · [prior-art](../profiles/community/tosca/docs/prior-art.md) · [modeling-methodology](../profiles/community/tosca/docs/modeling-methodology.md) · [decision-log](decision-log.md) · [open-issues](open-issues.md)
 
 ---
 
@@ -111,7 +111,7 @@ service templates.
 
 **2026-09-02** (Chris, Roberto, Stefano), after a two-week break, and the first meeting to work
 straight down the [abstract-profile proposal
-document](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md). It ran the
+document](https://github.com/oasis-open/tosca-community-contributions/blob/b8dc434/profiles/community/tosca/docs/abstract-profile-proposed-changes.md). It ran the
 full hour and went through all eight of its proposals, agreeing five of them — 2.1, 2.3, 2.4,
 2.6 and 2.7 — while 2.2 was already adopted, 2.5 came away reopened and 2.8 was taken
 provisionally. Five decisions were recorded, which is a different five: **credentials** as a
@@ -591,6 +591,6 @@ says otherwise, with the application changes implemented by then if possible.
   than language changes (with errata handled separately).
 - The **abstract-profile credential/mgmt-address work** that culminated at M38 is
   documented in detail in
-  [abstract-profile-proposed-changes.md](../profiles/community/tosca/docs/abstract-profile-proposed-changes.md).
+  [abstract-profile-proposed-changes.md](https://github.com/oasis-open/tosca-community-contributions/blob/b8dc434/profiles/community/tosca/docs/abstract-profile-proposed-changes.md).
 - Process observations (e.g. contribution-load distribution) are tracked as
   action items in [open-issues.md](open-issues.md).

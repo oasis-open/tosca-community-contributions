@@ -1,6 +1,6 @@
 # TOSCA Community Profiles
 
-**Related documents:** [modeling-methodology](docs/modeling-methodology.md) · [design-patterns](docs/design-patterns.md) · [prior-art](docs/prior-art.md) · [abstract-profile-proposed-changes](docs/abstract-profile-proposed-changes.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
+**Related documents:** [modeling-methodology](docs/modeling-methodology.md) · [design-patterns](docs/design-patterns.md) · [prior-art](docs/prior-art.md) · [meeting-history](../../../governance/meeting-history.md) · [decision-log](../../../governance/decision-log.md) · [open-issues](../../../governance/open-issues.md)
 
 This directory contains TOSCA profiles that are created by the TOSCA
 Community&mdash;an informal group of TOSCA implementors and TOSCA
