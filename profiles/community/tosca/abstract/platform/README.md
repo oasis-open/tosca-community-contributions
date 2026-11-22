@@ -75,7 +75,9 @@ A container platform's `credentials` accept `kubeconfig`, a kubeconfig file
 whose `name` selects a context within it where the file holds more than one;
 `token`, a file holding a bearer token; and `x509-cert` and `x509-key`, a client
 certificate and its private key, for an API that authenticates clients with
-TLS. A login to the machine the platform runs on belongs to that server
+TLS; and `ca-bundle`, the CA certificates the orchestrator verifies the API
+server against, where its certificate is self-signed or issued by a private CA.
+A login to the machine the platform runs on belongs to that server
 platform's `credentials`. Its `mgmt-address` is a URL whose scheme is `https`,
 for an API served over TLS such as a Kubernetes API server; `tcp`, for one
 reached on a TCP port such as a remote Docker daemon; or `unix`, for a local

@@ -7,7 +7,7 @@ proposed here is the capability and the node types.
 given. Raised by Tal on discussion #281, against the observation that a data type alone does not
 cover a credential with a lifecycle.
 
-**Related documents:** [README](README.md) · [design-patterns](design-patterns.md) · [profile-organization](profile-organization.md) · [abstract-profile-proposed-changes](abstract-profile-proposed-changes.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
+**Related documents:** [README](README.md) · [design-patterns](design-patterns.md) · [profile-organization](profile-organization.md) · [decision-log](../../../../governance/decision-log.md) · [open-issues](../../../../governance/open-issues.md)
 
 ---
 
@@ -102,7 +102,7 @@ contributing its own material.
 publishing it here would put two contracts on one port. It belongs on a port of its own.
 
 **Where these would live.** The data types are in `core`, and that part is settled: an abstract
-type uses `CredentialRef` as a property value, which is what Section 2.4 does in declaring
+type uses `CredentialRef` as a property value, as the abstract platform profile does in declaring
 `credentials` on `Platform`. The node types belong wherever their kind belongs, which for most of
 them is a technology profile rather than an abstract one — a key pair and a certificate are
 general, while an account or project is a provider's.
