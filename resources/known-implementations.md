@@ -25,6 +25,8 @@ Convert JSON Schema, OpenAPI, Redfish and YANG schemas to TOSCA 2.0
 data types and node types (`any2tosca`, `oas2tosca`,
 `redfish2tosca` and `yang2tosca`).
 
+* [any2tosca on PyPI](https://pypi.org/project/any2tosca/)
+
 ## [Apache AriaTosca](http://incubator.apache.org/projects/ariatosca.html)
 The AriaTosca project retired on 2018-07-01
 
