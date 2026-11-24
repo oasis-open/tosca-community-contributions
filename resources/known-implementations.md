@@ -20,6 +20,11 @@ Topology, Type, and LCM Design (supports
 ## [Amazon Telco Network Builder](https://aws.amazon.com/tnb)
 Automates the deployment and management of telco networks on AWS. 
 
+## [any2tosca](https://github.com/ubicity-corp/any2tosca)
+Convert JSON Schema, OpenAPI, Redfish and YANG schemas to TOSCA 2.0
+data types and node types (`any2tosca`, `oas2tosca`,
+`redfish2tosca` and `yang2tosca`).
+
 ## [Apache AriaTosca](http://incubator.apache.org/projects/ariatosca.html)
 The AriaTosca project retired on 2018-07-01
 
@@ -85,10 +90,6 @@ Cloudify plugin, and DSL definition, to orchestrate and mange
 applications in HPC environments
 
 * [How to use TOSCA](http://doc.mso4sc.eu/infrastructure/latest/components/orchestrator/tosca/README.html)
-
-## [oas2tosca](https://github.com/lauwers/oas2tosca)
-Convert OpenAPI or Swagger specification files to one or more TOSCA
-Profiles.
 
 ## [ONAP](https://www.onap.org/)
 ONAP is a comprehensive platform for orchestration, management, and
@@ -164,6 +165,13 @@ generates UML and other diagrams from a TOSCA template.
 * [TOSCA toolbox Portal](https://toscatoolbox.orange.com/)
 * [TOSCA toolbox Github](https://github.com/Orange-OpenSource/Cloudnet-TOSCA-toolbox)
 
+## [tosca-core](https://github.com/ubicity-corp/tosca-core)
+Open-source (Apache 2.0) parser and semantic validator for TOSCA 2.0
+and the TOSCA Simple Profile in YAML 1.3, as a Python library and the
+`tosca-validate` command-line tool.
+
+* [tosca-core on PyPI](https://pypi.org/project/tosca-core/)
+
 ## [TosKer](https://github.com/di-unipi-socc/tosker)
 Open-source framework for deploying and managing TOSCA applications
 with Docker
@@ -178,17 +186,17 @@ Orchestrate and compose Kubernetes workloads using TOSCA (based on
 [Puccini](https://puccini.cloud/))
 
 ## [Ubicity Orchestrator](https://ubicity.com/products.html)
-Pure TOSCA-based orchestrator for cloud applications and NFV
+TOSCA 2.0 orchestrator that deploys and operates multi-vendor systems
+from a single model, across cloud, data center, edge and the plant
+floor, including O-PAS Part 9 process automation systems. Built on
+[tosca-core](https://github.com/ubicity-corp/tosca-core).
 
 * [TOSCA Type Profile Browser](https://ubicity.com/profiles.html)
-* [TOSCA Validator](https://ubicity.com/validator.html)
+* [TOSCA Validator](https://ubicity.com/validator.html) (online)
 
 ## [Unfurl](https://unfurl.run/)
 A command line TOSCA orchestrator that enables you to use Git to
 manage your Ansible and Terraform deployment infrastructure.
-
-## [yang2tosca](https://github.com/lauwers/yang2tosca)
-Convert YANG modules to TOSCA type definitions.
 
 ## [Yorc](https://github.com/ystia/yorc)
 Yorc is a hybrid cloud/HPC TOSCA orchestrator
