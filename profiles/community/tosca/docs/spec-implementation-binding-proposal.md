@@ -126,7 +126,7 @@ implementations to the definitions of the profile it implements:
   profile were imported into the file's default namespace, so a refinement never takes a prefix
   and never has to resolve which of several homonymous definitions it means: there is one
   implemented profile, and its names are unique within it.
-- **Every entry is a refinement.** An entry under `functions`, `interface_types`, `node_types`,
+- **Every entry is a refinement.** An entry under `functions`, `node_types`,
   `relationship_types`, `group_types` or `policy_types` must name a definition of the implemented
   profile, and may contain only `implementation`, with the keynames that lead to it: `signatures`
   and a signature's `name` for a function, `interfaces` and `operations` for an operation.
@@ -240,31 +240,40 @@ imports:
   - profile: com.example.wasm:1.0
     namespace: wasm
 
-interface_types:
-  Kubernetes:
-    operations:
-      create:
-        implementation: &kubernetes
-          primary:
-            type: wasm:WasmPlugin
-            file: artifacts/kubernetes-1.36.wasm
-      delete:
-        implementation: *kubernetes
-
 node_types:
   Deployment:
     interfaces:
       Kubernetes:
         operations:
+          create:
+            implementation: &kubernetes
+              primary:
+                type: wasm:WasmPlugin
+                file: artifacts/kubernetes-1.36.wasm
+          delete:
+            implementation: *kubernetes
           apply:
+            implementation: *kubernetes
+  Service:
+    interfaces:
+      Kubernetes:
+        operations:
+          create:
+            implementation: *kubernetes
+          delete:
             implementation: *kubernetes
 ```
 
-Refining an interface type's operation is the case §11.4 has no site for today: it permits an
-implementation only during refinement, and every refinement site available derives a type or sits
-in a service template. In an implementing file the refinement creates no type: `Deployment` is
-still the implemented profile's `Deployment`, so a template that names it, and a substitution that
-matches it, are unchanged.
+An implementing file refines an operation where a node or relationship type uses its interface,
+never in an interface type. §11.4 forbids an implementation in an interface type definition,
+refinement included, because no node or node type context exists there, and an implementing file
+has no more context than the declaration had. An implementation that every node type using an
+interface shares is therefore written once and repeated per type with YAML aliases.
+
+The node type is the site §11.4 permits, but today only a derived type or a service template
+reaches it. In an implementing file the refinement creates no type: `Deployment` is still the
+implemented profile's `Deployment`, so a template that names it, and a substitution that matches
+it, are unchanged.
 
 ## 5. How a template gets the implementations
 
