@@ -193,8 +193,12 @@ The following figure shows an example of such a template:
 During the orchestration process, TOSCA service templates that use
 types defined a higher level of abstraction must be extended with
 information that is specific to the next lower level of
-abstraction. The TOSCA language provides two mechanisms to accomplish
-this:
+abstraction. The TOSCA language provides three mechanisms to accomplish
+this: derivation, binding, and substitution.
+
+> **Proposed amendment, tracked as I67.** Names binding as a third
+> mechanism, alongside derivation and substitution, and adds [Choosing a
+> Mechanism](#choosing-a-mechanism) below.
 
 ### Derivation
 
@@ -204,6 +208,25 @@ abstract definitions. This approach is shown in the following figure:
 
 ![Derivation](../images/derivation.png)
 
+### Binding
+
+> **Proposed amendment, tracked as I67.**
+
+Using the binding approach, the abstract entity is a *capability type*
+rather than a node type. A requirement names the capability type, and
+any node that offers a capability of that type, or of a type derived
+from it, fulfills the requirement, whatever the type of the node itself.
+A node type derives from a single parent but can offer many
+capabilities, so a node realizes an abstraction by offering its
+capability rather than by inheriting from it.
+
+Placement is binding. A dangling `host` requirement in an abstract
+service template is fulfilled by the `host` capability of one of the
+available platforms, as described in [Make Placement
+Decisions](#make-placement-decisions). What a capability must carry for
+a bound consumer to work unchanged against any node that offers it is
+set out in the [Component/Port Pattern](design-patterns.md#componentport-pattern).
+
 ### Substitution
 
 Using the substitution approach, base node types define an abstract
@@ -212,6 +235,30 @@ concrete implementations for the abstract facade. This approach is
 shown in the following figure:
 
 ![Substitution](../images/substitution.png)
+
+### Choosing a Mechanism
+
+> **Proposed amendment, tracked as I67.**
+
+The mechanism for a step follows from what the step refines:
+
+- **Derivation refines an identity.** Use it when every variant is the
+  same kind of thing as the type it refines: k3s and kubeadm are
+  Kubernetes clusters, and AWS and OpenStack are IaaS platforms.
+- **Binding refines a dependency.** Use it when a consumer needs a
+  contract rather than an ancestor: any node that offers a
+  certificate-issuing endpoint satisfies an enrolling node, whether that
+  node is step-ca or a hosted service.
+- **Substitution refines a component.** Use it when an abstract node in
+  a design is realized by an assembly of nodes, selected by the platform
+  the node is placed on.
+
+Derivation carries one axis of variation, because node types are singly
+inherited. A type that must vary along a second, independent axis
+multiplies into one derived type per combination if derivation carries
+both; binding or substitution carries the second axis instead. [Translating
+Device View to Instance View](#translating-device-view-to-instance-view)
+below is an instance of this.
 
 ### Passing Implementation Details Across a Substitution Boundary
 
@@ -409,6 +456,18 @@ in the following figure:
 
 ![Translate administrator view to device view](../images/administrator-to-device.png)
 
+> **Proposed amendment, tracked as I67.**
+
+Derivation applies where the Administrator View concept is a kind of
+thing, as a Kubernetes cluster or an IaaS platform is. Where it is a
+function that consumers depend on, such as a certificate authority or an
+image registry, the concept is a capability type and the Device View node
+type, named for its product, offers that capability. A product type also
+derives from the type that represents how it is realized, and a singly
+inherited node type has room for only one of the two parents. Where each
+case arises is set out in [Two Dimensions Determine Where a Type
+Belongs](profile-organization.md#two-dimensions-determine-where-a-type-belongs).
+
 #### Translating Device View to Instance View
 
 Derivation could be used again to translate from the device view level
@@ -428,6 +487,12 @@ better approach would be to *dynamically* attach implementations to
 the types defined in device view profiles without having to introduce
 new derived types. Unfortunately, the TOSCA language currently does
 not have any constructs to support such dynamic behavior.
+
+> **Proposed amendment, tracked as I67.**
+
+This is derivation carrying a second axis of variation, the technology
+that implements the operations, alongside the product the type already
+names (see [Choosing a Mechanism](#choosing-a-mechanism)).
 
 > **Tracked as issue I14** (dynamic attachment of implementation
 > artifacts). Needs a language construct; open against a future spec
@@ -556,6 +621,14 @@ following figure shows a node filter that drives placement for the
 `application` node in the abstract service template.
 
 ![Placement Decisions](../images/placement.png)
+
+> **Proposed amendment, tracked as I67.**
+
+Placement is the [binding](#binding) mechanism applied to the `host`
+requirement, and the realization it leads to is the
+[substitution](#substitution) mechanism. Deploying an abstract service
+is therefore binding followed by substitution: the platform a node is
+bound to selects the template that realizes it.
 
 The capability named by the requirement determines which platforms are
 *eligible*; the node filter then chooses among them. In practice a

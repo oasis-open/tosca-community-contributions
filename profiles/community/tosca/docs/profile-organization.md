@@ -121,14 +121,22 @@ TOSCA node types are singly inherited. Expressing the neutral concept as
 a capability avoids the contradiction entirely, because a port is
 *bound* rather than *inherited*, and binding carries no such limit.
 
-This is a specific instance of a more general tension already noted in
-[Translating Device View to Instance
-View](modeling-methodology.md#translating-device-view-to-instance-view) in the modeling
-methodology: where derivation
-is the only mechanism available for crossing a boundary, every
-independent axis of variation has to be expressed as another derived
-type. Capabilities relieve that pressure wherever what the consumer
-needs is a contract rather than an ancestor.
+> **Proposed amendment, tracked as I67.** The two paragraphs below
+> replace the paragraph that followed here.
+
+Binding is one of the three mechanisms for translating between levels,
+described in [Binding](modeling-methodology.md#binding) in the modeling
+methodology. The rule for choosing among them is in [Choosing a
+Mechanism](modeling-methodology.md#choosing-a-mechanism): derivation
+refines an identity, binding a dependency. A certificate authority is a
+dependency of the nodes that enroll with it, not an ancestor of step-ca,
+so it is bound.
+
+The same rule explains the tension noted in [Translating Device View to
+Instance
+View](modeling-methodology.md#translating-device-view-to-instance-view):
+where derivation carries more than one independent axis of variation,
+each combination needs another derived type.
 
 > The profile organization figure above depicts the horizontal dimension
 > only at the System View level. Extending it to show application (and
