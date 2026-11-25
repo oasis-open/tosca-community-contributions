@@ -1,12 +1,10 @@
 # Generating and Post-Processing the Kubernetes Profile
 
-**Status:** Working procedure — cleaned up from the post-processing notes in
-[`README.md`](README.md) (2026-07-21). A couple of items carry review notes (the
-v1.3→v2.0 edit list in Step 1; `IntOrString` in Step 2).
-**Scope:** How `io.kubernetes:1.35` is (re)generated from the upstream Kubernetes
-OpenAPI specification with [`oas2tosca`](https://github.com/ubicity-corp/oas2tosca),
-and the manual post-processing that turns the raw generator output into a working
-TOSCA v2.0 profile.
+**Status:** Working procedure.
+**Scope:** How `io.kubernetes:1.35` is generated from the upstream Kubernetes
+OpenAPI specification with `oas2tosca --kubernetes` from
+[any2tosca](https://github.com/ubicity-corp/any2tosca), and the manual post-processing that turns the generated
+types into a working TOSCA 2.0 profile.
 
 The Kubernetes profile is **not written by hand**. It is generated from the
 Kubernetes OpenAPI specification and then post-processed. This document records
@@ -56,82 +54,111 @@ curl -o k8s-openapi-v2.json \
   "https://raw.githubusercontent.com/kubernetes/kubernetes/$BRANCH/api/openapi-spec/swagger.json"
 ```
 
-To pin a specific Kubernetes version instead, set `BRANCH` explicitly (e.g.
-`BRANCH=release-1.34`).
+To pin a specific Kubernetes version instead, set `BRANCH` explicitly
+(`BRANCH=release-1.35` for this profile).
 
-### 2. Convert to TOSCA with `oas2tosca`
+### 2. Convert to TOSCA with `oas2tosca --kubernetes`
 
-`oas2tosca` generates a set of TOSCA profiles whose names follow the Kubernetes
-API groups:
-
-```bash
-oas2tosca -i k8s-openapi-v2.json -o k8s-profiles
-```
-
-Generator characteristics to keep in mind:
-
-- It currently emits **TOSCA v1.3** (post-processing converts to v2.0 — Part 2, Step 1).
-- It uses **heuristics** to decide when to emit a TOSCA *data type* versus a *node type*.
-- TOSCA has no `any` data type, so `any`-typed values are emitted as **strings**.
-- It converts **only the `v1` version** of each resource. The check is hardcoded
-  (`if version != 'v1': ... return`, in both the node-type and data-type paths of
-  `swagger.py`), so when the OpenAPI defines a resource at several versions in the
-  same group (`v1`, `v1beta1`, `v1alpha1`, `v2`, …) only the exact-`v1` schema is
-  kept and the rest are silently skipped. A kind that exists *only* at a non-`v1`
-  version is omitted from the generated profile entirely and must be added by hand.
-
-### 3. Aggregate the per-API-group files into the profile
-
-The generator emits one file per API group under `io/k8s/...`. The unmodified
-output for 1.35 is kept in this repository at [`profiles/io/k8s/`](../../k8s/)
-(26 profiles, one per API group and apimachinery package), as the reference for
-what the generator produces before any post-processing. Copy the files into the
-profile under its flat file names:
+`oas2tosca` is part of [any2tosca](https://github.com/ubicity-corp/any2tosca) (`pip install "any2tosca>=0.2"`).
+With `--kubernetes` it writes one TOSCA 2.0 file per API group, packaged as one
+profile:
 
 ```bash
-cp io/k8s/apimachinery/pkg/apis/meta/profile.yaml     io/kubernetes/1.35/meta.yaml
-cp io/k8s/apimachinery/pkg/api/resource/profile.yaml  io/kubernetes/1.35/resource.yaml
-cp io/k8s/apimachinery/pkg/runtime/profile.yaml       io/kubernetes/1.35/runtime.yaml
-cp io/k8s/apimachinery/pkg/util/intstr/profile.yaml   io/kubernetes/1.35/intstr.yaml
-cp io/k8s/api/core/profile.yaml                        io/kubernetes/1.35/core.yaml
-cp io/k8s/api/apps/profile.yaml                        io/kubernetes/1.35/apps.yaml
-cp io/k8s/api/storage/profile.yaml                     io/kubernetes/1.35/storage.yaml
-cp io/k8s/api/networking/profile.yaml                  io/kubernetes/1.35/networking.yaml
-cp io/k8s/api/rbac/profile.yaml                        io/kubernetes/1.35/rbac.yaml
+oas2tosca --kubernetes k8s-openapi-v2.json --profile io.kubernetes:1.35 -o k8s-generated
 ```
 
-At this stage every generated node type derives directly from `tosca.nodes.Root`,
-one node type per Kubernetes resource kind:
+What the generated files contain:
 
-Raw generated node types, by file:
+- **Files.** One per GA API group (`core.yaml`, `apps.yaml`, `batch.yaml`, …; the
+  `resource.k8s.io` group is `dra.yaml`), plus `meta.yaml`, `resource.yaml`
+  (`Quantity`), `runtime.yaml` and `intstr.yaml` for the apimachinery packages the
+  groups share, and `apiextensions.yaml` and `apiregistration.yaml`. Alpha and beta
+  versions and the `*List` kinds are left out; for `autoscaling`, `v2` replaces
+  the `v1` `HorizontalPodAutoscaler`. `profile.yaml` imports every file in
+  dependency order, and `TOSCA.meta` names it as the entry definitions.
+- **Node types** for the resources: the schemas the API creates in a collection
+  it can also read back. Action requests (`Binding`, `Eviction`, `TokenRequest`,
+  the access reviews) and `Scale` are data types. No node type derives from
+  another.
+- **Resource metadata.** Each resource node type carries its
+  `x-kubernetes-group-version-kind` as metadata (`group: ''` for the core group),
+  has no `apiVersion` or `kind` property (the type determines both), and declares
+  `status` as an attribute.
+- **Merge semantics** of lists and maps (`x-kubernetes-list-type`,
+  `x-kubernetes-list-map-keys`, `x-kubernetes-map-type`) as property metadata.
+- **Embedded resources.** A resource used as a value inside another schema has a
+  companion data type with the same properties: `StatefulSetSpec.volumeClaimTemplates`
+  is a list of `core:PersistentVolumeClaimValue`.
+- **Untyped values.** TOSCA has no `any` type, so a schema that accepts any JSON
+  value derives from `string`, as does `IntOrString`.
+- **Validation** where the schema states bounds (`minimum`, `maximum`,
+  `pattern`, `enum`). Integer formats (`int32`, `int64`) add no range check.
 
-**core.yaml:** `Namespace`, `Binding`, `ConfigMap`, `Endpoints`, `Event`,
-`LimitRange`, `PersistentVolumeClaim`, `Pod`, `PodTemplate`,
-`ReplicationController`, `ResourceQuota`, `Secret`, `ServiceAccount`, `Service`,
-`Node`, `PersistentVolume`
+### 3. Copy the generated files into the profile
+
+Copy the generated files, except `profile.yaml` and `TOSCA.meta`, into
+`io/kubernetes/1.35/`, and set the `imports` list of the profile's `profile.yaml`
+to the generated one.
+
+Generated node types, by file:
+
+**admissionregistration.yaml:** `MutatingWebhookConfiguration`,
+`ValidatingAdmissionPolicy`, `ValidatingAdmissionPolicyBinding`,
+`ValidatingWebhookConfiguration`
+
+**apiextensions.yaml:** `CustomResourceDefinition`
+
+**apiregistration.yaml:** `APIService`
 
 **apps.yaml:** `ControllerRevision`, `DaemonSet`, `Deployment`, `ReplicaSet`,
 `StatefulSet`
 
-**rbac.yaml:** `ClusterRoleBinding`, `ClusterRole`, `RoleBinding`, `Role`
+**autoscaling.yaml:** `HorizontalPodAutoscaler`
+
+**batch.yaml:** `CronJob`, `Job`
+
+**certificates.yaml:** `CertificateSigningRequest`
+
+**coordination.yaml:** `Lease`
+
+**core.yaml:** `ConfigMap`, `Endpoints`, `Event`, `LimitRange`, `Namespace`,
+`Node`, `PersistentVolume`, `PersistentVolumeClaim`, `Pod`, `PodTemplate`,
+`ReplicationController`, `ResourceQuota`, `Secret`, `Service`, `ServiceAccount`
+
+**discovery.yaml:** `EndpointSlice`
+
+**dra.yaml:** `DeviceClass`, `ResourceClaim`, `ResourceClaimTemplate`,
+`ResourceSlice`
+
+**events.yaml:** `Event`
+
+**flowcontrol.yaml:** `FlowSchema`, `PriorityLevelConfiguration`
+
+**networking.yaml:** `IPAddress`, `Ingress`, `IngressClass`, `NetworkPolicy`,
+`ServiceCIDR`
+
+**node.yaml:** `RuntimeClass`
+
+**policy.yaml:** `PodDisruptionBudget`
+
+**rbac.yaml:** `ClusterRole`, `ClusterRoleBinding`, `Role`, `RoleBinding`
+
+**scheduling.yaml:** `PriorityClass`
 
 **storage.yaml:** `CSIDriver`, `CSINode`, `CSIStorageCapacity`, `StorageClass`,
 `VolumeAttachment`, `VolumeAttributesClass`
 
-**networking.yaml:** `IngressClass`, `IPAddress`, `Ingress`, `NetworkPolicy`,
-`ServiceCIDR`
-
-This list covers only the API groups aggregated in Step 3 (`core`, `apps`,
-`storage`, `networking`, `rbac`) at their `v1` version. Other groups are not
-included — notably `batch` (`Job`, `CronJob`); see [Remaining work](#remaining-work).
+This repository keeps the output of the separate `oas2tosca` tool for 1.35
+at [`profiles/io/k8s/`](../../k8s/). The any2tosca design
+([`docs/kubernetes.md`](https://github.com/ubicity-corp/any2tosca/blob/master/docs/kubernetes.md),
+*Baseline comparison*) lists how the files above differ from it.
 
 ---
 
 ## Part 2 — Post-processing (manual)
 
-The raw output is a flat list of node types, each deriving from
-`tosca.nodes.Root`. Post-processing turns it into a DRY, validated, working v2.0
-profile. Apply the steps in order. The overarching goals are:
+The generated node types are flat: none derives from another. Post-processing
+turns them into a DRY, working profile. Apply the steps in order. The overarching goals are:
 
 1. **Introduce inheritance** to promote DRY (don't repeat yourself).
 2. **Introduce capabilities and requirements** to formalize the allowed
@@ -139,84 +166,25 @@ profile. Apply the steps in order. The overarching goals are:
 3. **Wire `spec` values across relationships** with `$get_property` /
    `$get_attribute` so template authors don't repeat them.
 
-### Step 1 — Convert TOSCA v1.3 → v2.0
+### Step 1 — Add the external profile import
 
-The generator emits v1.3. Convert each aggregated file to v2.0. (As of
-2026-07-21 all aggregated files are v2.0; the edits below were applied to the
-remaining `meta`/`resource`/`runtime`/`intstr`/`networking`/`rbac`/`storage`
-files.)
+The hand-written additions in the steps below use types from another profile.
+Add `- profile: community.tosca.technology.base:0.2` (namespace `base`) to
+`core.yaml` and `apps.yaml`, the files those additions go into. It provides the
+`Root` node type, the `Bash` artifact type (Step 7), and, through its own
+`community.tosca.core` import, the base capability and relationship types.
 
-The concrete edits:
-
-1. **Version.** `tosca_definitions_version: tosca_simple_yaml_1_3` → `tosca_2_0`.
-2. **Profile naming.** Drop the per-file `namespace: io.k8s.<group>` line. In v2.0
-   the profile name is declared once, in `profile.yaml` (`profile:
-   io.kubernetes:1.35`); the aggregated sub-files carry no `profile:` /
-   `namespace:` of their own.
-3. **Imports.** Three edits:
-   - **Syntax.** `- file: X` + `namespace_prefix: Y` → `- url: X` + `namespace: Y`.
-   - **Repoint siblings to the aggregated files.** The generator imports sibling
-     profiles by their full dotted name (`- file: io.k8s.apimachinery.pkg.apis.meta`);
-     after aggregation (Part 1, Step 3) these must point at the local file names
-     (`- url: meta.yaml`).
-   - **Add the external profile import** the generator never emits but the
-     post-processing needs: `community.tosca.technology.base:0.2` (`base`). It
-     provides the `Root` node type, the `Bash` artifact type (used in Step 8),
-     and — via its own `community.tosca.core` import — the base
-     capability/relationship types and the `$in_range` function. The `cluster`
-     requirement also targets `base:Kubernetes` / `base:KubernetesCluster`,
-     expected in the base profile.
-4. **Property constraints → validation.** v1.3
-   `constraints:` / `- in_range: [MIN, MAX]` becomes v2.0
-   `validation:` / `$in_range: [$value, [MIN, MAX]]` — note the 2-arg community
-   `$in_range` signature with the range as a nested list.
-5. **`$in_range` import.** `in_range` is a v1.3 *built-in* but a v2.0 *function*
-   (defined in `community.tosca.core` and re-exported by
-   `community.tosca.technology.base`). Any file that uses it therefore needs the
-   `- profile: community.tosca.technology.base:0.2` import (namespace `base`, from
-   which `$in_range` resolves unprefixed). Files with no `in_range` need no such
-   import. (`meta.yaml`, `networking.yaml`, and `storage.yaml` required it.)
-
-> **Note.** The full conversion (2026-07-21) confirmed these are the only
-> constructs present in the converted files: the version keyword, the per-file
-> `namespace:`, `file:`/`namespace_prefix:` imports, and `in_range` constraints
-> (plus the `$in_range` import above). No other v1.3-only constructs
-> (`occurrences`, other constraint operators, function-syntax differences)
-> appeared.
-
-### Step 2 — Fix known generator bugs
-
-- **`PodTemplate`.** `oas2tosca` emits `PodTemplate` as a *node type* with a
-  `template` property of type `PodTemplateSpec`. It should be a **data type**.
-  Convert it by hand.
-- **`IntOrString`.** Kubernetes' `IntOrString` is a *union* type — a field that
-  accepts either an `int32` or a `string` (e.g. a port given as the number `8080`
-  or the named port `"http"`). TOSCA has no union (or `any`) type, so the
-  generator emits it as `derived_from: string` (see `intstr.yaml`). The
-  consequence is that the integer branch is lost: a numeric value must be quoted
-  (`"8080"`), and design-time validation can enforce only "string," not "int32
-  *or* string." The profile currently keeps the `string` modeling.
-  > **Note.** The right long-term modeling of `IntOrString` is open —
-  > string-with-convention, a custom validation function, or accepting the
-  > limitation. TOSCA provides no native union type.
-- **Empty values.** The generator sometimes emits an empty scalar where a value
-  is expected (e.g. `group:`, `Examples:`); replace these with an empty map
-  (`group: {}`, `Examples: {}`) so the file is valid.
-
-### Step 3 — Introduce the top-level `Resource` node type
+### Step 2 — Introduce the top-level `Resource` node type
 
 Introduce a base `Resource` node type that all resource node types inherit from:
 
-- **Keep** the `metadata` property (inherited by all node types).
-- **Remove** the `apiVersion` and `kind` properties — these are hard-coded in the
-  implementation artifacts.
-- **Keep** each type's `x-kubernetes-group-version-kind` metadata block. The
-  `apiVersion`/`kind` *properties* are removed, but the group/version/kind
-  *metadata* stays — the lifecycle artifacts read it to build the manifest.
-- Turn `status` into an **attribute** rather than a property, and drop its
-  `required` keyword.
+- **Define** the `metadata` property on `Resource`, inherited by all node types.
+- The generated types already have no `apiVersion` or `kind` property, carry
+  their `x-kubernetes-group-version-kind` metadata, and declare `status` as an
+  attribute (Part 1, Step 2). The lifecycle artifacts hard-code the manifest's
+  `apiVersion` and `kind` (Part 3).
 
-### Step 4 — Separate cluster-scoped from namespaced resources
+### Step 3 — Separate cluster-scoped from namespaced resources
 
 **Cluster-scoped** resources (not namespaced) derive directly from `Resource`:
 
@@ -234,7 +202,7 @@ Introduce a **`NamespacedResource`** node type for everything else:
 - Sets `metadata.namespace` to the name of the target namespace.
 - All remaining node types derive from `NamespacedResource`.
 
-### Step 5 — Introduce workload types
+### Step 4 — Introduce workload types
 
 - **Pod:** a base `Pod`; a `Pod` that advertises the `Workload` capability and
   makes `labels` mandatory; and a `StandalonePod`.
@@ -244,7 +212,7 @@ Introduce a **`NamespacedResource`** node type for everything else:
   relationship). Derived classes set their pod template from the properties of
   the `pod` relationship's target.
 
-### Step 6 — Introduce capabilities and requirements
+### Step 5 — Introduce capabilities and requirements
 
 Formalize the allowed interactions between resources using the profile's
 capability and relationship types (defined in `core.yaml`):
@@ -255,7 +223,7 @@ capability and relationship types (defined in `core.yaml`):
 | `Identity` | `ServiceAccount` | `RunsAs` (pod → service account) |
 | `Workload` | `Pod` | `Controls` (controller → pod), `Exposes` (service → pod) |
 
-### Step 7 — Wire `spec` values across relationships
+### Step 6 — Wire `spec` values across relationships
 
 Where possible, set `spec` property values in the node types using
 `$get_property` / `$get_attribute` across TOSCA relationships, rather than
@@ -273,7 +241,7 @@ spec:
       spec: {$get_property: [SELF, RELATIONSHIP, pod, TARGET, spec]}
 ```
 
-### Step 8 — Wire lifecycle operations into the deployable types
+### Step 7 — Wire lifecycle operations into the deployable types
 
 Add `interfaces:` / `operations:` to the node types the orchestrator deploys,
 pointing each operation at its Bash artifact (the `base:Bash` type imported in
@@ -324,15 +292,15 @@ missing) is listed under [Remaining work](#remaining-work).
 
 ## Known issues / generator limitations
 
-- **`oas2tosca` emits TOSCA v1.3** — must be converted to v2.0 (Step 1).
-- **Only `v1` resources are converted** — the `version == 'v1'` check is hardcoded,
-  so multi-version resources keep only their `v1` schema and non-`v1`-only kinds
-  are dropped (Part 1, Step 2). One of the reasons the tool is slated for
-  replacement by `any2tosca`.
-- **`any` → string** — TOSCA has no `any` data type (Part 1, Step 2).
-- **`PodTemplate` emitted as a node type** instead of a data type (Step 2).
-- **`IntOrString`** — Kubernetes union type (`int32` or `string`) emitted as
-  `derived_from: string`, losing the integer branch (Step 2). *Requires review.*
+- **`IntOrString`.** Kubernetes' `IntOrString` is a union type: a field that
+  accepts either an `int32` or a `string` (a port given as the number `8080` or
+  the named port `"http"`). TOSCA has no union (or `any`) type, so it derives
+  from `string` (see `intstr.yaml`). A numeric value must be quoted (`"8080"`),
+  and design-time validation can enforce only "string", not "int32 *or* string".
+- **Untyped values.** A schema that accepts any JSON value derives from
+  `string`.
+- **No range checks from integer formats.** `int32` and `int64` fields accept
+  any integer.
 
 ---
 
@@ -355,14 +323,14 @@ yet, so the orchestrator cannot deploy them:
 
 Each follows the same pattern as `artifacts/deployment/create.sh` — render the
 resource spec from properties, `kubectl apply`, wait for readiness, emit outputs —
-then wire it into the type per Step 8.
+then wire it into the type per Step 7.
 
-### Missing API groups
+### API groups
 
-Only `core`/`apps`/`storage`/`networking`/`rbac` were aggregated (Part 1, Step 3).
-Other groups the generator produced are not included — notably `batch` (`Job`,
-`CronJob`). Aggregate the needed groups (or hand-write the types if the generator
-isn't easily re-runnable for one group) and add their lifecycle scripts.
+Every GA API group is generated (Part 1). Lifecycle scripts and the hand-written
+post-processing of Part 2 cover only `core`, `apps`, `storage`, `networking` and
+`rbac`; the other groups (`batch`: `Job`, `CronJob`, among them) have their
+generated types only.
 
 ### Service convenience subtypes (decision)
 
