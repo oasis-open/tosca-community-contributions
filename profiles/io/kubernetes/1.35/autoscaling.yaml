@@ -1,0 +1,663 @@
+tosca_definitions_version: tosca_2_0
+description: Types generated from JSON Schema by any2tosca
+imports:
+- url: meta.yaml
+  namespace: meta
+- url: resource.yaml
+  namespace: resource
+data_types:
+  Scale:
+    description: Scale represents a scaling request for a resource.
+    metadata:
+      x-kubernetes-group-version-kind:
+        group: autoscaling
+        kind: Scale
+        version: v1
+    properties:
+      apiVersion:
+        type: string
+        description: >-
+          APIVersion defines the versioned schema of this representation of an object. Servers
+          should convert recognized schemas to the latest internal value, and may reject unrecognized
+          values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+        required: false
+      kind:
+        type: string
+        description: >-
+          Kind is a string value representing the REST resource this object represents. Servers
+          may infer this from the endpoint the client submits requests to. Cannot be updated.
+          In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        required: false
+      metadata:
+        type: meta:ObjectMeta
+        description: >-
+          Standard object metadata; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata.
+        required: false
+      spec:
+        type: ScaleSpec
+        description: >-
+          spec defines the behavior of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
+        required: false
+      status:
+        type: ScaleStatus
+        description: >-
+          status is the current status of the scale. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
+          Read-only.
+        required: false
+  ScaleSpec:
+    description: ScaleSpec describes the attributes of a scale subresource.
+    properties:
+      replicas:
+        type: integer
+        description: >-
+          replicas is the desired number of instances for the scaled object.
+        required: false
+  ScaleStatus:
+    description: >-
+      ScaleStatus represents the current status of a scale subresource.
+    properties:
+      replicas:
+        type: integer
+        description: >-
+          replicas is the actual number of observed instances of the scaled object.
+        required: true
+      selector:
+        type: string
+        description: >-
+          selector is the label query over pods that should match the replicas count. This
+          is same as the label selector but in the string format to avoid introspection by
+          clients. The string will be in the same format as the query-param syntax. More info
+          about label selectors: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+        required: false
+  ContainerResourceMetricSource:
+    description: >-
+      ContainerResourceMetricSource indicates how to scale on a resource metric known to Kubernetes,
+      as specified in requests and limits, describing each pod in the current scale target
+      (e.g. CPU or memory).  The values will be averaged together before being compared to
+      the target.  Such metrics are built in to Kubernetes, and have special scaling options
+      on top of those available to normal per-pod metrics using the "pods" source.  Only one
+      "target" type should be set.
+    properties:
+      container:
+        type: string
+        description: >-
+          container is the name of the container in the pods of the scaling target
+        required: true
+      name:
+        type: string
+        description: name is the name of the resource in question.
+        required: true
+      target:
+        type: MetricTarget
+        description: target specifies the target value for the given metric
+        required: true
+  ContainerResourceMetricStatus:
+    description: >-
+      ContainerResourceMetricStatus indicates the current value of a resource metric known
+      to Kubernetes, as specified in requests and limits, describing a single container in
+      each pod in the current scale target (e.g. CPU or memory).  Such metrics are built in
+      to Kubernetes, and have special scaling options on top of those available to normal
+      per-pod metrics using the "pods" source.
+    properties:
+      container:
+        type: string
+        description: >-
+          container is the name of the container in the pods of the scaling target
+        required: true
+      current:
+        type: MetricValueStatus
+        description: current contains the current value for the given metric
+        required: true
+      name:
+        type: string
+        description: name is the name of the resource in question.
+        required: true
+  CrossVersionObjectReference:
+    description: >-
+      CrossVersionObjectReference contains enough information to let you identify the referred
+      resource.
+    properties:
+      apiVersion:
+        type: string
+        description: apiVersion is the API version of the referent
+        required: false
+      kind:
+        type: string
+        description: >-
+          kind is the kind of the referent; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+        required: true
+      name:
+        type: string
+        description: >-
+          name is the name of the referent; More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+        required: true
+  ExternalMetricSource:
+    description: >-
+      ExternalMetricSource indicates how to scale on a metric not associated with any Kubernetes
+      object (for example length of queue in cloud messaging service, or QPS from loadbalancer
+      running outside of cluster).
+    properties:
+      metric:
+        type: MetricIdentifier
+        description: metric identifies the target metric by name and selector
+        required: true
+      target:
+        type: MetricTarget
+        description: target specifies the target value for the given metric
+        required: true
+  ExternalMetricStatus:
+    description: >-
+      ExternalMetricStatus indicates the current value of a global metric not associated with
+      any Kubernetes object.
+    properties:
+      current:
+        type: MetricValueStatus
+        description: current contains the current value for the given metric
+        required: true
+      metric:
+        type: MetricIdentifier
+        description: metric identifies the target metric by name and selector
+        required: true
+  HPAScalingPolicy:
+    description: >-
+      HPAScalingPolicy is a single policy which must hold true for a specified past interval.
+    properties:
+      periodSeconds:
+        type: integer
+        description: >-
+          periodSeconds specifies the window of time for which the policy should hold true.
+          PeriodSeconds must be greater than zero and less than or equal to 1800 (30 min).
+        required: true
+      type:
+        type: string
+        description: type is used to specify the scaling policy.
+        required: true
+      value:
+        type: integer
+        description: >-
+          value contains the amount of change which is permitted by the policy. It must be
+          greater than zero
+        required: true
+  HPAScalingRules:
+    description: >-
+      HPAScalingRules configures the scaling behavior for one direction via scaling Policy
+      Rules and a configurable metric tolerance.
+
+
+      Scaling Policy Rules are applied after calculating DesiredReplicas from metrics for
+      the HPA. They can limit the scaling velocity by specifying scaling policies. They can
+      prevent flapping by specifying the stabilization window, so that the number of replicas
+      is not set instantly, instead, the safest value from the stabilization window is chosen.
+
+
+      The tolerance is applied to the metric values and prevents scaling too eagerly for small
+      metric variations. (Note that setting a tolerance requires the beta HPAConfigurableTolerance
+      feature gate to be enabled.)
+    properties:
+      policies:
+        type: list
+        description: >-
+          policies is a list of potential scaling polices which can be used during scaling.
+          If not set, use the default values: - For scale up: allow doubling the number of
+          pods, or an absolute change of 4 pods in a 15s window. - For scale down: allow all
+          pods to be removed in a 15s window.
+        required: false
+        entry_schema:
+          type: HPAScalingPolicy
+        metadata:
+          x-kubernetes-list-type: atomic
+      selectPolicy:
+        type: string
+        description: >-
+          selectPolicy is used to specify which policy should be used. If not set, the default
+          value Max is used.
+        required: false
+      stabilizationWindowSeconds:
+        type: integer
+        description: >-
+          stabilizationWindowSeconds is the number of seconds for which past recommendations
+          should be considered while scaling up or scaling down. StabilizationWindowSeconds
+          must be greater than or equal to zero and less than or equal to 3600 (one hour).
+          If not set, use the default values: - For scale up: 0 (i.e. no stabilization is
+          done). - For scale down: 300 (i.e. the stabilization window is 300 seconds long).
+        required: false
+      tolerance:
+        type: resource:Quantity
+        description: >-
+          tolerance is the tolerance on the ratio between the current and desired metric value
+          under which no updates are made to the desired number of replicas (e.g. 0.01 for
+          1%). Must be greater than or equal to zero. If not set, the default cluster-wide
+          tolerance is applied (by default 10%).
+
+
+          For example, if autoscaling is configured with a memory consumption target of 100Mi,
+          and scale-down and scale-up tolerances of 5% and 1% respectively, scaling will be
+          triggered when the actual consumption falls below 95Mi or exceeds 101Mi.
+
+
+          This is an beta field and requires the HPAConfigurableTolerance feature gate to
+          be enabled.
+        required: false
+  HorizontalPodAutoscalerBehavior:
+    description: >-
+      HorizontalPodAutoscalerBehavior configures the scaling behavior of the target in both
+      Up and Down directions (scaleUp and scaleDown fields respectively).
+    properties:
+      scaleDown:
+        type: HPAScalingRules
+        description: >-
+          scaleDown is scaling policy for scaling Down. If not set, the default value is to
+          allow to scale down to minReplicas pods, with a 300 second stabilization window
+          (i.e., the highest recommendation for the last 300sec is used).
+        required: false
+      scaleUp:
+        type: HPAScalingRules
+        description: >-
+          scaleUp is scaling policy for scaling Up. If not set, the default value is the higher
+          of:
+            * increase no more than 4 pods per 60 seconds
+            * double the number of pods per 60 seconds
+          No stabilization is used.
+        required: false
+  HorizontalPodAutoscalerCondition:
+    description: >-
+      HorizontalPodAutoscalerCondition describes the state of a HorizontalPodAutoscaler at
+      a certain point.
+    properties:
+      lastTransitionTime:
+        type: meta:Time
+        description: >-
+          lastTransitionTime is the last time the condition transitioned from one status to
+          another
+        required: false
+      message:
+        type: string
+        description: >-
+          message is a human-readable explanation containing details about the transition
+        required: false
+      reason:
+        type: string
+        description: reason is the reason for the condition's last transition.
+        required: false
+      status:
+        type: string
+        description: status is the status of the condition (True, False, Unknown)
+        required: true
+      type:
+        type: string
+        description: type describes the current condition
+        required: true
+  HorizontalPodAutoscalerSpec:
+    description: >-
+      HorizontalPodAutoscalerSpec describes the desired functionality of the HorizontalPodAutoscaler.
+    properties:
+      behavior:
+        type: HorizontalPodAutoscalerBehavior
+        description: >-
+          behavior configures the scaling behavior of the target in both Up and Down directions
+          (scaleUp and scaleDown fields respectively). If not set, the default HPAScalingRules
+          for scale up and scale down are used.
+        required: false
+      maxReplicas:
+        type: integer
+        description: >-
+          maxReplicas is the upper limit for the number of replicas to which the autoscaler
+          can scale up. It cannot be less that minReplicas.
+        required: true
+      metrics:
+        type: list
+        description: >-
+          metrics contains the specifications for which to use to calculate the desired replica
+          count (the maximum replica count across all metrics will be used).  The desired
+          replica count is calculated multiplying the ratio between the target value and the
+          current value by the current number of pods.  Ergo, metrics used must decrease as
+          the pod count is increased, and vice-versa.  See the individual metric source types
+          for more information about how each type of metric must respond. If not set, the
+          default metric will be set to 80% average CPU utilization.
+        required: false
+        entry_schema:
+          type: MetricSpec
+        metadata:
+          x-kubernetes-list-type: atomic
+      minReplicas:
+        type: integer
+        description: >-
+          minReplicas is the lower limit for the number of replicas to which the autoscaler
+          can scale down.  It defaults to 1 pod.  minReplicas is allowed to be 0 if the alpha
+          feature gate HPAScaleToZero is enabled and at least one Object or External metric
+          is configured.  Scaling is active as long as at least one metric value is available.
+        required: false
+      scaleTargetRef:
+        type: CrossVersionObjectReference
+        description: >-
+          scaleTargetRef points to the target resource to scale, and is used to the pods for
+          which metrics should be collected, as well as to actually change the replica count.
+        required: true
+  HorizontalPodAutoscalerStatus:
+    description: >-
+      HorizontalPodAutoscalerStatus describes the current status of a horizontal pod autoscaler.
+    properties:
+      conditions:
+        type: list
+        description: >-
+          conditions is the set of conditions required for this autoscaler to scale its target,
+          and indicates whether or not those conditions are met.
+        required: false
+        entry_schema:
+          type: HorizontalPodAutoscalerCondition
+        metadata:
+          x-kubernetes-list-type: map
+          x-kubernetes-list-map-keys: [type]
+      currentMetrics:
+        type: list
+        description: >-
+          currentMetrics is the last read state of the metrics used by this autoscaler.
+        required: false
+        entry_schema:
+          type: MetricStatus
+        metadata:
+          x-kubernetes-list-type: atomic
+      currentReplicas:
+        type: integer
+        description: >-
+          currentReplicas is current number of replicas of pods managed by this autoscaler,
+          as last seen by the autoscaler.
+        required: false
+      desiredReplicas:
+        type: integer
+        description: >-
+          desiredReplicas is the desired number of replicas of pods managed by this autoscaler,
+          as last calculated by the autoscaler.
+        required: true
+      lastScaleTime:
+        type: meta:Time
+        description: >-
+          lastScaleTime is the last time the HorizontalPodAutoscaler scaled the number of
+          pods, used by the autoscaler to control how often the number of pods is changed.
+        required: false
+      observedGeneration:
+        type: integer
+        description: >-
+          observedGeneration is the most recent generation observed by this autoscaler.
+        required: false
+  MetricIdentifier:
+    description: >-
+      MetricIdentifier defines the name and optionally selector for a metric
+    properties:
+      name:
+        type: string
+        description: name is the name of the given metric
+        required: true
+      selector:
+        type: meta:LabelSelector
+        description: >-
+          selector is the string-encoded form of a standard kubernetes label selector for
+          the given metric When set, it is passed as an additional parameter to the metrics
+          server for more specific metrics scoping. When unset, just the metricName will be
+          used to gather metrics.
+        required: false
+  MetricSpec:
+    description: >-
+      MetricSpec specifies how to scale based on a single metric (only `type` and one other
+      matching field should be set at once).
+    properties:
+      containerResource:
+        type: ContainerResourceMetricSource
+        description: >-
+          containerResource refers to a resource metric (such as those specified in requests
+          and limits) known to Kubernetes describing a single container in each pod of the
+          current scale target (e.g. CPU or memory). Such metrics are built in to Kubernetes,
+          and have special scaling options on top of those available to normal per-pod metrics
+          using the "pods" source.
+        required: false
+      external:
+        type: ExternalMetricSource
+        description: >-
+          external refers to a global metric that is not associated with any Kubernetes object.
+          It allows autoscaling based on information coming from components running outside
+          of cluster (for example length of queue in cloud messaging service, or QPS from
+          loadbalancer running outside of cluster).
+        required: false
+      object:
+        type: ObjectMetricSource
+        description: >-
+          object refers to a metric describing a single kubernetes object (for example, hits-per-second
+          on an Ingress object).
+        required: false
+      pods:
+        type: PodsMetricSource
+        description: >-
+          pods refers to a metric describing each pod in the current scale target (for example,
+          transactions-processed-per-second).  The values will be averaged together before
+          being compared to the target value.
+        required: false
+      resource:
+        type: ResourceMetricSource
+        description: >-
+          resource refers to a resource metric (such as those specified in requests and limits)
+          known to Kubernetes describing each pod in the current scale target (e.g. CPU or
+          memory). Such metrics are built in to Kubernetes, and have special scaling options
+          on top of those available to normal per-pod metrics using the "pods" source.
+        required: false
+      type:
+        type: string
+        description: >-
+          type is the type of metric source.  It should be one of "ContainerResource", "External",
+          "Object", "Pods" or "Resource", each mapping to a matching field in the object.
+        required: true
+  MetricStatus:
+    description: >-
+      MetricStatus describes the last-read state of a single metric.
+    properties:
+      containerResource:
+        type: ContainerResourceMetricStatus
+        description: >-
+          container resource refers to a resource metric (such as those specified in requests
+          and limits) known to Kubernetes describing a single container in each pod in the
+          current scale target (e.g. CPU or memory). Such metrics are built in to Kubernetes,
+          and have special scaling options on top of those available to normal per-pod metrics
+          using the "pods" source.
+        required: false
+      external:
+        type: ExternalMetricStatus
+        description: >-
+          external refers to a global metric that is not associated with any Kubernetes object.
+          It allows autoscaling based on information coming from components running outside
+          of cluster (for example length of queue in cloud messaging service, or QPS from
+          loadbalancer running outside of cluster).
+        required: false
+      object:
+        type: ObjectMetricStatus
+        description: >-
+          object refers to a metric describing a single kubernetes object (for example, hits-per-second
+          on an Ingress object).
+        required: false
+      pods:
+        type: PodsMetricStatus
+        description: >-
+          pods refers to a metric describing each pod in the current scale target (for example,
+          transactions-processed-per-second).  The values will be averaged together before
+          being compared to the target value.
+        required: false
+      resource:
+        type: ResourceMetricStatus
+        description: >-
+          resource refers to a resource metric (such as those specified in requests and limits)
+          known to Kubernetes describing each pod in the current scale target (e.g. CPU or
+          memory). Such metrics are built in to Kubernetes, and have special scaling options
+          on top of those available to normal per-pod metrics using the "pods" source.
+        required: false
+      type:
+        type: string
+        description: >-
+          type is the type of metric source.  It will be one of "ContainerResource", "External",
+          "Object", "Pods" or "Resource", each corresponds to a matching field in the object.
+        required: true
+  MetricTarget:
+    description: >-
+      MetricTarget defines the target value, average value, or average utilization of a specific
+      metric
+    properties:
+      averageUtilization:
+        type: integer
+        description: >-
+          averageUtilization is the target value of the average of the resource metric across
+          all relevant pods, represented as a percentage of the requested value of the resource
+          for the pods. Currently only valid for Resource metric source type
+        required: false
+      averageValue:
+        type: resource:Quantity
+        description: >-
+          averageValue is the target value of the average of the metric across all relevant
+          pods (as a quantity)
+        required: false
+      type:
+        type: string
+        description: >-
+          type represents whether the metric type is Utilization, Value, or AverageValue
+        required: true
+      value:
+        type: resource:Quantity
+        description: value is the target value of the metric (as a quantity).
+        required: false
+  MetricValueStatus:
+    description: MetricValueStatus holds the current value for a metric
+    properties:
+      averageUtilization:
+        type: integer
+        description: >-
+          currentAverageUtilization is the current value of the average of the resource metric
+          across all relevant pods, represented as a percentage of the requested value of
+          the resource for the pods.
+        required: false
+      averageValue:
+        type: resource:Quantity
+        description: >-
+          averageValue is the current value of the average of the metric across all relevant
+          pods (as a quantity)
+        required: false
+      value:
+        type: resource:Quantity
+        description: value is the current value of the metric (as a quantity).
+        required: false
+  ObjectMetricSource:
+    description: >-
+      ObjectMetricSource indicates how to scale on a metric describing a kubernetes object
+      (for example, hits-per-second on an Ingress object).
+    properties:
+      describedObject:
+        type: CrossVersionObjectReference
+        description: >-
+          describedObject specifies the descriptions of a object,such as kind,name apiVersion
+        required: true
+      metric:
+        type: MetricIdentifier
+        description: metric identifies the target metric by name and selector
+        required: true
+      target:
+        type: MetricTarget
+        description: target specifies the target value for the given metric
+        required: true
+  ObjectMetricStatus:
+    description: >-
+      ObjectMetricStatus indicates the current value of a metric describing a kubernetes object
+      (for example, hits-per-second on an Ingress object).
+    properties:
+      current:
+        type: MetricValueStatus
+        description: current contains the current value for the given metric
+        required: true
+      describedObject:
+        type: CrossVersionObjectReference
+        description: >-
+          DescribedObject specifies the descriptions of a object,such as kind,name apiVersion
+        required: true
+      metric:
+        type: MetricIdentifier
+        description: metric identifies the target metric by name and selector
+        required: true
+  PodsMetricSource:
+    description: >-
+      PodsMetricSource indicates how to scale on a metric describing each pod in the current
+      scale target (for example, transactions-processed-per-second). The values will be averaged
+      together before being compared to the target value.
+    properties:
+      metric:
+        type: MetricIdentifier
+        description: metric identifies the target metric by name and selector
+        required: true
+      target:
+        type: MetricTarget
+        description: target specifies the target value for the given metric
+        required: true
+  PodsMetricStatus:
+    description: >-
+      PodsMetricStatus indicates the current value of a metric describing each pod in the
+      current scale target (for example, transactions-processed-per-second).
+    properties:
+      current:
+        type: MetricValueStatus
+        description: current contains the current value for the given metric
+        required: true
+      metric:
+        type: MetricIdentifier
+        description: metric identifies the target metric by name and selector
+        required: true
+  ResourceMetricSource:
+    description: >-
+      ResourceMetricSource indicates how to scale on a resource metric known to Kubernetes,
+      as specified in requests and limits, describing each pod in the current scale target
+      (e.g. CPU or memory).  The values will be averaged together before being compared to
+      the target.  Such metrics are built in to Kubernetes, and have special scaling options
+      on top of those available to normal per-pod metrics using the "pods" source.  Only one
+      "target" type should be set.
+    properties:
+      name:
+        type: string
+        description: name is the name of the resource in question.
+        required: true
+      target:
+        type: MetricTarget
+        description: target specifies the target value for the given metric
+        required: true
+  ResourceMetricStatus:
+    description: >-
+      ResourceMetricStatus indicates the current value of a resource metric known to Kubernetes,
+      as specified in requests and limits, describing each pod in the current scale target
+      (e.g. CPU or memory).  Such metrics are built in to Kubernetes, and have special scaling
+      options on top of those available to normal per-pod metrics using the "pods" source.
+    properties:
+      current:
+        type: MetricValueStatus
+        description: current contains the current value for the given metric
+        required: true
+      name:
+        type: string
+        description: name is the name of the resource in question.
+        required: true
+node_types:
+  HorizontalPodAutoscaler:
+    description: >-
+      HorizontalPodAutoscaler is the configuration for a horizontal pod autoscaler, which
+      automatically manages the replica count of any resource implementing the scale subresource
+      based on the metrics specified.
+    metadata:
+      x-kubernetes-group-version-kind:
+        group: autoscaling
+        kind: HorizontalPodAutoscaler
+        version: v2
+    properties:
+      metadata:
+        type: meta:ObjectMeta
+        description: >-
+          metadata is the standard object metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+        required: false
+      spec:
+        type: HorizontalPodAutoscalerSpec
+        description: >-
+          spec is the specification for the behaviour of the autoscaler. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.
+        required: false
+    attributes:
+      status:
+        type: HorizontalPodAutoscalerStatus
+        description: status is the current information about the autoscaler.
