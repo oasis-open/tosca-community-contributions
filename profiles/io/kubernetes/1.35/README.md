@@ -1,11 +1,9 @@
 # TOSCA Kubernetes Profile (`io.kubernetes:1.35`)
 
-TOSCA type definitions for Kubernetes resources. The profile is generated
-semi-automatically from the upstream Kubernetes OpenAPI specification with
-[`oas2tosca`](https://github.com/ubicity-corp/oas2tosca) and then post-processed.
-It is the basis for all current Kubernetes work in this repository; the
-hand-written `io.kubernetes:2.5` profile is retained only for backward
-compatibility.
+TOSCA type definitions for Kubernetes resources. The profile is generated from
+the upstream Kubernetes OpenAPI specification with `oas2tosca --kubernetes` from
+[any2tosca](https://github.com/ubicity-corp/any2tosca) and then post-processed.
+It is the basis for all current Kubernetes work in this repository.
 
 ## What it models
 
@@ -22,7 +20,8 @@ resources interact.
 | File | Contents |
 |------|----------|
 | `profile.yaml` | Top-level file; declares `io.kubernetes:1.35` and imports the rest. |
-| `core.yaml`, `apps.yaml`, `storage.yaml`, `networking.yaml`, `rbac.yaml` | Resource node types, one file per Kubernetes API group. |
+| `core.yaml`, `apps.yaml`, `batch.yaml`, `networking.yaml`, `rbac.yaml`, `storage.yaml`, … | Resource node types and their data types, one file per GA Kubernetes API group (the `resource.k8s.io` group is `dra.yaml`). |
+| `apiextensions.yaml`, `apiregistration.yaml` | `CustomResourceDefinition` and `APIService`. |
 | `meta.yaml`, `resource.yaml`, `runtime.yaml`, `intstr.yaml` | `apimachinery` data types (`ObjectMeta`, `Quantity`, `RawExtension`, `IntOrString`). |
 | `artifacts/` | Bash lifecycle scripts (`create.sh` / `delete.sh`) for the deployable types. |
 
@@ -33,7 +32,8 @@ resources interact.
 
 ## Status
 
-Generated and partially finished: only the stable `v1` version of each resource
-is converted, only the API groups listed above are aggregated (`batch`/`Job` is
-not yet included), and only some types carry lifecycle scripts. See
-[`GENERATING.md`](GENERATING.md) → *Remaining work* for the current gaps.
+Generated and partially finished: every GA API group is generated (alpha and
+beta versions are not), but the hand-written post-processing (inheritance,
+capabilities, requirements, lifecycle wiring) covers only `core`, `apps`,
+`storage`, `networking` and `rbac`, and only some types carry lifecycle scripts.
+See [`GENERATING.md`](GENERATING.md) → *Remaining work* for the current gaps.
