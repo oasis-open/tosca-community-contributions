@@ -82,7 +82,10 @@ Generator characteristics to keep in mind:
 
 ### 3. Aggregate the per-API-group files into the profile
 
-The generator emits one file per API group under `io/k8s/...`. Copy them into the
+The generator emits one file per API group under `io/k8s/...`. The unmodified
+output for 1.35 is kept in this repository at [`profiles/io/k8s/`](../../k8s/)
+(26 profiles, one per API group and apimachinery package), as the reference for
+what the generator produces before any post-processing. Copy the files into the
 profile under its flat file names:
 
 ```bash
