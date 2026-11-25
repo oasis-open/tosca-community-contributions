@@ -19,49 +19,50 @@ description: >-
 
 imports:
 - profile: community.tosca.core:0.2
-- profile: community.tosca.abstract.application:0.2
-  namespace: app
+  namespace: core
 - profile: community.tosca.abstract.platform:0.2
   namespace: platform
+- profile: community.tosca.abstract.application:0.2
+  namespace: app
 
 service_template:
 
   inputs:
     cluster-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node cluster, passed to its substituting template.
     frontend-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node frontend, passed to its substituting template.
     checkout-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node checkout, passed to its substituting template.
     ad-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node ad, passed to its substituting template.
     recommendation-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node recommendation, passed to its substituting template.
     cart-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node cart, passed to its substituting template.
     product-catalog-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node product-catalog, passed to its substituting template.
     shipping-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node shipping, passed to its substituting template.
     currency-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node currency, passed to its substituting template.
     payment-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node payment, passed to its substituting template.
     email-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node email, passed to its substituting template.
     redis-implementation-details:
-      type: YAML
+      type: core:YAML
       description: Opaque implementation details for node redis, passed to its substituting template.
 
   node_templates:
@@ -74,7 +75,7 @@ service_template:
         implementation-details: {$get_input: cluster-implementation-details}
 
     frontend:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: frontend
@@ -95,7 +96,7 @@ service_template:
       - interacts-with: checkout
 
     checkout:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: checkout
@@ -115,7 +116,7 @@ service_template:
       - interacts-with: email
 
     ad:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: ad
@@ -129,7 +130,7 @@ service_template:
       - host: cluster
 
     recommendation:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: recommendation
@@ -144,7 +145,7 @@ service_template:
       - interacts-with: product-catalog
 
     cart:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: cart
@@ -159,7 +160,7 @@ service_template:
       - interacts-with: redis
 
     product-catalog:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: product_catalog
@@ -173,7 +174,7 @@ service_template:
       - host: cluster
 
     shipping:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: shipping
@@ -187,7 +188,7 @@ service_template:
       - host: cluster
 
     currency:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: currency
@@ -201,7 +202,7 @@ service_template:
       - host: cluster
 
     payment:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: payment
@@ -215,7 +216,7 @@ service_template:
       - host: cluster
 
     email:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: email
@@ -229,7 +230,7 @@ service_template:
       - host: cluster
 
     redis:
-      type: app:MicroService
+      type: app:ServiceApplication
       directives: [substitute]
       properties:
         name: redis
