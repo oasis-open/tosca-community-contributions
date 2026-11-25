@@ -149,9 +149,7 @@ Generated node types, by file:
 `VolumeAttachment`, `VolumeAttributesClass`
 
 This repository keeps the output of the separate `oas2tosca` tool for 1.35
-at [`profiles/io/k8s/`](../../k8s/). The any2tosca design
-([`docs/kubernetes.md`](https://github.com/ubicity-corp/any2tosca/blob/master/docs/kubernetes.md),
-*Baseline comparison*) lists how the files above differ from it.
+at [`profiles/io/k8s/`](../../k8s/).
 
 ---
 
