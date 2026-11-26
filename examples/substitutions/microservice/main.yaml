@@ -8,16 +8,28 @@ description: >-
   that exposes it. Rebuilt from main.yaml.old, which used the hand-authored
   community.tosca.technology.kubernetes profile.
 
+
 imports:
+  - profile: community.tosca.core:0.2
+    namespace: core
+  - profile: community.tosca.technology.base:0.2
+    namespace: base
   - profile: community.tosca.abstract.application:0.2
     namespace: app
   - profile: io.kubernetes:1.35
     namespace: k8s
-  - profile: community.tosca.core:0.2
-    namespace: core
+
+
+data_types:
+  ApplicationImplementationDetails:
+    properties:
+      target-port:
+        description: >-
+          Container port.
+        type: core:Port
+
 
 node_types:
-
   # A Pod whose single container is configured from the microservice's own
   # port (as the PORT env var) plus the addresses of the peer microservices
   # it interacts with (as <PEER>_SERVICE_ADDR env vars).
