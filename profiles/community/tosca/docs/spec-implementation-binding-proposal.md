@@ -126,7 +126,7 @@ implementations to the definitions of the profile it implements:
   profile were imported into the file's default namespace, so a refinement never takes a prefix
   and never has to resolve which of several homonymous definitions it means: there is one
   implemented profile, and its names are unique within it.
-- **Every entry is a refinement.** An entry under `functions`, `interface_types`, `node_types`,
+- **Every entry is a refinement.** An entry under `functions`, `node_types`,
   `relationship_types`, `group_types` or `policy_types` must name a definition of the implemented
   profile, and may contain only `implementation`, with the keynames that lead to it: `signatures`
   and a signature's `name` for a function, `interfaces` and `operations` for an operation.
@@ -141,12 +141,12 @@ that declared the definitions, rather than a parallel grammar for refinements. A
 declares nothing, a refinement is never a second definition of the same name, which is what
 §10.4's rule against overlapping definitions prevents.
 
-An implementing file follows the ordinary rule for `profile`: the keyname is optional, and the
-file needs a name of its own only to be imported by profile name, as an orchestrator's own
-profile imports one in Section 3. A processor configured with the file finds it by its
-`implements` value rather than its name. A name with its own version is still the natural way to
-release a corrected implementation of an unchanged profile, and to identify which file was in
-effect for a service. Where one artifact implements many definitions, as a single plugin may
+An implementing file takes effect only by configuration (Section 5). It is never imported, and
+an import that names one is an error. It follows the ordinary rule for `profile`: the keyname is
+optional. A processor configured with the file finds it by its `implements` value rather than
+its name, so a name serves to identify the file: a name with its own version is how a corrected
+implementation of an unchanged profile is released, and how a processor records which file was
+in effect for a service. Where one artifact implements many definitions, as a single plugin may
 implement every function of a profile, the definition is written once and repeated with a YAML
 anchor and aliases.
 
@@ -229,33 +229,6 @@ functions:
             file: functions/to_string_float.py
 ```
 
-An orchestrator's own profile, which templates written for that orchestrator already import,
-declares its own functions and imports the implementing file, so those templates receive
-`core`'s implementations through the imports they already have. How the profile imports `core`,
-into its default namespace or under one, makes no difference to the implementing file:
-
-```yaml
-tosca_definitions_version: tosca_2_0
-profile: com.example.core:1.0
-
-imports:
-  - profile: community.tosca.core:0.2
-    namespace: cc
-  - profile: community.tosca.core.python:0.2
-
-functions:
-  unique_name:
-    signatures:
-      - arguments:
-          - type: string
-        result:
-          type: string
-        implementation:
-          primary:
-            type: Python
-            file: functions/unique_name.py
-```
-
 ## 4. Operations
 
 ```yaml
@@ -267,42 +240,46 @@ imports:
   - profile: com.example.wasm:1.0
     namespace: wasm
 
-interface_types:
-  Kubernetes:
-    operations:
-      create:
-        implementation: &kubernetes
-          primary:
-            type: wasm:WasmPlugin
-            file: artifacts/kubernetes-1.36.wasm
-      delete:
-        implementation: *kubernetes
-
 node_types:
   Deployment:
     interfaces:
       Kubernetes:
         operations:
+          create:
+            implementation: &kubernetes
+              primary:
+                type: wasm:WasmPlugin
+                file: artifacts/kubernetes-1.36.wasm
+          delete:
+            implementation: *kubernetes
           apply:
+            implementation: *kubernetes
+  Service:
+    interfaces:
+      Kubernetes:
+        operations:
+          create:
+            implementation: *kubernetes
+          delete:
             implementation: *kubernetes
 ```
 
-Refining an interface type's operation is the case §11.4 has no site for today: it permits an
-implementation only during refinement, and every refinement site available derives a type or sits
-in a service template. In an implementing file the refinement creates no type: `Deployment` is
-still the implemented profile's `Deployment`, so a template that names it, and a substitution that
-matches it, are unchanged.
+An implementing file refines an operation where a node or relationship type uses its interface,
+never in an interface type. §11.4 forbids an implementation in an interface type definition,
+refinement included, because no node or node type context exists there, and an implementing file
+has no more context than the declaration had. An implementation that every node type using an
+interface shares is therefore written once and repeated per type with YAML aliases.
+
+The node type is the site §11.4 permits, but today only a derived type or a service template
+reaches it. In an implementing file the refinement creates no type: `Deployment` is still the
+implemented profile's `Deployment`, so a template that names it, and a substitution that matches
+it, are unchanged.
 
 ## 5. How a template gets the implementations
 
-**By import.** A service template, or a profile, that imports an implementing file gets its
-implementations under the ordinary rules for imports. An orchestrator's own profile can import
-one, as in Section 3, and pass it on to every template that imports that profile. This needs
-nothing of a processor beyond the grammar in Sections 1 and 2.
-
-**By configuration.** A processor may be configured with implementing files, each applying
-wherever the profile it implements is imported. A service template then imports the implemented
-profile and nothing else: it never names an implementing file, because which implementation runs
+A processor is configured with implementing files, each applying wherever the profile it
+implements is imported. A service template then imports the implemented profile and nothing
+else: it never names an implementing file, because which implementation runs
 is not a modelling question. This is §10.4's *"preconfigured to handle the function call"* given
 a form that can be inspected, and extended to operations. `implements` is both what makes a file
 eligible, since a file that declares nothing cannot bring types or functions into a template
@@ -317,9 +294,6 @@ When a template imports the implemented profile, the processor resolves its defi
 with the implementations it holds for them. The implemented profile is never modified: it stays
 as published, and the binding lives beside it.
 
-**A configured implementing file that a template also imports is one source.** Its refinements
-arrive once, and do not conflict with themselves under the rule in Section 7.
-
 A processor with no implementations for a profile can still parse, validate and reason about
 every template that imports it, and fails only if asked to execute an operation or evaluate a
 function for which it has no implementation. That is the §18.3 processor and §18.4 orchestrator
@@ -331,7 +305,7 @@ orchestration capability reads it as published.
 
 `core` declares its functions' signatures and ships no implementations (D16). Each orchestrator
 supplies its own for the execution environment it already runs, in a file that implements
-`core`, configured into the orchestrator or imported by the orchestrator's own profiles. Declaring
+`core`, configured into the orchestrator. Declaring
 `core` then creates no expectation that any orchestrator support Bash, Python or WebAssembly, and
 no user installs an interpreter their orchestrator does not use.
 
@@ -349,8 +323,8 @@ Two consequences follow for `core`:
 - **A function implementation at its declaration.** Operations may not carry one where they are
   declared (§11.4). Aligning functions with them would make an implementation reach a function
   only by refinement, and would break any profile that ships function implementations today.
-- **Conflicts.** Two implementing files refining the same definition for one template are an
-  error, whether imported or configured, rather than resolved by a precedence rule. A precedence
+- **Conflicts.** Two implementing files refining the same definition are an error, rather than
+  resolved by a precedence rule. A precedence
   rule would make the effective implementation depend on import order or on what happens to be
   installed, where the point of the design is that a model means one thing. Files refining
   disjoint parts of one profile do not conflict.
@@ -370,8 +344,6 @@ Two consequences follow for `core`:
 - **Refinement and derivation.** Whether a type that another profile derives from a refined type
   inherits the implementation, and whether an implementing file may refine a type that the
   implemented profile itself imports from elsewhere.
-- **Substitution.** Whether a substituting template's own imports may bring implementations, and
-  if so whose refinements apply inside the substituted service.
 - **Versions.** `implements` names one version of a profile, so a new version needs its own
   implementing file, and a template importing a version with none is in the position of a
   processor with none.
@@ -395,6 +367,10 @@ Two consequences follow for `core`:
   parameters, or anything else a consumer depends on.
 - **No preprocessing.** Selecting an implementation is a processor decision at parse or run time,
   not a textual variant of the file.
+- **No import of an implementing file.** Importing one would put the choice of implementation
+  back into the model, which Section 5 keeps out of it, and would need rules of its own for a
+  file both imported and configured, and for implementations a substituting template's imports
+  bring into the substituted service.
 
 ## 9. Alternatives
 

@@ -1,6 +1,6 @@
 # Known TOSCA Implementations
 
-The Following is a list of known TOSCA implementations that have been
+The following is a list of known TOSCA implementations that have been
 brought to the attention of the TOSCA community.
 
 Feel free to edit this list. Please keep the list in alphabetical
@@ -14,22 +14,27 @@ Topology, Type, and LCM Design (supports
 [Yorc](https://github.com/ystia/yorc) and
 [Cloudify](https://cloudify.co/))
 
-* Powers [Open Telekom Cloud](https://open-telekom-cloud.com/en)'s
+* Powers [T Cloud Public](https://www.t-cloud-public.com/en)'s
   [Cloud Topology Designer](https://designer.otc-service.com/) tool
 
 ## [Amazon Telco Network Builder](https://aws.amazon.com/tnb)
 Automates the deployment and management of telco networks on AWS. 
 
+## [any2tosca](https://github.com/ubicity-corp/any2tosca)
+Convert JSON Schema, OpenAPI, Redfish and YANG schemas to TOSCA 2.0
+data types and node types (`any2tosca`, `oas2tosca`,
+`redfish2tosca` and `yang2tosca`).
+
+* [any2tosca on PyPI](https://pypi.org/project/any2tosca/)
+
 ## [Apache AriaTosca](http://incubator.apache.org/projects/ariatosca.html)
 The AriaTosca project retired on 2018-07-01
 
-Multi-cloud orchestration, e.g. Amazon, Azure, VMware, OpenStack
-
 ## [CELAR](https://github.com/CELAR/c-Eclipse)
 The CELAR project is an initiative specifically focused on multi-cloud
-elasticity provisioning
+elasticity provisioning (EU research project, ended)
 
-## [Cisco NSO](https://www.cisco.com/c/en/us/products/cloud-systems-management/network-services-orchestrator/index.html)
+## [Cisco Crosswork NSO](https://www.cisco.com/site/us/en/products/networking/software/crosswork-network-services-orchestrator/index.html)
 NSO provides a robust bridge linking network automation and
 orchestration tools with the underlying physical and virtual
 infrastructure
@@ -43,9 +48,10 @@ CPLANE's Orchestration Platform automates deployment, monitoring,
 failure recovery, and evolution of distributed hybrid cloud
 
 ## [DICER](https://github.com/DICERs/DICER)
-Model-driven continuous architecting for BigData deployment
+Model-driven continuous architecting for BigData deployment (EU
+research project, ended)
 
-## [Eclipse Winery](https://projects.eclipse.org/projects/soa.winery)
+## [Eclipse Winery](https://projects.eclipse.org/projects/automotive.winery)
 Eclipse Winery is a web-based environment to graphically model TOSCA
 topologies and plans managing these topologies
 
@@ -65,12 +71,12 @@ Infrastructure Manager (IM) is a tool that deploys complex and
 customized virtual infrastructures on IaaS Cloud deployments (such as
 AWS, OpenStack, etc.).
 
-## [Itential](https://www.itential.com/products/automation-platform/)
+## [Itential](https://www.itential.com/cloud-platform/)
 Easily consume, transform, and federate any data or modeling language
 (YANG, YAML, JSON, and TOSCA), into JSON Schema for easily managing
 data for automations
 
-## [Khutulun](https://khutulun.puccini.cloud/)
+## [Khutulun](https://khutulun.org/)
 A distributed orchestrator for services that speaks TOSCA. Khutulun is
 a straightforward, flexible alternative to Kubernetes, Nomad, etc.
 
@@ -82,13 +88,7 @@ microservices orchestrated by Kubernetes.
 
 ## [MSO4SC HPC](https://github.com/MSO4SC/cloudify-hpc-plugin)
 Cloudify plugin, and DSL definition, to orchestrate and mange
-applications in HPC environments
-
-* [How to use TOSCA](http://doc.mso4sc.eu/infrastructure/latest/components/orchestrator/tosca/README.html)
-
-## [oas2tosca](https://github.com/lauwers/oas2tosca)
-Convert OpenAPI or Swagger specification files to one or more TOSCA
-Profiles.
+applications in HPC environments (EU research project, ended)
 
 ## [ONAP](https://www.onap.org/)
 ONAP is a comprehensive platform for orchestration, management, and
@@ -96,7 +96,7 @@ automation of network and edge computing services for network
 operators, cloud providers, and enterprises
 
 * [JTOSCA parser](https://gerrit.onap.org/r/admin/repos/sdc%2Fjtosca) for SDC component
-* [TOSCA Task Force](https://wiki.onap.org/display/DW/TOSCA+Task+Force)
+* [TOSCA Task Force](https://lf-onap.atlassian.net/wiki/spaces/DW/pages/16317251/TOSCA+Task+Force)
 
 ## [Open Baton](https://openbaton.github.io/)
 Open Baton is a ETSI NFV compliant Management and Orchestration (MANO)
@@ -106,12 +106,11 @@ Framework
 OpenStack is a set of software components that provide common services
 for cloud infrastructure
 
-* [Community App Catalog](http://apps.openstack.org) (integration with TOSCA)
 * [Murano Application Catalog](https://wiki.openstack.org/wiki/Murano) (plugin, catalog with business functions like billing)
-* [Heat Translator Project](https://wiki.openstack.org/wiki/Heat-Translator) (IaaS, App Orchestration) ([Python package](https://pypi.python.org/pypi/heat-translator))
+* [Heat Translator Project](https://wiki.openstack.org/wiki/Heat-Translator) (IaaS, App Orchestration) ([Python package](https://pypi.org/project/heat-translator/))
 * [Senlin Project](https://wiki.openstack.org/wiki/Senlin) (Clustering and Policy (on roadmap))
 * [Tacker Project](https://wiki.openstack.org/wiki/Tacker) (Network Function Virtualization)
-* [TOSCA Parser](https://wiki.openstack.org/wiki/TOSCA-Parser) ([Python package](https://pypi.python.org/pypi/tosca-parser))
+* [TOSCA Parser](https://wiki.openstack.org/wiki/TOSCA-Parser) ([Python package](https://pypi.org/project/tosca-parser/))
 
 ## [OpenTOSCA](http://www.opentosca.org/)
 Portal with runtime, repository, and other features mostly based on
@@ -123,32 +122,26 @@ Portal with runtime, repository, and other features mostly based on
 ## [Opera](https://github.com/xlab-si/xopera-opera)
 Opera aims to be a lightweight orchestrator compliant with OASIS TOSCA
 
-## [OPNFV](https://www.opnfv.org/)
+## [OPNFV (now LF Anuket)](https://anuket.io/)
 OPNFV reduces time to integrate and deploy NFV infrastructure and
 onboard VNF/CNFs for those who supply components and those who
-operationalize these platforms
-
-* [Parser](https://wiki.opnfv.org/display/parser/Parser)
-* [Policy](https://wiki.opnfv.org/display/domino/Policy+in+Tosca)
+operationalize these platforms. OPNFV merged into LF Anuket.
 
 ## [Puccini](https://puccini.cloud/)
 General-purpose stateless TOSCA parser and compiler
 
-* [TOSCA Mini-IDE](https://web.puccini.cloud/) running entirely within a browser as WebAssembly
-
 ## [RADON](http://radon-h2020.eu/)
 Serverless and FaaS Research Project with TOSCA as a centerstage IaC
-format
+format (EU research project, ended)
 
-## [SeaClouds](http://www.seaclouds-project.eu/)
-Open, Multi-Cloud Management
+## SeaClouds
+Open, Multi-Cloud Management (EU research project, ended; site offline)
 
 ## [SODALITE](https://cordis.europa.eu/project/rcn/220259/factsheet/en)
 Research Project over software-defined, high-performance, cloud
-infrastructures featuring TOSCA
+infrastructures featuring TOSCA (EU research project, ended)
 
 ## [TORCH](https://github.com/unict-cclab/TORCH)
-
 A TOSCA-based orchestrator of multi-cloud resources
 
 ## [TOSCA Implementation Landscape](https://github.com/philippemerle/tosca-implementation-landscape)
@@ -158,11 +151,16 @@ project.
 
 ![TOSCA Implementation Landscape](https://raw.githubusercontent.com/philippemerle/tosca-implementation-landscape/main/TOSCA-Implementation-Landscape.png)
 
-## [TOSCA toolbox](https://toscatoolbox.noprod-b.kmt.orange.com/)
+## [TOSCA toolbox](https://github.com/Orange-OpenSource/Cloudnet-TOSCA-toolbox)
 Allows for syntax and type checking of TOSCA service templates and
 generates UML and other diagrams from a TOSCA template.
-* [TOSCA toolbox Portal](https://toscatoolbox.orange.com/)
-* [TOSCA toolbox Github](https://github.com/Orange-OpenSource/Cloudnet-TOSCA-toolbox)
+
+## [tosca-core](https://github.com/ubicity-corp/tosca-core)
+Open-source (Apache 2.0) parser and semantic validator for TOSCA 2.0
+and the TOSCA Simple Profile in YAML 1.3, as a Python library and the
+`tosca-validate` command-line tool.
+
+* [tosca-core on PyPI](https://pypi.org/project/tosca-core/)
 
 ## [TosKer](https://github.com/di-unipi-socc/tosker)
 Open-source framework for deploying and managing TOSCA applications
@@ -173,22 +171,22 @@ with Docker
 ## [totosca](https://github.com/Shishqa/totosca)
 A set of tools aimed to help you working with TOSCA.
 
-## [Turandot](https://turandot.puccini.cloud/)
+## [Turandot](https://github.com/tliron/turandot)
 Orchestrate and compose Kubernetes workloads using TOSCA (based on
 [Puccini](https://puccini.cloud/))
 
 ## [Ubicity Orchestrator](https://ubicity.com/products.html)
-Pure TOSCA-based orchestrator for cloud applications and NFV
+TOSCA 2.0 orchestrator that deploys and operates multi-vendor systems
+from a single model, across cloud, data center, edge and the plant
+floor, including O-PAS Part 9 process automation systems. Built on
+[tosca-core](https://github.com/ubicity-corp/tosca-core).
 
 * [TOSCA Type Profile Browser](https://ubicity.com/profiles.html)
-* [TOSCA Validator](https://ubicity.com/validator.html)
+* [TOSCA Validator](https://ubicity.com/validator.html) (online)
 
 ## [Unfurl](https://unfurl.run/)
 A command line TOSCA orchestrator that enables you to use Git to
 manage your Ansible and Terraform deployment infrastructure.
 
-## [yang2tosca](https://github.com/lauwers/yang2tosca)
-Convert YANG modules to TOSCA type definitions.
-
 ## [Yorc](https://github.com/ystia/yorc)
-Yorc is a hybrid cloud/HPC TOSCA orchestrator
+Yorc is a hybrid cloud/HPC TOSCA orchestrator (archived on GitHub, 2023)
