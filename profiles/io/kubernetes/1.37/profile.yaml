@@ -1,0 +1,30 @@
+tosca_definitions_version: tosca_2_0
+profile: io.kubernetes:1.37
+description: TOSCA Kubernetes Profile
+imports:
+- resource.yaml
+- runtime.yaml
+- intstr.yaml
+- meta.yaml
+- autoscaling.yaml
+- admissionregistration.yaml
+- authentication.yaml
+- authorization.yaml
+- certificates.yaml
+- coordination.yaml
+- core.yaml
+- flowcontrol.yaml
+- policy.yaml
+- rbac.yaml
+- scheduling.yaml
+- storagemigration.yaml
+- apiextensions.yaml
+- apiregistration.yaml
+- dra.yaml
+- apps.yaml
+- batch.yaml
+- discovery.yaml
+- events.yaml
+- networking.yaml
+- node.yaml
+- storage.yaml

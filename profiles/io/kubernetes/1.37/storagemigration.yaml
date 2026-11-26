@@ -1,0 +1,59 @@
+tosca_definitions_version: tosca_2_0
+description: Types generated from JSON Schema by any2tosca
+imports:
+- url: meta.yaml
+  namespace: meta
+data_types:
+  StorageVersionMigrationSpec:
+    description: Spec of the storage version migration.
+    properties:
+      resource:
+        type: meta:GroupResource
+        description: >-
+          The resource that is being migrated. The migrator sends requests to the endpoint
+          serving the resource. Immutable.
+        required: true
+  StorageVersionMigrationStatus:
+    description: Status of the storage version migration.
+    properties:
+      conditions:
+        type: list
+        description: >-
+          The latest available observations of the migration's current state.
+        required: false
+        entry_schema:
+          type: meta:Condition
+        metadata:
+          x-kubernetes-list-type: map
+          x-kubernetes-list-map-keys: [type]
+      resourceVersion:
+        type: string
+        description: >-
+          ResourceVersion to compare with the GC cache for performing the migration. This
+          is the current resource version of given group, version and resource when kube-controller-manager
+          first observes this StorageVersionMigration resource.
+        required: false
+node_types:
+  StorageVersionMigration:
+    description: >-
+      StorageVersionMigration represents a migration of stored data to the latest storage
+      version.
+    metadata:
+      x-kubernetes-group-version-kind:
+        group: storagemigration.k8s.io
+        kind: StorageVersionMigration
+        version: v1
+    properties:
+      metadata:
+        type: meta:ObjectMeta
+        description: >-
+          Standard object metadata. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+        required: false
+      spec:
+        type: StorageVersionMigrationSpec
+        description: Specification of the migration.
+        required: false
+    attributes:
+      status:
+        type: StorageVersionMigrationStatus
+        description: Status of the migration.

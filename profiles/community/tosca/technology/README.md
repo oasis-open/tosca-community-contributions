@@ -6,12 +6,15 @@ layers.
 ## Kubernetes
 
 There is **no Kubernetes profile under this directory.** The community's
-Kubernetes resource profile is the auto-generated, reverse-DNS profile at:
+Kubernetes resource profile is the auto-generated, reverse-DNS profile, versioned
+by the Kubernetes distribution it was generated from:
 
-- [`profiles/io/kubernetes/1.35`](../../../io/kubernetes/1.35) —
-  `io.kubernetes:1.35`, versioned by the Kubernetes distribution it was generated
-  from. See its [`GENERATING.md`](../../../io/kubernetes/1.35/GENERATING.md)
-  for the OpenAPI-to-TOSCA generation procedure.
+- [`profiles/io/kubernetes/1.37`](../../../io/kubernetes/1.37) — `io.kubernetes:1.37`.
+- [`profiles/io/kubernetes/1.35`](../../../io/kubernetes/1.35) — `io.kubernetes:1.35`,
+  which `io.kubevirt`, `sh.helm` and the `microservice` example import.
+
+Each profile's `GENERATING.md` describes the OpenAPI-to-TOSCA generation
+procedure.
 
 The two former copies here — the generated `community.tosca.technology.k8s` and
 the hand-authored `community.tosca.technology.kubernetes` — were retired following

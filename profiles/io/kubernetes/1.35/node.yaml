@@ -1,0 +1,92 @@
+tosca_definitions_version: tosca_2_0
+description: Types generated from JSON Schema by any2tosca
+imports:
+- url: resource.yaml
+  namespace: resource
+- url: meta.yaml
+  namespace: meta
+- url: core.yaml
+  namespace: core
+data_types:
+  Overhead:
+    description: >-
+      Overhead structure represents the resource overhead associated with running a pod.
+    properties:
+      podFixed:
+        type: map
+        description: >-
+          podFixed represents the fixed resource overhead associated with running a pod.
+        required: false
+        entry_schema:
+          type: resource:Quantity
+  Scheduling:
+    description: >-
+      Scheduling specifies the scheduling constraints for nodes supporting a RuntimeClass.
+    properties:
+      nodeSelector:
+        type: map
+        description: >-
+          nodeSelector lists labels that must be present on nodes that support this RuntimeClass.
+          Pods using this RuntimeClass can only be scheduled to a node matched by this selector.
+          The RuntimeClass nodeSelector is merged with a pod's existing nodeSelector. Any
+          conflicts will cause the pod to be rejected in admission.
+        required: false
+        entry_schema:
+          type: string
+        metadata:
+          x-kubernetes-map-type: atomic
+      tolerations:
+        type: list
+        description: >-
+          tolerations are appended (excluding duplicates) to pods running with this RuntimeClass
+          during admission, effectively unioning the set of nodes tolerated by the pod and
+          the RuntimeClass.
+        required: false
+        entry_schema:
+          type: core:Toleration
+        metadata:
+          x-kubernetes-list-type: atomic
+node_types:
+  RuntimeClass:
+    description: >-
+      RuntimeClass defines a class of container runtime supported in the cluster. The RuntimeClass
+      is used to determine which container runtime is used to run all containers in a pod.
+      RuntimeClasses are manually defined by a user or cluster provisioner, and referenced
+      in the PodSpec. The Kubelet is responsible for resolving the RuntimeClassName reference
+      before running the pod.  For more details, see https://kubernetes.io/docs/concepts/containers/runtime-class/
+    metadata:
+      x-kubernetes-group-version-kind:
+        group: node.k8s.io
+        kind: RuntimeClass
+        version: v1
+    properties:
+      handler:
+        type: string
+        description: >-
+          handler specifies the underlying runtime and configuration that the CRI implementation
+          will use to handle pods of this class. The possible values are specific to the node
+          & CRI configuration.  It is assumed that all handlers are available on every node,
+          and handlers of the same name are equivalent on every node. For example, a handler
+          called "runc" might specify that the runc OCI runtime (using native Linux containers)
+          will be used to run the containers in a pod. The Handler must be lowercase, conform
+          to the DNS Label (RFC 1123) requirements, and is immutable.
+        required: true
+      metadata:
+        type: meta:ObjectMeta
+        description: >-
+          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
+        required: false
+      overhead:
+        type: Overhead
+        description: >-
+          overhead represents the resource overhead associated with running a pod for a given
+          RuntimeClass. For more details, see
+           https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/
+        required: false
+      scheduling:
+        type: Scheduling
+        description: >-
+          scheduling holds the scheduling constraints to ensure that pods running with this
+          RuntimeClass are scheduled to nodes that support it. If scheduling is nil, this
+          RuntimeClass is assumed to be supported by all nodes.
+        required: false
